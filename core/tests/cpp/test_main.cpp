@@ -162,37 +162,71 @@ int main(int argc, char** argv) {
   g_soc = parse_json(ss.str());
   SocCfg soc = parse_soc(g_soc);
 
+  auto fid_p = [&](const char* mem, std::vector<std::pair<std::string, double>> kv) {
+    Json f = fid("L0", "L1", "L0", mem);
+    Json p = Json::object();
+    for (auto& e : kv) p.set(e.first, Json::number(e.second));
+    f.set("params", p);
+    return f;
+  };
+
   test("noc_single_flow_zero_load", [&] {
-    Sim sim(g_soc, fid("L0", "L1", "L0", "L1"), 1);
+    Sim sim(g_soc, fid_p("L1", {{"noc_rr_tail", 0}}), 1);  // pure queueing model
     Noc& n = sim.noc();
     XY a{0, 0}, b{3, 3};
     ps_t lat = n.send(a, b, 4096, Q_REALTIME, 0, nullptr);
     // hops * (router + link cycles) + ceil(bytes / link_bytes) cycles at 1.5 GHz
     ps_t hop = cycles_to_ps(soc.router_cycles + soc.link_cycles, soc.noc_freq);
     ps_t ser = cycles_to_ps(std::ceil(4096.0 / soc.link_bytes), soc.noc_freq);
-    CHECK(lat == 6 * hop + ser);
+    // + network interface: source router + injection and ejection channels
+    ps_t ni = cycles_to_ps(soc.router_cycles + 2 * soc.link_cycles, soc.noc_freq);
+    CHECK(lat == 6 * hop + ni + ser);
     // A second identical flow injected at the same time queues behind the first one.
     ps_t lat2 = n.send(a, b, 4096, Q_REALTIME, 0, nullptr);
     CHECK(lat2 == lat + ser);
+    // Default model: the waiting message also pays the round-robin tail term
+    // (params.noc_rr_tail = 0.75 of its wait, latency only).
+    Sim s2(g_soc, fid("L0", "L1", "L0", "L1"), 1);
+    ps_t l1 = s2.noc().send(a, b, 4096, Q_REALTIME, 0, nullptr);
+    ps_t l2 = s2.noc().send(a, b, 4096, Q_REALTIME, 0, nullptr);
+    CHECK(l1 == lat);
+    CHECK(l2 == lat + ser + static_cast<ps_t>(0.75 * static_cast<double>(ser)));
+    // ...and a third message injected later, after the queue drained, sees zero load.
+    CHECK(s2.noc().send(a, b, 4096, Q_REALTIME, PS_PER_US, nullptr) - PS_PER_US == lat);
+  });
+
+  test("noc_calendar_fills_gaps", [&] {
+    // A reservation made for the future must not block earlier traffic (the
+    // legacy train model did), and concurrent messages interleave.
+    for (int arb = 0; arb < 2; ++arb) {
+      Sim sim(g_soc, fid_p("L1", {{"noc_l1_arbitration", arb}, {"noc_rr_tail", 0}}), 1);
+      Noc& n = sim.noc();
+      XY a{0, 0}, b{1, 0};
+      ps_t later = n.send(a, b, 4096, Q_REALTIME, 10 * PS_PER_US, nullptr) - 10 * PS_PER_US;  // future reservation
+      ps_t now = n.send(a, b, 256, Q_REALTIME, 0, nullptr);                                 // earlier traffic
+      ps_t zero = n.hops(a, b) * n.hop_ps() + n.ni_ps() + n.ser_ps(256);
+      if (arb == 1) CHECK(now == zero && later == n.hops(a, b) * n.hop_ps() + n.ni_ps() + n.ser_ps(4096));
+      else CHECK(now > 10 * PS_PER_US);  // legacy: blocked behind the future reservation
+    }
   });
 
   test("noc_l0_matches_zero_load_when_idle", [&] {
     Sim sim(g_soc, fid("L0", "L0", "L0", "L0"), 1);
     ps_t lat = sim.noc().send(XY{0, 0}, XY{2, 1}, 256, Q_REALTIME, 0, nullptr);
     ps_t hop = cycles_to_ps(soc.router_cycles + soc.link_cycles, soc.noc_freq);
-    CHECK(lat == 3 * hop + cycles_to_ps(8, soc.noc_freq));
+    CHECK(lat == 3 * hop + cycles_to_ps(soc.router_cycles + 2 * soc.link_cycles, soc.noc_freq) + cycles_to_ps(8, soc.noc_freq));
   });
 
   test("noc_qos_priority", [&] {
     for (int qos_on = 0; qos_on < 2; ++qos_on) {
-      Sim sim(g_soc, fid("L0", "L1", "L0", "L1"), 1);
+      Sim sim(g_soc, fid_p("L1", {{"noc_rr_tail", 0}}), 1);
       sim.set_qos(qos_on);
       Noc& n = sim.noc();
       for (int i = 0; i < 64; ++i) n.send(XY{0, 0}, XY{3, 0}, 4096, Q_BEST_EFFORT, 0, nullptr);
       ps_t s = n.send(XY{0, 0}, XY{3, 0}, 64, Q_SAFETY, 1000, nullptr) - 1000;
       ps_t pkt = n.ser_ps(soc.max_packet_bytes);
       // QoS: at most one lower-class packet of blocking per link (injection + 3 links + ejection).
-      if (qos_on) CHECK(s <= 3 * n.hop_ps() + n.ser_ps(64) + 5 * pkt + 1);
+      if (qos_on) CHECK(s <= 3 * n.hop_ps() + n.ni_ps() + n.ser_ps(64) + 5 * pkt + 1);
       else CHECK(s > 60 * n.ser_ps(4096));                               // FIFO: waits behind the burst
     }
   });
@@ -570,7 +604,7 @@ int main(int argc, char** argv) {
   });
 
   test("dma_descriptor_and_2d_strides", [&] {
-    Sim sim(g_soc, fid("L0", "L1", "L1", "L1"), 1);
+    // 1 MB copy: contiguous vs a 2D gather of 256 B rows every 1024 B.
     OpSpec flat;
     flat.id = "flat";
     flat.type = "memcopy";
@@ -580,18 +614,23 @@ int main(int argc, char** argv) {
     OpSpec strided = flat;
     strided.id = "strided";
     strided.shape = {{"rows", 4096}, {"row_bytes", 256}, {"stride", 1024}};
-    sim.add_task(task("T72_flat", 100000, 100000, "high", {flat}));
-    sim.add_task(task("T73_strided", 100000, 100000, "high", {strided}));
-    sim.release_job("T72_flat", 0, 0);
-    auto a = sim.run_until(20 * PS_PER_MS);
-    sim.release_job("T73_strided", 20 * PS_PER_MS, 0);
-    auto b = sim.run_until(40 * PS_PER_MS);
-    CHECK(a.size() == 1 && b.size() == 1);
-    CHECK(a[0].response >= ns_to_ps(soc.dma.desc_ns));
-    CHECK(b[0].response > a[0].response);  // 256 B rows => more, smaller transactions
-    CHECK(a[0].attribution[A_DMA] > 0);
+    Completion r[2];
+    double acts[2];
+    for (int k = 0; k < 2; ++k) {
+      Sim sim(g_soc, fid("L0", "L1", "L1", "L1"), 1);
+      sim.add_task(task("T72_dma", 100000, 100000, "high", {k ? strided : flat}));
+      sim.release_job("T72_dma", 0, 0);
+      auto d = sim.run_until(20 * PS_PER_MS);
+      CHECK(d.size() == 1);
+      r[k] = d[0];
+      acts[k] = sim.counters(false)[D_DRAM_IO].act[K_DRAM_ACTIVATES];
+    }
+    CHECK(r[0].response >= ns_to_ps(soc.dma.desc_ns));
+    CHECK(r[0].attribution[A_DMA] > 0);
+    CHECK(acts[1] > 3 * acts[0]);                          // strided rows open ~4x more DRAM rows
+    CHECK(r[1].response >= r[0].response * 95 / 100);     // and never make the copy faster
     // Completion interrupt is charged when the next consumer is a CPU (job end).
-    CHECK(a[0].attribution[A_MIDDLEWARE] >= ns_to_ps(2000) - 1);
+    CHECK(r[0].attribution[A_MIDDLEWARE] >= ns_to_ps(2000) - 1);
   });
 
   test("dram_contention_shows_in_attribution", [&] {

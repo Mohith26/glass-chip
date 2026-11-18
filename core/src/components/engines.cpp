@@ -125,9 +125,9 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
             // each fold uses R*S rows only.
             double folds = std::ceil(d.gB / soc_.npu.cols);
             double fold_cycles = d.gM + soc_.npu.rows + soc_.npu.cols - 1;
-            c.cycles = std::ceil(folds / nunits) * fold_cycles / rate;
+            c.cycles = std::ceil(folds / nunits) * fold_cycles / rate * d.work_scale;
           } else {
-            c.cycles = npu_gemm_cycles(d.gM, d.gK, d.gN, d.gB, nunits, d.dtype);
+            c.cycles = npu_gemm_cycles(d.gM, d.gK, d.gN, d.gB, nunits, d.dtype) * d.work_scale;
           }
         } else {
           // Vector unit for elementwise/softmax/norm/pool/resize/memcopy.
@@ -495,11 +495,21 @@ ps_t Sim::noc_xfer(XY a, XY b, int bytes, int qos, ps_t t, bool header, int64_t 
     }
     emit_xfer(t, arr, a, b, bytes, job, task, op);
   }
-  if (noc_csv_.f) {
+  if (noc_csv_.f && noc_csv_.per_message) {
+    // One row per message: latency to its last packet's arrival (what the simulator waits for).
+    CsvRow r;
+    r.t = t;
+    r.a = static_cast<uint64_t>(bytes);
+    r.b = a.x; r.c = a.y; r.d = b.x; r.e = b.y;
+    r.lat = arr - t;
+    csv_push(noc_csv_, r);
+  } else if (noc_csv_.f) {
     // One row per packet (max_packet_bytes); packet k's tail arrives
-    // ser(k+1 packets) after the head of the train.
+    // ser(k+1 packets) after the head of the train. The message-level
+    // round-robin tail term is excluded: round robin between multi-packet
+    // messages delays message tails but not the per-packet mean.
     const int pk = soc_.max_packet_bytes;
-    ps_t head = arr - noc_.ser_ps(bytes);
+    ps_t head = arr - (noc_backend_ ? 0 : noc_.last_rr()) - noc_.ser_ps(bytes);
     for (int off = 0; off < bytes; off += pk) {
       int nb = std::min(pk, bytes - off);
       CsvRow r;
@@ -817,6 +827,7 @@ void Sim::exec_issue_step(int32_t x, int32_t step) {
     while (left > 0) {
       int n = static_cast<int>(std::min<int64_t>(left, e.chunk));
       double off = std::fmod(st->cursor, std::max(64.0, st->size));
+      if (st->row > 0 && st->stride > st->row) off = std::floor(off / st->row) * st->stride + std::fmod(off, st->row);
       uint64_t addr = st->base + (static_cast<uint64_t>(off) & ~uint64_t{63});
       mem_read(execs_[x], x, si, addr, n, st->alloc, st->l0_hit);
       st->cursor += n;

@@ -43,7 +43,14 @@ whenever the NoC or DRAM is L1.
 | dsp_pipeline_fill_cycles | 64 | per-op pipeline fill at L1 |
 | dsp_l1_simd_eff | 0.85 | SIMD efficiency at L1 |
 | dma_bytes_per_cycle | 64 | DMA engine datapath at the noc_cache clock |
-| noc_vc_buffer_flits | 8 | buffered flits before backpressure holds the upstream link |
+| noc_vc_buffer_flits | 8 | legacy model only: buffered flits before the upstream hold |
+| noc_l1_arbitration | 1 | 1 = reservation calendar (default), 0 = legacy whole-train FIFO (phase B) |
+| noc_vc_flow_control | true | entering a link needs a free downstream input VC, held until the tail leaves that router |
+| noc_rr_tail | 0.75 | round-robin output arbitration tail delay, fraction of a message's wait (fitted to BookSim) |
+| noc_contention_bubble | 0 | idle cycles per packet on contended mesh links (fit found 0 best) |
+| noc_ni_cycles | -1 | NI latency per message; -1 = router + 2 x link cycles (calendar), 0 (legacy) |
+| noc_backpressure_hold | false | legacy upstream-hold rule |
+| noc_calendar_horizon_ns | 20000 | reservations older than this are pruned |
 | noc_util_window_ns | 10000 | utilization window for L0 queueing formulas |
 | cache_block_bytes | 1024 | tag granularity of the set-associative cache model |
 | stream_bypass_bytes | 2e6 | streams larger than this do not allocate in the system cache |

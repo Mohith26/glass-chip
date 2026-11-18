@@ -1,0 +1,704 @@
+{
+ "provenance": {
+  "script": "core/bench/noc_validate.py",
+  "date": "2026-11-18",
+  "configs": [
+   "configs/soc/vx1.yaml",
+   "calib/booksim/booksim_cfg.py"
+  ],
+  "tools": "BookSim 2 trace mode via calib/booksim/replay.py",
+  "seed": 11,
+  "cycles": 20000,
+  "latency_units": "NoC cycles (1.5 GHz), packet create to tail arrival, mean over packets created after warm-up"
+ },
+ "models": {
+  "before": {
+   "noc_l1_arbitration": 0,
+   "noc_backpressure_hold": true,
+   "noc_ni_cycles": 0,
+   "noc_vc_flow_control": false,
+   "noc_rr_tail": 0
+  },
+  "after": {}
+ },
+ "curves": {
+  "uniform/2flit": {
+   "points": [
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.02,
+     "packets": 3199,
+     "booksim": 13.533858267716536,
+     "before": 9.686114173228349,
+     "after": 13.572129330708659,
+     "before_err": -0.28430503839888277,
+     "after_err": 0.0028278013730507795,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.1,
+     "packets": 15910,
+     "booksim": 13.720210923972926,
+     "before": 10.474370966472534,
+     "after": 13.905511411931368,
+     "before_err": -0.2365736194207503,
+     "after_err": 0.013505658840468063,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.2,
+     "packets": 31859,
+     "booksim": 14.175163860434083,
+     "before": 11.614651124455436,
+     "after": 14.490090368538795,
+     "before_err": -0.1806337310234265,
+     "after_err": 0.02221678078683374,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.3,
+     "packets": 47694,
+     "booksim": 14.831795302013424,
+     "before": 13.454951945260069,
+     "after": 15.241110528523487,
+     "before_err": -0.09283052582086591,
+     "after_err": 0.02759714641251142,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.4,
+     "packets": 63704,
+     "booksim": 15.77645161924612,
+     "before": 44.54912159584718,
+     "after": 16.145585101362645,
+     "before_err": 1.823773220430664,
+     "after_err": 0.02339775071260056,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.5,
+     "packets": 79689,
+     "booksim": 17.35890053179773,
+     "before": 2467.631927357689,
+     "after": 17.392746483526857,
+     "before_err": 141.1536993565649,
+     "after_err": 0.0019497750832276816,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.6,
+     "packets": 95995,
+     "booksim": 20.026998826137994,
+     "before": 5200.931101467328,
+     "after": 19.29536605582366,
+     "before_err": 258.6959807417273,
+     "after_err": -0.03653232202517797,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.7,
+     "packets": 111970,
+     "booksim": 26.74651599070931,
+     "before": 8219.81622720319,
+     "after": 23.980010781445415,
+     "before_err": 306.3228763723257,
+     "after_err": -0.10343422710549924,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.75,
+     "packets": 119687,
+     "booksim": 37.97055995652447,
+     "before": 9270.40024088686,
+     "after": 75.92320612210773,
+     "before_err": 243.1470510706527,
+     "after_err": 0.999528218942209,
+     "below_booksim_saturation": true
+    }
+   ],
+   "saturation_3x_zero_load": {
+    "booksim": null,
+    "before": 0.35018108137237347,
+    "after": 0.7161102692093905
+   },
+   "mean_abs_err_below_sat": {
+    "before": 105.77085818626279,
+    "after": 0.1367766312535087
+   },
+   "max_abs_err_below_sat": {
+    "before": 306.3228763723257,
+    "after": 0.999528218942209
+   }
+  },
+  "uniform/8flit": {
+   "points": [
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.02,
+     "packets": 795,
+     "booksim": 20.084142394822006,
+     "before": 16.026944174757283,
+     "after": 20.091359223300966,
+     "before_err": -0.20201003061553327,
+     "after_err": 0.00035932968095368496,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.1,
+     "packets": 4023,
+     "booksim": 21.092068429237948,
+     "before": 16.868230171073098,
+     "after": 21.32623390357698,
+     "before_err": -0.20025718541239612,
+     "after_err": 0.011102063087109624,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.2,
+     "packets": 7921,
+     "booksim": 23.480265235238395,
+     "before": 18.88181954531102,
+     "after": 23.555864540574674,
+     "before_err": -0.1958430044915413,
+     "after_err": 0.0032196955434226713,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.3,
+     "packets": 11941,
+     "booksim": 26.615166474109863,
+     "before": 23.01665192731856,
+     "after": 26.305255330322446,
+     "before_err": -0.13520541193277114,
+     "after_err": -0.011644155751905062,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.4,
+     "packets": 15910,
+     "booksim": 31.14111443412561,
+     "before": 188.9620966079018,
+     "after": 29.74828628207147,
+     "before_err": 5.067929810528232,
+     "after_err": -0.04472634256556426,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.5,
+     "packets": 19837,
+     "booksim": 38.267888636936256,
+     "before": 2967.7912243953137,
+     "after": 34.838560563114136,
+     "before_err": 76.55304329831237,
+     "after_err": -0.08961372565802139,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.6,
+     "packets": 23930,
+     "booksim": 51.460454189506656,
+     "before": 6040.767942129992,
+     "after": 42.62472756460454,
+     "before_err": 116.3866036993076,
+     "after_err": -0.17169935174617668,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.7,
+     "packets": 27940,
+     "booksim": 113.45834637570988,
+     "before": 9077.62150176631,
+     "after": 54.51706602423646,
+     "before_err": 79.00840653631917,
+     "after_err": -0.5194970862372101,
+     "below_booksim_saturation": false
+    },
+    {
+     "traffic": "uniform",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.75,
+     "packets": 29838,
+     "booksim": 404.66933322164516,
+     "before": 10371.228326122467,
+     "after": 66.32143656810186,
+     "before_err": 24.628896174452503,
+     "after_err": -0.8361095563132868,
+     "below_booksim_saturation": false
+    }
+   ],
+   "saturation_3x_zero_load": {
+    "booksim": 0.6141810837190298,
+    "before": 0.3151038678073975,
+    "after": 0.7243850852710578
+   },
+   "mean_abs_err_below_sat": {
+    "before": 28.39155606294292,
+    "after": 0.04748066629045048
+   },
+   "max_abs_err_below_sat": {
+    "before": 116.3866036993076,
+    "after": 0.17169935174617668
+   }
+  },
+  "transpose/2flit": {
+   "points": [
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.02,
+     "packets": 3195,
+     "booksim": 13.60662199448167,
+     "before": 9.679423137564054,
+     "after": 13.644446984627512,
+     "before_err": -0.28862408748551543,
+     "after_err": 0.0027798957126303485,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.08,
+     "packets": 12714,
+     "booksim": 13.733853446573178,
+     "before": 9.975695634999015,
+     "after": 13.865225261702546,
+     "before_err": -0.2736419043784019,
+     "after_err": 0.009565546599170064,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.15,
+     "packets": 23936,
+     "booksim": 14.02278904453272,
+     "before": 10.420887779636214,
+     "after": 14.309162189002718,
+     "before_err": -0.25686054703224925,
+     "after_err": 0.020421981929597,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.2,
+     "packets": 31829,
+     "booksim": 14.360545019044253,
+     "before": 10.835858817292971,
+     "after": 14.767599481682177,
+     "before_err": -0.24544236984578335,
+     "after_err": 0.028345335229137136,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.25,
+     "packets": 39959,
+     "booksim": 15.025777555047451,
+     "before": 11.473036050991327,
+     "after": 15.562461474613961,
+     "before_err": -0.23644310525964687,
+     "after_err": 0.035717547235099824,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.3,
+     "packets": 47776,
+     "booksim": 17.385147528955507,
+     "before": 13.767118193490909,
+     "after": 18.01259584141292,
+     "before_err": -0.20811036141273218,
+     "after_err": 0.03609105481632406,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.33,
+     "packets": 52526,
+     "booksim": 39.04247968932409,
+     "before": 35.51587281109284,
+     "after": 39.87196447716389,
+     "before_err": -0.09032743069328089,
+     "after_err": 0.021245699413570296,
+     "below_booksim_saturation": true
+    }
+   ],
+   "saturation_3x_zero_load": {
+    "booksim": null,
+    "before": 0.3210648630062365,
+    "after": null
+   },
+   "mean_abs_err_below_sat": {
+    "before": 0.22849282944394428,
+    "after": 0.022023865847932676
+   },
+   "max_abs_err_below_sat": {
+    "before": 0.28862408748551543,
+    "after": 0.03609105481632406
+   }
+  },
+  "transpose/8flit": {
+   "points": [
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.02,
+     "packets": 794,
+     "booksim": 19.93192868719611,
+     "before": 15.882734197730958,
+     "after": 19.962658833063205,
+     "before_err": -0.20315116279069753,
+     "after_err": 0.0015417547568709086,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.08,
+     "packets": 3195,
+     "booksim": 20.655498620417816,
+     "before": 16.427337800551832,
+     "after": 20.85142609381159,
+     "before_err": -0.2046990439478656,
+     "after_err": 0.009485487472091344,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.15,
+     "packets": 5994,
+     "booksim": 22.327261306532662,
+     "before": 17.616617148241208,
+     "after": 22.6684824120603,
+     "before_err": -0.21098172738781815,
+     "after_err": 0.015282712055141331,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.2,
+     "packets": 7941,
+     "booksim": 24.229580573951434,
+     "before": 18.905505203405866,
+     "after": 24.6181596499527,
+     "before_err": -0.2197345246772178,
+     "after_err": 0.016037383512078406,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.25,
+     "packets": 9949,
+     "booksim": 27.686689333837048,
+     "before": 21.591146958821305,
+     "after": 27.993898564412547,
+     "before_err": -0.22016147548439924,
+     "after_err": 0.011095917856818129,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.3,
+     "packets": 11951,
+     "booksim": 39.78980557015239,
+     "before": 32.26361728849186,
+     "after": 39.54854424592748,
+     "before_err": -0.1891486568938192,
+     "after_err": -0.006063395404120443,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "transpose",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.33,
+     "packets": 13083,
+     "booksim": 94.39660626977279,
+     "before": 86.76943787748058,
+     "after": 93.50801610583837,
+     "before_err": -0.08079918011559425,
+     "after_err": -0.009413369813263763,
+     "below_booksim_saturation": false
+    }
+   ],
+   "saturation_3x_zero_load": {
+    "booksim": 0.31099092799895983,
+    "before": 0.3084676747208585,
+    "after": 0.31130817160668317
+   },
+   "mean_abs_err_below_sat": {
+    "before": 0.20797943186363624,
+    "after": 0.009917775176186762
+   },
+   "max_abs_err_below_sat": {
+    "before": 0.22016147548439924,
+    "after": 0.016037383512078406
+   }
+  },
+  "hotspot_dram/2flit": {
+   "points": [
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.01,
+     "packets": 1565,
+     "booksim": 14.331715210355988,
+     "before": 10.857975728155342,
+     "after": 14.415849514563103,
+     "before_err": -0.24238128034323123,
+     "after_err": 0.005870497911256317,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.03,
+     "packets": 4800,
+     "booksim": 14.709048361934478,
+     "before": 12.220858814352576,
+     "after": 14.981787441497659,
+     "before_err": -0.16916047091265832,
+     "after_err": 0.018542265471707984,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.05,
+     "packets": 7921,
+     "booksim": 14.977897063467003,
+     "before": 13.25294568992738,
+     "after": 15.475510656772968,
+     "before_err": -0.11516645936544717,
+     "after_err": 0.03322319489828171,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.07,
+     "packets": 11151,
+     "booksim": 15.873974142776841,
+     "before": 15.002425632377744,
+     "after": 16.704128836424957,
+     "before_err": -0.05490424153145543,
+     "after_err": 0.052296588502751325,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.09,
+     "packets": 14300,
+     "booksim": 17.24997809515465,
+     "before": 16.711615920441606,
+     "after": 18.488257425742574,
+     "before_err": -0.03120944106382744,
+     "after_err": 0.071784400174731,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.1,
+     "packets": 15910,
+     "booksim": 19.017235951518966,
+     "before": 19.160841688965842,
+     "after": 20.61427569652133,
+     "before_err": 0.007551346463438382,
+     "after_err": 0.08397854183824238,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.11,
+     "packets": 17413,
+     "booksim": 22.0793308923828,
+     "before": 24.507474800775363,
+     "after": 23.91394852466078,
+     "before_err": 0.10997361832329142,
+     "after_err": 0.08309208468409285,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 2,
+     "offered_flit_rate": 0.12,
+     "packets": 19029,
+     "booksim": 36.73802798397162,
+     "before": 134.4175089995402,
+     "after": 39.7115671681009,
+     "before_err": 2.6588112203024346,
+     "after_err": 0.08093899828881944,
+     "below_booksim_saturation": true
+    }
+   ],
+   "saturation_3x_zero_load": {
+    "booksim": null,
+    "before": 0.11073391410006324,
+    "after": null
+   },
+   "mean_abs_err_below_sat": {
+    "before": 0.423644759788223,
+    "after": 0.05371582147123538
+   },
+   "max_abs_err_below_sat": {
+    "before": 2.6588112203024346,
+    "after": 0.08397854183824238
+   }
+  },
+  "hotspot_dram/8flit": {
+   "points": [
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.01,
+     "packets": 406,
+     "booksim": 20.025316455696203,
+     "before": 15.90929905063291,
+     "after": 20.045079113924047,
+     "before_err": -0.20554069216182055,
+     "after_err": 0.0009868836915294967,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.03,
+     "packets": 1187,
+     "booksim": 22.495698924731183,
+     "before": 18.286361290322578,
+     "after": 22.592548387096777,
+     "before_err": -0.18711744180488518,
+     "after_err": 0.004305243535203958,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.05,
+     "packets": 1983,
+     "booksim": 24.576800509878904,
+     "before": 19.78452676864245,
+     "after": 24.497687380497126,
+     "before_err": -0.1949917662923678,
+     "after_err": -0.0032190166230131284,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.07,
+     "packets": 2800,
+     "booksim": 28.207377417903732,
+     "before": 22.52639743589744,
+     "after": 27.9774048582996,
+     "before_err": -0.20140050235228432,
+     "after_err": -0.008152922414480271,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.09,
+     "packets": 3605,
+     "booksim": 34.31569787678385,
+     "before": 27.98056247824574,
+     "after": 33.83014218586844,
+     "before_err": -0.1846133341447828,
+     "after_err": -0.014149666798526995,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.1,
+     "packets": 4023,
+     "booksim": 41.772317262830484,
+     "before": 40.322125194401245,
+     "after": 40.989969517884916,
+     "before_err": -0.03471658178081581,
+     "after_err": -0.018728856721619093,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.11,
+     "packets": 4413,
+     "booksim": 57.250850340136054,
+     "before": 106.01671853741497,
+     "after": 55.74039668367348,
+     "before_err": 0.8517929062634606,
+     "after_err": -0.026383078111307294,
+     "below_booksim_saturation": true
+    },
+    {
+     "traffic": "hotspot_dram",
+     "packet_flits": 8,
+     "offered_flit_rate": 0.12,
+     "packets": 4800,
+     "booksim": 122.99375975039001,
+     "before": 351.62646333853354,
+     "after": 120.20396957878316,
+     "before_err": 1.8588967769758622,
+     "after_err": -0.02268237166884401,
+     "below_booksim_saturation": false
+    }
+   ],
+   "saturation_3x_zero_load": {
+    "booksim": 0.11042971919744579,
+    "before": 0.10112730311288015,
+    "after": 0.11068175567389812
+   },
+   "mean_abs_err_below_sat": {
+    "before": 0.2657390321143453,
+    "after": 0.010846523985097176
+   },
+   "max_abs_err_below_sat": {
+    "before": 0.8517929062634606,
+    "after": 0.026383078111307294
+   }
+  }
+ }
+}

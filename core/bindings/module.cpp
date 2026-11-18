@@ -241,7 +241,11 @@ struct PySim {
 
 PYBIND11_MODULE(glasschip_core, m) {
   m.doc() = "Glass Chip simulation kernel: deterministic multi-fidelity discrete-event SoC model.";
-  m.attr("__version__") = "0.1.0";
+#ifndef GC_BUILD_ID
+#define GC_BUILD_ID "dev"
+#endif
+  m.attr("__version__") = "0.2.0";
+  m.attr("__build_id__") = GC_BUILD_ID;
   m.attr("ATTRIBUTION_KEYS") = py::make_tuple("compute", "runqueue", "engine_queue", "noc", "dram", "cache", "dma", "preemption", "dvfs",
                                               "middleware");
   py::class_<PySim>(m, "Sim")
@@ -398,12 +402,13 @@ PYBIND11_MODULE(glasschip_core, m) {
       .def("dram_trace_close", [](PySim& p) { p.s->dram_trace_close(); })
       .def("export_dram_trace", [](PySim& p, const std::string& path) { return p.s->dram_trace_open(path); }, py::arg("path"),
            "Alias of dram_trace_open().")
-      .def("noc_trace_open", [](PySim& p, const std::string& path) { return p.s->noc_trace_open(path); }, py::arg("path"),
-           "Start a NoC packet CSV: time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns (one row per max_packet_bytes packet; "
-           "latency = injection to that packet's tail arrival).")
+      .def("noc_trace_open", [](PySim& p, const std::string& path, bool per_message) { return p.s->noc_trace_open(path, per_message); },
+           py::arg("path"), py::arg("per_message") = false,
+           "Start a NoC CSV: time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns. Default one row per max_packet_bytes packet "
+           "(latency = injection to that packet's tail arrival); per_message=True gives one row per message (latency to its last packet).")
       .def("noc_trace_close", [](PySim& p) { p.s->noc_trace_close(); })
-      .def("export_noc_trace", [](PySim& p, const std::string& path) { return p.s->noc_trace_open(path); }, py::arg("path"),
-           "Alias of noc_trace_open().")
+      .def("export_noc_trace", [](PySim& p, const std::string& path, bool per_message) { return p.s->noc_trace_open(path, per_message); },
+           py::arg("path"), py::arg("per_message") = false, "Alias of noc_trace_open().")
       .def("checkpoint",
            [](PySim& p) {
              auto b = p.s->checkpoint();
@@ -418,7 +423,36 @@ PYBIND11_MODULE(glasschip_core, m) {
             p.s->restore(v);
           },
           py::arg("blob"), "Restore state saved by checkpoint().")
-      .def("info", [](PySim& p) { return from_json(p.s->info()); }, "Fidelity levels in use, warnings, units, policies, counters.")
+      .def("info",
+           [](PySim& p) {
+             py::dict d = from_json(p.s->info());
+             d["build_id"] = GC_BUILD_ID;
+             return d;
+           },
+           "Fidelity levels in use, warnings, units, policies, counters, build id.")
+      .def(
+          "noc_replay",
+          [](PySim& p, py::array_t<int64_t, py::array::c_style | py::array::forcecast> recs) {
+            // rows: t_ps, src_x, src_y, dst_x, dst_y, bytes[, qos]; replayed in time order through
+            // this simulator's NoC model (its level and params); returns latency_ps per row.
+            auto r = recs.unchecked<2>();
+            if (r.shape(1) < 6) throw std::runtime_error("noc_replay expects rows of t_ps,src_x,src_y,dst_x,dst_y,bytes[,qos]");
+            std::vector<size_t> order(static_cast<size_t>(r.shape(0)));
+            for (size_t i = 0; i < order.size(); ++i) order[i] = i;
+            std::stable_sort(order.begin(), order.end(), [&](size_t a, size_t b) { return r(a, 0) < r(b, 0); });
+            py::array_t<int64_t> out(static_cast<py::ssize_t>(order.size()));
+            auto o = out.mutable_unchecked<1>();
+            Noc& n = p.s->noc();
+            for (size_t i : order) {
+              XY a{static_cast<int8_t>(r(i, 1)), static_cast<int8_t>(r(i, 2))}, b{static_cast<int8_t>(r(i, 3)), static_cast<int8_t>(r(i, 4))};
+              int q = r.shape(1) > 6 ? static_cast<int>(r(i, 6)) : Q_REALTIME;
+              o(i) = n.send(a, b, static_cast<int>(r(i, 5)), q, r(i, 0), nullptr) - r(i, 0);
+            }
+            return out;
+          },
+          py::arg("records"),
+          "Replay an open-loop NoC message trace (numpy int64 rows t_ps,src_x,src_y,dst_x,dst_y,bytes[,qos]) through the NoC "
+          "model; returns latency_ps per row. Mutates NoC state: use a fresh Sim.")
       .def("npu_gemm_cycles",
            [](PySim& p, double M, double K, double N, double B, int tiles, const std::string& dtype) {
              int dt = dtype == "bf16" ? DT_BF16 : dtype == "fp8" ? DT_FP8 : dtype == "fp16" ? DT_FP16 : dtype == "fp32" ? DT_FP32 : DT_INT8;

@@ -161,6 +161,7 @@ def main() -> None:
             + [f"configs/scenarios/{args.scenario}.yaml"],
             "seed": 1,
             "note": "single-threaded; simulator stepped in 1 ms increments with counters() read each step",
+            "build_id": gc.__build_id__,
         },
         "results": results,
     }

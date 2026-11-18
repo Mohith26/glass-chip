@@ -182,6 +182,18 @@ void Sim::add_task(const Json& graph) {
   TaskDef td = parse_task(graph);
   if (task_index_.count(td.id)) throw std::runtime_error("task already added: " + td.id);
   int t = static_cast<int>(tasks_.size());
+  {
+    int n = 0;
+    std::string ex;
+    for (const OpDef& d : td.ops)
+      if (d.has_gemm && (d.work_scale > 2.0 || d.work_scale < 0.5)) {
+        if (n < 3) ex += (ex.empty() ? "" : ", ") + d.id + " (x" + std::to_string(d.work_scale).substr(0, 6) + ")";
+        ++n;
+      }
+    if (n > 0)
+      graph_warnings_.push_back("graph " + td.id + ": " + std::to_string(n) + " op(s) declare MACs that differ from their shape by >2x: " + ex +
+                                (n > 3 ? ", ..." : "") + "; using declared MACs (shape-based cycles scaled)");
+  }
   task_index_[td.id] = t;
   tasks_.push_back(std::move(td));
   plans_.emplace_back();
@@ -671,6 +683,12 @@ void Sim::start_exec(int engine, const ReadyItem& it, const std::vector<int32_t>
     e.rd_in.size = std::max(64.0, po.def >= 0 ? td.ops[po.def].bytes_in : pl.rx_bytes);
   }
   e.rd_in.total = c.rd_in;
+  if (engine == E_DMA && po.def >= 0 && td.ops[po.def].rows2d > 0) {
+    const OpDef& d2 = td.ops[po.def];
+    e.rd_in.row = d2.row_bytes2d;
+    e.rd_in.stride = d2.stride2d;
+    e.rd_in.size = std::max(e.rd_in.size, d2.rows2d * d2.stride2d);
+  }
   e.rd_in.alloc = e.rd_in.size <= p.stream_bypass_bytes;
   e.rd_in.l0_hit = hit_hint(cache, p, e.qos, e.rd_in.size);
   e.wr.base = abase + static_cast<uint64_t>(po.def >= 0 ? po.out_off : 0) + (po.def == -2 ? (1ull << 33) : 0);

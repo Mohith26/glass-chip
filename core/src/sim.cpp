@@ -168,9 +168,10 @@ void Sim::dram_trace_close() {
   std::fclose(dram_csv_.f);
   dram_csv_.f = nullptr;
 }
-bool Sim::noc_trace_open(const std::string& path) {
+bool Sim::noc_trace_open(const std::string& path, bool per_message) {
   noc_trace_close();
   noc_csv_ = CsvTrace{};
+  noc_csv_.per_message = per_message;
   noc_csv_.f = std::fopen(path.c_str(), "w");
   if (!noc_csv_.f) return false;
   std::fprintf(noc_csv_.f, "time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns\n");
@@ -764,13 +765,13 @@ std::vector<std::string> Sim::op_names(int task) const {
 // queue, component state, RNGs, counters, trace hash) is written with the
 // GC_IO field lists. Trace buffers and open files are not part of the state.
 static const uint32_t kCkptMagic = 0x4B434347;  // "GCCK"
-static const uint32_t kCkptVersion = 3;
+static const uint32_t kCkptVersion = 4;
 
 #define GC_SIM_STATE                                                                                                           \
   soc_, fid_, seed_, now_, q_, rng_, tasks_, plans_, task_index_, jobs_, free_jobs_, job_slot_, active_count_, job_seq_,       \
       next_job_id_, units_, eng_, execs_, free_execs_, next_uid_, txns_, free_txns_, dram_seq_, noc_, cache_, dram_, dom_,   \
       counters_since_, noc_busy_base_, dram_busy_base_, mw_, qos_on_, ready_seq_, npu_l2_, cpu_cpi_, l2_fallbacks_npu_,         \
-      l2_fallbacks_cpu_, l2_hits_npu_, l2_hits_cpu_, events_, hash_, last_dram_q_, cpu_kernel_cpi_, l2_sources_, faults_
+      l2_fallbacks_cpu_, l2_hits_npu_, l2_hits_cpu_, events_, hash_, last_dram_q_, cpu_kernel_cpi_, l2_sources_, faults_, graph_warnings_
 
 std::vector<uint8_t> Sim::checkpoint() {
   if (dram_backend_ || noc_backend_)
@@ -801,7 +802,7 @@ void Sim::restore(const std::vector<uint8_t>& blob) {
 Json Sim::info() const {
   Json j = Json::object();
   j.set("module", Json::string("glasschip_core"));
-  j.set("version", Json::string("0.1.0"));
+  j.set("version", Json::string("0.2.0"));
   j.set("soc", Json::string(soc_.name));
   Json f = Json::object();
   auto lv = [](int l) { return Json::string("L" + std::to_string(l)); };
@@ -819,6 +820,7 @@ Json Sim::info() const {
   j.set("fidelity", f);
   Json w = Json::array();
   for (const auto& s : fid_.warnings) w.push(Json::string(s));
+  for (const auto& gw : graph_warnings_) w.push(Json::string(gw));
   if (fid_.npu >= 2 && l2_fallbacks_npu_ > 0)
     w.push(Json::string("npu: L2 requested but " + std::to_string(l2_fallbacks_npu_) + " op executions had no SCALE-Sim cycle table; used L1"));
   if (fid_.dram >= 2 && !dram_backend_) w.push(Json::string("dram: L2 requested but no DramBackend attached (" + dram_attach_error_ + "); using L1"));

@@ -122,6 +122,13 @@ struct ModelParams {
   int cpu_miss_bytes = 64;
   int noc_req_bytes = 16;            // params.noc_req_bytes: read request header size
   bool noc_model_requests = true;    // params.noc_model_requests: reserve links for request headers (false = zero-load latency)
+  int noc_l1_arbitration = 1;        // params.noc_l1_arbitration: 1 = interval calendar (interleaving), 0 = legacy train FIFO
+  bool noc_backpressure_hold = false;// params.noc_backpressure_hold: legacy rule, a stalled train holds its upstream link
+  double noc_calendar_horizon_ns = 20000;  // params.noc_calendar_horizon_ns: link reservations older than this are pruned
+  bool noc_vc_flow_control = true;   // params.noc_vc_flow_control: a message holds a downstream input VC until its tail leaves the next link
+  double noc_rr_tail = 0.75;         // params.noc_rr_tail (fitted to BookSim, core/bench/noc_validation.json): tail delay (fraction of the wait, capped at the message's own serialization) from flit-level round-robin output arbitration
+  double noc_contention_bubble = 0;  // params.noc_contention_bubble: idle cycles per packet on a contended mesh link (switch allocation / HOL loss, fitted to BookSim)
+  int noc_ni_cycles = -1;            // params.noc_ni_cycles: source router + injection + ejection channel; -1 = router + 2 links (calendar), 0 (legacy)
   // --- NPU
   double npu_l0_util = 0.80;         // params.npu_l0_util: roofline MAC utilization at L0
   double npu_vec_ops = 256;          // params.npu_vec_ops_per_cycle: per-tile vector unit throughput
@@ -169,7 +176,7 @@ struct ModelParams {
   bool fuse_elementwise = true;      // params.fuse_elementwise: elementwise epilogues fused into conv/matmul
   int flash_block = 64;              // params.flash_block: Br = Bc tile rows/cols for fused attention
 
-  GC_IO(bulk_chunk_bytes, cpu_miss_bytes, noc_req_bytes, noc_model_requests, npu_l0_util, npu_vec_ops, npu_depth, npu_wload_overlap,
+  GC_IO(bulk_chunk_bytes, cpu_miss_bytes, noc_req_bytes, noc_model_requests, noc_l1_arbitration, noc_backpressure_hold, noc_calendar_horizon_ns, noc_vc_flow_control, noc_rr_tail, noc_contention_bubble, noc_ni_cycles, npu_l0_util, npu_vec_ops, npu_depth, npu_wload_overlap,
         npu_min_macs_per_tile, npu_max_tiles_per_op, npu_fp32_frac, simt_l0_eff, simt_warps_needed, simt_warp, cpu_vec_ipc,
         cpu_mem_ipc, cpu_mlp, cpu_l0_mem_bw_gbs, dsp_line_buffer_kb, dsp_fill_cycles, dsp_l1_eff, dma_bytes_per_cycle,
         noc_vc_buffer_flits, noc_window_ns, cache_block_bytes, stream_bypass_bytes, dram_queue_depth, dram_l0_eff, dram_ctrl_ns,
@@ -212,10 +219,12 @@ struct OpDef {
   double groups = 1;
   double threads = 0;                     // SIMT threads if given
   double rows2d = 0, row_bytes2d = 0;     // DMA 2D descriptor
+  double stride2d = 0;                    // DMA 2D source stride (bytes between row starts)
   double descriptors = 1;
   double l2_cycles = -1;                  // SCALE-Sim per-layer cycles if present
+  double work_scale = 1;                  // declared macs / shape macs (shape-based cycles are scaled by this)
   GC_IO(id, layer, type, dtype, macs, flops, bytes_in, bytes_w, bytes_out, i_scalar, i_vector, i_mem, reuse, eligible, elig_order, deps,
-        preempt_boundary, gM, gK, gN, gB, has_gemm, groups, threads, rows2d, row_bytes2d, descriptors, l2_cycles)
+        preempt_boundary, gM, gK, gN, gB, has_gemm, groups, threads, rows2d, row_bytes2d, stride2d, descriptors, l2_cycles, work_scale)
 };
 
 struct MsgDef {

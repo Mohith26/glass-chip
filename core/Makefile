@@ -35,9 +35,15 @@ $(BUILD)/obj/%.o: %.cpp $(HDRS)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(BUILD)/obj/bindings/module.o: bindings/module.cpp $(HDRS)
+# Build id = first 16 hex of sha256 over all core sources, headers, bindings and
+# the Makefile (sorted), so results can name the exact simulator they used.
+ID_SRCS  := $(sort $(CORE_SRC) $(HDRS) bindings/module.cpp src/adapters/ramulator_backend.cpp src/adapters/booksim_backend.cpp Makefile)
+BUILD_ID := $(shell cat $(ID_SRCS) | shasum -a 256 | cut -c1-16)
+
+$(BUILD)/obj/bindings/module.o: bindings/module.cpp $(HDRS) $(CORE_SRC) Makefile
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(PYINC) -Wno-pedantic -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(PYINC) -Wno-pedantic -DGC_BUILD_ID=\"$(BUILD_ID)\" -c $< -o $@
+	@echo $(BUILD_ID) > $(BUILD)/BUILD_ID
 
 # Link to a temp file and rename into place: processes that already loaded
 # the old module keep their mapping, new imports see the new one.

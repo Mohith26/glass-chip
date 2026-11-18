@@ -47,12 +47,55 @@ The full API is in `notes/CONTRACTS.md`. Additions beyond it are listed at the e
 | NPU | MACs / (peak x utilization), roofline memory | closed-form systolic tiles (weight or output stationary), SRAM tiling with double buffering, weight and activation streaming over the NoC, INT8/FP8/BF16 rates, per-layer utilization, compiler fusion (below) | SCALE-Sim `vx1_cycles` per op (`calib/tables/npu_scalesim_<task>.json`), op field `l2_cycles`, or `set_l2_tables({"npu_cycles": ...})`; memory traffic still comes from the simulator |
 | SIMT | flops / (peak x efficiency) + launch overhead | occupancy from threads (lanes covered, warps to hide latency), launch overhead, coalescing inflates traffic | none |
 | DSP | ops / SIMD throughput | SIMD efficiency, pipeline fill, line-buffer sized steps | none |
-| NoC | zero-load latency + M/D/1 wait on the busiest link | 4x4 mesh, XY routing, per-link reservation of packet trains, injection and ejection ports, QoS classes as priority timelines, VC buffer backpressure | BookSim 2 in-process (plugin) |
+| NoC | zero-load latency + M/D/1 wait on the busiest link | 4x4 mesh, XY routing, per-link reservation calendars (messages fill gaps, concurrent messages interleave), injection and ejection ports, VC flow control, QoS priority with per-class VCs, round-robin tail term; validated against BookSim (below) | BookSim 2 in-process (plugin) |
 | System cache | hit-rate model per stream | set-associative tags, LRU, way partitioning per QoS class, no-allocate for large streams, dirty write-backs | none |
 | DRAM | base latency + transfer at sustained efficiency + M/D/1 wait | channels x bank groups x banks, open page, tRCD/tRP/CL/tRAS, all-bank refresh, read/write turnaround, FR-FCFS within a bounded window, per-class queues with QoS, row-hit accounting per 64 B burst | Ramulator 2 in-process (plugin) |
 | DMA | descriptor latency + bytes / bandwidth | descriptor latency, read then write streams, 2D descriptors with short rows become small transactions, completion interrupt | none |
 
 Mixes live in `configs/fidelity/` (`interactive`, `study`, `analytic`, `memory_focus`, `reference`). L0 engines do not issue transactions; their traffic is added as fluid load on the DRAM channels and NoC links they use. A level with no implementation, or an L2 plugin that cannot be loaded, falls back to L1 and `sim.info()["warnings"]` says why. `info()["backends"]` and `info()["l2"]` show what is actually in use.
+
+### L1 NoC model and its validation against BookSim
+
+Each link (mesh links plus each node's injection and ejection ports) keeps a calendar of busy intervals. A message (up to a 4 KB chunk) fills the earliest gaps at or after its head arrival, so packets of concurrent messages interleave and a reservation made for the future never blocks earlier traffic. Cut-through pipelining: the next link's head can start one hop after this link's first fragment; its tail cannot finish before this link's tail plus one hop. Zero-load latency is `hops x (router + link) + NI + serialization`, where NI (source router, injection and ejection channels, `router + 2 x link` cycles) matches BookSim's measured `3h + 4 + flits` cycles. Two effects of BookSim's input-queued routers are approximated:
+
+- VC flow control: entering a link needs a free input VC at the router it feeds (4 VCs); the message holds it until its tail has left that router. With QoS on, safety and realtime get their own VC and best effort the rest.
+- Round-robin output arbitration interleaves flits of competing packets, which delays tails compared with first-come-first-served. A message that waited at a link gets `noc_rr_tail` (0.75, fitted) of its wait, capped at its own serialization, added to its arrival. This is latency only; link and VC occupancy are unchanged.
+
+Validation numbers (build in `core/build/BUILD_ID`):
+
+| Open-loop traffic | mean abs error below BookSim saturation, phase B | now | saturation (3x zero load) BookSim | phase B | now |
+|---|---|---|---|---|---|
+| uniform/2flit | 10577.1% | 13.7% | beyond tested | 0.35 | 0.72 |
+| uniform/8flit | 2839.2% | 4.7% | 0.61 | 0.32 | 0.72 |
+| transpose/2flit | 22.8% | 2.2% | beyond tested | 0.32 | beyond tested |
+| transpose/8flit | 20.8% | 1.0% | 0.31 | 0.31 | 0.31 |
+| hotspot_dram/2flit | 42.4% | 5.4% | beyond tested | 0.11 | beyond tested |
+| hotspot_dram/8flit | 26.6% | 1.1% | 0.11 | 0.10 | 0.11 |
+
+The phase B model saturated uniform traffic at half BookSim's load because a reservation made for the future blocked earlier traffic, and missed BookSim's fixed 4-cycle NI latency. Most remaining error for uniform 2-flit traffic is the single point at 0.75 offered load, at BookSim's knee.
+
+| Closed loop (core run, packet or message trace replayed through BookSim) | packet mean ratio, phase B | now | message mean ratio, phase B | now |
+|---|---|---|---|---|
+| all_to_one_hotspot_6x4MB | 2.07 | 1.38 | 2.50 | 1.67 |
+| stream_copy_dma_8MB | 1.02 | 1.00 | 1.01 | 1.06 |
+| gemm_vit_mlp_1024x768x3072 | 1.15 | 0.93 | 1.18 | 0.94 |
+| attention_vit_12h_1024 | 0.99 | 0.95 | 1.01 | 0.97 |
+
+Ratios are core mean latency over BookSim mean latency on identical injection times. The all-to-one hotspot is still pessimistic: its packets queue at one ejection port and closed-loop replay feeds the model's own timing back into the trace.
+
+| S1, 40 ms, study mix | mean response with NoC L2 (BookSim), ms | NoC L1 phase B, error | now |
+|---|---|---|---|
+| T10_record | 0.627 | +8.9% | +2.2% |
+| T1_ingest_overhead | 1.506 | -7.2% | -7.7% |
+| T1_ingest_wrist | 2.058 | +2.0% | -0.0% |
+| T2_detect | 3.257 | -0.7% | -2.7% |
+| T3_esdf | 3.379 | -1.4% | -3.0% |
+| T6_estimate | 0.836 | +4.7% | -3.3% |
+| T8_safety | 1.503 | +11.3% | +11.3% |
+
+T8_safety's +11.3% is the same with both L1 models, so it does not come from the L1 NoC; with NoC L2, request headers and writes run at zero-load timing (see L2 backends), which shortens T8's NPU-side path.
+
+`core/bench/noc_validate.py` replays identical open-loop Bernoulli traces (the calibration generator, seed 11, 20k cycles) through BookSim 2 and through L1, for the phase B model ("before": whole-train FIFO reservation, upstream hold, no NI cycles) and the current one ("after"). Results are in `core/bench/noc_validation.json`, and closed-loop checks (microbenchmark packet traces replayed through BookSim, scenario S1 against NoC L2) in `core/bench/noc_closed_loop.json`. The remaining known gap: under uniform traffic with 8-flit packets L1 saturates later than BookSim, because head-of-line blocking inside input-queued routers is not modeled. The legacy model stays available with `noc_l1_arbitration: 0`.
 
 ### The NoC caps DRAM traffic at about 96 GB/s
 
@@ -68,6 +111,10 @@ Each node's network interface has one link-width injection port and one ejection
 Both backends are advanced in steps of `quantum_ns` (default 100 ns) while they have work. Completion times are exact, but the simulator only observes them at the next quantum boundary, so a requester can react up to one quantum late when its data arrived just before a boundary. `core/bench/quantum.json` measures this on one detector job: with Ramulator, response time changes by less than 0.2% from 1 ns to 1000 ns quanta (double buffering hides it); with BookSim it is within 0.2% up to 100 ns and grows by about 6% at 1000 ns.
 
 Limits: one BookSim instance per process (it keeps global state); BookSim's cycle counter is 32-bit, so NoC L2 runs stop at about 1.4 s of simulated time; BookSim calls `exit()` on a configuration error, so `params.booksim_config` must be valid BookSim syntax; DRAM activates are not counted at DRAM L2; the BookSim clock does not follow `noc_cache` DVFS; `checkpoint()` raises while a backend is attached. Both backends are thousands of times slower than real time.
+
+## Declared MACs vs shapes
+
+When an op's declared `macs` and the MACs implied by its `shape` differ by more than 2x, `info()["warnings"]` names the task and ops. I trust the declared MACs for the amount of work, because they come from the full graph walk (for example T11_speech decoder steps include attention over a 1,500-entry cross-attention cache that the summary shape `1 x 384 x 384` leaves out), and use the shape only for array utilization: shape-based NPU cycles are multiplied by `declared / shape`. Shape fields `layers` and `repeat` count as multipliers.
 
 ## NPU compiler assumptions
 
@@ -121,6 +168,8 @@ Rows are written in time order once they are 1 ms older than the simulation cloc
 
 ## Measured speed
 
+The calendar NoC costs CPU time: the study mix models every request header on the NoC and runs about half as fast as with the phase B NoC model. For large sweeps, `noc_model_requests: false` (as in the interactive mix) saves about 25% at the study mix, at the cost of zero-load timing for 16 B request headers.
+
 `core/bench/bench_speed.py` runs scenario S1 with the real task graphs in `workloads/graphs/`, stepped in 1 ms increments the way the co-simulation drives it, on one thread, and writes `core/bench/speed.json`. Speed is simulated seconds per second of process CPU time, because other jobs were sharing the machine when I measured and wall-clock time was noisy.
 
 ## Assumptions and limits
@@ -128,7 +177,8 @@ Rows are written in time order once they are 1 ms older than the simulation cloc
 - The cache lookup for a read happens when the request is issued rather than when it reaches the cache slice, so tag state can update up to one NoC traversal early.
 - The NoC response for a DRAM read is reserved when the controller schedules it, at most `tRP + tRCD + CL` ahead of the current time.
 - With `noc_model_requests: false` (interactive mix), 16 B read request headers use zero-load latency; all data messages still reserve links.
-- L1 NoC arbitration is reservation based: a packet train reserves each link in order rather than flit by flit, and QoS is modeled with priority timelines. On a light detector load it reports more NoC delay than BookSim.
+- L1 NoC reservations are made when a message is sent (in call order), not cycle by cycle; switch allocation and head-of-line blocking inside routers are approximated by VC flow control and the round-robin tail term, so L1 saturates later than BookSim for uniform traffic with 8-flit packets.
+- DMA 2D descriptors use their `stride` to place source rows, so strided gathers open more DRAM rows.
 - Bank groups only affect address mapping; tCCD_L/tCCD_S are not in the config.
 - The L0 cache model assumes a stream shares its class's capacity with about one other stream of equal size. CPU L1 uses the graph's `reuse` field as its private-cache hit rate instead of a stack-distance model.
 - CPU L2 maps the real kernels by task (T7/T12 control step, T6 estimator, T8 SSM): the task's ops mapped to that kernel cost gem5's measured `cycles_per_call` in total (O3 for app cores, Minor for the RT core), split by instruction count, because the graphs' static instruction counts overstate dynamic counts (T6 12,436 static vs 5,461 dynamic). Other ops map to an axpy or GEMM kernel class by instruction mix and use the graph's instruction count times that kernel's CPI.
@@ -142,5 +192,5 @@ Rows are written in time order once they are 1 ms older than the simulation cloc
 - `set_power_gating(domain, enabled, wake_latency_ps=0, idle_before_gate_ps=0)`; `set_fault(kind, rate, seed=0, param_ns=None)`.
 - `trace_drain(as_numpy=False)`, `trace_names()`, `trace_open(path)`, `trace_close()`, `dram_trace_open/close`, `noc_trace_open/close` (aliases `export_dram_trace`, `export_noc_trace`).
 - `info()` returns levels in use, fallback warnings, backends, L2 table hits and fallbacks and table sources, fault counts, units per engine, schedulers, event counts.
-- `npu_gemm_cycles(M, K, N, B=1, tiles=1, dtype="int8")` exposes the closed-form systolic model.
+- `npu_gemm_cycles(M, K, N, B=1, tiles=1, dtype="int8")` exposes the closed-form systolic model; `noc_replay(records)` replays an open-loop NoC trace through the NoC model (validation).
 - Completion dicts also have `cycles_by_domain`, `busy_ps_by_domain`, `corrupted`, `faults`; `critical_path` entries also have `unit`, `gap_ps` and `gap_cause`. Counters also have `gated_ps`, `wakeups`, `unit_busy_ps` and `units`. `queue_depths()` also has `dram_channels` and `engines_busy`. Op trace dicts also have `units` (tiles or CUs used). Trace kinds include `fault`.

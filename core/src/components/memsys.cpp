@@ -22,12 +22,22 @@ void Noc::init(const SocCfg& soc, const ModelParams& p, int level) {
   level_ = level;
   buf_flits_ = p.noc_vc_buffer_flits * std::max(1, soc.vcs) / 4.0;  // params.noc_vc_buffer_flits, noc.virtual_channels
   window_ps_ = ns_to_ps(p.noc_window_ns);   // params.noc_util_window_ns
+  arb_ = p.noc_l1_arbitration;              // params.noc_l1_arbitration
+  hold_ = p.noc_backpressure_hold;          // params.noc_backpressure_hold
+  bubble_ = p.noc_contention_bubble;        // params.noc_contention_bubble
+  vcfc_ = p.noc_vc_flow_control;            // params.noc_vc_flow_control
+  rr_tail_ = p.noc_rr_tail;                 // params.noc_rr_tail
+  nvc_ = std::clamp(soc.vcs, 1, 8);         // noc.virtual_channels
+  ni_cycles_ = p.noc_ni_cycles >= 0 ? p.noc_ni_cycles : (arb_ == 1 ? router_cycles_ + 2 * link_cycles_ : 0);  // params.noc_ni_cycles
+  horizon_ps_ = ns_to_ps(p.noc_calendar_horizon_ns);
+  max_t_ = 0;
   links_.assign(static_cast<size_t>(dimx_ * dimy_ * 6), NocLink{});
 }
 
 void Noc::set_qos(bool on) { qos_on_ = on; }
 
 ps_t Noc::hop_ps() const { return cycles_to_ps(router_cycles_ + link_cycles_, freq_); }
+ps_t Noc::ni_ps() const { return cycles_to_ps(ni_cycles_, freq_); }
 
 ps_t Noc::ser_ps(int bytes) const {
   double cyc = std::ceil(static_cast<double>(bytes) / link_bytes_);
@@ -83,10 +93,9 @@ ps_t Noc::send(XY a, XY b, int bytes, int qos, ps_t t, uint64_t* flit_hops) {
   int h = hops(a, b);
   int flits = (bytes + flit_bytes_ - 1) / flit_bytes_;
   if (flit_hops) *flit_hops += static_cast<uint64_t>(flits) * static_cast<uint64_t>(std::max(1, h));
-  const ps_t hop = hop_ps();
-  const ps_t ser = ser_ps(bytes);
-  const double bpp = bytes_per_ps();
   if (level_ == 0) {
+    const ps_t hop = hop_ps();
+    const ps_t ser = ser_ps(bytes);
     // L0: zero-load latency plus M/D/1 waiting time on the most utilized
     // link of the path: W = rho / (2 (1 - rho)) * service(max packet).
     double rho = 0;
@@ -100,12 +109,188 @@ ps_t Noc::send(XY a, XY b, int bytes, int qos, ps_t t, uint64_t* flit_hops) {
     rho = std::min(rho, 0.95);
     double svc = static_cast<double>(ser_ps(std::min(bytes, max_packet_)));
     ps_t w = static_cast<ps_t>(rho / (2.0 * (1.0 - rho)) * svc);
-    return t + h * hop + ser + w;
+    return t + h * hop + ni_ps() + ser + w;
   }
-  // L1: packet-train reservation per link (virtual cut-through). QoS uses
-  // separate reservation timelines so higher classes only see equal/higher
-  // class occupancy (plus one packet of non-preemptive blocking), and lower
-  // classes are pushed back by higher-class traffic.
+  last_rr_ = 0;
+  return arb_ == 1 ? send_calendar(p, n, bytes, qos, t) : send_train(p, n, bytes, qos, t);
+}
+
+// L1 calendar model. Each link keeps sorted busy intervals per QoS class. A
+// message fills the earliest gaps at or after its head arrival, so packets of
+// concurrent messages interleave instead of queueing as whole trains, and a
+// reservation made for the future does not block earlier traffic. Cut-through
+// pipelining: the next link's head may start one hop after this link's first
+// fragment, and its tail cannot finish before this link's tail plus one hop.
+// QoS on: class q only avoids intervals of classes <= q (higher classes
+// overtake lower ones), plus at most one lower-class packet of non-preemptive
+// blocking at its head; lower classes avoid everything. QoS off: one calendar.
+ps_t Noc::send_calendar(const int* p, int n, int bytes, int qos, ps_t t) {
+  const ps_t hop = hop_ps();
+  const ps_t ser = ser_ps(bytes);
+  const ps_t pkt_ser = ser_ps(max_packet_);
+  const double bpp = bytes_per_ps();
+  const int q = qos_on_ ? qos : 0;
+  const ps_t ni_eject = ni_cycles_ > 0 ? cycles_to_ps(std::min(ni_cycles_, link_cycles_), freq_) : 0;
+  const ps_t ni_inject = ni_ps() - ni_eject;
+  max_t_ = std::max(max_t_, t);
+  ps_t head = t, tail_min = -PS_NEVER, end = t;
+  // VC flow control (credit approximation): entering link i needs a free input
+  // VC at the router it feeds; the message holds it until its tail has left
+  // that router (i.e. finished on link i+1). Ejection feeds a sink (no VCs).
+  NocLink* held_link = nullptr;
+  int held_vc = -1;
+  ps_t rr_acc = 0;
+  for (int i = 0; i < n; ++i) {
+    NocLink& l = links_[p[i]];
+    int dir_i = p[i] % 6;
+    int vc = -1;
+    if (vcfc_ && dir_i != 4) {
+      // QoS on: classes own VCs (safety VC 0, realtime VC 1, best effort the
+      // rest) so lower classes cannot exhaust a higher class's buffers.
+      int v0 = 0, v1 = nvc_;
+      if (qos_on_ && nvc_ >= N_QOS) {
+        v0 = std::min(qos, N_QOS - 1);
+        v1 = qos == N_QOS - 1 ? nvc_ : v0 + 1;
+      }
+      vc = v0;
+      for (int k = v0 + 1; k < v1; ++k)
+        if (l.vc_free[k] < l.vc_free[vc]) vc = k;
+      head = std::max(head, l.vc_free[vc]);
+    }
+    double bg = std::min(0.9, l.bg_rate / bpp);
+    ps_t need = bg > 0 ? static_cast<ps_t>(static_cast<double>(ser) / (1.0 - bg)) : ser;
+    ps_t h = head;
+    if (qos_on_) {
+      // non-preemptive blocking by a lower-class packet in progress at the head
+      for (int k = q + 1; k < N_QOS; ++k)
+        for (const NocIv& iv : l.cal[k])
+          if (iv.s <= h && h < iv.e) h += std::min(iv.e - h, pkt_ser);
+    }
+    ps_t first = h, last = h;
+    // Router allocation loss: a packet entering a contended mesh link loses
+    // `bubble` cycles (BookSim's input-queued routers do not reach ideal
+    // output-queued throughput). Ports (injection/ejection) have none.
+    ps_t extra = (bubble_ > 0 && is_mesh_link(p[i])) ? cycles_to_ps(bubble_ * std::ceil(static_cast<double>(bytes) / max_packet_), freq_) : 0;
+    place(l, q, h, need, extra, &first, &last);
+    // Flit-level round-robin at a contended output delays the tail of a message
+    // that had to wait. Latency only: it is added to the arrival, not to link
+    // or VC occupancy (round-robin does not change throughput).
+    if (rr_tail_ > 0 && first > h) rr_acc += static_cast<ps_t>(rr_tail_ * static_cast<double>(std::min(first - h, need)));
+    last = std::max(last, tail_min);
+    l.busy_ps += need;
+    l.bytes += static_cast<uint64_t>(bytes);
+    touch_window(l, first, bytes);
+    // Latency after this link: mesh link -> next router (router + link);
+    // injection port -> source router; ejection port -> ejection channel.
+    // The NI cycles (source router + both channels) are split so that
+    // zero-load latency = hops * hop + ni + serialization.
+    int dir = p[i] % 6;
+    ps_t lat = dir < 4 ? hop : (dir == 5 ? ni_inject : ni_eject);
+    head = first + lat;
+    tail_min = last + lat;
+    end = last + (dir == 4 ? lat : 0);
+    // The VC held at the router this message just left is released when its
+    // tail has crossed this link.
+    if (held_link) held_link->vc_free[held_vc] = last;
+    held_link = vc >= 0 ? &l : nullptr;
+    held_vc = vc;
+    if (vc >= 0) l.vc_free[vc] = PS_NEVER;  // held until released by the next link
+  }
+  if (held_link) held_link->vc_free[held_vc] = end;
+  last_rr_ = rr_acc;
+  return end + rr_acc;
+}
+
+void Noc::place(NocLink& l, int q, ps_t head, ps_t need, ps_t extra, ps_t* first, ps_t* last) {
+  // Prune intervals far in the past (relative to the latest send time).
+  const ps_t prune = max_t_ - horizon_ps_;
+  for (int k = 0; k < N_QOS; ++k) {
+    auto& v = l.cal[k];
+    if (v.size() > 32 && v.front().e < prune) {
+      size_t cut = 0;
+      while (cut < v.size() && v[cut].e < prune) ++cut;
+      v.erase(v.begin(), v.begin() + static_cast<std::ptrdiff_t>(cut));
+    }
+  }
+  // Classes this placement must avoid: 0..q (QoS on) or the single calendar.
+  const int lo = 0, hi_avoid = qos_on_ ? q : 0;
+  auto& mine = l.cal[q];
+  // Fast path: nothing to avoid at or after head -> append one interval.
+  bool clear = true;
+  for (int k = lo; k <= hi_avoid && clear; ++k)
+    if (!l.cal[k].empty() && l.cal[k].back().e > head) clear = false;
+  if (clear) {
+    *first = head;
+    *last = head + need;
+    if (!mine.empty() && mine.back().e == head) mine.back().e = head + need;
+    else mine.push_back(NocIv{head, head + need});
+    return;
+  }
+  // General path: walk gaps in the union of the avoided calendars.
+  need += extra;
+  const ps_t min_frag = cycles_to_ps(1, freq_);  // one flit-cycle
+  std::array<size_t, N_QOS> ptr{};
+  for (int k = lo; k <= hi_avoid; ++k) {
+    const auto& v = l.cal[k];
+    // first interval with e > head (intervals within one class do not overlap, so e is sorted)
+    ptr[k] = static_cast<size_t>(std::upper_bound(v.begin(), v.end(), head, [](ps_t x, const NocIv& iv) { return x < iv.e; }) - v.begin());
+  }
+  ps_t cur = head, left = need;
+  bool started = false;
+  std::vector<NocIv> frags;
+  while (left > 0) {
+    ps_t next_s = PS_NEVER;
+    bool blocked = false;
+    for (int k = lo; k <= hi_avoid; ++k) {
+      const auto& v = l.cal[k];
+      while (ptr[k] < v.size() && v[ptr[k]].e <= cur) ++ptr[k];
+      if (ptr[k] < v.size()) {
+        const NocIv& iv = v[ptr[k]];
+        if (iv.s <= cur) {
+          cur = iv.e;
+          blocked = true;
+          break;
+        }
+        next_s = std::min(next_s, iv.s);
+      }
+    }
+    if (blocked) continue;
+    ps_t gap = next_s - cur;
+    if (gap < min_frag && gap < left) {
+      cur = next_s;  // too small to carry a flit
+      continue;
+    }
+    ps_t take = std::min(gap, left);
+    frags.push_back(NocIv{cur, cur + take});
+    if (!started) {
+      *first = cur;
+      started = true;
+    }
+    left -= take;
+    cur += take;
+    *last = cur;
+  }
+  // Insert fragments into this class's calendar, merging touching intervals.
+  for (const NocIv& f : frags) {
+    auto it = std::lower_bound(mine.begin(), mine.end(), f.s, [](const NocIv& iv, ps_t x) { return iv.s < x; });
+    it = mine.insert(it, f);
+    if (it + 1 != mine.end() && it->e == (it + 1)->s) {
+      it->e = (it + 1)->e;
+      mine.erase(it + 1);
+    }
+    if (it != mine.begin() && (it - 1)->e == it->s) {
+      (it - 1)->e = it->e;
+      mine.erase(it);
+    }
+  }
+}
+
+// Legacy L1 train model (phase A/B): each message reserves each link as one
+// train in call order; QoS via per-class timelines; optional upstream hold.
+ps_t Noc::send_train(const int* p, int n, int bytes, int qos, ps_t t) {
+  const ps_t hop = hop_ps();
+  const ps_t ser = ser_ps(bytes);
+  const double bpp = bytes_per_ps();
   const ps_t pkt_ser = ser_ps(max_packet_);
   const ps_t buf_ps = cycles_to_ps(buf_flits_ * flit_bytes_ / link_bytes_, freq_);
   ps_t head = t, last_ser = ser, prev_start = 0;
@@ -124,7 +309,7 @@ ps_t Noc::send(XY a, XY b, int bytes, int qos, ps_t t, uint64_t* flit_hops) {
     ps_t start = std::max(head, avail);
     if (qos_on_ && lower > start) start += std::min(lower - start, pkt_ser);
     ps_t wait = start - head;
-    if (prev >= 0 && wait > buf_ps) {
+    if (hold_ && prev >= 0 && wait > buf_ps) {
       // Credit/backpressure approximation: once the downstream buffer is
       // full, the upstream link stays held by this packet train.
       NocLink& pl = links_[prev];
@@ -155,7 +340,7 @@ ps_t Noc::send(XY a, XY b, int bytes, int qos, ps_t t, uint64_t* flit_hops) {
 ps_t Noc::header_latency(XY a, XY b, int bytes, uint64_t* flit_hops) const {
   int h = hops(a, b);
   if (flit_hops) *flit_hops += static_cast<uint64_t>((bytes + flit_bytes_ - 1) / flit_bytes_) * static_cast<uint64_t>(std::max(1, h));
-  return h * hop_ps() + ser_ps(bytes);
+  return h * hop_ps() + ni_ps() + ser_ps(bytes);
 }
 
 void Noc::add_fluid(XY a, XY b, double rate, std::vector<int32_t>* touched) {

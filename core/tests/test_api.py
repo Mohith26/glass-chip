@@ -457,3 +457,38 @@ def test_cpu_l2_matches_gem5_cycles_per_call(soc):
     assert sum(done["T6_estimate"]["cycles_by_domain"].get(d, 0) for d in ("cpu_a", "cpu_b")) == pytest.approx(
         k["T6_estimate_step"]["o3"]["cycles_per_call"], rel=1e-6)
     assert done["T7_control"]["cycles_by_domain"]["rt"] == pytest.approx(k["T7_control_step"]["minor"]["cycles_per_call"], rel=1e-6)
+
+
+def test_macs_shape_mismatch_warning_and_scaling(soc):
+    res = {}
+    for scale in (1, 10):
+        g = _tiny_npu_graph()
+        g["task_id"] = f"T98_m{scale}"
+        g["ops"][0]["macs"] = 256 * 512 * 512 * scale
+        sim = gc.Sim(soc, load_fidelity("interactive"), 1)
+        sim.add_task(g)
+        sim.release_job(g["task_id"], 0, 0)
+        d = sim.run_until(10 * PS_MS)[0]
+        res[scale] = (d["cycles_by_domain"]["npu"], sim.info()["warnings"])
+    assert not any("differ from their shape" in w for w in res[1][1])
+    assert any("T98_m10" in w and "differ from their shape" in w for w in res[10][1])
+    assert res[10][0] == pytest.approx(10 * res[1][0], rel=1e-9)  # declared MACs win; shape sets utilization
+
+
+def test_noc_replay_and_per_message_export(soc, make_sim, tmp_path):
+    import csv
+
+    sim = gc.Sim(soc, load_fidelity("study"), 1)
+    recs = np.array([[0, 0, 0, 3, 3, 256], [10_000_000, 1, 0, 1, 0, 64]], dtype=np.int64)  # 6 hops; same node
+    lat = sim.noc_replay(recs)
+    cyc = 1e12 / 1.5e9
+    assert lat[0] == pytest.approx((6 * 3 + 4 + 8) * cyc, abs=2)   # BookSim zero load: 3h + 4 + flits
+    assert lat[1] == pytest.approx((0 + 4 + 2) * cyc, abs=2)
+    s2 = make_sim()
+    path = tmp_path / "msg.csv"
+    s2.noc_trace_open(str(path), per_message=True)
+    drive(s2, 0, 20)
+    s2.noc_trace_close()
+    with open(path) as f:
+        rows = list(csv.DictReader(f))
+    assert rows and max(int(r["bytes"]) for r in rows) == 4096

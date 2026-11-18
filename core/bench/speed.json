@@ -1,7 +1,7 @@
 {
  "provenance": {
   "script": "core/bench/bench_speed.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "Darwin arm64, Python 3.12.13",
   "configs": [
    "configs/soc/vx1.yaml",
@@ -12,95 +12,96 @@
    "configs/scenarios/S1_nominal.yaml"
   ],
   "seed": 1,
-  "note": "single-threaded; simulator stepped in 1 ms increments with counters() read each step"
+  "note": "single-threaded; simulator stepped in 1 ms increments with counters() read each step",
+  "build_id": "3e9cf32325432d0f"
  },
  "results": [
   {
    "mix": "interactive",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 6.615334000001894,
-   "setup_seconds": 0.032258166000247,
-   "cpu_seconds": 1.73783,
-   "speed_x_realtime": 0.30232789455519965,
-   "speed_x_realtime_cpu": 1.1508605559807346,
+   "wall_seconds": 2.299385082995286,
+   "setup_seconds": 0.03249462498934008,
+   "cpu_seconds": 2.225268,
+   "speed_x_realtime": 0.8697977623629299,
+   "speed_x_realtime_cpu": 0.8987681483758362,
    "events_by_kind": {
     "job_release": 2893,
     "op_ready": 812,
-    "setup_done": 4049,
-    "compute_end": 83752,
-    "data_ready": 45721,
-    "mem_done": 805,
+    "setup_done": 7427,
+    "compute_end": 87109,
+    "data_ready": 45715,
+    "mem_done": 2224,
     "dram_arrive": 0,
-    "dram_decide": 6259566
+    "dram_decide": 6260482
    },
-   "events": 6397598,
-   "events_per_wall_s": 967086.1667752782,
+   "events": 6406662,
+   "events_per_wall_s": 2786250.135907807,
    "releases": 2894,
    "skipped": 0,
    "completed": 2892,
    "warnings": [],
-   "trace_hash": "bd199a3df66b03d8a9422d0abe5178e7",
+   "trace_hash": "54eec8a8c0399d0bc883090fc6835c09",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 0.596577415,
-     "p99_ms": 0.7043366625199998
+     "p50_ms": 0.588511794,
+     "p99_ms": 0.9469530904399998
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.3361971165,
-     "p99_ms": 2.02245404103
+     "p50_ms": 1.325510041,
+     "p99_ms": 2.088602738369999
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.496966676,
-     "p99_ms": 3.1636619697299957
+     "p50_ms": 1.4858656765,
+     "p99_ms": 3.8010668536999925
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.1022501614999998,
-     "p99_ms": 4.5739797072399995
+     "p50_ms": 3.099223673,
+     "p99_ms": 5.0690488532299955
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 1.284947848,
-     "p99_ms": 3.734913220630001
+     "p50_ms": 1.241371426,
+     "p99_ms": 4.070888777530002
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 59.3237954025,
-     "p99_ms": 60.584853564650004
+     "p50_ms": 56.3281314455,
+     "p99_ms": 57.20643467
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 7.4913865,
-     "p99_ms": 11.28390628305
+     "p50_ms": 9.295812896000001,
+     "p99_ms": 9.7262901514
     },
     "T6_estimate": {
      "jobs": 400,
      "missed": 0,
-     "p50_ms": 0.8136671625,
-     "p99_ms": 1.57004997121
+     "p50_ms": 0.8136538794999999,
+     "p99_ms": 1.57662576544
     },
     "T7_control": {
      "jobs": 2000,
      "missed": 0,
-     "p50_ms": 0.00197,
-     "p99_ms": 0.00197
+     "p50_ms": 0.001989167,
+     "p99_ms": 0.001989167
     },
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.3196659085,
-     "p99_ms": 2.808639860169997
+     "p50_ms": 1.2725292490000002,
+     "p99_ms": 2.7906373934
     }
    }
   },
@@ -108,90 +109,88 @@
    "mix": "study",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 32.6736223330081,
-   "setup_seconds": 0.0111445419897791,
-   "cpu_seconds": 8.901337999999999,
-   "speed_x_realtime": 0.06121145612861927,
-   "speed_x_realtime_cpu": 0.22468532258858165,
+   "wall_seconds": 18.14952866602107,
+   "setup_seconds": 0.013137208996340632,
+   "cpu_seconds": 17.068702000000002,
+   "speed_x_realtime": 0.11019569911720804,
+   "speed_x_realtime_cpu": 0.11717352614158943,
    "events_by_kind": {
-    "job_release": 2892,
+    "job_release": 2893,
     "op_ready": 812,
-    "setup_done": 4064,
-    "compute_end": 1260423,
-    "data_ready": 79887,
+    "setup_done": 7327,
+    "compute_end": 1263176,
+    "data_ready": 113092,
     "mem_done": 0,
     "dram_arrive": 0,
-    "dram_decide": 22771378
+    "dram_decide": 27846708
    },
-   "events": 24119456,
-   "events_per_wall_s": 738193.5113950814,
+   "events": 29234008,
+   "events_per_wall_s": 1610730.9747790264,
    "releases": 2894,
-   "skipped": 1,
-   "completed": 2891,
-   "warnings": [
-    "npu: L2 requested but 28108 op executions had no SCALE-Sim cycle table; used L1"
-   ],
-   "trace_hash": "88a558f7bc944bcb4c7b24608cf2bd09",
+   "skipped": 0,
+   "completed": 2892,
+   "warnings": [],
+   "trace_hash": "d3d6c23ee0b94265027e702036b9ab6b",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 0.6104824090000001,
-     "p99_ms": 0.74814362785
+     "p50_ms": 0.5964132465,
+     "p99_ms": 1.065563756739999
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.4703598764999999,
-     "p99_ms": 5.5580005874199925
+     "p50_ms": 1.4229482975,
+     "p99_ms": 4.088522630579995
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.5870454280000001,
-     "p99_ms": 3.2467114773699994
+     "p50_ms": 1.566482436,
+     "p99_ms": 3.7030158504399946
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.3815800675,
-     "p99_ms": 6.726900559789992
+     "p50_ms": 3.242905116,
+     "p99_ms": 4.817765337559999
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 2.3428790115,
-     "p99_ms": 6.446590446170004
+     "p50_ms": 2.238314238,
+     "p99_ms": 5.1210197098200005
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 64.7336744415,
-     "p99_ms": 70.2785901932
+     "p50_ms": 62.469242256,
+     "p99_ms": 66.73450037445
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 17.8576194535,
-     "p99_ms": 18.4089839138
+     "p50_ms": 14.0401235595,
+     "p99_ms": 15.5338333678
     },
     "T6_estimate": {
-     "jobs": 399,
-     "missed": 1,
-     "p50_ms": 0.824660387,
-     "p99_ms": 2.6457721589399963
+     "jobs": 400,
+     "missed": 0,
+     "p50_ms": 0.8213512089999999,
+     "p99_ms": 2.7716942913399993
     },
     "T7_control": {
      "jobs": 2000,
      "missed": 0,
-     "p50_ms": 0.00197,
-     "p99_ms": 0.00197
+     "p50_ms": 0.001989167,
+     "p99_ms": 0.001989167
     },
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.5280758045,
-     "p99_ms": 4.288835294549978
+     "p50_ms": 1.4851035824999999,
+     "p99_ms": 3.652890365069999
     }
    }
   },
@@ -199,28 +198,28 @@
    "mix": "analytic",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 0.554106875002617,
-   "setup_seconds": 0.016472583985887468,
-   "cpu_seconds": 0.13071500000000036,
-   "speed_x_realtime": 3.609411992931064,
-   "speed_x_realtime_cpu": 15.300462839000838,
+   "wall_seconds": 0.12846770798205398,
+   "setup_seconds": 0.012327500007813796,
+   "cpu_seconds": 0.12143299999999968,
+   "speed_x_realtime": 15.568114597945389,
+   "speed_x_realtime_cpu": 16.469987565159432,
    "events_by_kind": {
     "job_release": 2890,
     "op_ready": 812,
-    "setup_done": 3433,
-    "compute_end": 77459,
+    "setup_done": 6897,
+    "compute_end": 80921,
     "data_ready": 0,
-    "mem_done": 16847,
+    "mem_done": 18429,
     "dram_arrive": 0,
     "dram_decide": 0
    },
-   "events": 101441,
-   "events_per_wall_s": 183071.18098746004,
+   "events": 109949,
+   "events_per_wall_s": 855849.3159647489,
    "releases": 2894,
    "skipped": 3,
    "completed": 2889,
    "warnings": [],
-   "trace_hash": "b064783074573d61a4b6d70c8d382386",
+   "trace_hash": "25749b0d1c07dfcf719ca383a589c1e8",
    "tasks": {
     "T10_record": {
      "jobs": 60,
@@ -231,56 +230,56 @@
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.820186548,
-     "p99_ms": 7.63506978062
+     "p50_ms": 1.8060464965,
+     "p99_ms": 7.63519850269
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 2.020787505,
-     "p99_ms": 6.795795695899999
+     "p50_ms": 2.009379573,
+     "p99_ms": 6.7949243189
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.067819202,
-     "p99_ms": 5.991149279909999
+     "p50_ms": 3.19084902,
+     "p99_ms": 6.894376126249998
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 2.4037639295,
-     "p99_ms": 7.930038053880002
+     "p50_ms": 2.4254711980000003,
+     "p99_ms": 7.503448867410002
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 38.9334465605,
-     "p99_ms": 43.88180566075
+     "p50_ms": 38.942367238,
+     "p99_ms": 44.28671414085
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 7.2822954965,
-     "p99_ms": 15.815725101250003
+     "p50_ms": 9.256559378999999,
+     "p99_ms": 16.20165811645
     },
     "T6_estimate": {
      "jobs": 397,
      "missed": 3,
-     "p50_ms": 0.824377899,
-     "p99_ms": 4.8871263475600015
+     "p50_ms": 0.824265747,
+     "p99_ms": 4.887041810040001
     },
     "T7_control": {
      "jobs": 2000,
      "missed": 0,
-     "p50_ms": 0.00197,
-     "p99_ms": 0.0421338143
+     "p50_ms": 0.001989167,
+     "p99_ms": 0.0193176083
     },
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.0269935785,
-     "p99_ms": 5.315426211579999
+     "p50_ms": 1.012457075,
+     "p99_ms": 5.401002164659996
     }
    }
   },
@@ -288,88 +287,88 @@
    "mix": "memory_focus",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 44.27770379197318,
-   "setup_seconds": 0.013423500000499189,
-   "cpu_seconds": 11.939756,
-   "speed_x_realtime": 0.045169460670238436,
-   "speed_x_realtime_cpu": 0.16750761070829254,
+   "wall_seconds": 25.112240957998438,
+   "setup_seconds": 0.011083209014032036,
+   "cpu_seconds": 24.327741,
+   "speed_x_realtime": 0.07964243427518503,
+   "speed_x_realtime_cpu": 0.08221067463682716,
    "events_by_kind": {
     "job_release": 2893,
     "op_ready": 812,
-    "setup_done": 4093,
-    "compute_end": 113986,
-    "data_ready": 73770,
-    "mem_done": 19,
+    "setup_done": 7355,
+    "compute_end": 116841,
+    "data_ready": 76829,
+    "mem_done": 33,
     "dram_arrive": 0,
-    "dram_decide": 30019134
+    "dram_decide": 33750649
    },
-   "events": 30214707,
-   "events_per_wall_s": 682391.0097496391,
+   "events": 33955412,
+   "events_per_wall_s": 1352145.8342484145,
    "releases": 2894,
    "skipped": 0,
    "completed": 2892,
    "warnings": [],
-   "trace_hash": "742af9a568e5d4872ae5ce4ece52ce9a",
+   "trace_hash": "13b5713450bb8a235aa55174a5383bd6",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 0.606471751,
-     "p99_ms": 0.6933143207499997
+     "p50_ms": 0.5982318765000001,
+     "p99_ms": 0.69257052279
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.425086704,
-     "p99_ms": 2.272106035779998
+     "p50_ms": 1.415052475,
+     "p99_ms": 2.07483422743
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.5594711625,
-     "p99_ms": 2.6738752635199994
+     "p50_ms": 1.5406234054999999,
+     "p99_ms": 2.6615959545199996
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.1884791325,
-     "p99_ms": 5.478965914499999
+     "p50_ms": 3.0871079325,
+     "p99_ms": 4.858792043579998
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 1.8452038825,
-     "p99_ms": 3.893758102110001
+     "p50_ms": 1.691058564,
+     "p99_ms": 2.8949949173600005
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 59.912687491499995,
-     "p99_ms": 65.72728993075
+     "p50_ms": 56.2207462185,
+     "p99_ms": 59.77780154565
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 17.896175278999998,
-     "p99_ms": 18.5808735274
+     "p50_ms": 14.338374206000001,
+     "p99_ms": 15.404415514350001
     },
     "T6_estimate": {
      "jobs": 400,
      "missed": 0,
-     "p50_ms": 0.8112353605,
-     "p99_ms": 1.5676483139
+     "p50_ms": 0.809393826,
+     "p99_ms": 1.5755961740800002
     },
     "T7_control": {
      "jobs": 2000,
      "missed": 0,
-     "p50_ms": 0.00197,
-     "p99_ms": 0.00197
+     "p50_ms": 0.001989167,
+     "p99_ms": 0.001989167
     },
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.344994269,
-     "p99_ms": 2.8689223557599997
+     "p50_ms": 1.325465264,
+     "p99_ms": 2.597320427899998
     }
    }
   }

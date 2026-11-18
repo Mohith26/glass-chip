@@ -195,6 +195,13 @@ void apply_params(ModelParams& p, const Json& params, std::vector<std::string>* 
     NUM("cpu_miss_bytes", cpu_miss_bytes)
     NUM("noc_req_bytes", noc_req_bytes)
     NUM("noc_model_requests", noc_model_requests)
+    NUM("noc_l1_arbitration", noc_l1_arbitration)
+    NUM("noc_backpressure_hold", noc_backpressure_hold)
+    NUM("noc_calendar_horizon_ns", noc_calendar_horizon_ns)
+    NUM("noc_ni_cycles", noc_ni_cycles)
+    NUM("noc_contention_bubble", noc_contention_bubble)
+    NUM("noc_vc_flow_control", noc_vc_flow_control)
+    NUM("noc_rr_tail", noc_rr_tail)
     NUM("npu_l0_util", npu_l0_util)
     NUM("npu_vec_ops_per_cycle", npu_vec_ops)
     NUM("npu_buffer_depth", npu_depth)
@@ -389,11 +396,11 @@ TaskDef parse_task(const Json& g) {
         d.gM = N * Ho * Wo;
         d.gK = (C / g2) * R * S;
         d.gN = K / g2;
-        d.gB = g2;
+        d.gB = g2 * shp(s, {"layers"}, 1) * shp(s, {"repeat"}, 1);
       }
     } else if (d.type == OT_MATMUL || d.type == OT_ATTENTION) {
       double M = shp(s, {"M"}, 0), K = shp(s, {"K"}, 0), N = shp(s, {"N"}, 0);
-      double B = shp(s, {"B", "batch"}, 1) * shp(s, {"heads"}, 1);
+      double B = shp(s, {"B", "batch"}, 1) * shp(s, {"heads"}, 1) * shp(s, {"layers"}, 1) * shp(s, {"repeat"}, 1);
       if (M > 0 && K > 0 && N > 0) { d.has_gemm = true; d.gM = M; d.gK = K; d.gN = N; d.gB = B; }
     }
     d.threads = shp(s, {"threads"}, 0);
@@ -403,9 +410,18 @@ TaskDef parse_task(const Json& g) {
     }
     d.rows2d = shp(s, {"rows"}, 0);
     d.row_bytes2d = shp(s, {"row_bytes"}, 0);
+    if (d.rows2d > 0) d.stride2d = shp(s, {"stride"}, d.row_bytes2d);
     d.descriptors = std::max(1.0, shp(s, {"descriptors"}, 1));
     // Fill MACs from the GEMM view if the graph left them at zero.
     if (d.macs <= 0 && d.has_gemm) d.macs = d.gB * d.gM * d.gK * d.gN;
+    // When declared MACs and the shape disagree, the declared count is the
+    // amount of work (it comes from the full graph walk, e.g. decoder steps
+    // with attention over a KV cache that the summary shape omits); the shape
+    // only sets array utilization, so shape-based cycles are scaled.
+    if (d.has_gemm && d.macs > 0) {
+      double sm = d.gB * d.gM * d.gK * d.gN;
+      if (sm > 0) d.work_scale = d.macs / sm;
+    }
     idx[d.id] = static_cast<int>(i);
     t.ops.push_back(std::move(d));
   }

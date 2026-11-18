@@ -104,7 +104,8 @@ struct Stream {
   double cursor = 0;      // bytes already moved
   bool alloc = true;      // allocate in system cache
   float l0_hit = 0;       // hit fraction when the cache is L0
-  GC_IO(base, size, total, cursor, alloc, l0_hit)
+  double row = 0, stride = 0;  // 2D gather: `row` contiguous bytes every `stride` bytes (0 = contiguous)
+  GC_IO(base, size, total, cursor, alloc, l0_hit, row, stride)
 };
 
 // An op in execution on one or more units.
@@ -305,6 +306,7 @@ struct CsvTrace {
   std::vector<CsvRow> heap;
   ps_t flushed = -PS_NEVER;
   uint64_t seq = 0, rows = 0, late = 0;
+  bool per_message = false;  // NoC: one row per message instead of per packet
 };
 
 // Cost of one op on one engine at one fidelity level (engines.cpp).
@@ -422,7 +424,7 @@ class Sim {
   //   NoC:  time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns  (one row per packet)
   bool dram_trace_open(const std::string& path);
   void dram_trace_close();
-  bool noc_trace_open(const std::string& path);
+  bool noc_trace_open(const std::string& path, bool per_message = false);
   void noc_trace_close();
   uint64_t dram_trace_rows() const { return dram_csv_.rows; }
   uint64_t noc_trace_rows() const { return noc_csv_.rows; }
@@ -552,6 +554,7 @@ class Sim {
   std::map<std::string, double> cpu_cpi_; // op_id or type name -> CPI
   std::map<std::string, std::array<double, 5>> cpu_kernel_cpi_;  // gem5 kernel -> {O3 cpi, Minor cpi, instr/call, O3 cycles/call, Minor cycles/call}
   std::vector<std::string> l2_sources_;
+  std::vector<std::string> graph_warnings_;  // e.g. MACs vs shape disagreements (add_task)
   uint64_t l2_fallbacks_npu_ = 0, l2_fallbacks_cpu_ = 0, l2_hits_npu_ = 0, l2_hits_cpu_ = 0;
   uint64_t events_ = 0;
   std::array<uint64_t, 32> ev_kind_{};  // events processed per EvKind (diagnostics)

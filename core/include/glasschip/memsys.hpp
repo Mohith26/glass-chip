@@ -70,14 +70,22 @@ using NocBackendFactory = NocBackend* (*)(const char* config_json, char* err, in
 // NoC: 2D mesh with XY routing. Links are directional; each node also has an
 // injection port and an ejection port (one link width each, as in BookSim),
 // which model contention at the source and destination network interfaces.
+// A busy interval [s, e) on a link's reservation calendar.
+struct NocIv {
+  ps_t s = 0, e = 0;
+  GC_IO(s, e)
+};
+
 struct NocLink {
-  std::array<ps_t, N_QOS> free_at{};  // per-QoS-class reservation timelines
+  std::array<ps_t, N_QOS> free_at{};  // per-QoS-class reservation timelines (legacy train model)
+  std::array<std::vector<NocIv>, N_QOS> cal;  // per-class sorted busy intervals (calendar model)
+  std::array<ps_t, 8> vc_free{};      // when each downstream input VC is released (calendar model)
   ps_t busy_ps = 0;                   // total serialization time reserved
   uint64_t bytes = 0;
   double bg_rate = 0;                 // fluid load (bytes/ps) from L0 sources
   ps_t win_start = 0;
   uint64_t win_bytes = 0, prev_win_bytes = 0;
-  GC_IO(free_at, busy_ps, bytes, bg_rate, win_start, win_bytes, prev_win_bytes)
+  GC_IO(free_at, cal, vc_free, busy_ps, bytes, bg_rate, win_start, win_bytes, prev_win_bytes)
 };
 
 class Noc {
@@ -90,12 +98,17 @@ class Noc {
   int hops(XY a, XY b) const { return std::abs(a.x - b.x) + std::abs(a.y - b.y); }
   // Per-hop latency (router + link) at the current NoC frequency.
   ps_t hop_ps() const;
+  // Fixed network-interface latency per message: source router + injection
+  // channel + ejection channel (BookSim: zero-load = 3h + 4 + flits cycles).
+  ps_t ni_ps() const;
   // Serialization time of `bytes` on one link at the current frequency.
   ps_t ser_ps(int bytes) const;
   // Sends `bytes` from a to b starting at time t (L1: per-link reservation
   // with QoS arbitration and backpressure; L0: zero-load + M/D/1 queueing).
   // Returns the tail arrival time; adds flit-hops to *flit_hops.
   ps_t send(XY a, XY b, int bytes, int qos, ps_t t, uint64_t* flit_hops);
+  // Round-robin tail term included in the last send()'s arrival (calendar model).
+  ps_t last_rr() const { return last_rr_; }
   // Zero-load latency of a small header message (no link reservation).
   ps_t header_latency(XY a, XY b, int bytes, uint64_t* flit_hops) const;
   // Fluid (L0) load registration along the XY path a->b, in bytes per ps.
@@ -114,7 +127,7 @@ class Noc {
   ps_t total_busy_ps() const;
 
   GC_IO(dimx_, dimy_, link_bytes_, router_cycles_, link_cycles_, flit_bytes_, max_packet_, freq_, qos_on_, level_, buf_flits_,
-        window_ps_, links_)
+        window_ps_, arb_, ni_cycles_, bubble_, vcfc_, rr_tail_, nvc_, hold_, horizon_ps_, max_t_, links_)
 
  private:
   int idx(int x, int y, int dir) const { return (y * dimx_ + x) * 6 + dir; }  // dir: 0 +x, 1 -x, 2 +y, 3 -y, 4 eject, 5 inject
@@ -128,6 +141,22 @@ class Noc {
   int level_ = 1;
   double buf_flits_ = 8;
   ps_t window_ps_ = 10 * PS_PER_US;
+  int arb_ = 1;            // 1 calendar, 0 legacy train
+  int ni_cycles_ = 0;
+  double bubble_ = 0;
+  bool vcfc_ = true;
+  double rr_tail_ = 0;
+  int nvc_ = 4;
+  bool hold_ = false;      // legacy upstream-hold backpressure
+  ps_t horizon_ps_ = 20 * PS_PER_US;
+  ps_t max_t_ = 0;         // latest send time seen (pruning reference)
+  ps_t last_rr_ = 0;       // transient, not checkpointed
+  ps_t send_train(const int* p, int n, int bytes, int qos, ps_t t);
+  ps_t send_calendar(const int* p, int n, int bytes, int qos, ps_t t);
+  // Places `need` ps of occupancy for class q on link l in the earliest gaps at
+  // or after `head`; returns the first fragment start and the last fragment end.
+  // `extra` is added to `need` if the link is contended (gaps must be searched).
+  void place(NocLink& l, int q, ps_t head, ps_t need, ps_t extra, ps_t* first, ps_t* last);
   std::vector<NocLink> links_;
 };
 
