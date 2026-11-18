@@ -1,0 +1,5 @@
+# P1: rate-monotonic fixed-priority scheduling at nominal V/f.
+name: P1_fixed_priority
+scheduler: fixed_priority
+power: nominal
+params: {}

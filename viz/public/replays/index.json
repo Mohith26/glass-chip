@@ -1,0 +1,72 @@
+{
+ "format": "glasschip-replay-index",
+ "version": 1,
+ "replays": [
+  {
+   "id": "S1_P0",
+   "path": "S1_P0/manifest.json",
+   "scenario": "S1_nominal",
+   "scenario_label": "Nominal pick",
+   "policy": "P0_nominal",
+   "policy_label": "P0 Nominal",
+   "seed": 7,
+   "synthetic": true,
+   "default": true
+  },
+  {
+   "id": "S2_P0",
+   "path": "S2_P0/manifest.json",
+   "scenario": "S2_second_camera",
+   "scenario_label": "Second camera",
+   "policy": "P0_nominal",
+   "policy_label": "P0 Nominal",
+   "seed": 7,
+   "synthetic": true,
+   "default": false
+  },
+  {
+   "id": "S2_P2Q",
+   "path": "S2_P2Q/manifest.json",
+   "scenario": "S2_second_camera",
+   "scenario_label": "Second camera",
+   "policy": "P2_edf_qos",
+   "policy_label": "P2 EDF + QoS",
+   "seed": 7,
+   "synthetic": true,
+   "default": false
+  },
+  {
+   "id": "S2_P4Q",
+   "path": "S2_P4Q/manifest.json",
+   "scenario": "S2_second_camera",
+   "scenario_label": "Second camera",
+   "policy": "P4_pace_to_deadline",
+   "policy_label": "P4 Pace to deadline",
+   "seed": 7,
+   "synthetic": true,
+   "default": false
+  },
+  {
+   "id": "S3_P0",
+   "path": "S3_P0/manifest.json",
+   "scenario": "S3_human_enters",
+   "scenario_label": "Human enters",
+   "policy": "P0_nominal",
+   "policy_label": "P0 Nominal",
+   "seed": 7,
+   "synthetic": true,
+   "default": false
+  },
+  {
+   "id": "S7_P0",
+   "path": "S7_P0/manifest.json",
+   "scenario": "S7_bandwidth_hog",
+   "scenario_label": "4K recording",
+   "policy": "P0_nominal",
+   "policy_label": "P0 Nominal",
+   "seed": 7,
+   "synthetic": true,
+   "default": false
+  }
+ ]
+}
