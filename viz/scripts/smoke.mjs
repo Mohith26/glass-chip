@@ -74,7 +74,8 @@ function checkReplay(dir) {
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const targets = args.length ? args : [join(root, 'tests/fixtures/tiny')];
 if (!args.length) {
-  const pub = join(root, 'public/replays');
+  // --site checks what actually ships: the replays left in dist/replays after stage_site.mjs
+  const pub = join(root, process.argv.includes('--site') ? 'dist/replays' : 'public/replays');
   if (existsSync(pub)) for (const d of readdirSync(pub)) if (existsSync(join(pub, d, 'manifest.json'))) targets.push(join(pub, d));
 }
 for (const t of targets) checkReplay(t);

@@ -3,6 +3,7 @@
 // and a step that the data cannot show says so instead of narrating it.
 import type { Manifest, ReplayIndexEntry } from '../replay/types';
 import { SHORT } from '../views/rings';
+import { nowMs } from '../util/time';
 
 export interface TourHost {
   replays(): ReplayIndexEntry[];
@@ -209,10 +210,17 @@ const STEPS: Step[] = [
       h.seekSeconds(8); h.setSpeed(1); h.setPlaying(true); h.openDrawer(true, 'power');
       if (!m) return '';
       const r = rmOf(m);
-      const ps = (m as unknown as { power_summary?: { time_throttled_s?: number; peak_temp_c?: number } }).power_summary;
+      const ps = (m as unknown as { power_summary?: {
+        time_throttled_s?: number; peak_temp_c?: number; ambient_c_end?: number;
+        settle?: { runaway?: boolean; capped_at_c?: number } } }).power_summary;
       const spd = (m as unknown as { conveyor_speed_mps?: number }).conveyor_speed_mps;
-      return `A hot module${ps?.peak_temp_c != null ? ` (peaking at ${fmt(ps.peak_temp_c, 0)} °C)` : ''} throttles` +
-        (ps?.time_throttled_s != null ? ` for ${fmt(ps.time_throttled_s, 1)} s of this run` : '') +
+      const amb = ps?.ambient_c_end != null ? `At ${fmt(ps.ambient_c_end, 0)} °C ambient` : 'On a hot day';
+      // runaway settle: no steady state at the run's own power, so the run starts at the throttle threshold
+      const start = ps?.settle?.runaway && ps.settle.capped_at_c != null
+        ? `${amb} this module has no thermal steady state, so the run starts at the ${fmt(ps.settle.capped_at_c, 0)} °C throttle threshold`
+        : `${amb} the module heats up`;
+      return `${start}${ps?.peak_temp_c != null ? ` and peaks at ${fmt(ps.peak_temp_c, 0)} °C` : ''}` +
+        (ps?.time_throttled_s != null ? `. It throttles for ${fmt(ps.time_throttled_s, 1)} s of the run` : '') +
         `. VLA p99 is ${fmt(p99(m, 'T4_vla'))} ms${spd ? ` with the belt at ${spd} m/s` : ''}, and ${fmt(r?.objects_missed_per_min ?? null, 1)} objects per minute reach the end of the belt unpicked. ` +
         'No scheduling policy fixes this within a run: the slowdown comes from the thermal state.';
     },
@@ -281,12 +289,14 @@ export class Tour {
   private paused = false;
   private pauseAt = 0;
   private text = '';
+  /** The running step's async work (loads, selections); capture mode awaits it before drawing. */
+  pending: Promise<unknown> = Promise.resolve();
   constructor(private host: HTMLElement, private h: TourHost) {}
 
   start(): void {
     this.active = true;
     this.idx = -1;
-    this.t0 = performance.now();
+    this.t0 = nowMs();
     this.paused = false;
     this.host.classList.add('open');
   }
@@ -298,16 +308,16 @@ export class Tour {
   }
 
   private elapsed(): number {
-    return ((this.paused ? this.pauseAt : performance.now()) - this.t0) / 1000;
+    return ((this.paused ? this.pauseAt : nowMs()) - this.t0) / 1000;
   }
 
   private go(i: number): void {
     const s = STEPS[i];
     this.idx = i;
-    this.t0 = performance.now() - s.at * 1000;
+    this.t0 = nowMs() - s.at * 1000;
     this.text = '';
     this.render();
-    void s.run(this.h).then((txt) => { if (this.idx === i) { this.text = txt; this.render(); } });
+    this.pending = s.run(this.h).then((txt) => { if (this.idx === i) { this.text = txt; this.render(); } });
   }
 
   tick(): void {
@@ -340,8 +350,8 @@ export class Tour {
     this.host.querySelector('[data-a="next"]')?.addEventListener('click', () => (this.idx + 1 < STEPS.length ? this.go(this.idx + 1) : this.stop()));
     this.host.querySelector('[data-a="exit"]')?.addEventListener('click', () => this.stop());
     this.host.querySelector('[data-a="pause"]')?.addEventListener('click', () => {
-      if (this.paused) { this.t0 += performance.now() - this.pauseAt; this.paused = false; }
-      else { this.pauseAt = performance.now(); this.paused = true; }
+      if (this.paused) { this.t0 += nowMs() - this.pauseAt; this.paused = false; }
+      else { this.pauseAt = nowMs(); this.paused = true; }
       this.render();
     });
   }

@@ -216,6 +216,12 @@ export class RobotView {
       }
       const key = `${g.rgba.join(',')}|${g.role}`;
       let mat = matCache.get(key);
+      if (!mat && g.role === 'human') {
+        // the person is a proxy volume, not a character: draw it as soft frosted glass so it never hides the arm
+        mat = new THREE.MeshPhysicalMaterial({ color: '#c9d6ea', roughness: 0.35, transparent: true, opacity: 0.32,
+          depthWrite: false, clearcoat: 0.4, emissive: '#3a4a66', emissiveIntensity: 0.25 });
+        matCache.set(key, mat);
+      }
       if (!mat) {
         const col = new THREE.Color(g.rgba[0], g.rgba[1], g.rgba[2]);
         const dark = g.rgba[0] < 0.3;
@@ -233,6 +239,7 @@ export class RobotView {
       mesh.position.set(g.pos[0], g.pos[1], g.pos[2]);
       mesh.quaternion.set(g.quat[1], g.quat[2], g.quat[3], g.quat[0]);
       mesh.castShadow = g.role !== 'human';
+      if (g.role === 'human') mesh.renderOrder = 5;
       mesh.receiveShadow = true;
       if (g.role === 'belt') {
         this.beltTex = this.beltTexture();

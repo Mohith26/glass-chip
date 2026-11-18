@@ -7,6 +7,7 @@ import { lowerBound } from '../replay/decode';
 import type { CritOp } from '../replay/types';
 import { blockLabel } from './die';
 import { SHORT } from './rings';
+import { nowMs } from '../util/time';
 
 const GUTTER = 168;
 const OVERVIEW_H = 30;
@@ -90,7 +91,7 @@ export class Timeline {
     const span = Math.max(2e5, Math.min(dur, b - a));
     let a2 = Math.max(0, a), b2 = a2 + span;
     if (b2 > dur) { b2 = dur; a2 = Math.max(0, dur - span); }
-    if (animateMs > 0) this.anim = { a0: this.view0, a1: this.view1, b0: a2, b1: b2, t0: performance.now(), ms: animateMs };
+    if (animateMs > 0) this.anim = { a0: this.view0, a1: this.view1, b0: a2, b1: b2, t0: nowMs(), ms: animateMs };
     else { this.anim = null; this.view0 = a2; this.view1 = b2; }
   }
 
@@ -100,7 +101,7 @@ export class Timeline {
     const end = Math.max(j.finish, j.deadline);
     const span = Math.max(end - j.release, 1e8);
     this.setView(j.release - span * 0.25, end + span * 0.35, 650);
-    this.lastInteract = performance.now();
+    this.lastInteract = nowMs();
   }
 
   private x(t: number): number {
@@ -155,7 +156,7 @@ export class Timeline {
   // ------------------------------------------------------------ interaction
   private wheel(e: WheelEvent): void {
     e.preventDefault();
-    this.lastInteract = performance.now();
+    this.lastInteract = nowMs();
     const r = this.canvas.getBoundingClientRect();
     const mx = e.clientX - r.left;
     const my = e.clientY - r.top;
@@ -176,7 +177,7 @@ export class Timeline {
   private down(e: PointerEvent): void {
     const r = this.canvas.getBoundingClientRect();
     const mx = e.clientX - r.left, my = e.clientY - r.top;
-    this.lastInteract = performance.now();
+    this.lastInteract = nowMs();
     if (my < OVERVIEW_H) {
       const st = this.store;
       if (!st) return;
@@ -206,7 +207,7 @@ export class Timeline {
       return;
     }
     if (Math.abs(mx - d.x) + Math.abs(my - d.y) > 3) d.moved = true;
-    this.lastInteract = performance.now();
+    this.lastInteract = nowMs();
     if (d.mode === 'pan') {
       const dt = ((mx - d.x) / (this.w - GUTTER - 8)) * (d.v1 - d.v0);
       this.setView(d.v0 - dt, d.v1 - dt);
@@ -288,7 +289,7 @@ export class Timeline {
     else if (e.key === 'a') this.setView(this.view0 - span * 0.25, this.view1 - span * 0.25, 180);
     else if (e.key === 'd') this.setView(this.view0 + span * 0.25, this.view1 + span * 0.25, 180);
     else return;
-    this.lastInteract = performance.now();
+    this.lastInteract = nowMs();
   }
 
   // ------------------------------------------------------------ drawing
@@ -297,12 +298,12 @@ export class Timeline {
     const g = this.ctx;
     if (!st || this.w === 0) return;
     if (this.anim) {
-      const k = Math.min(1, (performance.now() - this.anim.t0) / this.anim.ms);
+      const k = Math.min(1, (nowMs() - this.anim.t0) / this.anim.ms);
       const e = 1 - Math.pow(1 - k, 4);
       this.view0 = this.anim.a0 + (this.anim.b0 - this.anim.a0) * e;
       this.view1 = this.anim.a1 + (this.anim.b1 - this.anim.a1) * e;
       if (k >= 1) this.anim = null;
-    } else if (this.follow && playing && performance.now() - this.lastInteract > 2500 && !this.drag) {
+    } else if (this.follow && playing && nowMs() - this.lastInteract > 2500 && !this.drag) {
       const span = this.view1 - this.view0;
       if (t > this.view1 - span * 0.04 || t < this.view0) this.setView(t - span * 0.12, t + span * 0.88);
     }

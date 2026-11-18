@@ -49,6 +49,19 @@ export class ReplayStore {
   readonly eventChunks = new Map<number, EventBlock>();
   /** Bumped whenever a chunk finishes loading. */
   version = 0;
+  private inflight = new Set<Promise<unknown>>();
+
+  /** Track a background load so capture mode can wait for it. */
+  protected track<T>(p: Promise<T>): Promise<T> {
+    this.inflight.add(p);
+    void p.finally(() => this.inflight.delete(p));
+    return p;
+  }
+
+  /** Resolves when no chunk or robot load is in flight. */
+  async idle(): Promise<void> {
+    while (this.inflight.size) await Promise.allSettled([...this.inflight]);
+  }
   private eventLoading = new Map<number, Promise<EventBlock>>();
   readonly robotChunks = new Map<number, Float32Array>();
   private robotLoading = new Set<number>();
@@ -194,6 +207,7 @@ export class ReplayStore {
         return b;
       });
       this.eventLoading.set(i, p);
+      this.track(p);
     }
     return p;
   }
@@ -227,12 +241,12 @@ export class ReplayStore {
     if (!r) return Promise.resolve();
     const c = Math.floor(frame / r.chunk_frames);
     const todo = [c, c + 1].filter((k) => k >= 0 && k < r.chunks.length && !this.robotChunks.has(k) && !this.robotLoading.has(k));
-    return Promise.all(todo.map(async (k) => {
+    return this.track(Promise.all(todo.map(async (k) => {
       this.robotLoading.add(k);
       const b = await worker().call<ArrayBuffer>({ type: 'raw', url: this.url(r.chunks[k]), gz: true });
       this.robotChunks.set(k, new Float32Array(b));
       this.robotLoading.delete(k);
-    })).then(() => undefined);
+    }))).then(() => undefined);
   }
 
   /** Body pose array (bodies*7) for a frame if loaded. */

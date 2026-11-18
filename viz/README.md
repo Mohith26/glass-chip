@@ -11,6 +11,8 @@ cd viz
 npm install
 npm run dev          # http://127.0.0.1:5317
 npm run build        # static site in viz/dist (relative paths, works on Cloudflare Pages or GitHub Pages)
+npm run build:site   # build, then keep only the 15 real replays from index.json, add results/figures, check every file is under 25 MiB, print totals
+BASE=/glass-chip/ npm run build:site   # same, with an absolute base for GitHub Pages (npm run build:site:gh)
 npm run lint
 npm run smoke        # build, then decode the fixture and every replay in public/replays with the viewer's own decoders
 ```
@@ -51,7 +53,7 @@ URL parameters: `?replay=S2_P0` picks a replay from `replays/index.json`, `?t=6.
 - Transfers are instanced quads animated entirely in the vertex shader along their XY route. At fast playback the particles come from per-bucket flow aggregates the worker computes once per chunk, and the per-link byte counts drive glowing flow ribbons; in slow motion each transfer becomes a stream of particles. The instance buffer is rebuilt only when the visible window moves or a needed chunk arrives, and chunks are prefetched ahead of the playhead. I tested 200k particles in flight at 60 fps or better on an Apple Silicon laptop.
 - The robot view reads the co-sim scene export (`cosim/SCENE_FORMAT.md`) or, as a fallback, the Panda geometry exported by `scripts/export_panda_scene.py`, and plays back recorded body poses.
 - The design-space panel loads an ONNX surrogate from `surrogate/meta.json` with onnxruntime-web (wasm). It shows each output with its conformal interval, plots the point on the Pareto view, and flags wide intervals as "uncertain, run full model" (in live mode that button restarts the run with the slider configuration). Until a model is published it stays visibly disabled and computes nothing.
-- The latency-tolerance band comes from `results/s14.json` (scripted expert, injected latency, 95% intervals), copied into the site at build time.
+- The latency-tolerance band comes from `results/s14.json` (scripted expert, injected latency, 95% intervals), copied into the site at build time. <!-- numcheck: ignore -->
 
 ## Layout
 
@@ -66,3 +68,7 @@ src/palette.ts         task colors shared by every view (Python reads this file 
 ```
 
 VX-1 is a fictional reference SoC inspired by public descriptions of physical-AI SoCs. It does not describe any real product.
+
+## Capture mode
+
+`?capture=1` swaps the wall clock for a virtual one and exposes `window.__capture` (`step(dt)`, `load(id, t, speed)`, `startTour()`). Each `step` advances time, waits for the tour step and every chunk load to settle, then draws. I use it to render the demo video and GIF frame by frame, so they show exactly what the app draws at 30 fps regardless of machine load.

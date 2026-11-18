@@ -1,6 +1,7 @@
 import '@fontsource-variable/inter';
 import './styles.css';
 import { Clock, fmtSpeed, fmtTime } from './clock';
+import { setTimeSource } from './util/time';
 import { DsePanel } from './dse/surrogate';
 import { LiveClient } from './live/client';
 import { LiveStore } from './live/liveStore';
@@ -63,6 +64,7 @@ class App implements TourHost {
     window.addEventListener('resize', () => this.resize());
     new ResizeObserver(() => this.resize()).observe($('#stage'));
     const params = new URLSearchParams(location.search);
+    if (params.get('capture') === '1') this.enableCapture();
     const live = params.get('live');
     try {
       this.index = await fetchJson<ReplayIndex>('replays/index.json');
@@ -120,7 +122,12 @@ class App implements TourHost {
     return Promise.resolve(t / 1e12);
   }
   replayId(): string { return this.store?.entry?.id ?? ''; }
-  seekSeconds(s: number): void { this.clock.seek(s * 1e12); }
+  seekSeconds(s: number): void {
+    this.clock.seek(s * 1e12);
+    // bring the timeline window along so the playhead is visible right away
+    const span = this.timeline.view1 - this.timeline.view0;
+    this.timeline.setView(s * 1e12 - span * 0.12, s * 1e12 + span * 0.88);
+  }
   setSpeed(s: number): void { this.clock.setSpeed(s); }
   setPlaying(p: boolean): void { this.clock.playing = p; this.clock.emit(); }
   clearSelection(): void { this.select(-1); }
@@ -289,6 +296,7 @@ class App implements TourHost {
     const m = st.manifest;
     if (st instanceof LiveStore) { this.renderLiveHeader(st); return; }
     $('#replay-title').textContent = `${m.scenario_label}`;
+    $('#replay-title').title = m.scenario_label;
     $('#replay-policy').textContent = prettyPolicy(m.policy_label || m.policy);
     $('#badge-synthetic').hidden = !m.synthetic;
     const cur = st.entry;
@@ -523,8 +531,46 @@ class App implements TourHost {
 
   private frame(now: number): void {
     this.loopStarted = true;
+    if (this.capturing) return; // capture mode drives frames through window.__capture.step
     const dt = Math.min(0.1, (now - this.last) / 1000);
     this.last = now;
+    this.frameCore(now, dt);
+    requestAnimationFrame((n) => this.frame(n));
+  }
+
+  // ---------------------------------------------------------------- capture mode (?capture=1)
+  capturing = false;
+  private vnow = 0;
+
+  /** Freeze the RAF loop and drive everything (clock, tour, springs, CSS-free UI) from a virtual clock. */
+  enableCapture(): void {
+    this.capturing = true;
+    this.vnow = 0;
+    setTimeSource(() => this.vnow);
+    document.body.classList.add('capture');
+    (window as unknown as { __capture: unknown }).__capture = {
+      /** Advance dt seconds of wall time, wait for any loads that triggered, then draw. */
+      step: async (dt: number): Promise<{ t: number; tour: boolean }> => {
+        this.vnow += dt * 1000;
+        this.frameCore(this.vnow, dt);
+        await this.tour.pending;
+        if (this.store) await this.store.idle();
+        this.frameCore(this.vnow, 0);
+        return { t: this.clock.t / 1e12, tour: this.tour.active };
+      },
+      startTour: (): void => this.tour.start(),
+      load: async (id: string, tS: number, speed: number): Promise<void> => {
+        await this.loadReplay(id, false);
+        this.seekSeconds(tS);
+        this.clock.setSpeed(speed);
+        this.clock.playing = true;
+        if (this.store) await this.store.idle();
+      },
+      app: this,
+    };
+  }
+
+  private frameCore(now: number, dt: number): void {
     this.frameTimes.push(now);
     if (this.frameTimes.length > 240) this.frameTimes.shift();
     const st0 = this.store;
@@ -562,7 +608,6 @@ class App implements TourHost {
       $('#particle-count').textContent = this.die.particleCount.toLocaleString('en-US');
     }
     this.tour.tick();
-    requestAnimationFrame((n) => this.frame(n));
   }
 
   private robotKey = '';

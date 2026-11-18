@@ -83,7 +83,7 @@
    "id": "S5_P0",
    "path": "S5_P0/manifest.json",
    "scenario": "S5_hot_day",
-   "scenario_label": "Hot module (45 C ambient), conveyor 0.4 m/s",
+   "scenario_label": "Hot module: 45 C ambient, no steady state, starts at the 100 C throttle threshold; conveyor 0.4 m/s",
    "policy": "P0_nominal",
    "policy_label": "P0 Nominal",
    "seed": 1,

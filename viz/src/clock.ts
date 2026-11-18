@@ -1,3 +1,4 @@
+import { nowMs } from './util/time';
 // Playback clock in simulated picoseconds. speed = simulated seconds per wall second.
 
 export type ClockListener = () => void;
@@ -32,7 +33,7 @@ export class Clock {
 
   seek(t: number, animateMs = 0): void {
     const to = Math.max(0, Math.min(this.duration, t));
-    if (animateMs > 0) this.tween = { from: this.t, to, t0: performance.now(), ms: animateMs };
+    if (animateMs > 0) this.tween = { from: this.t, to, t0: nowMs(), ms: animateMs };
     else { this.tween = null; this.t = to; }
     this.emit();
   }

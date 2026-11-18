@@ -1,0 +1,9 @@
+@page { size: Letter; margin: 11mm 13mm 11mm 13mm; }
+body { font-family: "Helvetica Neue", "Inter", Arial, sans-serif; font-size: 9.3pt; line-height: 1.33; max-width: none; }
+h1 { font-size: 18pt; margin: 0 0 1pt; }
+.byline { font-size: 9.5pt; color: #333; margin: 0 0 6pt; }
+p { margin: 0 0 4.5pt; text-align: left; }
+ul, ol { margin: 0 0 5pt; padding-left: 14pt; } li { margin: 0 0 2.5pt; }
+figure { margin: 3pt 0 4pt; }
+figure img { max-height: 3.05in; }
+figcaption { font-size: 7.8pt; text-align: center; }

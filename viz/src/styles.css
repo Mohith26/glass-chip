@@ -359,3 +359,13 @@ canvas.pareto { width: 100%; display: block; margin-top: 10px; }
 .slider-row > span:first-child { grid-area: name; }
 .slider-row > input { grid-area: range; }
 .slider-row > .slider-val { grid-area: val; color: var(--text); }
+
+/* capture mode: no wall-clock CSS motion, no loading veil (frames are stepped, not timed) */
+body.capture *, body.capture *::before, body.capture *::after { transition: none !important; animation: none !important; }
+body.capture #loading { display: none !important; }
+body.capture .hints { display: none; }
+
+/* long scenario labels (S5 explains its thermal start) ellipsize instead of squeezing the scenario chips */
+.now-title { display: flex; align-items: baseline; min-width: 0; }
+#replay-title { max-width: 30vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#replay-policy { white-space: nowrap; }

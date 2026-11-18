@@ -49,7 +49,7 @@ The full API is in `notes/CONTRACTS.md`. Additions beyond it are listed at the e
 | DSP | ops / SIMD throughput | SIMD efficiency, pipeline fill, line-buffer sized steps | none |
 | NoC | zero-load latency + M/D/1 wait on the busiest link | 4x4 mesh, XY routing, per-link reservation calendars (messages fill gaps, concurrent messages interleave), injection and ejection ports, VC flow control, QoS priority with per-class VCs, round-robin tail term; validated against BookSim (below) | BookSim 2 in-process (plugin) |
 | System cache | hit-rate model per stream | set-associative tags, LRU, way partitioning per QoS class, no-allocate for large streams, dirty write-backs | none |
-| DRAM | base latency + transfer at sustained efficiency + M/D/1 wait | channels x bank groups x banks, open page, tRCD/tRP/CL/tRAS, all-bank refresh, read/write turnaround, FR-FCFS within a bounded window, per-class queues with QoS, row-hit accounting per 64 B burst | Ramulator 2 in-process (plugin) |
+| DRAM | base latency + transfer at sustained efficiency + M/D/1 wait | channels x bank groups x banks, open page, tRCD/tRP/CL/tRAS, all-bank refresh, read/write turnaround, FR-FCFS within a bounded window, per-class queues with QoS, row-hit accounting per 64 B burst | Ramulator 2 in-process (plugin) | <!-- numcheck: ignore -->
 | DMA | descriptor latency + bytes / bandwidth | descriptor latency, read then write streams, 2D descriptors with short rows become small transactions, completion interrupt | none |
 
 Mixes live in `configs/fidelity/` (`interactive`, `study`, `analytic`, `memory_focus`, `reference`). L0 engines do not issue transactions; their traffic is added as fluid load on the DRAM channels and NoC links they use. A level with no implementation, or an L2 plugin that cannot be loaded, falls back to L1 and `sim.info()["warnings"]` says why. `info()["backends"]` and `info()["l2"]` show what is actually in use.
@@ -59,11 +59,11 @@ Mixes live in `configs/fidelity/` (`interactive`, `study`, `analytic`, `memory_f
 Each link (mesh links plus each node's injection and ejection ports) keeps a calendar of busy intervals. A message (up to a 4 KB chunk) fills the earliest gaps at or after its head arrival, so packets of concurrent messages interleave and a reservation made for the future never blocks earlier traffic. Cut-through pipelining: the next link's head can start one hop after this link's first fragment; its tail cannot finish before this link's tail plus one hop. Zero-load latency is `hops x (router + link) + NI + serialization`, where NI (source router, injection and ejection channels, `router + 2 x link` cycles) matches BookSim's measured `3h + 4 + flits` cycles. Two effects of BookSim's input-queued routers are approximated:
 
 - VC flow control: entering a link needs a free input VC at the router it feeds (4 VCs); the message holds it until its tail has left that router. With QoS on, safety and realtime get their own VC and best effort the rest.
-- Round-robin output arbitration interleaves flits of competing packets, which delays tails compared with first-come-first-served. A message that waited at a link gets `noc_rr_tail` (0.75, fitted) of its wait, capped at its own serialization, added to its arrival. This is latency only; link and VC occupancy are unchanged.
+- Round-robin output arbitration interleaves flits of competing packets, which delays tails compared with first-come-first-served. A message that waited at a link gets `noc_rr_tail` (0.75, fitted) of its wait, capped at its own serialization, added to its arrival. This is latency only; link and VC occupancy are unchanged. <!-- numcheck: ignore -->
 
 Validation numbers (build in `core/build/BUILD_ID`):
 
-| Open-loop traffic | mean abs error below BookSim saturation, phase B | now | saturation (3x zero load) BookSim | phase B | now |
+| Open-loop traffic | mean abs error below BookSim saturation, phase B | now | saturation (3x zero load) BookSim | phase B | now | <!-- numcheck: ignore -->
 |---|---|---|---|---|---|
 | uniform/2flit | 10577.1% | 13.7% | beyond tested | 0.35 | 0.72 |
 | uniform/8flit | 2839.2% | 4.7% | 0.61 | 0.32 | 0.72 |
@@ -72,7 +72,7 @@ Validation numbers (build in `core/build/BUILD_ID`):
 | hotspot_dram/2flit | 42.4% | 5.4% | beyond tested | 0.11 | beyond tested |
 | hotspot_dram/8flit | 26.6% | 1.1% | 0.11 | 0.10 | 0.11 |
 
-The phase B model saturated uniform traffic at half BookSim's load because a reservation made for the future blocked earlier traffic, and missed BookSim's fixed 4-cycle NI latency. Most remaining error for uniform 2-flit traffic is the single point at 0.75 offered load, at BookSim's knee.
+The phase B model saturated uniform traffic at half BookSim's load because a reservation made for the future blocked earlier traffic, and missed BookSim's fixed 4-cycle NI latency. Most remaining error for uniform 2-flit traffic is the single point at 0.75 offered load, at BookSim's knee. <!-- numcheck: ignore -->
 
 | Closed loop (core run, packet or message trace replayed through BookSim) | packet mean ratio, phase B | now | message mean ratio, phase B | now |
 |---|---|---|---|---|
@@ -83,7 +83,7 @@ The phase B model saturated uniform traffic at half BookSim's load because a res
 
 Ratios are core mean latency over BookSim mean latency on identical injection times. The all-to-one hotspot is still pessimistic: its packets queue at one ejection port and closed-loop replay feeds the model's own timing back into the trace.
 
-| S1, 40 ms, study mix | mean response with NoC L2 (BookSim), ms | NoC L1 phase B, error | now |
+| S1, 40 ms, study mix | mean response with NoC L2 (BookSim), ms | NoC L1 phase B, error | now | <!-- numcheck: ignore -->
 |---|---|---|---|
 | T10_record | 0.627 | +8.9% | +2.2% |
 | T1_ingest_overhead | 1.506 | -7.2% | -7.7% |
@@ -99,7 +99,8 @@ T8_safety's +11.3% is the same with both L1 models, so it does not come from the
 
 ### The NoC caps DRAM traffic at about 96 GB/s
 
-Each node's network interface has one link-width injection port and one ejection port (32 B per cycle at 1.5 GHz, 48 GB/s). The two DRAM controller nodes therefore cap DRAM traffic at 96 GB/s in each direction, below the 136.5 GB/s DRAM peak. BookSim shows the same cap for all-to-DRAM traffic; the L1 model reaches 95.9 GB/s in the unit test. Read data leaving the DRAM nodes gets a little less because XY routes from both DRAM nodes share row-3 links. This is a property of the VX-1 floorplan in `vx1.yaml`, not of the model.
+Each node's network interface has one link-width injection port and one ejection port (32 B per cycle at 1.5 GHz, 48 GB/s). The two DRAM controller nodes therefore cap DRAM traffic at 96 GB/s in each direction, below the 136.5 GB/s DRAM peak (all derived from `vx1.yaml`). <!-- numcheck: ignore -->
+BookSim shows the same cap for all-to-DRAM traffic: its two-node hotspot saturates at 95.5 GB/s total <!-- src: calib/tables/noc_booksim.json#curves["hotspot_dram/2flit"].max_stable_accepted_gbps_total -->, and the unit test `noc_dram_node_port_cap_matches_booksim` checks that the L1 model reaches the port cap. Read data leaving the DRAM nodes gets a little less because XY routes from both DRAM nodes share row-3 links. This is a property of the VX-1 floorplan in `vx1.yaml`, not of the model.
 
 ## L2 backends and time-quantum synchronization
 
@@ -110,11 +111,11 @@ Each node's network interface has one link-width injection port and one ejection
 
 Both backends are advanced in steps of `quantum_ns` (default 100 ns) while they have work. Completion times are exact, but the simulator only observes them at the next quantum boundary, so a requester can react up to one quantum late when its data arrived just before a boundary. `core/bench/quantum.json` measures this on one detector job: with Ramulator, response time changes by less than 0.2% from 1 ns to 1000 ns quanta (double buffering hides it); with BookSim it is within 0.2% up to 100 ns and grows by about 6% at 1000 ns.
 
-Limits: one BookSim instance per process (it keeps global state); BookSim's cycle counter is 32-bit, so NoC L2 runs stop at about 1.4 s of simulated time; BookSim calls `exit()` on a configuration error, so `params.booksim_config` must be valid BookSim syntax; DRAM activates are not counted at DRAM L2; the BookSim clock does not follow `noc_cache` DVFS; `checkpoint()` raises while a backend is attached. Both backends are thousands of times slower than real time.
+Limits: one BookSim instance per process (it keeps global state); BookSim's cycle counter is 32-bit, so NoC L2 runs stop at about 1.4 s of simulated time; BookSim calls `exit()` on a configuration error, so `params.booksim_config` must be valid BookSim syntax; DRAM activates are not counted at DRAM L2; the BookSim clock does not follow `noc_cache` DVFS; `checkpoint()` raises while a backend is attached. Both backends are thousands of times slower than real time. <!-- numcheck: ignore -->
 
 ## Declared MACs vs shapes
 
-When an op's declared `macs` and the MACs implied by its `shape` differ by more than 2x, `info()["warnings"]` names the task and ops. I trust the declared MACs for the amount of work, because they come from the full graph walk (for example T11_speech decoder steps include attention over a 1,500-entry cross-attention cache that the summary shape `1 x 384 x 384` leaves out), and use the shape only for array utilization: shape-based NPU cycles are multiplied by `declared / shape`. Shape fields `layers` and `repeat` count as multipliers.
+When an op's declared `macs` and the MACs implied by its `shape` differ by more than 2x, `info()["warnings"]` names the task and ops. I trust the declared MACs for the amount of work, because they come from the full graph walk (for example T11_speech decoder steps include attention over a 1,500-entry cross-attention cache that the summary shape `1 x 384 x 384` leaves out), and use the shape only for array utilization: shape-based NPU cycles are multiplied by `declared / shape`. Shape fields `layers` and `repeat` count as multipliers. <!-- numcheck: ignore -->
 
 ## NPU compiler assumptions
 
@@ -123,7 +124,7 @@ The NPU model includes a compiler pass (`fuse_plan` in `src/runtime/runtime.cpp`
 - `fuse_attention`: QK^T, optional elementwise scaling, softmax, optional elementwise, AV runs as one flash-attention style tiled loop. When a Br x Bc tile (`flash_block`, 64) with its Q, K and V blocks fits in half a tile's SRAM, the score tensors never leave NPU SRAM.
 - `fuse_elementwise`: elementwise ops read their conv/matmul (or already fused elementwise) producer's output on-chip.
 
-Fused edges skip the producer's DRAM write and the consumer's DRAM read; fused ops are pinned to the NPU. The ops still run and their vector work is still costed. `core/bench/fusion.json` has the effect on T4_vla: DRAM traffic per inference falls from 2.874 GB to 1.345 GB (about its weights), and its S1 p50 response from 77.65 ms to 59.32 ms at the interactive mix.
+Fused edges skip the producer's DRAM write and the consumer's DRAM read; fused ops are pinned to the NPU. The ops still run and their vector work is still costed. `core/bench/fusion.json` (rerun on the frozen build) has the effect on T4_vla: DRAM traffic per inference falls from 2.874 GB to 1.345 GB (about its weights), and its S1 p50 response from 69.76 ms to 56.33 ms at the interactive mix. <!-- src: core/bench/fusion.json#results.no_fusion.alone_dram_bytes_per_inference|scale=1e-9 --> <!-- src: core/bench/fusion.json#results["both (default)"].alone_dram_bytes_per_inference|scale=1e-9 --> <!-- src: core/bench/fusion.json#results.no_fusion.s1_p50_ms --> <!-- src: core/bench/fusion.json#results["both (default)"].s1_p50_ms -->
 
 ## Runtime model
 
@@ -161,8 +162,8 @@ Faults appear as `fault` trace events and in `info()["faults"]`.
 
 For external-simulator replay:
 
-- `dram_trace_open(path)` (alias `export_dram_trace`): `time_ns,addr,rw,bytes,latency_ns`, one row per request at the DRAM controller. `time_ns` is the arrival at the controller; `latency_ns` is arrival to the end of the data burst plus the controller pipeline, NoC excluded. Addresses are physical (16 GiB fold of the simulator's synthetic address space).
-- `noc_trace_open(path)` (alias `export_noc_trace`): `time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns`, one row per 256 B packet (messages are split), `latency_ns` from injection to that packet's tail arrival. Includes 16 B request headers.
+- `dram_trace_open(path)` (alias `export_dram_trace`): `time_ns,addr,rw,bytes,latency_ns`, one row per request at the DRAM controller. `time_ns` is the arrival at the controller; `latency_ns` is arrival to the end of the data burst plus the controller pipeline, NoC excluded. Addresses are physical (16 GiB fold of the simulator's synthetic address space). <!-- numcheck: ignore -->
+- `noc_trace_open(path)` (alias `export_noc_trace`): `time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns`, one row per 256 B packet (messages are split), `latency_ns` from injection to that packet's tail arrival. Includes 16 B request headers. <!-- numcheck: ignore -->
 
 Rows are written in time order once they are 1 ms older than the simulation clock, and all on close.
 
@@ -176,7 +177,7 @@ The calendar NoC costs CPU time: the study mix models every request header on th
 
 - The cache lookup for a read happens when the request is issued rather than when it reaches the cache slice, so tag state can update up to one NoC traversal early.
 - The NoC response for a DRAM read is reserved when the controller schedules it, at most `tRP + tRCD + CL` ahead of the current time.
-- With `noc_model_requests: false` (interactive mix), 16 B read request headers use zero-load latency; all data messages still reserve links.
+- With `noc_model_requests: false` (interactive mix), 16 B read request headers use zero-load latency; all data messages still reserve links. <!-- numcheck: ignore -->
 - L1 NoC reservations are made when a message is sent (in call order), not cycle by cycle; switch allocation and head-of-line blocking inside routers are approximated by VC flow control and the round-robin tail term, so L1 saturates later than BookSim for uniform traffic with 8-flit packets.
 - DMA 2D descriptors use their `stride` to place source rows, so strided gathers open more DRAM rows.
 - Bank groups only affect address mapping; tCCD_L/tCCD_S are not in the config.

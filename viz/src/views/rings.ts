@@ -67,7 +67,7 @@ export class DeadlineRings {
     if (!n) return;
     // two rails flanking the die, following its projected edges
     const left = Math.ceil(n / 2);
-    const top = 128, bottom = h - 56;
+    const top = 128, bottom = h - 100; // keep clear of the voltage legend in the bottom-left corner
     const step = (bottom - top) / Math.max(left, n - left);
     // many tasks: switch to compact rows (smaller ring, label beside it) instead of shrinking text
     // with the drawer open, rings shrink to dots-with-arcs (details stay in each ring's tooltip)

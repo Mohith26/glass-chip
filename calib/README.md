@@ -12,9 +12,9 @@ block (script, tool commit, config files, date).
 
 | Tool | Version | Used for | Script | Output |
 |---|---|---|---|---|
-| Ramulator 2.1 | CMU-SAFARI/ramulator2 @ 7bead6c (2.1.0) | DRAM L2: LPDDR5 bandwidth and latency vs load, per-request trace replay | `run_ramulator.py`, `ramulator/replay.py` | `tables/dram_ramulator.json` |
-| BookSim 2 | booksim/booksim2 @ 28f4329 | NoC L2: 4x4 mesh latency vs load, saturation, packet trace replay | `run_booksim.py`, `booksim/replay.py` | `tables/noc_booksim.json` |
-| SCALE-Sim | scale-sim-v2 @ 87fd03d (package 3.0.0) | NPU L2: per-op cycles, utilization, SRAM and DRAM traffic for one 64x64 tile | `run_scalesim.py` | `tables/npu_scalesim_<task>.json`, `tables/npu_scalesim_standard.json` |
+| Ramulator 2.1 | CMU-SAFARI/ramulator2 @ 7bead6c (2.1.0) | DRAM L2: LPDDR5 bandwidth and latency vs load, per-request trace replay | `run_ramulator.py`, `ramulator/replay.py` | `tables/dram_ramulator.json` | <!-- numcheck: ignore -->
+| BookSim 2 | booksim/booksim2 @ 28f4329 | NoC L2: 4x4 mesh latency vs load, saturation, packet trace replay | `run_booksim.py`, `booksim/replay.py` | `tables/noc_booksim.json` | <!-- numcheck: ignore -->
+| SCALE-Sim | scale-sim-v2 @ 87fd03d (package 3.0.0) | NPU L2: per-op cycles, utilization, SRAM and DRAM traffic for one 64x64 tile | `run_scalesim.py` | `tables/npu_scalesim_<task>.json`, `tables/npu_scalesim_standard.json` | <!-- numcheck: ignore -->
 | gem5 | 26.0.0.0 (stable @ 9d36889) | CPU L3: cycles and CPI of RV64 kernels in SE mode | `run_gem5.py`, `gem5/se_run.py` | `tables/cpu_gem5.json` |
 | zig cc | 0.17.1 (LLVM, ld.lld, musl) | RV64GCV cross compiler and linker for the gem5 binaries | `riscv/kernels/Makefile` | `riscv/build/*` |
 | Public Jetson AGX Orin data | NVIDIA spec pages, MLPerf v3.1 | External sanity check only | `orin_public.py`, `../configs/soc/orin_like.yaml` | `tables/orin_public.json` |
@@ -64,12 +64,14 @@ cd calib/booksim && ../../.venv/bin/python replay.py trace.csv out.csv
 
 ## Key results (from the tables)
 
+<!-- src: calib/tables/dram_ramulator.json#points[0].peak_gbps --> <!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.seq_read.max_achieved_gbps --> <!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.seq_read.max_efficiency|pct -->
 - DRAM, derived LPDDR5X-8533, 136.5 GB/s peak: sequential reads reach 102.6 GB/s (75% of peak),
-  random 64 B reads 46.2 GB/s, random 2:1 read/write 37.7 GB/s, row-hit-heavy random 78.7 GB/s.
-  Low-load mean read latency is 33.5 ns sequential and 81.6 ns random (controller plus device).
-- NoC: zero-load latency for 2-flit packets is 13.4 cycles (8.9 ns). Saturation (accepted
-  flits/node/cycle): uniform 0.75, transpose 0.34, all-to-DRAM hotspot 0.124. The hotspot limit is
-  95.5 GB/s total, set by the two DRAM-node ejection ports, which is below the DRAM peak.
+<!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.random_read.max_achieved_gbps --> <!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.mixed_rw.max_achieved_gbps --> <!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.row_hit_heavy.max_achieved_gbps -->
+  random 64 B reads 46.2 GB/s, random 2:1 read/write 37.7 GB/s, row-hit-heavy random 78.7 GB/s. <!-- src: calib/tables/dram_ramulator.json#setup.request_bytes -->
+  Low-load mean read latency is 33.5 ns sequential and 81.6 ns random (controller plus device). <!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.seq_read.low_load_read_lat_mean_ns --> <!-- src: calib/tables/dram_ramulator.json#summary.lpddr5x_8533_derived.random_read.low_load_read_lat_mean_ns -->
+- NoC: zero-load latency for 2-flit packets is 13.4 cycles (8.9 ns). Saturation (accepted <!-- src: calib/tables/noc_booksim.json#curves["uniform/2flit"].zero_load_plat_cycles --> <!-- src: calib/tables/noc_booksim.json#curves["uniform/2flit"].zero_load_plat_ns -->
+  flits/node/cycle): uniform 0.75, transpose 0.34, all-to-DRAM hotspot 0.124. The hotspot limit is <!-- src: calib/tables/noc_booksim.json#curves["uniform/2flit"].saturation_offered_flit_rate_3x_zero_load --> <!-- src: calib/tables/noc_booksim.json#curves["transpose/2flit"].max_stable_accepted_flit_rate --> <!-- src: calib/tables/noc_booksim.json#curves["hotspot_dram/2flit"].max_stable_accepted_flit_rate -->
+  95.5 GB/s total, set by the two DRAM-node ejection ports, which is below the DRAM peak. <!-- src: calib/tables/noc_booksim.json#curves["hotspot_dram/2flit"].max_stable_accepted_gbps_total -->
 - NPU and CPU: see `tables/npu_scalesim_*.json` and `tables/cpu_gem5.json`.
 
 ## Build notes and what failed

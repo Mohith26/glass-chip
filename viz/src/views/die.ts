@@ -15,6 +15,7 @@ import type { ReplayStore } from '../replay/store';
 import { NONE16 } from '../replay/types';
 import { lowerBound } from '../replay/decode';
 import type { BlockInfo, CritOp } from '../replay/types';
+import { nowMs } from '../util/time';
 
 const DIE = 10;
 const Y_NOC = 1.15;
@@ -457,13 +458,13 @@ export class DieView {
   private fit: { cx: number; width: number; until: number } | null = null;
   /** Ease the camera so the die spans `width` px centered at screen x `cx` (runs briefly after layout changes). */
   fitTo(cx: number, width: number): void {
-    this.fit = { cx, width: Math.max(220, width), until: performance.now() + 900 };
+    this.fit = { cx, width: Math.max(220, width), until: nowMs() + 900 };
   }
 
   private applyFit(): void {
     const f = this.fit;
     if (!f) return;
-    if (performance.now() > f.until) { this.fit = null; return; }
+    if (nowMs() > f.until) { this.fit = null; return; }
     const e = this.dieScreen(this.size.w, this.size.h);
     // horizontal: move the view offset so the die center lands on cx
     this.shift.target = this.shift.target + (f.cx - e.cx) * 0.18;
