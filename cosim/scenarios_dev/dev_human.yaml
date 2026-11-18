@@ -1,0 +1,20 @@
+# Co-sim development scenario: a person walks up to the far side of the conveyor, leans in,
+# waits, and leaves. Exercises speed-and-separation monitoring and the protective stop.
+name: dev_human
+description: Human proxy enters the workspace at 5 s and leaves at 9 s.
+duration_s: 14.0
+seed: 3
+tasks:
+- {graph: T1_ingest_overhead, enabled_at_s: 0.0}
+- {graph: T2_detect_overhead, enabled_at_s: 0.0}
+- {graph: T3_esdf, enabled_at_s: 0.0}
+- {graph: T4_vla, enabled_at_s: 0.0}
+- {graph: T5_plan, enabled_at_s: 0.0}
+- {graph: T6_estimate, enabled_at_s: 0.0}
+- {graph: T7_control, enabled_at_s: 0.0}
+- {graph: T8_safety, enabled_at_s: 0.0}
+events:
+- {t_s: 5.0, action: human_enter, args: {from: front, speed_mps: 1.6, stop_x: 0.75, stop_y: -0.1,
+   safety_escalation: {task: T8_safety, period_us: 5000}}}
+- {t_s: 9.0, action: human_enter, args: {leave: true}}
+robot: {conveyor_speed_mps: 0.2, object_spacing_m: 0.5, human: true}

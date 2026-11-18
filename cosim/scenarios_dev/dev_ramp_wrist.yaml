@@ -1,0 +1,20 @@
+# Co-sim development scenario: wrist-camera detection only (as in S1) while the conveyor ramps.
+name: dev_ramp_wrist
+description: Wrist camera detection, conveyor 0.1 to 0.4 m/s.
+duration_s: 24.0
+seed: 2
+tasks:
+- {graph: T1_ingest_wrist, enabled_at_s: 0.0}
+- {graph: T1_ingest_overhead, enabled_at_s: 0.0}
+- {graph: T2_detect, enabled_at_s: 0.0}
+- {graph: T3_esdf, enabled_at_s: 0.0}
+- {graph: T4_vla, enabled_at_s: 0.0}
+- {graph: T5_plan, enabled_at_s: 0.0}
+- {graph: T6_estimate, enabled_at_s: 0.0}
+- {graph: T7_control, enabled_at_s: 0.0}
+- {graph: T8_safety, enabled_at_s: 0.0}
+events:
+- {t_s: 6.0, action: set_conveyor_speed, args: {speed_mps: 0.2}}
+- {t_s: 12.0, action: set_conveyor_speed, args: {speed_mps: 0.3}}
+- {t_s: 18.0, action: set_conveyor_speed, args: {speed_mps: 0.4}}
+robot: {conveyor_speed_mps: 0.1, object_spacing_m: 0.4, human: false}

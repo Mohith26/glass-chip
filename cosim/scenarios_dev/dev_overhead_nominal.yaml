@@ -1,0 +1,17 @@
+# Co-sim development scenario: overhead-camera detection, no extra load.
+# Rates come from workloads/graphs/<task>.json (defaults for a conveyor pick, not measured requirements).
+name: dev_overhead_nominal
+description: Overhead camera feeds detection; robot stack only.
+duration_s: 30.0
+seed: 1
+tasks:
+- {graph: T1_ingest_overhead, enabled_at_s: 0.0}
+- {graph: T2_detect_overhead, enabled_at_s: 0.0}
+- {graph: T3_esdf, enabled_at_s: 0.0}
+- {graph: T4_vla, enabled_at_s: 0.0}
+- {graph: T5_plan, enabled_at_s: 0.0}
+- {graph: T6_estimate, enabled_at_s: 0.0}
+- {graph: T7_control, enabled_at_s: 0.0}
+- {graph: T8_safety, enabled_at_s: 0.0}
+events: []
+robot: {conveyor_speed_mps: 0.2, object_spacing_m: 0.6, human: false}
