@@ -276,6 +276,7 @@ def main() -> None:
         "aggregate": agg,
         "runs": rows,
         "figures": figs,
+        "build_check": __import__("power.provenance", fromlist=["check_build_ids"]).check_build_ids(rows),
         "provenance": {"script": "studies/s07_voltage_cliff.py", "git_sha": prov0.get("git_sha"),
                        "core_build": prov0.get("core_build"), "date": dt.date.today().isoformat(),
                        "scenario": prov0.get("scenario"), "scenario_events_replaced": "set_vmin events removed; one fixed Vmin per run",

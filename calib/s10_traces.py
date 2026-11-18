@@ -165,7 +165,10 @@ def run_trace_replays(cases: list[str] | None = None, variants: tuple[str, ...] 
     if rid.exists() and os.environ.get("S10_RUN_ID") != rid.read_text().strip():
         raise RuntimeError("stale s10 run: aborting (data/calib/s10_run_id guard)")
     cases = cases or (MB_CASES + ["S1_first_10ms"])
+    import glasschip_core as gc
+
     out: dict[str, Any] = {
+        "core_build_id": str(getattr(gc, "__build_id__", "unknown")),
         "method": __doc__.split("\n\n")[1].strip().replace("\n", " "),
         "dram_reference": "Ramulator 2.1, lpddr5x_8533_derived (calib/ramulator/configs)",
         "noc_reference": "BookSim 2 trace mode, VX-1 4x4 mesh (calib/booksim/booksim_cfg.py)",

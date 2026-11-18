@@ -4,7 +4,7 @@ The VX-1 planner graph (workloads/graphs/T5_plan.json) runs TrajOpt's collision 
 cluster. For the s13 study I build "what if the collision step ran on the RV64 app cores" variants
 of that graph:
 
-- Each TrajOpt block's `collision` op is replaced by `shards` parallel CPU shards (default 8, one per
+- Each TrajOpt `collision` op (one per iteration in the current graph) is replaced by `shards` parallel CPU shards (default 8, one per
   app core across both clusters). Each shard has two ops: `.esdf` (swept-sphere ESDF cost, 61 spheres
   x 4 sub-samples per state) and `.selfcol` (694 sphere pairs per state).
 - Instruction counts per op = queries in the shard x measured instructions per query from gem5
@@ -27,6 +27,8 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 TABLE = ROOT / "riscv/tables/rvv_kernels.json"
+
+SELF_PAIR_FLOPS = 15  # workloads/capture/curobo.py: selfc = self_pairs * 15
 
 VARIANT_KERNELS = {"scalar": ("esdf_scalar", "selfcol_scalar"), "rvv": ("esdf_rvv", "selfcol_rvv"),
                    "xcol": ("esdf_xcol", "selfcol_rvv")}
@@ -58,9 +60,11 @@ def t5_variant(base: dict[str, Any], table: dict[str, Any], variant: str, cpu: s
         if not o["op_id"].endswith(".collision"):
             ops_out.append(o)
             continue
-        # States evaluated in this block: threads per launch = seeds x line-search x horizon x spheres,
-        # and the block runs two launches per iteration (curobo.py: launches = iterations x 2).
-        states = o["shape"]["threads"] / nsph * o["shape"]["kernel_launches"] / 2
+        # States evaluated by this op, from its FLOP count and curobo.py's per-state accounting:
+        # nsph x sweep_subsamples ESDF lookups at esdf_lookup_flops each, plus SELF_PAIR_FLOPS per pair.
+        # Works for both the blocked (25 iterations per op) and per-launch (1 iteration per op) graphs.
+        per_state = nsph * sub * p["assumptions"]["esdf_lookup_flops"] + npair * SELF_PAIR_FLOPS
+        states = o["flops"] / per_state
         q_esdf = states * nsph * sub
         q_self = states * npair
         deps = o.get("depends_on")

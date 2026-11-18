@@ -47,7 +47,7 @@ if _core_dir == SNAPSHOT and (SNAPSHOT / "pkg" / "power").exists():
 
 PS_PER_MS = 1_000_000_000
 PS_PER_US = 1_000_000
-GRAPH_DIR = ROOT / "workloads" / "graphs"
+GRAPH_DIR = (SNAPSHOT / "graphs") if (_core_dir == SNAPSHOT and (SNAPSHOT / "graphs").exists()) else ROOT / "workloads" / "graphs"
 SOC_PATH = (SNAPSHOT / "vx1.yaml") if (SNAPSHOT / "vx1.yaml").exists() else ROOT / "configs" / "soc" / "vx1.yaml"
 POWER_PARAMS_PATH = (SNAPSHOT / "params_vx1.yaml") if (SNAPSHOT / "params_vx1.yaml").exists() else ROOT / "power" / "params_vx1.yaml"
 DSE_FIDELITY_PATH = Path(__file__).resolve().parent / "fidelity_dse.yaml"
@@ -144,28 +144,30 @@ def policy_from_config(cfg: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _memoize_predictor(pred: Any) -> None:
-    """Cache ExecTimePredictor.inflation / demand_cycles between observations.
+    """Cache ExecTimePredictor's quantile queries between observations.
 
-    The P4 policy calls these (each a numpy quantile over up to 200 samples) once per pending
-    job per domain per 1 ms step. Their inputs only change when observe_pending or
-    observe_completion is called, so I clear the cache there. Results are identical; this only
-    removes repeated work (it was most of the Python time for P4 runs).
+    The P4 policy asks for numpy quantiles over up to 200 samples once per pending job per
+    domain per 1 ms step. The predictor's state only changes in observe_pending and
+    observe_completion (checked against power/predictor.py), so I clear the cache there.
+    Results are identical; this only removes repeated work.
     """
     cache: dict[tuple[Any, ...], Any] = {}
-    infl, dem = pred.inflation, pred.demand_cycles
+
+    def wrap(name: str) -> None:
+        f = getattr(pred, name, None)
+        if f is None:
+            return
+
+        def g(*a: Any, **kw: Any) -> Any:
+            k = (name, a, tuple(sorted(kw.items())))
+            if k not in cache:
+                cache[k] = f(*a, **kw)
+            return cache[k]
+        setattr(pred, name, g)
+
+    for name in ("inflation", "demand_cycles", "slack_low", "cpc_cycles", "fixed_time_ps"):
+        wrap(name)
     obs_p, obs_c = pred.observe_pending, pred.observe_completion
-
-    def inflation(task: str, domain: str, safety: bool | None = None) -> float:
-        k = ("i", task, domain, safety)
-        if k not in cache:
-            cache[k] = infl(task, domain, safety)
-        return cache[k]
-
-    def demand_cycles(task: str, domain: str, safety: bool | None = None) -> float | None:
-        k = ("d", task, domain, safety)
-        if k not in cache:
-            cache[k] = dem(task, domain, safety)
-        return cache[k]
 
     def observe_pending(*a: Any, **kw: Any) -> None:
         cache.clear()
@@ -175,7 +177,6 @@ def _memoize_predictor(pred: Any) -> None:
         cache.clear()
         obs_c(*a, **kw)
 
-    pred.inflation, pred.demand_cycles = inflation, demand_cycles
     pred.observe_pending, pred.observe_completion = observe_pending, observe_completion
 
 
@@ -188,7 +189,7 @@ def _quantiles(x: list[float]) -> tuple[float, float, float]:
 
 def run_chip(cfg: Mapping[str, Any], seed: int = 1, duration_s: float = 2.0, warmup_s: float = 0.25,
              fidelity: Mapping[str, Any] | None = None, surrogate: Any = None,
-             soc_base: dict[str, Any] | None = None) -> dict[str, Any]:
+             soc_base: dict[str, Any] | None = None, thermal_init: str = "settle") -> dict[str, Any]:
     """Run one design point chip-only; returns a flat metrics dict.
 
     cfg keys: npu_tiles, npu_array, npu_sram_mb, cache_mb, cache_partition (0/1), qos (0/1),
@@ -233,7 +234,7 @@ def run_chip(cfg: Mapping[str, Any], seed: int = 1, duration_s: float = 2.0, war
     lv = {"enabled": lvf > 1.0 + 1e-9, "reduction_x": max(lvf, 1.0)}
     from power.params import load_params
     pm = PowerManager(pol, soc, params=load_params(POWER_PARAMS_PATH), ambient_c=float(cfg["ambient_c"]), task_info=task_info_from_graphs(graphs.values()),
-                      surrogate=surrogate, thermal_init="steady", low_voltage_arith=lv, record_series=False)
+                      surrogate=surrogate, thermal_init=thermal_init, low_voltage_arith=lv, record_series=False)
     for dom, key in (("npu", "vmin_npu"), ("cpu_a", "vmin_cpu"), ("cpu_b", "vmin_cpu"), ("simt", "vmin_simt"),
                      ("dsp", "vmin_dsp")):
         if key in cfg and cfg[key] is not None:

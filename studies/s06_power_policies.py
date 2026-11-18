@@ -56,7 +56,10 @@ def _job(args: tuple[str, str, int, float]) -> dict[str, Any]:
 
     spec = POLICIES[pkey]
     ov = deep_merge({"power": {"thermal_init": "settle"}}, spec["overrides"])
+    surr_ver = None
     if spec.get("surrogate"):
+        from power.provenance import surrogate_version
+        surr_ver = surrogate_version()
         # conformal surrogate from the surrogate worker (surrogate/p6.py), built inside the policy
         ov = deep_merge(ov, {"policy": {"params": {"surrogate_factory": {
             "callable": "surrogate.p6:SurrogateFinishBound", "kwargs": {"scenario": scen}}}}})
@@ -76,6 +79,7 @@ def _job(args: tuple[str, str, int, float]) -> dict[str, Any]:
         "energy_j_by_domain": s["energy_j_by_domain"], "energy_j_by_part": s["energy_j_by_part"],
         "dvfs_transitions": s["dvfs_transitions"], "wakeups": s["wakeups"], "settle": s["settle"],
         "surrogate": s.get("surrogate"), "surrogate_stats": s.get("surrogate_stats"),
+        "surrogate_bundle": surr_ver,
         "misses_total": r["misses"]["total"], "safety_misses": r["misses"]["safety"],
         "skipped_total": int(sum(v.get("skipped", 0) or 0 for v in r["tasks"].values())),
         "safety_skipped": int(sum(r["tasks"][t].get("skipped", 0) or 0 for t in safety_tasks)),
@@ -234,6 +238,8 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=9)
     ap.add_argument("--quick", action="store_true", help="2 s runs, for a smoke test (not for results)")
     ap.add_argument("--replot", action="store_true", help="only redraw the figure from results/s06.json")
+    ap.add_argument("--heldout", action="store_true",
+                    help="run --policies on --seeds as a held-out check and store it under 'held_out' in results/s06.json")
     ap.add_argument("--replace-policies", action="store_true",
                     help="rerun only --policies and replace their rows in the existing results/s06.json")
     a = ap.parse_args()
@@ -249,9 +255,21 @@ def main() -> None:
             print(f"[{len(rows)}/{len(jobs)}] {r['scenario']} {r['policy']} seed {r['seed']}: "
                   f"{r['energy_per_robot_hour_wh']:.3f} Wh/h, P5 {r['p5_bound_on_this_trace']['energy_per_robot_hour_wh']:.3f}, "
                   f"misses {r['misses_total']} (safety {r['safety_misses']}), wall {r['wall_s']:.0f}s", flush=True)
+    from power.provenance import check_build_ids
+    if a.heldout:
+        old = json.loads((RESULTS / "s06.json").read_text())
+        old["held_out"] = {
+            "note": "Held-out seeds, never used to set any policy parameter; compare with the study seeds in 'aggregate'.",
+            "seeds": a.seeds, "policies": a.policies, "aggregate": aggregate(rows), "runs": rows,
+            "build_check": check_build_ids(rows), "date": dt.date.today().isoformat(), "wall_s": time.time() - t0}
+        (RESULTS / "s06.json").write_text(json.dumps(old, indent=1, default=lambda o: float(o) if isinstance(o, np.floating) else str(o)))
+        print("wrote held_out into", RESULTS / "s06.json", old["held_out"]["build_check"])
+        return
     replaced_note = None
+    held_out = None
     if a.replace_policies and (RESULTS / "s06.json").exists():
         old = json.loads((RESULTS / "s06.json").read_text())
+        held_out = old.get("held_out")
         kept = [r for r in old["runs"] if r["policy"] not in a.policies]
         replaced_note = {"replaced_policies": a.policies, "date": dt.date.today().isoformat(),
                          "kept_rows": len(kept), "new_rows": len(rows),
@@ -266,7 +284,8 @@ def main() -> None:
         "study": "s06_power_policies",
         "question": "Energy per robot-hour of P0, P3, P4, P5 (lower bound), P6 at zero safety-critical misses",
         "policy_params_note": "P4/P6 margins (deadline_margin_frac 0.08, slack feedback, anchored time model) were set "
-                              "after 60 s S1 pilot runs (seeds 1-3) showed ~0.2% T4 misses at 0.05; see power/README.md.",
+                              "on the previous core build after 60 s S1 pilot runs (seeds 1-3) showed ~0.2% T4 misses "
+                              "at 0.05. Not retuned for this build; see 'held_out' for seeds never used in tuning.",
         "labels": [
             "VX-1 is a fictional SoC; every power parameter is an assumption (power/params_vx1.yaml).",
             "P6ph uses a PLACEHOLDER conservative finish-time bound; P6 uses the conformal surrogate "
@@ -276,6 +295,7 @@ def main() -> None:
             "Robot behavior comes from a scripted expert in hybrid mode; VLA compute is modeled from its operator graph.",
         ],
         "quick": a.quick,
+        "build_check": check_build_ids(rows),
         "aggregate": agg,
         "runs": rows,
         "figures": figs,
@@ -289,6 +309,8 @@ def main() -> None:
                        "scenarios": a.scenarios, "seeds": a.seeds, "thermal_init": "settle",
                        "wall_s": time.time() - t0, "rerun": replaced_note},
     }
+    if held_out is not None:
+        out["held_out"] = held_out
     name = "s06_quick.json" if a.quick else "s06.json"
     (RESULTS / name).write_text(json.dumps(out, indent=1, default=lambda o: float(o) if isinstance(o, np.floating) else str(o)))
     print("wrote", RESULTS / name)

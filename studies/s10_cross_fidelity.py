@@ -148,10 +148,7 @@ def build_l2_tables() -> dict[str, Any]:
 
     gem5 = json.loads((ROOT / "calib" / "tables" / "cpu_gem5.json").read_text())["kernels"]
     o3 = {k: v["o3"]["cycles_per_call"] for k, v in gem5.items()}
-    rv = json.loads((ROOT / "workloads" / "capture" / "control" / "rv64_counts.json").read_text())
-    static_instr = {"T7_control_step": rv["control_step"]["instr_total"],
-                    "T6_estimate_step": rv["estimate_step"]["instr_total"],
-                    "T8_ssm_step": rv["ssm_step"]["instr_total"]}
+    static_instr = {k: graph_instr(k) for k in ("T7_control_step", "T6_estimate_step", "T8_ssm_step")}
     # CPI per graph instruction such that L2 cycles = gem5 O3 cycles for that kernel.
     cpi_kernel = {k: o3[k] / static_instr[k] for k in static_instr}
     scalar_kernels = ["T7_control_step", "T6_estimate_step", "T8_ssm_step", "axpy_scalar_4096",
@@ -171,6 +168,22 @@ def build_l2_tables() -> dict[str, Any]:
                        "npu": "SCALE-Sim ws vx1_cycles per op (one tile; the core divides by tiles)"}}
 
 
+def graph_instr(kernel: str) -> float:
+    """Instruction count per call carried by the workload graph op for a gem5 kernel."""
+    tid, oid = {"T7_control_step": ("T7_control", "arm1.control_step"),
+                "T6_estimate_step": ("T6_estimate", "est.step"),
+                "T8_ssm_step": ("T8_safety", "rt.ssm")}[kernel]
+    g = json.loads((ROOT / "workloads" / "graphs" / f"{tid}.json").read_text())
+    op = next(o for o in g["ops"] if o["op_id"] == oid)
+    return float(sum(op["instr"].values()))
+
+
+def build_id() -> str:
+    import glasschip_core as gc
+
+    return str(getattr(gc, "__build_id__", "unknown"))
+
+
 def load_l2() -> dict[str, Any]:
     d = json.loads(L2_TABLES.read_text())
     return {k: v for k, v in d.items() if not k.startswith("_")}
@@ -179,7 +192,8 @@ def load_l2() -> dict[str, Any]:
 # ---------------------------------------------------------------------------- workers
 def _effective(info: dict[str, Any]) -> dict[str, Any]:
     f = info.get("fidelity", {})
-    return {"levels": {c: f.get(c) for c in COMPONENTS}, "warnings": info.get("warnings", []),
+    return {"build_id": info.get("build_id"),
+            "levels": {c: f.get(c) for c in COMPONENTS}, "warnings": info.get("warnings", []),
             "backends": info.get("backends"), "l2": info.get("l2")}
 
 
@@ -362,7 +376,6 @@ def cpu_vs_l3(results: list[dict[str, Any]]) -> dict[str, Any]:
     f_app = float(soc["blocks"]["cpu_a"]["freq_hz"])
     f_rt = float(soc["blocks"]["rt"]["freq_hz"])
     l2 = json.loads(L2_TABLES.read_text())
-    rv = json.loads((ROOT / "workloads" / "capture" / "control" / "rv64_counts.json").read_text())
     cases = {  # mb name -> (task, gem5 kernel, gem5 cpu model, core clock)
         "control_step_cpu": ("T7_mb_ctrl_cpu", "T7_control_step", "o3", f_app),
         "estimate_step_cpu": ("T6_mb_est_cpu", "T6_estimate_step", "o3", f_app),
@@ -378,8 +391,7 @@ def cpu_vs_l3(results: list[dict[str, Any]]) -> dict[str, Any]:
     for name, (tid, kern, model, f) in cases.items():
         g5 = gem5[kern][model]["cycles_per_call"]
         row = {"gem5_model": model, "gem5_cycles": g5, "gem5_instr": gem5[kern][model]["instr_per_call"],
-               "graph_instr": rv[{"T7_control_step": "control_step", "T6_estimate_step": "estimate_step",
-                                  "T8_ssm_step": "ssm_step"}[kern]]["instr_total"], "levels": {}}
+               "graph_instr": graph_instr(kern), "levels": {}}
         for cname in ("L0", "L1", "L2t"):
             if cname in mb and name in mb[cname]["results"]:
                 cyc = mb[cname]["results"][name][tid]["compute_ps"] * 1e-12 * f
@@ -537,6 +549,9 @@ def main() -> None:
                          text=True).stdout.strip()
     doc = {
         "provenance": {"script": "studies/s10_cross_fidelity.py", "git_sha": sha,
+                       "core_build_id": build_id(),
+                       "worker_build_ids": sorted({str(r.get("effective", {}).get("build_id"))
+                                                   for r in results if r.get("effective")}),
                        "date": dt.date.today().isoformat(), "seed": 1,
                        "config_files": ["configs/soc/vx1.yaml", "configs/fidelity/*.yaml",
                                         "configs/scenarios/S1-S8", "calib/graphs/mb/*.json",

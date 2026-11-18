@@ -269,6 +269,7 @@ def main() -> None:
     sha = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True,
                          text=True).stdout.strip()
     doc = {"provenance": {"script": "studies/s15_external_sanity.py", "git_sha": sha,
+                          "core_build_id": str(getattr(gc, "__build_id__", "unknown")),
                           "date": dt.date.today().isoformat(), "seed": 1, "wall_s": time.time() - t0,
                           "config_files": ["configs/soc/orin_like.yaml", "configs/soc/vx1.yaml",
                                            "configs/fidelity/*.yaml", "calib/graphs/T9*.json",

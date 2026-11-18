@@ -124,15 +124,32 @@ def load_graphs(task_ids) -> dict[str, dict[str, Any]]:
     return out
 
 
+_CORE_BUILD: dict[str, Any] | None = None
+
+
 def core_build_id() -> dict[str, Any]:
-    """Identify the glasschip_core binary used (the core changes independently of git commits)."""
+    """Identify the glasschip_core binary used: the core's own build_id (sim.info()) plus a file hash."""
+    global _CORE_BUILD
+    if _CORE_BUILD is not None:
+        return dict(_CORE_BUILD)
     import hashlib
     so = sorted((ROOT / "core" / "build").glob("glasschip_core*.so"))
     if not so:
         return {}
     b = so[0].read_bytes()
-    return {"file": so[0].name, "sha256_12": hashlib.sha256(b).hexdigest()[:12],
-            "mtime": _dt.datetime.fromtimestamp(so[0].stat().st_mtime).isoformat(timespec="seconds")}
+    out: dict[str, Any] = {"file": so[0].name, "sha256_12": hashlib.sha256(b).hexdigest()[:12],
+                           "mtime": _dt.datetime.fromtimestamp(so[0].stat().st_mtime).isoformat(timespec="seconds")}
+    try:
+        from cosim.core_chip import _gc
+        sim = _gc.Sim(yaml.safe_load((ROOT / "configs/soc/vx1.yaml").read_text()),
+                      yaml.safe_load((ROOT / "configs/fidelity/interactive.yaml").read_text()), 0)
+        info = sim.info()
+        out["build_id"] = info.get("build_id")
+        out["version"] = info.get("version")
+    except Exception:
+        pass
+    _CORE_BUILD = out
+    return dict(out)
 
 
 def _coalescing_sink(writer: Any, gap_us: int, xfer_bin_ms: int = 1):

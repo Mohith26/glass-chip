@@ -1,10 +1,11 @@
 {
  "provenance": {
   "script": "studies/s15_external_sanity.py",
-  "git_sha": "e65c22e4561221df51aca1b068f7ddc413c0b2ff",
+  "git_sha": "73bd1989d53da169c7a0023f09f50d4fd8cec67e",
+  "core_build_id": "3e9cf32325432d0f",
   "date": "2026-11-18",
   "seed": 1,
-  "wall_s": 3.8092339038848877,
+  "wall_s": 7.0116798877716064,
   "config_files": [
    "configs/soc/orin_like.yaml",
    "configs/soc/vx1.yaml",
@@ -32,54 +33,54 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.00020741700427606702
+      "wall_s": 0.00019095800234936178
      },
      "gpu_wide_primary/interactive": {
-      "modeled_ms": 0.411736534,
-      "rel_err": -0.356661665625,
+      "modeled_ms": 0.369312003,
+      "rel_err": -0.4229499953125,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 0.204380044,
-       "engine_queue": 0.03027377,
-       "noc": 0.054388367,
-       "dram": 0.119664435,
-       "cache": 0.001029918,
+       "engine_queue": 0.024683788,
+       "noc": 0.018685272,
+       "dram": 0.118538072,
+       "cache": 0.001024827,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0021555419953074306
+      "wall_s": 0.0027609170065261424
      },
      "gpu_wide_primary/memory_focus": {
-      "modeled_ms": 0.41113591,
-      "rel_err": -0.357600140625,
+      "modeled_ms": 0.359255063,
+      "rel_err": -0.4386639640625,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 0.204380044,
-       "engine_queue": 0.030809517,
-       "noc": 0.101737789,
-       "dram": 0.071149434,
-       "cache": 0.001059126,
+       "engine_queue": 0.024813204,
+       "noc": 0.028080147,
+       "dram": 0.098949963,
+       "cache": 0.001031705,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.00989254197338596
+      "wall_s": 0.022083417017711326
      },
      "gpu_wide_primary/study": {
-      "modeled_ms": 0.434893955,
-      "rel_err": -0.3204781953125,
+      "modeled_ms": 0.363934877,
+      "rel_err": -0.43135175468750003,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 0.204380044,
-       "engine_queue": 0.034277024,
-       "noc": 0.091241254,
-       "dram": 0.101931274,
-       "cache": 0.001064359,
+       "engine_queue": 0.024462912,
+       "noc": 0.022169334,
+       "dram": 0.109883546,
+       "cache": 0.001039041,
        "middleware": 0.002
       },
       "warnings": [
        "npu: L2 requested but 54 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.00421804201323539
+      "wall_s": 0.006711708003422245
      },
      "vx1_default_sensitivity/analytic": {
       "modeled_ms": 0.618792571,
@@ -92,51 +93,51 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0001690420031081885
+      "wall_s": 0.00014391701552085578
      },
      "vx1_default_sensitivity/interactive": {
-      "modeled_ms": 0.695337596,
-      "rel_err": 0.08646499374999998,
+      "modeled_ms": 0.661383284,
+      "rel_err": 0.033411381250000004,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 0.549498513,
-       "noc": 0.046609064,
-       "dram": 0.096124539,
-       "cache": 0.00110548,
+       "noc": 0.018463977,
+       "dram": 0.090371904,
+       "cache": 0.00104889,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0020360000198706985
+      "wall_s": 0.002913624979555607
      },
      "vx1_default_sensitivity/memory_focus": {
-      "modeled_ms": 0.667779512,
-      "rel_err": 0.04340548749999992,
+      "modeled_ms": 0.630865958,
+      "rel_err": -0.014271940625000014,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 0.549498513,
-       "noc": 0.063449612,
-       "dram": 0.051724666,
-       "cache": 0.001106721,
+       "noc": 0.015900426,
+       "dram": 0.062438618,
+       "cache": 0.001028401,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.008885832998203114
+      "wall_s": 0.023875499988207594
      },
      "vx1_default_sensitivity/study": {
-      "modeled_ms": 0.686496375,
-      "rel_err": 0.07265058593750005,
+      "modeled_ms": 0.635973315,
+      "rel_err": -0.006291695312500047,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 0.549498513,
-       "noc": 0.068535776,
-       "dram": 0.065316607,
-       "cache": 0.001145479,
+       "noc": 0.018032833,
+       "dram": 0.065401558,
+       "cache": 0.001040411,
        "middleware": 0.002
       },
       "warnings": [
        "npu: L2 requested but 54 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.004611292009940371
+      "wall_s": 0.006153082998935133
      }
     }
    },
@@ -156,54 +157,54 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.00045883399434387684
+      "wall_s": 0.0004105409898329526
      },
      "gpu_wide_primary/interactive": {
-      "modeled_ms": 10.638917073,
-      "rel_err": -0.08835329280205655,
+      "modeled_ms": 10.099619345,
+      "rel_err": -0.13456560882604965,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 7.667859286,
-       "engine_queue": 1.114904176,
-       "noc": 1.003067973,
-       "dram": 0.847378972,
-       "cache": 0.003706666,
+       "engine_queue": 1.05599005,
+       "noc": 0.344873082,
+       "dram": 1.025158882,
+       "cache": 0.003738045,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.03605020898976363
+      "wall_s": 0.05183862501871772
      },
      "gpu_wide_primary/memory_focus": {
-      "modeled_ms": 12.158682879,
-      "rel_err": 0.041875139588689,
+      "modeled_ms": 10.758766803,
+      "rel_err": -0.07808339305912593,
       "within_30pct": true,
       "attribution_ms": {
-       "compute": 7.667859286,
-       "engine_queue": 1.185159629,
-       "noc": 3.05012269,
-       "dram": 0.24985159,
-       "cache": 0.003689684,
+       "compute": 8.824764081,
+       "engine_queue": 0.485672804,
+       "noc": 1.208359133,
+       "dram": 0.234765188,
+       "cache": 0.003205597,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.13590491699869744
+      "wall_s": 0.6890661669895053
      },
      "gpu_wide_primary/study": {
-      "modeled_ms": 11.653786407,
-      "rel_err": -0.0013893395886889293,
+      "modeled_ms": 10.791830105,
+      "rel_err": -0.07525020522707791,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 7.667859286,
-       "engine_queue": 1.174791562,
-       "noc": 2.404996977,
-       "dram": 0.400438824,
-       "cache": 0.003699758,
+       "engine_queue": 1.098531638,
+       "noc": 1.580255811,
+       "dram": 0.439545617,
+       "cache": 0.003637753,
        "middleware": 0.002
       },
       "warnings": [
        "npu: L2 requested but 111 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.052562041993951425
+      "wall_s": 0.13556904200231656
      },
      "vx1_default_sensitivity/analytic": {
       "modeled_ms": 17.871644725,
@@ -215,51 +216,51 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0004624169960152358
+      "wall_s": 0.0004004160000476986
      },
      "vx1_default_sensitivity/interactive": {
-      "modeled_ms": 22.027528892,
-      "rel_err": 0.8875346094258783,
+      "modeled_ms": 21.423337951,
+      "rel_err": 0.8357616067694945,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 19.935400875,
-       "noc": 1.464693125,
-       "dram": 0.620733594,
-       "cache": 0.004701298,
+       "noc": 0.673903044,
+       "dram": 0.807142307,
+       "cache": 0.004891725,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.039916417008498684
+      "wall_s": 0.07920008400105871
      },
      "vx1_default_sensitivity/memory_focus": {
-      "modeled_ms": 23.017234991,
-      "rel_err": 0.9723423299914309,
+      "modeled_ms": 21.849606905,
+      "rel_err": 0.8722885094258784,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 19.935400875,
-       "noc": 2.878170681,
-       "dram": 0.196934746,
-       "cache": 0.004728689,
+       "noc": 1.624291828,
+       "dram": 0.283216158,
+       "cache": 0.004698044,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.13496787499752827
+      "wall_s": 0.6720275830011815
      },
      "vx1_default_sensitivity/study": {
-      "modeled_ms": 22.479770688,
-      "rel_err": 0.9262871197943444,
+      "modeled_ms": 21.81450286,
+      "rel_err": 0.8692804507283635,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 19.935400875,
-       "noc": 2.255949301,
-       "dram": 0.281696431,
-       "cache": 0.004724081,
+       "noc": 1.561891345,
+       "dram": 0.310526656,
+       "cache": 0.004683984,
        "middleware": 0.002
       },
       "warnings": [
        "npu: L2 requested but 111 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.05039308298728429
+      "wall_s": 0.131183166988194
      }
     }
    },
@@ -279,54 +280,54 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0012343749986030161
+      "wall_s": 0.0007764170004520565
      },
      "gpu_wide_primary/interactive": {
-      "modeled_ms": 6.754056181,
-      "rel_err": 0.18284696690017516,
+      "modeled_ms": 6.23521029,
+      "rel_err": 0.09198078633975489,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 4.17628649,
-       "engine_queue": 0.904786484,
-       "noc": 0.650450088,
-       "dram": 1.014389668,
-       "cache": 0.006143451,
+       "engine_queue": 0.787405038,
+       "noc": 0.244094251,
+       "dram": 1.019280883,
+       "cache": 0.006143628,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.020085374999325722
+      "wall_s": 0.04369074999704026
      },
      "gpu_wide_primary/memory_focus": {
-      "modeled_ms": 6.338068723,
-      "rel_err": 0.10999452241681264,
+      "modeled_ms": 5.982807441,
+      "rel_err": 0.047777135026269756,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 4.17628649,
-       "engine_queue": 0.883447793,
-       "noc": 0.835987634,
-       "dram": 0.434205505,
-       "cache": 0.006141301,
+       "engine_queue": 0.785368197,
+       "noc": 0.36540762,
+       "dram": 0.647605356,
+       "cache": 0.006139778,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.11184270799276419
+      "wall_s": 0.5999398749845568
      },
      "gpu_wide_primary/study": {
-      "modeled_ms": 6.425831581,
-      "rel_err": 0.12536455008756564,
+      "modeled_ms": 5.976699721,
+      "rel_err": 0.04670748178633979,
       "within_30pct": true,
       "attribution_ms": {
        "compute": 4.17628649,
-       "engine_queue": 0.911138191,
-       "noc": 0.672580853,
-       "dram": 0.657682183,
-       "cache": 0.006143864,
+       "engine_queue": 0.784741365,
+       "noc": 0.279696172,
+       "dram": 0.727831903,
+       "cache": 0.006143791,
        "middleware": 0.002
       },
       "warnings": [
        "npu: L2 requested but 193 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.038651333015877753
+      "wall_s": 0.13496295901131816
      },
      "vx1_default_sensitivity/analytic": {
       "modeled_ms": 14.02667491,
@@ -338,51 +339,51 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0007670419872738421
+      "wall_s": 0.000731917010853067
      },
      "vx1_default_sensitivity/interactive": {
-      "modeled_ms": 13.521087565,
-      "rel_err": 1.3679662985989494,
+      "modeled_ms": 13.318608988,
+      "rel_err": 1.332505952364273,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 12.447203666,
-       "noc": 0.444978663,
-       "dram": 0.620761785,
-       "cache": 0.006143451,
+       "noc": 0.242101832,
+       "dram": 0.621159862,
+       "cache": 0.006143628,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.021779249975224957
+      "wall_s": 0.05229033299838193
      },
      "vx1_default_sensitivity/memory_focus": {
-      "modeled_ms": 13.428023507,
-      "rel_err": 1.3516678646234677,
+      "modeled_ms": 13.196477189,
+      "rel_err": 1.3111168457092819,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 12.447203666,
-       "noc": 0.703953683,
-       "dram": 0.268724857,
-       "cache": 0.006141301,
+       "noc": 0.36356814,
+       "dram": 0.377565605,
+       "cache": 0.006139778,
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.10246383299818262
+      "wall_s": 0.3791621669952292
      },
      "vx1_default_sensitivity/study": {
-      "modeled_ms": 13.307122671,
-      "rel_err": 1.330494338178634,
+      "modeled_ms": 13.127726893,
+      "rel_err": 1.2990765136602451,
       "within_30pct": false,
       "attribution_ms": {
        "compute": 12.447203666,
-       "noc": 0.472851886,
-       "dram": 0.378923516,
-       "cache": 0.006143603,
+       "noc": 0.259953092,
+       "dram": 0.412426344,
+       "cache": 0.006143791,
        "middleware": 0.002
       },
       "warnings": [
        "npu: L2 requested but 193 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.04447791600250639
+      "wall_s": 0.1325328339880798
      }
     }
    }
@@ -401,31 +402,31 @@
    "gpu_wide_primary/interactive": {
     "n_within_30pct": 2,
     "n_models": 3,
-    "mean_abs_rel_err": 0.20928730844241059,
+    "mean_abs_rel_err": 0.21649879682610151,
     "rel_err_by_model": {
-     "T90_resnet50": -0.356661665625,
-     "T91_retinanet": -0.08835329280205655,
-     "T92_bert_large": 0.18284696690017516
+     "T90_resnet50": -0.4229499953125,
+     "T91_retinanet": -0.13456560882604965,
+     "T92_bert_large": 0.09198078633975489
     }
    },
    "gpu_wide_primary/memory_focus": {
     "n_within_30pct": 2,
     "n_models": 3,
-    "mean_abs_rel_err": 0.16982326754350055,
+    "mean_abs_rel_err": 0.18817483071596522,
     "rel_err_by_model": {
-     "T90_resnet50": -0.357600140625,
-     "T91_retinanet": 0.041875139588689,
-     "T92_bert_large": 0.10999452241681264
+     "T90_resnet50": -0.4386639640625,
+     "T91_retinanet": -0.07808339305912593,
+     "T92_bert_large": 0.047777135026269756
     }
    },
    "gpu_wide_primary/study": {
     "n_within_30pct": 2,
     "n_models": 3,
-    "mean_abs_rel_err": 0.14907736166291818,
+    "mean_abs_rel_err": 0.18443648056697257,
     "rel_err_by_model": {
-     "T90_resnet50": -0.3204781953125,
-     "T91_retinanet": -0.0013893395886889293,
-     "T92_bert_large": 0.12536455008756564
+     "T90_resnet50": -0.43135175468750003,
+     "T91_retinanet": -0.07525020522707791,
+     "T92_bert_large": 0.04670748178633979
     }
    },
    "vx1_default_sensitivity/analytic": {
@@ -441,31 +442,31 @@
    "vx1_default_sensitivity/interactive": {
     "n_within_30pct": 1,
     "n_models": 3,
-    "mean_abs_rel_err": 0.7806553005916091,
+    "mean_abs_rel_err": 0.7338929801279225,
     "rel_err_by_model": {
-     "T90_resnet50": 0.08646499374999998,
-     "T91_retinanet": 0.8875346094258783,
-     "T92_bert_large": 1.3679662985989494
+     "T90_resnet50": 0.033411381250000004,
+     "T91_retinanet": 0.8357616067694945,
+     "T92_bert_large": 1.332505952364273
     }
    },
    "vx1_default_sensitivity/memory_focus": {
     "n_within_30pct": 1,
     "n_models": 3,
-    "mean_abs_rel_err": 0.789138560704966,
+    "mean_abs_rel_err": 0.7325590985867202,
     "rel_err_by_model": {
-     "T90_resnet50": 0.04340548749999992,
-     "T91_retinanet": 0.9723423299914309,
-     "T92_bert_large": 1.3516678646234677
+     "T90_resnet50": -0.014271940625000014,
+     "T91_retinanet": 0.8722885094258784,
+     "T92_bert_large": 1.3111168457092819
     }
    },
    "vx1_default_sensitivity/study": {
     "n_within_30pct": 1,
     "n_models": 3,
-    "mean_abs_rel_err": 0.7764773479701595,
+    "mean_abs_rel_err": 0.7248828865670363,
     "rel_err_by_model": {
-     "T90_resnet50": 0.07265058593750005,
-     "T91_retinanet": 0.9262871197943444,
-     "T92_bert_large": 1.330494338178634
+     "T90_resnet50": -0.006291695312500047,
+     "T91_retinanet": 0.8692804507283635,
+     "T92_bert_large": 1.2990765136602451
     }
    }
   },
@@ -476,15 +477,15 @@
  "npu_vs_scalesim": {
   "tasks": {
    "T11_speech": {
-    "n_ops": 47,
-    "total_core_l1_cycles": 10731876.0,
-    "total_scalesim_cycles": 29816543.0,
-    "total_rel_err": -0.6400697424916094,
-    "per_op_abs_rel_err_median": 0.03726228241752823,
-    "per_op_abs_rel_err_p90": 0.9969943742356299,
+    "n_ops": 530,
+    "total_core_l1_cycles": 28971564.0,
+    "total_scalesim_cycles": 38223654.0,
+    "total_rel_err": -0.24205142710846012,
+    "per_op_abs_rel_err_median": 0.32974545454545456,
+    "per_op_abs_rel_err_p90": 0.32981856524742753,
     "by_type_median_rel_err": {
      "conv2d": -0.02850462215481884,
-     "matmul": -0.03726228241752823
+     "matmul": -0.32974545454545456
     },
     "ops": {
      "asr.enc.frontend.001.conv": {
@@ -759,109 +760,3973 @@
       "rel_err": -0.0372741505348066,
       "scalesim_utilization": 0.8875776116765767
      },
-     "asr.dec.cross_kv": {
+     "asr.dec.l0.cross_kv": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 117144.0,
-      "scalesim_cycles": 486716.0,
-      "rel_err": -0.7593175486320565,
+      "scalesim_cycles": 121679.0,
+      "rel_err": -0.03727019452822591,
       "scalesim_utilization": 0.8875812588860854
      },
-     "asr.dec.t0": {
+     "asr.dec.l1.cross_kv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 117144.0,
+      "scalesim_cycles": 121679.0,
+      "rel_err": -0.03727019452822591,
+      "scalesim_utilization": 0.8875812588860854
+     },
+     "asr.dec.l2.cross_kv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 117144.0,
+      "scalesim_cycles": 121679.0,
+      "rel_err": -0.03727019452822591,
+      "scalesim_utilization": 0.8875812588860854
+     },
+     "asr.dec.l3.cross_kv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 117144.0,
+      "scalesim_cycles": 121679.0,
+      "rel_err": -0.03727019452822591,
+      "scalesim_utilization": 0.8875812588860854
+     },
+     "asr.dec.t0.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t0.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l0.self_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1526250.0,
-      "rel_err": -0.9969808353808354,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t1": {
+     "asr.dec.t0.l0.cross_q": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1526250.0,
-      "rel_err": -0.9969808353808354,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t2": {
+     "asr.dec.t0.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l0.cross_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1526250.0,
-      "rel_err": -0.9969808353808354,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t3": {
+     "asr.dec.t0.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t0.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l1.self_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1526250.0,
-      "rel_err": -0.9969808353808354,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t4": {
+     "asr.dec.t0.l1.cross_q": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1526250.0,
-      "rel_err": -0.9969808353808354,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t5": {
+     "asr.dec.t0.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l1.cross_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t6": {
+     "asr.dec.t0.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t0.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l2.self_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t7": {
+     "asr.dec.t0.l2.cross_q": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t8": {
+     "asr.dec.t0.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l2.cross_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t9": {
+     "asr.dec.t0.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t0.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0003289473684210526
+     },
+     "asr.dec.t0.l3.self_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t10": {
+     "asr.dec.t0.l3.cross_q": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
      },
-     "asr.dec.t11": {
+     "asr.dec.t0.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t0.l3.cross_o": {
       "type": "matmul",
       "dtype": "int8",
       "core_l1_cycles": 4608.0,
-      "scalesim_cycles": 1533125.0,
-      "rel_err": -0.9969943742356299,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
       "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t0.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t0.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t1.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t1.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t1.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t1.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t1.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0004111842105263158
+     },
+     "asr.dec.t1.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t1.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t1.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t1.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t2.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t2.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t2.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t2.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t2.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000493421052631579
+     },
+     "asr.dec.t2.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t2.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t2.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t2.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t3.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t3.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t3.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t3.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t3.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000575657894736842
+     },
+     "asr.dec.t3.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t3.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t3.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t3.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t4.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t4.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t4.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t4.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t4.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0006578947368421052
+     },
+     "asr.dec.t4.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t4.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t4.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t4.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t5.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t5.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t5.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t5.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t5.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0007401315789473683
+     },
+     "asr.dec.t5.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t5.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t5.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t5.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t6.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t6.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t6.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t6.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t6.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0008223684210526316
+     },
+     "asr.dec.t6.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t6.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t6.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t6.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t7.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t7.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t7.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t7.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t7.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0009046052631578947
+     },
+     "asr.dec.t7.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t7.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t7.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t7.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t8.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t8.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t8.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t8.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t8.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.000986842105263158
+     },
+     "asr.dec.t8.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t8.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t8.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t8.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t9.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t9.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t9.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t9.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t9.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0010690789473684211
+     },
+     "asr.dec.t9.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t9.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t9.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t9.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t10.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t10.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t10.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t10.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t10.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.001151315789473684
+     },
+     "asr.dec.t10.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t10.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t10.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t10.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
+     },
+     "asr.dec.t11.l0.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t11.l0.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l0.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l0.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l0.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l0.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l0.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l0.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l0.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l0.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l1.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t11.l1.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l1.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l1.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l1.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l1.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l1.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l1.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l1.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l1.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l2.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t11.l2.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l2.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l2.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l2.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l2.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l2.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l2.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l2.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l2.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l3.self_qkv": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 13824.0,
+      "scalesim_cycles": 20627.0,
+      "rel_err": -0.3298104426237456,
+      "scalesim_utilization": 0.005235855917001988
+     },
+     "asr.dec.t11.l3.self.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l3.self.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 3072.0,
+      "scalesim_cycles": 4560.0,
+      "rel_err": -0.3263157894736842,
+      "scalesim_utilization": 0.0012335526315789473
+     },
+     "asr.dec.t11.l3.self_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l3.cross_q": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l3.cross.qk": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l3.cross.av": {
+      "type": "matmul",
+      "dtype": "bf16",
+      "core_l1_cycles": 73728.0,
+      "scalesim_cycles": 109992.0,
+      "rel_err": -0.3296967052149247,
+      "scalesim_utilization": 0.00511400829151211
+     },
+     "asr.dec.t11.l3.cross_o": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 4608.0,
+      "scalesim_cycles": 6875.0,
+      "rel_err": -0.32974545454545456,
+      "scalesim_utilization": 0.005236363636363637
+     },
+     "asr.dec.t11.l3.fc1": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.l3.fc2": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 18432.0,
+      "scalesim_cycles": 27503.0,
+      "rel_err": -0.32981856524742753,
+      "scalesim_utilization": 0.005235792459004473
+     },
+     "asr.dec.t11.logits": {
+      "type": "matmul",
+      "dtype": "int8",
+      "core_l1_cycles": 622848.0,
+      "scalesim_cycles": 929405.0,
+      "rel_err": -0.32984221087685134,
+      "scalesim_utilization": 0.005231673759017866
      }
     }
    },
@@ -13457,39 +17322,39 @@
    }
   },
   "overall": {
-   "n_ops": 1614,
-   "per_op_abs_rel_err_median": 0.26173096976016685,
-   "per_op_abs_rel_err_p90": 0.26249599878471563,
-   "cycle_weighted_abs_rel_err": 0.21186901162352245,
+   "n_ops": 2097,
+   "per_op_abs_rel_err_median": 0.262482927845552,
+   "per_op_abs_rel_err_p90": 0.32974545454545456,
+   "cycle_weighted_abs_rel_err": 0.16227733416676007,
    "no_weight_load_overlap_diagnostic": {
-    "per_op_abs_rel_err_median": 0.004177562690567389,
+    "per_op_abs_rel_err_median": 0.00418991180351397,
     "per_op_abs_rel_err_p90": 0.005563282336578581,
-    "cycle_weighted_abs_rel_err": 0.0849171299551232
+    "cycle_weighted_abs_rel_err": 0.0028734032625185924
    }
   },
   "l2_consistency": {
    "T11_speech": {
-    "table_hits": 47,
+    "table_hits": 530,
     "fallbacks": 0,
-    "ops_traced": 47,
+    "ops_traced": 530,
     "op_duration_over_table_min": 1.0,
-    "op_duration_over_table_median": 1.0617479674061776,
+    "op_duration_over_table_median": 1.5481192888048576,
     "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
    },
    "T2_detect": {
     "table_hits": 64,
     "fallbacks": 0,
     "ops_traced": 64,
-    "op_duration_over_table_min": 1.00296439669715,
-    "op_duration_over_table_median": 1.0727057297163076,
+    "op_duration_over_table_min": 1.0032423580503818,
+    "op_duration_over_table_median": 1.08031022409833,
     "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
    },
    "T2_detect_overhead": {
     "table_hits": 64,
     "fallbacks": 0,
     "ops_traced": 64,
-    "op_duration_over_table_min": 1.00296439669715,
-    "op_duration_over_table_median": 1.0727057297163076,
+    "op_duration_over_table_min": 1.0032423580503818,
+    "op_duration_over_table_median": 1.08031022409833,
     "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
    },
    "T4_vla": {
@@ -13497,15 +17362,15 @@
     "fallbacks": 0,
     "ops_traced": 1373,
     "op_duration_over_table_min": 1.0,
-    "op_duration_over_table_median": 1.1353930218805441,
+    "op_duration_over_table_median": 1.1362323233090457,
     "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
    },
    "T8_safety": {
     "table_hits": 66,
     "fallbacks": 0,
     "ops_traced": 66,
-    "op_duration_over_table_min": 1.005761720563206,
-    "op_duration_over_table_median": 1.1877472538437117,
+    "op_duration_over_table_min": 1.006256908556398,
+    "op_duration_over_table_median": 1.1939516712776088,
     "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
    }
   }
@@ -13516,106 +17381,106 @@
   "cases": {
    "stream_copy_dma_8MB/study_L1": {
     "n": 4096,
-    "core_mean_ns": 311.04132568359375,
-    "core_p50_ns": 209.011,
-    "core_p99_ns": 824.027,
-    "ref_mean_ns": 344.1104592285156,
-    "ref_p50_ns": 274.4465,
-    "ref_p99_ns": 1388.2905500000002,
-    "rel_err_mean": -0.09610034411352028,
-    "rel_err_p99": -0.40644485406891234,
-    "per_request_abs_rel_err_median": 0.4868072338341054,
-    "per_request_abs_rel_err_p90": 1.8847202806019612,
-    "pearson_r": 0.5859640147101993,
-    "ramulator_achieved_gbps": 70.57884169736037,
-    "replay_wall_s": 4.047254125005566
+    "core_mean_ns": 317.85807617187504,
+    "core_p50_ns": 271.177,
+    "core_p99_ns": 816.2450000000002,
+    "ref_mean_ns": 336.5225983886719,
+    "ref_p50_ns": 273.75300000000004,
+    "ref_p99_ns": 1364.4174000000003,
+    "rel_err_mean": -0.05546290889873607,
+    "rel_err_p99": -0.40176297956915524,
+    "per_request_abs_rel_err_median": 0.49719480315852765,
+    "per_request_abs_rel_err_p90": 1.9088250808741325,
+    "pearson_r": 0.603414984034358,
+    "ramulator_achieved_gbps": 68.50878931704918,
+    "replay_wall_s": 4.391064874973381
    },
    "random_access_cpu_64B/study_L1": {
     "n": 262144,
-    "core_mean_ns": 101.10899563598632,
-    "core_p50_ns": 86.773,
-    "core_p99_ns": 358.371,
-    "ref_mean_ns": 60.20905154037475,
-    "ref_p50_ns": 44.148,
-    "ref_p99_ns": 308.8621300000001,
-    "rel_err_mean": 0.6792989268097844,
-    "rel_err_p99": 0.16029440061168998,
-    "per_request_abs_rel_err_median": 0.9796662950752413,
-    "per_request_abs_rel_err_p90": 2.229863306342775,
-    "pearson_r": 0.004394000866528065,
-    "ramulator_achieved_gbps": 25.226799381449908,
-    "replay_wall_s": 2.4468774590059184
+    "core_mean_ns": 104.51548710250854,
+    "core_p50_ns": 88.691,
+    "core_p99_ns": 355.453,
+    "ref_mean_ns": 54.68145714950562,
+    "ref_p50_ns": 39.5065,
+    "ref_p99_ns": 295.5455500000001,
+    "rel_err_mean": 0.9113515358003491,
+    "rel_err_p99": 0.20270124182211455,
+    "per_request_abs_rel_err_median": 1.2833662104655077,
+    "per_request_abs_rel_err_p90": 2.279203231647861,
+    "pearson_r": 0.03851256520498548,
+    "ramulator_achieved_gbps": 25.214554619017065,
+    "replay_wall_s": 1.9479742910189088
    },
    "all_to_one_hotspot_6x4MB/study_L1": {
-    "n": 142187,
-    "core_mean_ns": 344.9760658217699,
-    "core_p50_ns": 71.38,
-    "core_p99_ns": 4029.458739999988,
-    "ref_mean_ns": 438.77205838789763,
-    "ref_p50_ns": 109.559,
-    "ref_p99_ns": 6256.007879999995,
-    "rel_err_mean": -0.21376929267270506,
-    "rel_err_p99": -0.3559057441596458,
-    "per_request_abs_rel_err_median": 0.5750795932740046,
-    "per_request_abs_rel_err_p90": 2.3390477187366616,
-    "pearson_r": 0.9956033040350281,
-    "ramulator_achieved_gbps": 49.63973753759719,
-    "replay_wall_s": 22.043135707994225
+    "n": 142189,
+    "core_mean_ns": 393.9543431489074,
+    "core_p50_ns": 70.38,
+    "core_p99_ns": 7170.219759999991,
+    "ref_mean_ns": 548.3016710153387,
+    "ref_p50_ns": 105.953,
+    "ref_p99_ns": 10445.816959999993,
+    "rel_err_mean": -0.2815007431595324,
+    "rel_err_p99": -0.31357980065543906,
+    "per_request_abs_rel_err_median": 0.6048545740681375,
+    "per_request_abs_rel_err_p90": 10.776754906754208,
+    "pearson_r": 0.9778799591804712,
+    "ramulator_achieved_gbps": 57.73381289052641,
+    "replay_wall_s": 22.62097737498698
    },
    "gemm_vit_mlp_1024x768x3072/study_L1": {
     "n": 1536,
-    "core_mean_ns": 5576.13119921875,
-    "core_p50_ns": 318.8595,
-    "core_p99_ns": 21342.64335000001,
-    "ref_mean_ns": 6228.452328776042,
-    "ref_p50_ns": 356.04650000000004,
-    "ref_p99_ns": 24388.514500000005,
-    "rel_err_mean": -0.10473245922482319,
-    "rel_err_p99": -0.12488957250758323,
-    "per_request_abs_rel_err_median": 0.17474870142337307,
-    "per_request_abs_rel_err_p90": 1.8898735542829885,
-    "pearson_r": 0.9997040980997608,
-    "ramulator_achieved_gbps": 24.421421180376452,
-    "replay_wall_s": 3.2508744999940973
+    "core_mean_ns": 6126.888913411459,
+    "core_p50_ns": 330.176,
+    "core_p99_ns": 23530.04320000001,
+    "ref_mean_ns": 6216.697606119792,
+    "ref_p50_ns": 356.13750000000005,
+    "ref_p99_ns": 24312.813750000005,
+    "rel_err_mean": -0.014446366607879468,
+    "rel_err_p99": -0.03219580251175139,
+    "per_request_abs_rel_err_median": 0.20125109958205634,
+    "per_request_abs_rel_err_p90": 1.8953754641241167,
+    "pearson_r": 0.9995876083589257,
+    "ramulator_achieved_gbps": 26.530365599976726,
+    "replay_wall_s": 3.0088312920124736
    },
    "attention_vit_12h_1024/study_L1": {
     "n": 192,
-    "core_mean_ns": 2903.424197916667,
-    "core_p50_ns": 2922.8025,
-    "core_p99_ns": 5630.71997,
-    "ref_mean_ns": 2966.5582708333336,
-    "ref_p50_ns": 3029.301,
-    "ref_p99_ns": 6102.8029400000005,
-    "rel_err_mean": -0.02128192577148733,
-    "rel_err_p99": -0.07735510627515041,
-    "per_request_abs_rel_err_median": 0.06437187703989353,
-    "per_request_abs_rel_err_p90": 0.21677118082767802,
-    "pearson_r": 0.9924963219462352,
-    "ramulator_achieved_gbps": 114.27830750599485,
-    "replay_wall_s": 0.19693729100981727
+    "core_mean_ns": 3101.4925937499997,
+    "core_p50_ns": 3085.8565,
+    "core_p99_ns": 6128.6009699999995,
+    "ref_mean_ns": 3016.2215104166667,
+    "ref_p50_ns": 3128.126,
+    "ref_p99_ns": 6135.41172,
+    "rel_err_mean": 0.02827082926066447,
+    "rel_err_p99": -0.0011100722022939567,
+    "per_request_abs_rel_err_median": 0.0786406133726387,
+    "per_request_abs_rel_err_p90": 0.29447720115505266,
+    "pearson_r": 0.9874267748030376,
+    "ramulator_achieved_gbps": 123.61780514388846,
+    "replay_wall_s": 0.1896606249792967
    },
    "S1_first_10ms/study_L1": {
-    "n": 178663,
-    "core_mean_ns": 535.9267450227522,
+    "n": 187017,
+    "core_mean_ns": 802.183747921312,
     "core_p50_ns": 52.501,
-    "core_p99_ns": 8277.714120000011,
-    "ref_mean_ns": 3742.2665908666036,
-    "ref_p50_ns": 23.651,
-    "ref_p99_ns": 51293.014400000015,
-    "rel_err_mean": -0.8567908693809421,
-    "rel_err_p99": -0.8386190748032931,
-    "per_request_abs_rel_err_median": 0.9816889625401212,
-    "per_request_abs_rel_err_p90": 138.54542165640106,
-    "pearson_r": 0.3304063753003715,
-    "ramulator_achieved_gbps": 9.861618560519695,
-    "replay_wall_s": 56.17167408298701
+    "core_p99_ns": 10847.083679999967,
+    "ref_mean_ns": 4137.616584700856,
+    "ref_p50_ns": 37.991,
+    "ref_p99_ns": 57251.59927999995,
+    "rel_err_mean": -0.806124194569539,
+    "rel_err_p99": -0.8105365820970307,
+    "per_request_abs_rel_err_median": 0.9387921165329732,
+    "per_request_abs_rel_err_p90": 131.21399176954733,
+    "pearson_r": 0.5926332680000937,
+    "ramulator_achieved_gbps": 10.142385846062416,
+    "replay_wall_s": 57.051776250009425
    }
   },
   "summary": {
    "study_L1/dram": {
     "n_cases": 6,
-    "mean_abs_rel_err_of_mean": 0.3286623029955437,
-    "mean_abs_rel_err_of_p99": 0.3272514587377125
+    "mean_abs_rel_err_of_mean": 0.34952609638278337,
+    "mean_abs_rel_err_of_p99": 0.2936477464762975
    }
   }
  },

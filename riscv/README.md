@@ -40,7 +40,7 @@ All numbers below come from `riscv/tables/rvv_kernels.json` (written by `riscv/r
 make -C riscv/kernels                         # zig cc for RV64 (+v), Apple clang for the host reference
 riscv/gem5/build_xcol.sh                      # gem5 with xcol.sdf, build/RISCV_XCOL (about 10 min)
 .venv/bin/python riscv/run_gem5.py            # 83 gem5 runs, about 4 min on 8 threads
-.venv/bin/python studies/s13_riscv.py --seeds 0 1 2 --jobs 6   # T5 and S3, about 8 min
+.venv/bin/python studies/s13_riscv.py --seeds 0 1 2 --jobs 2   # T5 and S3, about 11 min
 ```
 
 ## S1: RVV kernels
@@ -164,41 +164,49 @@ the timed memory path that would settle it (a microcoded or multi-access load in
 
 ## End to end: T5 replan latency
 
-`core_hook.py` builds T5 variants in which each of TrajOpt's five collision ops moves to the 8 RV64 app
-cores as 8 shards (ESDF part, then self-collision part). Each shard's instruction count is its query
-count times the measured instructions per query, and the core's CPU L2 hook turns that into cycles
-with the measured O3 CPI (`set_l2_tables({"cpu_cpi": ...})`, CPU fidelity L2). Self-collision runs as
-RVV in both the RVV and the xcol variants, so the instruction only speeds up part of the step.
+These results are from the final core build (`build_id` 3e9cf32325432d0f, recorded in
+`results/s13.json` under `provenance.core_build_id`, per T5-alone run and per S3 run) and the current T5
+graph, which has one op per SIMT launch (574 ops, 125 TrajOpt collision ops).
 
-T5 alone on an idle SoC (deadline 50 ms): <!-- src: results/s13.json#headline.t5_deadline_ms -->
+`core_hook.py` builds T5 variants in which every TrajOpt collision op moves to the 8 RV64 app cores as
+8 shards (ESDF part, then self-collision part), which gives 2,449 ops. The states each op evaluates come
+from its FLOP count and the per-state accounting in `workloads/capture/curobo.py`. Each shard's
+instruction count is its query count times the measured instructions per query, and the core's CPU L2
+hook turns that into cycles with the measured O3 CPI (`set_l2_tables({"cpu_cpi": ...})`, CPU fidelity
+L2). Self-collision runs as RVV in both the RVV and the xcol variants, so the instruction only speeds up
+part of the step.
+
+T5 alone on an idle SoC (deadline 50 ms), interactive fidelity with the CPU at L2 (SIMT at L0): <!-- src: results/s13.json#headline.t5_deadline_ms -->
 
 | Collision step on | T5 response |
 |---|---|
-| SIMT cluster (baseline mapping) | 6.6 ms <!-- src: results/s13.json#headline.t5_alone_ms.simt --> |
-| 8 app cores, scalar | 150.7 ms (misses) <!-- src: results/s13.json#headline.t5_alone_ms.scalar --> |
-| 8 app cores, RVV | 31.3 ms <!-- src: results/s13.json#headline.t5_alone_ms.rvv --> |
-| 8 app cores, RVV + xcol.sdf | 24.0 ms <!-- src: results/s13.json#headline.t5_alone_ms.xcol --> |
+| SIMT cluster (baseline mapping) | 8.7 ms <!-- src: results/s13.json#headline.t5_alone_ms.simt --> |
+| 8 app cores, scalar | 152.5 ms (misses) <!-- src: results/s13.json#headline.t5_alone_ms.scalar --> |
+| 8 app cores, RVV | 33.1 ms <!-- src: results/s13.json#headline.t5_alone_ms.rvv --> |
+| 8 app cores, RVV + xcol.sdf | 25.8 ms <!-- src: results/s13.json#headline.t5_alone_ms.xcol --> |
 
 Scenario S3 (human enters at 3 s, replan burst of 4 T5 jobs in 200 ms on top of the policy's replans), <!-- numcheck: ignore (scenario inputs) -->
-policy P0, 10 s, seeds 0 to 2, interactive fidelity with CPU at L2 for every variant:
+policy P0, 10 s, seeds 0 to 2, same fidelity for every variant:
 
 | Collision step on | T5 mean | T5 mean, replans in the second after the human enters | T5 misses | Other deadline misses | |
 |---|---|---|---|---|---|
-| SIMT | 7.7 ms | 8.9 ms | 0 | none | <!-- src: results/s13.json#headline.s3.simt.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.simt.t5_after_human_enter_mean_ms -->
-| App cores, scalar | 170.3 ms | 170.4 ms | 23 of 23, plus 15 skipped | T1, T2, T6, T8 (T8: 132 of 3,833) | <!-- src: results/s13.json#headline.s3.scalar.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.scalar.t5_after_human_enter_mean_ms --> <!-- src: results/s13.json#headline.s3.scalar.t5_missed --> <!-- src: results/s13.json#headline.s3.scalar.t5_skipped_total --> <!-- src: results/s13.json#headline.s3.scalar.other_tasks_with_misses.T8_safety.missed --> <!-- src: results/s13.json#headline.s3.scalar.other_tasks_with_misses.T8_safety.completed -->
-| App cores, RVV | 38.4 ms | 41.2 ms | 0 | T6_estimate 103 of 5,897 | <!-- src: results/s13.json#headline.s3.rvv.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.rvv.t5_after_human_enter_mean_ms --> <!-- src: results/s13.json#headline.s3.rvv.other_tasks_with_misses.T6_estimate.missed --> <!-- src: results/s13.json#headline.s3.rvv.other_tasks_with_misses.T6_estimate.completed -->
-| App cores, RVV + xcol.sdf | 29.6 ms | 31.9 ms | 0 | T6_estimate 20 of 5,980 | <!-- src: results/s13.json#headline.s3.xcol.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.xcol.t5_after_human_enter_mean_ms --> <!-- src: results/s13.json#headline.s3.xcol.other_tasks_with_misses.T6_estimate.missed --> <!-- src: results/s13.json#headline.s3.xcol.other_tasks_with_misses.T6_estimate.completed -->
+| SIMT | 10.2 ms | 10.7 ms | 0 | none | <!-- src: results/s13.json#headline.s3.simt.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.simt.t5_after_human_enter_mean_ms --> |
+| App cores, scalar | 182.3 ms | 186.1 ms | 23 of 23, plus 15 skipped | none | <!-- src: results/s13.json#headline.s3.scalar.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.scalar.t5_after_human_enter_mean_ms --> <!-- src: results/s13.json#headline.s3.scalar.t5_missed --> <!-- src: results/s13.json#headline.s3.scalar.t5_skipped_total --> |
+| App cores, RVV | 38.6 ms | 40.9 ms | 0 | none | <!-- src: results/s13.json#headline.s3.rvv.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.rvv.t5_after_human_enter_mean_ms --> |
+| App cores, RVV + xcol.sdf | 30.3 ms | 32.2 ms | 0 | none | <!-- src: results/s13.json#headline.s3.xcol.t5_mean_ms --> <!-- src: results/s13.json#headline.s3.xcol.t5_after_human_enter_mean_ms --> |
 
 What I take from it:
 
-- On VX-1 as configured, the SIMT cluster is the right place for collision checking; moving it to the
-  CPUs makes T5 four to five times slower even with RVV.
-- If the CPUs have to do it (no SIMT, or SIMT busy), RVV is what makes it feasible, and `xcol.sdf`
-  cuts the burst replan latency by about 23% (41.2 to 31.9 ms). <!-- src: results/s13.json#headline.s3_burst_xcol_vs_rvv_reduction_pct --> <!-- src: results/s13.json#headline.s3.rvv.t5_after_human_enter_mean_ms --> <!-- src: results/s13.json#headline.s3.xcol.t5_after_human_enter_mean_ms --> The bigger effect is on the rest of
-  the system: shorter CPU occupancy during the burst reduced T6 state-estimation misses from 103 to
-  20 across the three seeds.
-- Self-collision is about half of the CPU collision cycles and the instruction does not touch it,
-  which caps the end-to-end gain (Amdahl).
+- On VX-1 as configured, the SIMT cluster is the right place for collision checking. Moving it to the
+  CPUs makes T5 about 3.8x slower with RVV and 3.0x slower with RVV + xcol.sdf in S3. <!-- src: results/s13.json#headline.s3_cpu_vs_simt_slowdown_rvv --> <!-- src: results/s13.json#headline.s3_cpu_vs_simt_slowdown_xcol -->
+- If the CPUs have to do it (no SIMT, or SIMT busy), RVV is what makes it feasible: scalar code misses
+  every replan, RVV and xcol.sdf meet the 50 ms deadline with no skips. <!-- src: results/s13.json#headline.t5_deadline_ms --> xcol.sdf cuts the burst replan
+  latency by about 21% (40.9 to 32.2 ms). <!-- src: results/s13.json#headline.s3_burst_xcol_vs_rvv_reduction_pct --> <!-- src: results/s13.json#headline.s3.rvv.t5_after_human_enter_mean_ms --> <!-- src: results/s13.json#headline.s3.xcol.t5_after_human_enter_mean_ms -->
+- With the final core build no other task missed a deadline in any variant. An earlier run on a
+  previous core build and the older blocked T5 graph showed state-estimation (T6) misses that xcol.sdf
+  reduced; that effect does not reproduce on the final build, so I do not claim it.
+- Self-collision is about half of the CPU collision cycles in the RVV case and the instruction does not
+  touch it, which caps the end-to-end gain (Amdahl).
 - The xcol numbers assume L1-hit corner reads. With the pessimistic memory bound above, the
   instruction would not beat RVV on O3.
 
@@ -214,6 +222,6 @@ Figures: `results/figures/s13_kernels.*`, `s13_replan.*`, `s13_xcol_sweep.*`.
   the corrected config.
 - `xcol.sdf`'s memory reads are not timed through caches (see above).
 - I did not build Spike; gem5 already had the RISC-V decoder and timing models I needed.
-- The IK rollout op also does ESDF lookups, but it mixes them with kinematics in one op, so I left it on
+- The IK rollout ops also do ESDF lookups, but they mix them with kinematics in one op, so I left them on
   the SIMT cluster in every variant.
 - The swept-sphere sub-samples are modeled as independent queries; I did not write a fused swept kernel.

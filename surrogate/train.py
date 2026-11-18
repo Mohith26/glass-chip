@@ -280,7 +280,7 @@ def _train_worker(name: str) -> tuple[str, OutputModel | None]:
     return name, train_output(name, _SHARED["df"], _SHARED["idx"])
 
 
-def train_all(df: pd.DataFrame | None = None, outputs: list[str] | None = None, workers: int = 6) -> dict[str, Any]:
+def train_all(df: pd.DataFrame | None = None, outputs: list[str] | None = None, workers: int = 4) -> dict[str, Any]:
     df = prepare(load_dataset() if df is None else df)
     df = df.reset_index(drop=True)
     idx = split(df)

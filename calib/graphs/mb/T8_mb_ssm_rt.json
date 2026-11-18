@@ -22,9 +22,9 @@
    "type": "control_law",
    "dtype": "fp32",
    "instr": {
-    "scalar": 39909,
+    "scalar": 25906,
     "vector": 0,
-    "mem": 37073
+    "mem": 24065
    },
    "bytes_in": 1744,
    "bytes_out": 64,

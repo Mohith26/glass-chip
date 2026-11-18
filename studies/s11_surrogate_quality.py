@@ -33,7 +33,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from surrogate.conformal import (ALPHAS, DEADLINES_MS, clopper_pearson, load_bundle, task_of)  # noqa: E402
-from surrogate.dataset import DATA, DURATION_S, INPUTS, load_dataset, provenance, to_cfg  # noqa: E402
+from surrogate.dataset import DATA, DURATION_S, WARMUP_S, INPUTS, load_dataset, provenance, to_cfg  # noqa: E402
 from surrogate.train import BUNDLE_PATH, prepare  # noqa: E402
 
 FIG = ROOT / "results" / "figures"
@@ -49,11 +49,11 @@ def _fid_one(args: tuple[int, dict[str, float]]) -> dict[str, Any]:
     sid, num = args
     fid = yaml.safe_load((ROOT / "configs" / "fidelity" / "study.yaml").read_text())
     fid["npu"] = "L1"     # SCALE-Sim tables only exist for the 64x64 array
-    r = run_chip(to_cfg(num), seed=1 + sid % 1000, duration_s=DURATION_S, warmup_s=0.2, fidelity=fid)
+    r = run_chip(to_cfg(num), seed=1 + sid % 1000, duration_s=DURATION_S, warmup_s=WARMUP_S, fidelity=fid)
     return {"sample_id": sid, **{f"study.{k}": v for k, v in r.items()}}
 
 
-def fidelity_check(df: pd.DataFrame, test_idx: np.ndarray, n: int = 40, workers: int = 8) -> pd.DataFrame:
+def fidelity_check(df: pd.DataFrame, test_idx: np.ndarray, n: int = 40, workers: int = 4) -> pd.DataFrame:
     if FID_CACHE.exists():
         return pd.read_parquet(FID_CACHE)
     import multiprocessing as mp
@@ -64,6 +64,42 @@ def fidelity_check(df: pd.DataFrame, test_idx: np.ndarray, n: int = 40, workers:
         rows = pool.map(_fid_one, pts)
     out = pd.DataFrame(rows)
     out.to_parquet(FID_CACHE, index=False)
+    return out
+
+
+RUNLEN_CACHE = DATA / "runlength_check.json"
+
+
+def _runlen_one(args: tuple[str, float]) -> dict[str, Any]:
+    from surrogate.chiprun import VX1_DEFAULT, run_chip
+    pol, d = args
+    c = dict(VX1_DEFAULT, power_policy=pol, scheduler="edf", vmin_npu=0.45, vmin_cpu=0.5, vmin_simt=0.5, vmin_dsp=0.5)
+    if pol != "pace_to_deadline":
+        c.update(vmin_npu=0.75, vmin_cpu=0.75, vmin_simt=0.75, vmin_dsp=0.75)   # static policies at nominal
+    r = run_chip(c, seed=1, duration_s=d, warmup_s=1.0)
+    return {"policy": pol, "duration_s": d, "energy_per_robot_hour_wh": r["energy_per_robot_hour_wh"],
+            "worst_safety_miss_rate": r["worst_safety_miss_rate"], "T4_vla.p99_ms": r["T4_vla.p99_ms"]}
+
+
+def runlength_check(workers: int = 4) -> dict[str, Any]:
+    """Does a 2 s run (1 s burn-in) give the same energy as a 6 s run? VX-1 default, S1, EDF.
+
+    P4 gets its Vmin floors at the table minimums so it can actually scale; P0 and P3 run at
+    nominal. This checks that the burn-in hides P4's warm-up.
+    """
+    if RUNLEN_CACHE.exists():
+        return json.loads(RUNLEN_CACHE.read_text())
+    import multiprocessing as mp
+    jobs = [(p, d) for p in ("nominal", "race_to_idle", "pace_to_deadline") for d in (DURATION_S, 6.0)]
+    with mp.get_context("spawn").Pool(workers) as pool:
+        rows = pool.map(_runlen_one, jobs)
+    out: dict[str, Any] = {"rows": rows, "rel_diff_energy_2s_vs_6s": {}}
+    for p in ("nominal", "race_to_idle", "pace_to_deadline"):
+        a = [r for r in rows if r["policy"] == p]
+        e2 = next(r for r in a if r["duration_s"] == DURATION_S)["energy_per_robot_hour_wh"]
+        e6 = next(r for r in a if r["duration_s"] == 6.0)["energy_per_robot_hour_wh"]
+        out["rel_diff_energy_2s_vs_6s"][p] = (e2 - e6) / e6
+    RUNLEN_CACHE.write_text(json.dumps(out))
     return out
 
 
@@ -100,7 +136,7 @@ def main() -> None:
         "n_total": int(len(raw)), "n_ok": int(raw["ok"].sum()), "n_failed": int((~raw["ok"]).sum()),
         "n_lhs": int((raw["phase"] == "lhs").sum()), "n_active_learning": int((raw["phase"] != "lhs").sum()),
         "split_sizes": {k: int(len(v)) for k, v in split.items()},
-        "sim_seconds_per_sample": DURATION_S, "warmup_s": 0.2, "fidelity": "surrogate/fidelity_dse.yaml (interactive mix)",
+        "sim_seconds_per_sample": DURATION_S, "warmup_s": WARMUP_S, "thermal_init": "settle", "fidelity": "surrogate/fidelity_dse.yaml (interactive mix)",
         "sample_wall_s_median": float(raw["out.wall_s"].median()), "sample_cpu_s_median": float(raw["out.cpu_s"].median()),
         "sample_wall_s_p95": float(raw["out.wall_s"].quantile(0.95)),
         "total_cpu_hours": float(raw["out.cpu_s"].sum() / 3600), "by_phase": gen,
@@ -209,7 +245,7 @@ def main() -> None:
         speed["speedup_onnx_vs_sim_cpu"] = sim_cpu / (speed["onnx_web_model_ms_per_design_python_ort"] / 1000)
     if nw and "ms_per_run" in nw:
         speed["speedup_ortweb_vs_sim_cpu"] = sim_cpu / (nw["ms_per_run"] / 1000)
-    speed["note"] = ("Full-sim time is one design point at 1.2 simulated seconds on the interactive mix, measured as "
+    speed["note"] = ("Full-sim time is one design point at 2.0 simulated seconds (1.0 s burn-in plus a 1.0 s measured window) on the interactive mix, measured as "
                      "process CPU time inside dataset generation on a shared machine. Surrogate time covers every output "
                      "plus its conformal interval.")
 
@@ -264,6 +300,8 @@ def main() -> None:
         shift["note"] = ("Co-sim runs differ from the chip-only training runs (20 s runs, scenario events mid-run, "
                          "robot-driven T5 releases, live core build). Coverage is not guaranteed here.")
 
+    runlen = runlength_check()
+
     # ------------------------------------------------------------------ figures
     figs = make_figures(bundle, df, X, split, cov90)
 
@@ -272,7 +310,7 @@ def main() -> None:
                  "date": str(date.today()), "runtime_s": time.time() - t_start})
     out = {"provenance": prov, "dataset": dataset, "summary": summary, "headline": headline, "speed": speed,
            "model_sizes": {"onnx_bytes": speed.get("onnx_bytes"), "bundle_pickle_bytes": BUNDLE_PATH.stat().st_size},
-           "robot_subset": robot, "fidelity_check": fidelity, "cosim_shift": shift, "outputs": outputs,
+           "robot_subset": robot, "run_length_check": runlen, "fidelity_check": fidelity, "cosim_shift": shift, "outputs": outputs,
            "figures": figs,
            "guarantee": ("Split conformal and CQR give marginal coverage >= 1 - alpha under exchangeability of "
                          "calibration and test design points. They do not give coverage conditional on a design, "

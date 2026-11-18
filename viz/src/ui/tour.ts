@@ -195,7 +195,7 @@ const STEPS: Step[] = [
       return `A person walks in while four 4K streams are recorded. With "${e0.policy_label}" the safety monitor misses ${miss(m0)}% of its deadlines and human-to-slowdown p99 is ${hs(r0)} ms` +
         (m1 && e1 ? `; with "${e1.policy_label}" it misses ${miss(m1)}% and p99 is ${hs(r1)} ms. Protective stops average ${st(r0)} ms against ${st(r1)} ms.` : '.') +
         (r0?.min_human_separation_moving_m != null
-          ? ` The arm had already slowed, so its closest approach while moving is still about ${sep(r0)} cm${m1 ? ` (${sep(r1)} cm)` : ''}: the timing gets worse, the consequence here is small.`
+          ? ` The arm had already slowed, so the late monitor shows up as a thinner margin, not contact: the closest approach while the arm moves is ${sep(r0)} cm${m1 ? ` against ${sep(r1)} cm` : ''}.`
           : ' The arm had already slowed, so the consequence here is small.');
     },
   },

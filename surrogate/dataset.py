@@ -41,8 +41,9 @@ if str(ROOT) not in sys.path:
 DATA = ROOT / "data" / "surrogate"
 PARTS = DATA / "parts"
 
-DURATION_S = 1.2        # simulated seconds per sample
-WARMUP_S = 0.2          # releases before this are excluded from statistics
+DURATION_S = 2.0        # simulated seconds per sample
+WARMUP_S = 1.0          # releases before this are excluded from statistics; the power manager's
+                        # thermal "settle" jump and energy restart happen at the same time (settle_s = 1.0)
 SCHEDULERS = ["fifo", "fixed_priority", "edf", "edf_mc"]
 POWER_POLICIES = ["nominal", "race_to_idle", "pace_to_deadline"]
 TRANSPORTS = ["copy", "zero_copy"]
@@ -195,11 +196,24 @@ def _sha256(p: Path) -> str:
     return h.hexdigest()[:16]
 
 
+def _core_build_id() -> str | None:
+    """The core's own build id (sim.info()["build_id"]) for the module chiprun imports."""
+    try:
+        import yaml
+        import glasschip_core as gc  # noqa: F401  (chiprun put the snapshot first on sys.path)
+        from surrogate.chiprun import SOC_PATH, DSE_FIDELITY_PATH
+        sim = gc.Sim(yaml.safe_load(SOC_PATH.read_text()), yaml.safe_load(DSE_FIDELITY_PATH.read_text()), 0)
+        return sim.info().get("build_id")
+    except Exception:
+        return None
+
+
 def provenance() -> dict[str, Any]:
     import glob
     from surrogate.chiprun import SOC_PATH, POWER_PARAMS_PATH, _core_dir
     core = sorted(glob.glob(str(Path(_core_dir) / "glasschip_core*.so")))
-    graphs = sorted((ROOT / "workloads/graphs").glob("*.json"))
+    from surrogate.chiprun import GRAPH_DIR
+    graphs = sorted(Path(GRAPH_DIR).glob("*.json"))
     gh = hashlib.sha256()
     for g in graphs:
         gh.update(g.read_bytes())
@@ -213,6 +227,8 @@ def provenance() -> dict[str, Any]:
         "core_so_sha256": _sha256(Path(core[0])) if core else None,
         "graphs_sha256": gh.hexdigest()[:16],
         "core_so_path": str(Path(core[0]).relative_to(ROOT)) if core else None,
+        "core_build_id": _core_build_id(),
+        "graph_dir": str(Path(GRAPH_DIR).relative_to(ROOT)),
         "soc": str(SOC_PATH.relative_to(ROOT)), "soc_sha256": _sha256(SOC_PATH),
         "power_params_sha256": _sha256(POWER_PARAMS_PATH),
         "fidelity": "surrogate/fidelity_dse.yaml", "fidelity_sha256": _sha256(Path(__file__).parent / "fidelity_dse.yaml"),

@@ -22,9 +22,9 @@
    "type": "cpu_kernel",
    "dtype": "fp32",
    "instr": {
-    "scalar": 6810,
-    "vector": 662,
-    "mem": 4964
+    "scalar": 2990,
+    "vector": 291,
+    "mem": 2180
    },
    "bytes_in": 4096,
    "bytes_out": 4096,

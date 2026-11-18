@@ -33,9 +33,9 @@ from surrogate.train import CATEGORICAL, LAT_EPS, RATE_EPS, output_kind  # noqa:
 OUT_DIR = ROOT / "viz" / "public" / "surrogate"
 
 # Outputs shown in the browser panel (label, unit). Everything else stays in the Python bundle.
+# The list is trimmed to keep the file under 5 MB (each LightGBM tree costs about 1.5 KB).
 WEB_OUTPUTS: list[tuple[str, str, str]] = [
     ("energy_per_robot_hour_wh", "Energy per robot-hour", "Wh"),
-    ("peak_power_w", "Peak SoC power", "W"),
     ("peak_temp_c", "Peak junction temperature", "C"),
     ("worst_safety_miss_rate", "Worst safety-task miss rate", ""),
     ("worst_rt_miss_rate", "Worst real-time miss rate", ""),
@@ -46,7 +46,6 @@ WEB_OUTPUTS: list[tuple[str, str, str]] = [
     ("T4_vla.p99_ms", "VLA policy (T4) p99", "ms"),
     ("T5_plan.p99_ms", "Motion planning (T5) p99", "ms"),
     ("chain_camera_to_plan.p99_ms", "Camera to plan chain p99", "ms"),
-    ("chain_human_to_control.p99_ms", "Human detection to control chain p99", "ms"),
     ("area_mm2", "Area proxy (rough)", "mm2"),
 ]
 
@@ -356,7 +355,7 @@ def write_meta(alpha: float = 0.1) -> dict[str, Any]:
                       "outside the sampled ranges or for a changed simulator."),
         "labels": ["VX-1 is a fictional reference SoC", "area_mm2 is a rough proxy",
                    "low-voltage arithmetic factor above 1x is hypothetical",
-                   "trained on chip-only runs at the interactive fidelity mix (1.2 s simulated per sample)"],
+                   "trained on chip-only runs at the interactive fidelity mix (2.0 s simulated per sample, 1.0 s burn-in with thermal settle)"],
         "provenance": prov,
     }
     s12 = ROOT / "results" / "s12.json"

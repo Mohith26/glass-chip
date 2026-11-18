@@ -25,7 +25,7 @@ Method
    over feasible candidates.
 4. Three recommendations from the feasible set: lowest energy, smallest area, and a balanced
    knee point (minimum of normalized energy + normalized area). Each is re-run with the full
-   model (chiprun) on all four workloads at the training run length and at a 4x longer run,
+   model (chiprun) on all four workloads at the training run length (2 s) and at a 3x longer run (6 s),
    and compared with the surrogate prediction and interval. The VX-1 baseline is run too.
 
 Writes results/s12.json and results/figures/s12_*.{png,svg}.
@@ -142,7 +142,7 @@ def describe(row: np.ndarray) -> dict[str, Any]:
     return {k: cfg[k] for k in INPUTS if k not in WORKLOAD_KNOBS}
 
 
-def verify(row: np.ndarray, durations: tuple[float, ...] = (1.2, 4.8), workers: int = 8) -> dict[str, Any]:
+def verify(row: np.ndarray, durations: tuple[float, ...] = (2.0, 6.0), workers: int = 4) -> dict[str, Any]:
     """Re-run the full chip model for every workload and duration."""
     import multiprocessing as mp
     jobs = []
@@ -162,7 +162,7 @@ def verify(row: np.ndarray, durations: tuple[float, ...] = (1.2, 4.8), workers: 
 def _verify_one(args: tuple[dict[str, float], float]) -> dict[str, Any]:
     from surrogate.chiprun import run_chip
     num, d = args
-    r = run_chip(to_cfg(num), seed=101, duration_s=d, warmup_s=0.2)
+    r = run_chip(to_cfg(num), seed=101, duration_s=d, warmup_s=1.0)
     keep = ["energy_per_robot_hour_wh", "worst_safety_miss_rate", "worst_rt_miss_rate", "T4_vla.miss_rate",
             "T2_detect.miss_rate", "T4_vla.p99_ms", "T8_safety.p99_ms", "T7_control.miss_rate", "T8_safety.miss_rate",
             "chain_camera_to_plan.p99_ms", "avg_power_w", "peak_power_w", "peak_temp_c", "cpu_s"]
@@ -219,35 +219,35 @@ def main() -> None:
         checks = []
         for s in SCENARIOS:
             for n in ("energy_per_robot_hour_wh", "worst_safety_miss_rate", "T4_vla.miss_rate", "T4_vla.p99_ms"):
-                if n in pred[s] and ver["1.2s"][s].get(n) is not None:
-                    y = ver["1.2s"][s][n]
+                if n in pred[s] and ver["2s"][s].get(n) is not None:
+                    y = ver["2s"][s][n]
                     checks.append({"workload": s, "output": n, "full_model": y, **pred[s][n],
                                    "inside_90": bool(pred[s][n]["lo"] - 1e-9 <= y <= pred[s][n]["hi"] + 1e-9)})
-        e_full = float(np.mean([ver["1.2s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS]))
-        e_full_long = float(np.mean([ver["4.8s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS]))
-        safety_full = max(ver["1.2s"][s]["worst_safety_miss_rate"] or 0 for s in SCENARIOS)
-        safety_full_long = max(ver["4.8s"][s]["worst_safety_miss_rate"] or 0 for s in SCENARIOS)
-        rt_full_long = max(max(ver["4.8s"][s]["T4_vla.miss_rate"] or 0, ver["4.8s"][s]["T2_detect.miss_rate"] or 0)
+        e_full = float(np.mean([ver["2s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS]))
+        e_full_long = float(np.mean([ver["6s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS]))
+        safety_full = max(ver["2s"][s]["worst_safety_miss_rate"] or 0 for s in SCENARIOS)
+        safety_full_long = max(ver["6s"][s]["worst_safety_miss_rate"] or 0 for s in SCENARIOS)
+        rt_full_long = max(max(ver["6s"][s]["T4_vla.miss_rate"] or 0, ver["6s"][s]["T2_detect.miss_rate"] or 0)
                            for s in SCENARIOS)
         recs.append({
             "name": name, "why": why, "design": describe(row), "inputs_encoded": dict(zip(INPUTS, row.tolist())),
             "predicted": {"energy_wh_mean": float(ev["energy"][i]), "energy_wh_interval_mean": [float(ev["energy_lo"][i]), float(ev["energy_hi"][i])],
                           "worst_safety_miss_upper_90": float(ev["safety_hi"][i]), "t4_miss_upper_90": float(ev["t4_hi"][i]),
                           "t2_miss_upper_90": float(ev["t2_hi"][i]), "area_mm2": float(ev["area"][i]), "per_workload": pred},
-            "verified": {"energy_wh_mean_1p2s": e_full, "energy_wh_mean_4p8s": e_full_long,
-                         "worst_safety_miss_1p2s": safety_full, "worst_safety_miss_4p8s": safety_full_long,
-                         "worst_t4_t2_miss_4p8s": rt_full_long, "runs": ver, "interval_checks": checks,
+            "verified": {"energy_wh_mean_2s": e_full, "energy_wh_mean_6s": e_full_long,
+                         "worst_safety_miss_2s": safety_full, "worst_safety_miss_6s": safety_full_long,
+                         "worst_t4_t2_miss_6s": rt_full_long, "runs": ver, "interval_checks": checks,
                          "frac_inside_90": float(np.mean([c["inside_90"] for c in checks])) if checks else None,
                          "wall_s": time.time() - t0},
             "on_pareto_all": bool(pm_all[i]), "on_pareto_feasible": bool(pm_feas[i]),
         })
-    base_ver = verify(base_row, durations=(1.2, 4.8))
+    base_ver = verify(base_row)
     baseline = {"design": describe(base_row), "inputs_encoded": dict(zip(INPUTS, base_row.tolist())),
                 "predicted_energy_wh_mean": float(base_ev["energy"][0]), "predicted_safety_upper": float(base_ev["safety_hi"][0]),
                 "area_mm2": float(base_ev["area"][0]), "feasible_by_surrogate": bool(base_ev["feasible"][0]),
-                "verified_energy_wh_mean_1p2s": float(np.mean([base_ver["1.2s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS])),
-                "verified_energy_wh_mean_4p8s": float(np.mean([base_ver["4.8s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS])),
-                "verified_worst_safety_miss_4p8s": max(base_ver["4.8s"][s]["worst_safety_miss_rate"] or 0 for s in SCENARIOS),
+                "verified_energy_wh_mean_2s": float(np.mean([base_ver["2s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS])),
+                "verified_energy_wh_mean_6s": float(np.mean([base_ver["6s"][s]["energy_per_robot_hour_wh"] for s in SCENARIOS])),
+                "verified_worst_safety_miss_6s": max(base_ver["6s"][s]["worst_safety_miss_rate"] or 0 for s in SCENARIOS),
                 "runs": base_ver,
                 "p0_fifo_predicted_energy_wh_mean": float(base_ev["energy"][1])}
 
@@ -290,13 +290,13 @@ def main() -> None:
         "caveats": ["VX-1 is fictional; the area proxy is rough.",
                     "Feasibility uses the surrogate's 90% marginal upper bounds; the guarantee is marginal, so each "
                     "recommendation is re-run with the full model.",
-                    "Runs are 1.2 simulated seconds (verification also at 4.8 s); rare events longer than that are not sampled."],
+                    "Runs are 2.0 simulated seconds with a 1.0 s burn-in (verification also at 6 s); rare events longer than that are not sampled."],
     }
     (ROOT / "results" / "s12.json").write_text(json.dumps(out, indent=1, default=float))
     print(json.dumps({k: out[k] for k in ("counts", "feasible_by_policy")}, indent=1))
     for r in recs:
         print(r["name"], json.dumps(r["design"]), json.dumps(r["predicted"]["energy_wh_mean"]),
-              r["verified"]["energy_wh_mean_1p2s"], r["verified"]["worst_safety_miss_4p8s"], r["verified"]["frac_inside_90"])
+              r["verified"]["energy_wh_mean_2s"], r["verified"]["worst_safety_miss_6s"], r["verified"]["frac_inside_90"])
 
 
 def make_figures(ev: dict[str, Any], pm_all: np.ndarray, pm_feas: np.ndarray, recs: list[dict[str, Any]],
@@ -331,7 +331,7 @@ def make_figures(ev: dict[str, Any], pm_all: np.ndarray, pm_feas: np.ndarray, re
     ax.scatter(ev["area"][pm_feas], ev["energy"][pm_feas], s=10, color="#1d4ed8", label="feasible Pareto")
     for r, mk in zip(recs, ("*", "D", "P")):
         ax.scatter(r["predicted"]["area_mm2"], r["predicted"]["energy_wh_mean"], marker=mk, s=120, color="#dc2626",
-                   edgecolor="k", zorder=5, label=f"{r['name']} (verified {r['verified']['energy_wh_mean_1p2s']:.2f} Wh)")
+                   edgecolor="k", zorder=5, label=f"{r['name']} (verified {r['verified']['energy_wh_mean_2s']:.2f} Wh)")
     ax.set_xlabel("area proxy (mm2, rough)")
     ax.set_ylabel("energy per robot-hour (Wh)")
     ax.legend(fontsize=7)

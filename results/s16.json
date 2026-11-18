@@ -1,0 +1,2901 @@
+{
+ "headline": {
+  "stop_latency_ms_mean": {
+   "recording 0.2 Gbit/s | P0 FIFO": 26.41176470588271,
+   "recording 0.2 Gbit/s | EDF-MC + QoS + partition": 26.77777777777764,
+   "recording 11.9 Gbit/s | P0 FIFO": 26.588235294117172,
+   "recording 11.9 Gbit/s | EDF-MC + QoS + partition": 27.43749999999978,
+   "recording 24 Gbit/s | P0 FIFO": 32.17647058823522,
+   "recording 24 Gbit/s | EDF-MC + QoS + partition": 25.823529411764653,
+   "S6 fifteen tasks | P0 FIFO": 24.250000000000327,
+   "S6 fifteen tasks | EDF-MC + QoS + partition": 23.06249999999993
+  },
+  "t8_misses": {
+   "recording 0.2 Gbit/s | P0 FIFO": 0,
+   "recording 0.2 Gbit/s | EDF-MC + QoS + partition": 0,
+   "recording 11.9 Gbit/s | P0 FIFO": 1527,
+   "recording 11.9 Gbit/s | EDF-MC + QoS + partition": 0,
+   "recording 24 Gbit/s | P0 FIFO": 2788,
+   "recording 24 Gbit/s | EDF-MC + QoS + partition": 0,
+   "S6 fifteen tasks | P0 FIFO": 4,
+   "S6 fifteen tasks | EDF-MC + QoS + partition": 0
+  },
+  "min_separation_while_moving_m": {
+   "recording 0.2 Gbit/s | P0 FIFO": 0.3929672184541596,
+   "recording 0.2 Gbit/s | EDF-MC + QoS + partition": 0.39586762212011295,
+   "recording 11.9 Gbit/s | P0 FIFO": 0.3959403748897937,
+   "recording 11.9 Gbit/s | EDF-MC + QoS + partition": 0.3942020170301175,
+   "recording 24 Gbit/s | P0 FIFO": 0.34757001143077615,
+   "recording 24 Gbit/s | EDF-MC + QoS + partition": 0.3944247924794657,
+   "S6 fifteen tasks | P0 FIFO": 0.40547006347425063,
+   "S6 fifteen tasks | EDF-MC + QoS + partition": 0.4059942797524211
+  },
+  "t7_max_response_ms": 0.045600834,
+  "oscillation_episodes_total": 0,
+  "grasp_success_rate": {
+   "nominal": 0.9541284403669725,
+   "NPU Vmin 0.55 V": 0.9636363636363636,
+   "NPU Vmin 0.50 V": 0.8627450980392157,
+   "hot module (45 C)": 0.8666666666666667,
+   "recording 24 Gbit/s (FIFO)": 0.9181818181818182
+  },
+  "pick_rate": {
+   "nominal": 0.7890625,
+   "NPU Vmin 0.55 V": 0.8046875,
+   "NPU Vmin 0.50 V": 0.6484375,
+   "hot module (45 C)": 0.6953125,
+   "recording 24 Gbit/s (FIFO)": 0.7578125
+  },
+  "camera_to_grasp_p50_ms": {
+   "nominal": 93.875,
+   "NPU Vmin 0.55 V": 123.9375,
+   "NPU Vmin 0.50 V": 170.9375,
+   "hot module (45 C)": 139.6875,
+   "recording 24 Gbit/s (FIFO)": 125.3125
+  }
+ },
+ "part_a_safety_under_load": {
+  "recording 0.2 Gbit/s | P0 FIFO": {
+   "case": "recording 0.2 Gbit/s",
+   "policy": "P0 FIFO",
+   "runs": 5,
+   "zone_entries": 20,
+   "entries_while_moving": 17,
+   "stop_latency_ms": {
+    "n": 17,
+    "mean": 26.41176470588271,
+    "lo": 22.607127745860147,
+    "hi": 30.216401665905273
+   },
+   "stop_latency_ms_max": 35.00000000000014,
+   "speed_at_entry_rad_s": {
+    "n": 17,
+    "mean": 0.15783922891446842,
+    "lo": 0.1352321078318729,
+    "hi": 0.18044634999706394
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 17,
+    "mean": 0.12628151340021912,
+    "lo": 0.10159909472268408,
+    "hi": 0.15096393207775416
+   },
+   "separation_at_stop_m": {
+    "n": 17,
+    "mean": 0.4105192713726674,
+    "lo": 0.4041679763810741,
+    "hi": 0.41687056636426073
+   },
+   "min_separation_while_moving_m": 0.3929672184541596,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 38.0,
+    "lo": 38.0,
+    "hi": 38.0
+   },
+   "human_to_slowdown_max_ms": 41.0,
+   "t8_miss_rate": 0.0,
+   "t8_misses": 0,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 2.485409465688,
+    "lo": 2.4848877534271416,
+    "hi": 2.485931177948858
+   },
+   "t8_miss_dominant_wait": {},
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.043631667,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.0020524128978367286,
+    "lo": 0.001906329084801772,
+    "hi": 0.002198496710871685
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 31,
+   "grasp_attempts": 32
+  },
+  "recording 0.2 Gbit/s | EDF-MC + QoS + partition": {
+   "case": "recording 0.2 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "runs": 5,
+   "zone_entries": 20,
+   "entries_while_moving": 18,
+   "stop_latency_ms": {
+    "n": 18,
+    "mean": 26.77777777777764,
+    "lo": 22.481091898597555,
+    "hi": 31.074463656957725
+   },
+   "stop_latency_ms_max": 33.99999999999981,
+   "speed_at_entry_rad_s": {
+    "n": 18,
+    "mean": 0.15872579681994264,
+    "lo": 0.13599220394440378,
+    "hi": 0.1814593896954815
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 18,
+    "mean": 0.12271527828879586,
+    "lo": 0.09986059528152894,
+    "hi": 0.14556996129606278
+   },
+   "separation_at_stop_m": {
+    "n": 18,
+    "mean": 0.4125000436770607,
+    "lo": 0.4048149223440512,
+    "hi": 0.42018516501007025
+   },
+   "min_separation_while_moving_m": 0.39586762212011295,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 37.0,
+    "lo": 37.0,
+    "hi": 37.0
+   },
+   "human_to_slowdown_max_ms": 41.0,
+   "t8_miss_rate": 0.0,
+   "t8_misses": 0,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 2.0568194919360003,
+    "lo": 2.017334496091012,
+    "hi": 2.096304487780989
+   },
+   "t8_miss_dominant_wait": {},
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.001989167,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.0035402673528201123,
+    "lo": -0.0006673043840563983,
+    "hi": 0.007747839089696623
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 30,
+   "grasp_attempts": 33
+  },
+  "recording 11.9 Gbit/s | P0 FIFO": {
+   "case": "recording 11.9 Gbit/s",
+   "policy": "P0 FIFO",
+   "runs": 5,
+   "zone_entries": 19,
+   "entries_while_moving": 17,
+   "stop_latency_ms": {
+    "n": 17,
+    "mean": 26.588235294117172,
+    "lo": 22.642894002095353,
+    "hi": 30.53357658613899
+   },
+   "stop_latency_ms_max": 33.99999999999981,
+   "speed_at_entry_rad_s": {
+    "n": 17,
+    "mean": 0.1669282550196145,
+    "lo": 0.14346539830627547,
+    "hi": 0.19039111173295353
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 17,
+    "mean": 0.13001918579411842,
+    "lo": 0.10466983818456191,
+    "hi": 0.15536853340367493
+   },
+   "separation_at_stop_m": {
+    "n": 17,
+    "mean": 0.41011885026691663,
+    "lo": 0.4034703093552444,
+    "hi": 0.41676739117858885
+   },
+   "min_separation_while_moving_m": 0.3959403748897937,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 38.0,
+    "lo": 38.0,
+    "hi": 38.0
+   },
+   "human_to_slowdown_max_ms": 42.0,
+   "t8_miss_rate": 0.08266118118334867,
+   "t8_misses": 1527,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 12.176563960926,
+    "lo": 11.33988571958325,
+    "hi": 13.01324220226875
+   },
+   "t8_miss_dominant_wait": {
+    "runqueue": 1527
+   },
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.043631667,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.002065275335371427,
+    "lo": 0.0020126146913158767,
+    "hi": 0.002117935979426977
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 30,
+   "grasp_attempts": 31
+  },
+  "recording 11.9 Gbit/s | EDF-MC + QoS + partition": {
+   "case": "recording 11.9 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "runs": 5,
+   "zone_entries": 18,
+   "entries_while_moving": 16,
+   "stop_latency_ms": {
+    "n": 16,
+    "mean": 27.43749999999978,
+    "lo": 22.492227950185328,
+    "hi": 32.38277204981423
+   },
+   "stop_latency_ms_max": 35.00000000000014,
+   "speed_at_entry_rad_s": {
+    "n": 16,
+    "mean": 0.17038456291778004,
+    "lo": 0.14204961200168478,
+    "hi": 0.1987195138338753
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 16,
+    "mean": 0.13420287276871581,
+    "lo": 0.10112038336067897,
+    "hi": 0.16728536217675266
+   },
+   "separation_at_stop_m": {
+    "n": 16,
+    "mean": 0.4098075598973506,
+    "lo": 0.4009840148175631,
+    "hi": 0.4186311049771382
+   },
+   "min_separation_while_moving_m": 0.3942020170301175,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 37.0,
+    "lo": 37.0,
+    "hi": 37.0
+   },
+   "human_to_slowdown_max_ms": 42.0,
+   "t8_miss_rate": 0.0,
+   "t8_misses": 0,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 2.0369583931179998,
+    "lo": 2.020548016381134,
+    "hi": 2.0533687698548655
+   },
+   "t8_miss_dominant_wait": {},
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.001989167,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.0020655512315647445,
+    "lo": 0.001983825493627034,
+    "hi": 0.002147276969502455
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 30,
+   "grasp_attempts": 30
+  },
+  "recording 24 Gbit/s | P0 FIFO": {
+   "case": "recording 24 Gbit/s",
+   "policy": "P0 FIFO",
+   "runs": 5,
+   "zone_entries": 20,
+   "entries_while_moving": 17,
+   "stop_latency_ms": {
+    "n": 17,
+    "mean": 32.17647058823522,
+    "lo": 26.160569022353787,
+    "hi": 38.19237215411665
+   },
+   "stop_latency_ms_max": 61.99999999999761,
+   "speed_at_entry_rad_s": {
+    "n": 17,
+    "mean": 0.2220536264871273,
+    "lo": 0.154479251670267,
+    "hi": 0.2896280013039876
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 17,
+    "mean": 0.22403408310585943,
+    "lo": 0.10541098660538063,
+    "hi": 0.34265717960633824
+   },
+   "separation_at_stop_m": {
+    "n": 17,
+    "mean": 0.40386429920178685,
+    "lo": 0.39283875047334904,
+    "hi": 0.41488984793022465
+   },
+   "min_separation_while_moving_m": 0.34757001143077615,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 62.85799999999999,
+    "lo": 52.48039841370843,
+    "hi": 73.23560158629155
+   },
+   "human_to_slowdown_max_ms": 103.0,
+   "t8_miss_rate": 0.17354497354497356,
+   "t8_misses": 2788,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 21.322583424136,
+    "lo": 20.6689550475991,
+    "hi": 21.9762118006729
+   },
+   "t8_miss_dominant_wait": {
+    "runqueue": 2788
+   },
+   "t1_overhead_misses": 113,
+   "t7_max_response_ms": 0.043631667,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.0020545576442605453,
+    "lo": 0.001910263527641941,
+    "hi": 0.00219885176087915
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 30,
+   "grasp_attempts": 34
+  },
+  "recording 24 Gbit/s | EDF-MC + QoS + partition": {
+   "case": "recording 24 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "runs": 5,
+   "zone_entries": 19,
+   "entries_while_moving": 17,
+   "stop_latency_ms": {
+    "n": 17,
+    "mean": 25.823529411764653,
+    "lo": 21.911088182581928,
+    "hi": 29.73597064094738
+   },
+   "stop_latency_ms_max": 35.00000000000014,
+   "speed_at_entry_rad_s": {
+    "n": 17,
+    "mean": 0.1618705093398107,
+    "lo": 0.1389277308917694,
+    "hi": 0.184813287787852
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 17,
+    "mean": 0.1281406712874858,
+    "lo": 0.10717710571480984,
+    "hi": 0.14910423686016175
+   },
+   "separation_at_stop_m": {
+    "n": 17,
+    "mean": 0.4123286555709895,
+    "lo": 0.40598125613088204,
+    "hi": 0.418676055011097
+   },
+   "min_separation_while_moving_m": 0.3944247924794657,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 37.0,
+    "lo": 37.0,
+    "hi": 37.0
+   },
+   "human_to_slowdown_max_ms": 43.0,
+   "t8_miss_rate": 0.0,
+   "t8_misses": 0,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 2.058939302602,
+    "lo": 1.9920525842521883,
+    "hi": 2.125826020951812
+   },
+   "t8_miss_dominant_wait": {},
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.001989167,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.0019973761850087405,
+    "lo": 0.001912905788934721,
+    "hi": 0.0020818465810827596
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 30,
+   "grasp_attempts": 31
+  },
+  "S6 fifteen tasks | P0 FIFO": {
+   "case": "S6 fifteen tasks",
+   "policy": "P0 FIFO",
+   "runs": 5,
+   "zone_entries": 19,
+   "entries_while_moving": 16,
+   "stop_latency_ms": {
+    "n": 16,
+    "mean": 24.250000000000327,
+    "lo": 22.251470038304394,
+    "hi": 26.24852996169626
+   },
+   "stop_latency_ms_max": 28.000000000002245,
+   "speed_at_entry_rad_s": {
+    "n": 16,
+    "mean": 0.13520846745721699,
+    "lo": 0.12418211608026467,
+    "hi": 0.1462348188341693
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 16,
+    "mean": 0.11887511774812201,
+    "lo": 0.10528724919503732,
+    "hi": 0.1324629863012067
+   },
+   "separation_at_stop_m": {
+    "n": 16,
+    "mean": 0.41277501646299275,
+    "lo": 0.409354951428442,
+    "hi": 0.4161950814975435
+   },
+   "min_separation_while_moving_m": 0.40547006347425063,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 38.0,
+    "lo": 38.0,
+    "hi": 38.0
+   },
+   "human_to_slowdown_max_ms": 41.0,
+   "t8_miss_rate": 0.00020004000800160032,
+   "t8_misses": 4,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 4.050638077543999,
+    "lo": 3.059681462784929,
+    "hi": 5.041594692303069
+   },
+   "t8_miss_dominant_wait": {
+    "preemption": 4
+   },
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.045600834,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.001841836614539074,
+    "lo": 0.0017869025207307783,
+    "hi": 0.0018967707083473698
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 34,
+   "grasp_attempts": 35
+  },
+  "S6 fifteen tasks | EDF-MC + QoS + partition": {
+   "case": "S6 fifteen tasks",
+   "policy": "EDF-MC + QoS + partition",
+   "runs": 5,
+   "zone_entries": 19,
+   "entries_while_moving": 16,
+   "stop_latency_ms": {
+    "n": 16,
+    "mean": 23.06249999999993,
+    "lo": 20.66782845088571,
+    "hi": 25.457171549114147
+   },
+   "stop_latency_ms_max": 27.999999999998693,
+   "speed_at_entry_rad_s": {
+    "n": 16,
+    "mean": 0.13518963126722977,
+    "lo": 0.11714892244397797,
+    "hi": 0.1532303400904816
+   },
+   "hand_travel_after_entry_cm": {
+    "n": 16,
+    "mean": 0.10679857087700603,
+    "lo": 0.08854251424776874,
+    "hi": 0.12505462750624333
+   },
+   "separation_at_stop_m": {
+    "n": 16,
+    "mean": 0.4165014753595958,
+    "lo": 0.41079220473570033,
+    "hi": 0.4222107459834913
+   },
+   "min_separation_while_moving_m": 0.4059942797524211,
+   "human_to_slowdown_p99_ms": {
+    "n": 5,
+    "mean": 37.0,
+    "lo": 37.0,
+    "hi": 37.0
+   },
+   "human_to_slowdown_max_ms": 41.0,
+   "t8_miss_rate": 0.0,
+   "t8_misses": 0,
+   "t8_p99_ms": {
+    "n": 5,
+    "mean": 2.1708985541679993,
+    "lo": 2.149946224558652,
+    "hi": 2.1918508837773465
+   },
+   "t8_miss_dominant_wait": {},
+   "t1_overhead_misses": 0,
+   "t7_max_response_ms": 0.003958334,
+   "t7_misses": 0,
+   "t12_misses": 0,
+   "tracking_rms_rad": {
+    "n": 5,
+    "mean": 0.0018649364255508942,
+    "lo": 0.0017948758873670599,
+    "hi": 0.0019349969637347285
+   },
+   "oscillation_episodes": 0,
+   "grasp_success": 32,
+   "grasp_attempts": 33
+  }
+ },
+ "part_b_fast_conveyor": {
+  "nominal": {
+   "runs": 8,
+   "grasp_attempts": 109,
+   "grasp_success": 104,
+   "grasp_success_rate": 0.9541284403669725,
+   "grasp_success_ci95": [
+    0.8970861750742003,
+    0.980249842848268
+   ],
+   "placed": 101,
+   "offered": 128,
+   "pick_rate": 0.7890625,
+   "pick_rate_ci95": [
+    0.7104917146716522,
+    0.8507878814497541
+   ],
+   "objects_missed_per_min": {
+    "n": 8,
+    "mean": 2.125,
+    "lo": 1.5892193183863847,
+    "hi": 2.6607806816136153
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 8,
+    "mean": 93.875,
+    "lo": 91.74648632404332,
+    "hi": 96.00351367595668
+   },
+   "camera_to_grasp_p99_ms": {
+    "n": 8,
+    "mean": 129.76125000000002,
+    "lo": 119.60842342204397,
+    "hi": 139.91407657795605
+   },
+   "vla_p99_ms": {
+    "n": 8,
+    "mean": 56.936445507211246,
+    "lo": 56.89127734540663,
+    "hi": 56.981613669015864
+   },
+   "vla_miss_rate": 0.0,
+   "vla_skipped": 0,
+   "align_err_p50_mm": {
+    "n": 8,
+    "mean": 8.87491306291004,
+    "lo": 6.359363129643079,
+    "hi": 11.390462996177
+   },
+   "time_throttled_s": {
+    "n": 8,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   },
+   "chip_misses_by_cause": {}
+  },
+  "NPU Vmin 0.55 V": {
+   "runs": 8,
+   "grasp_attempts": 110,
+   "grasp_success": 106,
+   "grasp_success_rate": 0.9636363636363636,
+   "grasp_success_ci95": [
+    0.9102118658040408,
+    0.9857699194133138
+   ],
+   "placed": 103,
+   "offered": 128,
+   "pick_rate": 0.8046875,
+   "pick_rate_ci95": [
+    0.7275577251368665,
+    0.8640613086127239
+   ],
+   "objects_missed_per_min": {
+    "n": 8,
+    "mean": 1.875,
+    "lo": 1.1773213455283469,
+    "hi": 2.572678654471653
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 8,
+    "mean": 123.9375,
+    "lo": 114.85478579120345,
+    "hi": 133.02021420879655
+   },
+   "camera_to_grasp_p99_ms": {
+    "n": 8,
+    "mean": 168.05375000000004,
+    "lo": 145.34100919155688,
+    "hi": 190.7664908084432
+   },
+   "vla_p99_ms": {
+    "n": 8,
+    "mean": 86.6900117111425,
+    "lo": 78.50669485550814,
+    "hi": 94.87332856677686
+   },
+   "vla_miss_rate": 0.12057291666666667,
+   "vla_skipped": 0,
+   "align_err_p50_mm": {
+    "n": 8,
+    "mean": 9.734552825323517,
+    "lo": 7.581452214929656,
+    "hi": 11.887653435717379
+   },
+   "time_throttled_s": {
+    "n": 8,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   },
+   "chip_misses_by_cause": {
+    "T4_vla: noc": 463
+   }
+  },
+  "NPU Vmin 0.50 V": {
+   "runs": 8,
+   "grasp_attempts": 102,
+   "grasp_success": 88,
+   "grasp_success_rate": 0.8627450980392157,
+   "grasp_success_ci95": [
+    0.782710889505578,
+    0.9164470975240967
+   ],
+   "placed": 83,
+   "offered": 128,
+   "pick_rate": 0.6484375,
+   "pick_rate_ci95": [
+    0.5624962244946202,
+    0.725728432973129
+   ],
+   "objects_missed_per_min": {
+    "n": 8,
+    "mean": 4.375,
+    "lo": 3.382028741507116,
+    "hi": 5.367971258492884
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 8,
+    "mean": 170.9375,
+    "lo": 165.9591500935117,
+    "hi": 175.9158499064883
+   },
+   "camera_to_grasp_p99_ms": {
+    "n": 8,
+    "mean": 239.25499999999994,
+    "lo": 188.92531883911778,
+    "hi": 289.5846811608821
+   },
+   "vla_p99_ms": {
+    "n": 8,
+    "mean": 129.40583597662499,
+    "lo": 129.37906246582835,
+    "hi": 129.43260948742162
+   },
+   "vla_miss_rate": 0.9937823834196892,
+   "vla_skipped": 1910,
+   "align_err_p50_mm": {
+    "n": 8,
+    "mean": 13.418510795192585,
+    "lo": 10.710239651785264,
+    "hi": 16.12678193859991
+   },
+   "time_throttled_s": {
+    "n": 8,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   },
+   "chip_misses_by_cause": {
+    "T4_vla: noc": 1918
+   }
+  },
+  "hot module (45 C)": {
+   "runs": 8,
+   "grasp_attempts": 105,
+   "grasp_success": 91,
+   "grasp_success_rate": 0.8666666666666667,
+   "grasp_success_ci95": [
+    0.7885632722139584,
+    0.9188868203976901
+   ],
+   "placed": 89,
+   "offered": 128,
+   "pick_rate": 0.6953125,
+   "pick_rate_ci95": [
+    0.6108473759049617,
+    0.7683955944473397
+   ],
+   "objects_missed_per_min": {
+    "n": 8,
+    "mean": 3.75,
+    "lo": 2.7760651002010586,
+    "hi": 4.723934899798942
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 8,
+    "mean": 139.6875,
+    "lo": 138.22339742226134,
+    "hi": 141.15160257773866
+   },
+   "camera_to_grasp_p99_ms": {
+    "n": 8,
+    "mean": 238.87999999999994,
+    "lo": 235.52315848658367,
+    "hi": 242.2368415134162
+   },
+   "vla_p99_ms": {
+    "n": 8,
+    "mean": 153.11311663865126,
+    "lo": 133.66509769627666,
+    "hi": 172.56113558102587
+   },
+   "vla_miss_rate": 0.3487577639751553,
+   "vla_skipped": 620,
+   "align_err_p50_mm": {
+    "n": 8,
+    "mean": 12.011682578325011,
+    "lo": 9.152695317856736,
+    "hi": 14.870669838793287
+   },
+   "time_throttled_s": {
+    "n": 8,
+    "mean": 59.999,
+    "lo": 59.999,
+    "hi": 59.999
+   },
+   "chip_misses_by_cause": {
+    "T4_vla: noc": 576,
+    "T6_estimate: runqueue": 19,
+    "T4_vla: dram": 547
+   }
+  },
+  "recording 24 Gbit/s (FIFO)": {
+   "runs": 8,
+   "grasp_attempts": 110,
+   "grasp_success": 101,
+   "grasp_success_rate": 0.9181818181818182,
+   "grasp_success_ci95": [
+    0.8517805850797745,
+    0.9563598486456827
+   ],
+   "placed": 97,
+   "offered": 128,
+   "pick_rate": 0.7578125,
+   "pick_rate_ci95": [
+    0.6767870437261757,
+    0.8238136771388623
+   ],
+   "objects_missed_per_min": {
+    "n": 8,
+    "mean": 2.5,
+    "lo": 1.4053916697328872,
+    "hi": 3.594608330267113
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 8,
+    "mean": 125.3125,
+    "lo": 121.68940774414072,
+    "hi": 128.93559225585926
+   },
+   "camera_to_grasp_p99_ms": {
+    "n": 8,
+    "mean": 166.16624999999996,
+    "lo": 155.10303187553603,
+    "hi": 177.2294681244639
+   },
+   "vla_p99_ms": {
+    "n": 8,
+    "mean": 90.266871098945,
+    "lo": 80.46407474047295,
+    "hi": 100.06966745741705
+   },
+   "vla_miss_rate": 0.0046875,
+   "vla_skipped": 0,
+   "align_err_p50_mm": {
+    "n": 8,
+    "mean": 9.038066769410074,
+    "lo": 6.18157355079359,
+    "hi": 11.894559988026558
+   },
+   "time_throttled_s": {
+    "n": 8,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   },
+   "chip_misses_by_cause": {
+    "T2_detect: runqueue": 184,
+    "T6_estimate: runqueue": 6798,
+    "T8_safety: runqueue": 6685,
+    "T10_record_4k: noc": 1123,
+    "T1_ingest_overhead: runqueue": 194,
+    "T1_ingest_wrist: runqueue": 183,
+    "T4_vla: runqueue": 18,
+    "T5_plan: runqueue": 2
+   }
+  }
+ },
+ "causal_chains": [
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    30.0,
+    31.0,
+    22.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    28.0,
+    24.0,
+    35.0,
+    33.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    28.0,
+    24.0,
+    15.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    5.0,
+    32.0,
+    28.0,
+    29.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    26.0,
+    25.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    29.0,
+    31.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 5,
+    "placed": 5,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    31.0,
+    22.0,
+    24.0,
+    13.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    34.0,
+    34.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 4,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    29.0,
+    32.0,
+    34.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 0.2 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 5,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    1.0,
+    25.0,
+    27.0,
+    20.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 1163,
+     "why": "runqueue",
+     "mean_response_ms": 8.49
+    },
+    {
+     "task": "T8_safety",
+     "missed": 317,
+     "why": "runqueue",
+     "mean_response_ms": 11.09
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    15.0,
+    26.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 1163,
+     "why": "runqueue",
+     "mean_response_ms": 8.49
+    },
+    {
+     "task": "T8_safety",
+     "missed": 317,
+     "why": "runqueue",
+     "mean_response_ms": 11.06
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 3
+   },
+   "stop_latency_ms": [
+    25.0,
+    22.0,
+    25.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 1169,
+     "why": "runqueue",
+     "mean_response_ms": 8.5
+    },
+    {
+     "task": "T8_safety",
+     "missed": 319,
+     "why": "runqueue",
+     "mean_response_ms": 11.11
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    32.0,
+    33.0,
+    27.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 1146,
+     "why": "runqueue",
+     "mean_response_ms": 8.48
+    },
+    {
+     "task": "T8_safety",
+     "missed": 292,
+     "why": "runqueue",
+     "mean_response_ms": 10.8
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    3.0,
+    29.0,
+    32.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 1122,
+     "why": "runqueue",
+     "mean_response_ms": 8.4
+    },
+    {
+     "task": "T8_safety",
+     "missed": 282,
+     "why": "runqueue",
+     "mean_response_ms": 10.8
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    31.0,
+    30.0,
+    32.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    35.0,
+    29.0,
+    18.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    31.0,
+    30.0,
+    25.0,
+    13.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    30.0,
+    35.0,
+    34.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 4,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    29.0,
+    33.0,
+    32.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 11.9 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 5,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 2
+   },
+   "stop_latency_ms": [
+    1.0,
+    30.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 547,
+     "why": "runqueue",
+     "mean_response_ms": 19.48
+    },
+    {
+     "task": "T8_safety",
+     "missed": 543,
+     "why": "runqueue",
+     "mean_response_ms": 19.75
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 108,
+     "why": "noc",
+     "mean_response_ms": 47.1
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    30.0,
+    28.0,
+    62.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 549,
+     "why": "runqueue",
+     "mean_response_ms": 18.92
+    },
+    {
+     "task": "T8_safety",
+     "missed": 542,
+     "why": "runqueue",
+     "mean_response_ms": 19.1
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 94,
+     "why": "noc",
+     "mean_response_ms": 48.22
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    27.0,
+    42.0,
+    42.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 604,
+     "why": "runqueue",
+     "mean_response_ms": 19.34
+    },
+    {
+     "task": "T8_safety",
+     "missed": 598,
+     "why": "runqueue",
+     "mean_response_ms": 19.68
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 149,
+     "why": "noc",
+     "mean_response_ms": 47.75
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    33.0,
+    26.0,
+    32.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 550,
+     "why": "runqueue",
+     "mean_response_ms": 19.34
+    },
+    {
+     "task": "T8_safety",
+     "missed": 548,
+     "why": "runqueue",
+     "mean_response_ms": 19.53
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 125,
+     "why": "noc",
+     "mean_response_ms": 47.79
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    37.0,
+    31.0,
+    21.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 563,
+     "why": "runqueue",
+     "mean_response_ms": 19.39
+    },
+    {
+     "task": "T8_safety",
+     "missed": 557,
+     "why": "runqueue",
+     "mean_response_ms": 19.79
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 139,
+     "why": "noc",
+     "mean_response_ms": 47.11
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    30.0,
+    35.0,
+    3.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 1,
+   "chip": [
+    {
+     "task": "T10_record_4k",
+     "missed": 23,
+     "why": "noc",
+     "mean_response_ms": 48.2
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 3
+   },
+   "stop_latency_ms": [
+    32.0,
+    26.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 2,
+   "chip": [
+    {
+     "task": "T10_record_4k",
+     "missed": 37,
+     "why": "noc",
+     "mean_response_ms": 48.44
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 5,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    31.0,
+    22.0,
+    22.0,
+    25.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 3,
+   "chip": [
+    {
+     "task": "T10_record_4k",
+     "missed": 68,
+     "why": "noc",
+     "mean_response_ms": 48.21
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    34.0,
+    35.0,
+    26.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T10_record_4k",
+     "missed": 72,
+     "why": "noc",
+     "mean_response_ms": 47.51
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    30.0,
+    27.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "recording 24 Gbit/s",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T10_record_4k",
+     "missed": 32,
+     "why": "noc",
+     "mean_response_ms": 48.23
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    1.0,
+    25.0,
+    27.0,
+    20.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    26.0,
+    15.0,
+    25.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    27.0,
+    21.0,
+    28.0,
+    17.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    25.0,
+    22.0,
+    25.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T8_safety",
+     "missed": 2,
+     "why": "preemption",
+     "mean_response_ms": 10.92
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    27.0,
+    25.0,
+    27.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T8_safety",
+     "missed": 2,
+     "why": "preemption",
+     "mean_response_ms": 10.94
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 3
+   },
+   "stop_latency_ms": [
+    25.0,
+    25.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    25.0,
+    22.0,
+    28.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    14.0,
+    16.0,
+    27.0,
+    23.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 34,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 3
+   },
+   "stop_latency_ms": [
+    25.0,
+    26.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 4,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    26.0,
+    14.0,
+    25.0,
+    27.0
+   ]
+  },
+  {
+   "part": "A",
+   "case": "S6 fifteen tasks",
+   "policy": "EDF-MC + QoS + partition",
+   "seed": 5,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 7,
+    "grasp_success": 7,
+    "placed": 6,
+    "objects_offered": 35,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 4
+   },
+   "stop_latency_ms": [
+    23.0,
+    23.0,
+    25.0
+   ]
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 13,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 14,
+    "placed": 14,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 6,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 7,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "nominal",
+   "policy": "P0 FIFO",
+   "seed": 8,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 13,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 13,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 14,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 13,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 14,
+    "placed": 14,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 6,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 14,
+    "placed": 14,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 7,
+   "chip": [],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.55 V",
+   "policy": "P0 FIFO",
+   "seed": 8,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 463,
+     "why": "noc",
+     "mean_response_ms": 109.56
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.31
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 12,
+    "grasp_success": 10,
+    "placed": 8,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.38
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 11,
+    "placed": 11,
+    "objects_offered": 16,
+    "oscillation_episodes": 1,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.3
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 12,
+    "placed": 11,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.23
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 11,
+    "placed": 10,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.19
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 12,
+    "grasp_success": 11,
+    "placed": 11,
+    "objects_offered": 16,
+    "oscillation_episodes": 1,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 6,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.36
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 12,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 7,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 238,
+     "why": "noc",
+     "mean_response_ms": 128.17
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 12,
+    "placed": 11,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "NPU Vmin 0.50 V",
+   "policy": "P0 FIFO",
+   "seed": 8,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 240,
+     "why": "noc",
+     "mean_response_ms": 128.41
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 11,
+    "grasp_success": 9,
+    "placed": 9,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 144,
+     "why": "noc",
+     "mean_response_ms": 139.59
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 1,
+     "why": "runqueue",
+     "mean_response_ms": 8.51
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 11,
+    "placed": 11,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 126,
+     "why": "dram",
+     "mean_response_ms": 119.67
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 3,
+     "why": "runqueue",
+     "mean_response_ms": 7.35
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 12,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 144,
+     "why": "noc",
+     "mean_response_ms": 137.25
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 3,
+     "why": "runqueue",
+     "mean_response_ms": 8.56
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 12,
+    "placed": 11,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 135,
+     "why": "dram",
+     "mean_response_ms": 120.11
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 2,
+     "why": "runqueue",
+     "mean_response_ms": 7.18
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 12,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 144,
+     "why": "noc",
+     "mean_response_ms": 146.0
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 2,
+     "why": "runqueue",
+     "mean_response_ms": 8.55
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 10,
+    "placed": 10,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 6,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 144,
+     "why": "noc",
+     "mean_response_ms": 144.54
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 1,
+     "why": "runqueue",
+     "mean_response_ms": 8.58
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 11,
+    "placed": 10,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 7,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 145,
+     "why": "dram",
+     "mean_response_ms": 119.8
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 4,
+     "why": "runqueue",
+     "mean_response_ms": 7.66
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 15,
+    "grasp_success": 13,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "hot module (45 C)",
+   "policy": "P0 FIFO",
+   "seed": 8,
+   "chip": [
+    {
+     "task": "T4_vla",
+     "missed": 141,
+     "why": "dram",
+     "mean_response_ms": 119.84
+    },
+    {
+     "task": "T6_estimate",
+     "missed": 3,
+     "why": "runqueue",
+     "mean_response_ms": 6.7
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 12,
+    "grasp_success": 10,
+    "placed": 10,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 1,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 844,
+     "why": "runqueue",
+     "mean_response_ms": 18.92
+    },
+    {
+     "task": "T8_safety",
+     "missed": 831,
+     "why": "runqueue",
+     "mean_response_ms": 19.32
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 142,
+     "why": "noc",
+     "mean_response_ms": 47.65
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 2,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 836,
+     "why": "runqueue",
+     "mean_response_ms": 18.71
+    },
+    {
+     "task": "T8_safety",
+     "missed": 821,
+     "why": "runqueue",
+     "mean_response_ms": 19.04
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 117,
+     "why": "noc",
+     "mean_response_ms": 47.61
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 14,
+    "placed": 14,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 3,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 915,
+     "why": "runqueue",
+     "mean_response_ms": 19.08
+    },
+    {
+     "task": "T8_safety",
+     "missed": 911,
+     "why": "runqueue",
+     "mean_response_ms": 19.45
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 232,
+     "why": "noc",
+     "mean_response_ms": 47.34
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 14,
+    "placed": 13,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 4,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 818,
+     "why": "runqueue",
+     "mean_response_ms": 18.85
+    },
+    {
+     "task": "T8_safety",
+     "missed": 807,
+     "why": "runqueue",
+     "mean_response_ms": 19.2
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 128,
+     "why": "noc",
+     "mean_response_ms": 47.61
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 5,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 844,
+     "why": "runqueue",
+     "mean_response_ms": 18.77
+    },
+    {
+     "task": "T8_safety",
+     "missed": 828,
+     "why": "runqueue",
+     "mean_response_ms": 19.19
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 134,
+     "why": "noc",
+     "mean_response_ms": 47.41
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 10,
+    "placed": 10,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 6,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 857,
+     "why": "runqueue",
+     "mean_response_ms": 18.71
+    },
+    {
+     "task": "T8_safety",
+     "missed": 839,
+     "why": "runqueue",
+     "mean_response_ms": 19.18
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 118,
+     "why": "noc",
+     "mean_response_ms": 47.35
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 13,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 7,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 847,
+     "why": "runqueue",
+     "mean_response_ms": 18.81
+    },
+    {
+     "task": "T8_safety",
+     "missed": 828,
+     "why": "runqueue",
+     "mean_response_ms": 19.36
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 133,
+     "why": "noc",
+     "mean_response_ms": 47.41
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 13,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  },
+  {
+   "part": "B",
+   "case": "recording 24 Gbit/s (FIFO)",
+   "policy": "P0 FIFO",
+   "seed": 8,
+   "chip": [
+    {
+     "task": "T6_estimate",
+     "missed": 837,
+     "why": "runqueue",
+     "mean_response_ms": 18.78
+    },
+    {
+     "task": "T8_safety",
+     "missed": 820,
+     "why": "runqueue",
+     "mean_response_ms": 19.21
+    },
+    {
+     "task": "T10_record_4k",
+     "missed": 119,
+     "why": "noc",
+     "mean_response_ms": 47.07
+    }
+   ],
+   "robot": {
+    "grasp_attempts": 14,
+    "grasp_success": 12,
+    "placed": 12,
+    "objects_offered": 16,
+    "oscillation_episodes": 0,
+    "safety_zone_entries": 0
+   },
+   "stop_latency_ms": []
+  }
+ ],
+ "figures": [
+  "results/figures/s16_safety_under_load.svg",
+  "results/figures/s16_safety_under_load.png",
+  "results/figures/s16_fast_conveyor.svg",
+  "results/figures/s16_fast_conveyor.png"
+ ],
+ "definitions": {
+  "stop_latency": "protective-zone entry (separation <= 0.45 m) to all arm joints below 0.05 rad/s; only entries where the arm was still moving (>= 0.05 rad/s)",
+  "separation_at_stop": "human-to-robot surface distance when the arm reached the stop threshold",
+  "pick_rate": "objects placed in the bin / objects offered",
+  "why": "largest non-compute attribution component of the missed jobs"
+ },
+ "realism": {
+  "S9": "configs/scenarios/S9_human_during_recording.yaml header",
+  "fast_conveyor": "0.4 m/s is the top of the spec's 0.1-0.4 m/s range; NPU floors are S8 steps; 45 C ambient is S5's range; 24 Gbit/s is an S7 step"
+ },
+ "provenance": {
+  "script": "studies/s16_closed_loop.py",
+  "git_sha": "73bd198",
+  "date": "2026-11-18",
+  "config_files": [
+   "configs/scenarios/S9_human_during_recording.yaml",
+   "configs/scenarios/S6_fifteen_at_once.yaml",
+   "configs/scenarios/S1_nominal.yaml",
+   "configs/scenarios/S5_hot_day.yaml",
+   "configs/scenarios/S7_bandwidth_hog.yaml"
+  ],
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "core_build": {
+   "file": "glasschip_core.cpython-312-darwin.so",
+   "sha256_12": "4b0e98de5c2a",
+   "mtime": "2026-11-18T02:21:04",
+   "build_id": "3e9cf32325432d0f",
+   "version": "0.2.0"
+  },
+  "fidelity": "configs/fidelity/interactive.yaml",
+  "soc": "configs/soc/vx1.yaml",
+  "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph",
+  "compute": {
+   "runs": 80,
+   "failed": 0,
+   "wall_s_total": 14229.679298879113,
+   "sim_s_total": 4000.0
+  },
+  "duration_part_a_s": 40.0,
+  "duration_part_b_s": 60.0,
+  "quick": false
+ }
+}

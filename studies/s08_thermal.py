@@ -86,7 +86,23 @@ def _measure(policy: str, seed: int) -> dict[str, Any]:
     for amb in AMBIENTS_B:
         o = open_loop_onset(pm, pnl, volts, amb, thr, init_temps=ss25["temps_c"], gated_frac=gated)
         b_rows.append({"ambient_c": amb, "onset_s": o["onset_s"], "t_max_c_end": o["t_max_c"]})
-    return {"policy": policy, "seed": seed, "nonleak_w_by_domain": pnl, "mean_volts": volts,
+    rule = None
+    if policy == "P0":
+        # What the enclosure design rule (85 C hottest junction at 40 C ambient, S1 P0) would give on this
+        # build. Recorded only; the parameter file is not changed by this study.
+        from power.params import deep_merge
+        lo, hi = 1.0, 8.0
+        for _ in range(40):
+            mid = 0.5 * (lo + hi)
+            prm = deep_merge(pm.params, {"thermal": {"enclosure_to_ambient_r_k_per_w": mid}})
+            ss = steady_state_with_leakage(pm, pnl, volts, 40.0, gated_frac=gated, params=prm)
+            if ss["runaway"] or ss["t_max_c"] > 85.0:
+                hi = mid
+            else:
+                lo = mid
+        rule = {"rule": "S1 P0 hottest junction 85 C at 40 C ambient", "implied_enclosure_r_k_per_w": round(lo, 3),
+                "used_enclosure_r_k_per_w": pm.params["thermal"]["enclosure_to_ambient_r_k_per_w"]}
+    return {"policy": policy, "seed": seed, "nonleak_w_by_domain": pnl, "design_rule_check": rule, "mean_volts": volts,
             "avg_power_w_25c": s["avg_power_w"], "steady_state": a_rows, "throttle_onset_ambient": onset_amb,
             "steady_25c_t_max_c": ss25["t_max_c"], "onset_time_after_step": b_rows,
             "provenance": r["provenance"]}
@@ -309,6 +325,7 @@ def main() -> None:
         "ambient_step_closed_loop": fixed,
         "runs": closed,
         "figures": figs,
+        "build_check": __import__("power.provenance", fromlist=["check_build_ids"]).check_build_ids(closed + meas),
         "provenance": {"script": "studies/s08_thermal.py", "git_sha": prov0.get("git_sha"),
                        "core_build": prov0.get("core_build"), "date": dt.date.today().isoformat(),
                        "configs": ["configs/soc/vx1.yaml", "configs/fidelity/interactive.yaml", "power/params_vx1.yaml",

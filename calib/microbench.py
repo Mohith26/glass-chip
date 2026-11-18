@@ -19,10 +19,13 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 OUT = HERE / "graphs" / "mb"
 
-# Dynamic instruction counts per call measured in gem5 (calib/tables/cpu_gem5.json) are the L3
-# reference; the graphs carry the static instruction mixes the workloads use
-# (workloads/capture/control/rv64_counts.json), so L0/L1/L2 see the same inputs as the scenarios.
-RV64_COUNTS = ROOT / "workloads" / "capture" / "control" / "rv64_counts.json"
+# The control-kernel microbenchmarks copy the instruction mix of the matching op in the workload
+# graphs (T7_control, T6_estimate, T8_safety), which now carry gem5-measured dynamic counts, so
+# L0/L1/L2 see the same inputs as the scenarios.
+GRAPHS = ROOT / "workloads" / "graphs"
+KERNEL_OPS = {"control_step": ("T7_control", "arm1.control_step"),
+              "estimate_step": ("T6_estimate", "est.step"),
+              "ssm_step": ("T8_safety", "rt.ssm")}
 
 
 def graph(task_id: str, name: str, ops: list[dict[str, Any]], period_us: float = 100_000,
@@ -69,7 +72,6 @@ def conv(op_id: str, C: int, H: int, W: int, K: int, R: int, stride: int = 1,
 
 
 def build() -> dict[str, list[dict[str, Any]]]:
-    rv = json.loads(RV64_COUNTS.read_text())
     mbs: dict[str, list[dict[str, Any]]] = {}
 
     # Memory system
@@ -133,7 +135,10 @@ def build() -> dict[str, list[dict[str, Any]]]:
 
     # Control loop and friends (instruction mixes from the compiled kernels)
     def instr(fn: str) -> dict[str, int]:
-        return {k: int(v) for k, v in rv[fn]["instr"].items()}
+        tid, oid = KERNEL_OPS[fn]
+        g = json.loads((GRAPHS / f"{tid}.json").read_text())
+        op = next(o for o in g["ops"] if o["op_id"] == oid)
+        return {k: int(v) for k, v in op["instr"].items()}
 
     mbs["control_step_rt"] = [graph("T7_mb_ctrl_rt", "T7 control_step on the RT core", [
         {"op_id": "control_step", "type": "control_law", "dtype": "fp32",

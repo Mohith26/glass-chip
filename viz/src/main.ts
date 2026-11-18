@@ -193,6 +193,7 @@ class App implements TourHost {
     this.rings.setStore(st);
     this.timeline.setStore(st);
     this.drawer.setStore(st);
+    this.dse.deadlinesMs = Object.fromEntries(st.manifest.tasks.filter((x) => x.deadline_us).map((x) => [x.id, x.deadline_us! / 1000]));
     this.renderHeader();
     this.renderTransport();
     this.resize();

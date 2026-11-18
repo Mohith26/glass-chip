@@ -51,4 +51,5 @@ def test_t5_variant_is_a_valid_dag(variant: str) -> None:
         seen.add(o["op_id"])
     assert not any(i.endswith(".collision") for i in ids)
     assert set(cpi) == {i for i in ids if ".collision." in i}
-    assert len(summ["blocks"]) == 5 and summ["blocks"][0]["self_pairs"] == summ["blocks"][0]["states"] * 694
+    assert summ["blocks"] and all(b["self_pairs"] == b["states"] * 694 for b in summ["blocks"])
+    assert len(summ["blocks"]) == sum(o["op_id"].endswith(".collision") for o in base["ops"])

@@ -2,20 +2,22 @@
  "provenance": {
   "script": "studies/s12_dse.py",
   "driver": "surrogate/chiprun.py",
-  "git_sha": "e65c22e",
-  "core_so_sha256": "4953d653bf13b89d",
-  "graphs_sha256": "8fb8e69f48389e43",
+  "git_sha": "73bd198",
+  "core_so_sha256": "4b0e98de5c2af677",
+  "graphs_sha256": "78a623f046ce7ef3",
   "core_so_path": "data/surrogate/snapshot/glasschip_core.cpython-312-darwin.so",
+  "core_build_id": "3e9cf32325432d0f",
+  "graph_dir": "data/surrogate/snapshot/graphs",
   "soc": "data/surrogate/snapshot/vx1.yaml",
   "soc_sha256": "0d467c5ec8fc7edc",
-  "power_params_sha256": "d6a7c086d29b410d",
+  "power_params_sha256": "6c78fe619c748502",
   "fidelity": "surrogate/fidelity_dse.yaml",
   "fidelity_sha256": "8e21af1bae307def",
-  "duration_s": 1.2,
-  "warmup_s": 0.2,
+  "duration_s": 2.0,
+  "warmup_s": 1.0,
   "machine": "Darwin arm64, Python 3.12.13",
   "date": "2026-11-18",
-  "runtime_s": 165.3810842037201
+  "runtime_s": 86.56534314155579
  },
  "setup": {
   "n_candidates": 60000,
@@ -31,8 +33,8 @@
   "safety_limit": 0.005,
   "rt_limit": 0.05,
   "lv_arith_factor": 1.0,
-  "surrogate_eval_s": 59.52015709877014,
-  "surrogate_eval_ms_per_design_workload": 0.2480006545782089,
+  "surrogate_eval_s": 21.417210817337036,
+  "surrogate_eval_ms_per_design_workload": 0.08923837840557099,
   "objectives": [
    "energy (mean over workloads, point)",
    "worst safety miss rate (max over workloads, 90% upper bound)",
@@ -40,379 +42,379 @@
   ]
  },
  "counts": {
-  "feasible": 16888,
-  "pareto_all": 102,
-  "pareto_feasible": 59,
-  "flagged_uncertain": 33532
+  "feasible": 10678,
+  "pareto_all": 96,
+  "pareto_feasible": 33,
+  "flagged_uncertain": 31793
  },
  "feasible_by_policy": {
-  "nominal": 5093,
-  "race_to_idle": 4200,
-  "pace_to_deadline": 7595
+  "nominal": 2672,
+  "race_to_idle": 3485,
+  "pace_to_deadline": 4521
  },
  "recommended": [
   {
    "name": "lowest_energy",
    "why": "Lowest predicted energy per robot-hour (mean over S1, S2, S3, S6) among designs whose 90% upper bounds keep every safety task under 0.5% misses and T4/T2 under 5% misses (zero expected misses in the window) on every workload.",
    "design": {
-    "npu_tiles": 8,
-    "npu_array": 120,
-    "npu_sram_mb": 1.625709568322445,
-    "cache_mb": 3,
+    "npu_tiles": 4,
+    "npu_array": 128,
+    "npu_sram_mb": 2.9226955739408207,
+    "cache_mb": 5,
     "cache_partition": 0,
-    "qos": 0,
-    "noc_bits": 512,
-    "dram_gbps": 65.91495229788421,
-    "cpu_cores": 7,
+    "qos": 1,
+    "noc_bits": 256,
+    "dram_gbps": 71.92779349572979,
+    "cpu_cores": 9,
     "scheduler": "edf",
     "power_policy": "race_to_idle",
-    "vmin_npu": 0.45616100453292313,
-    "vmin_cpu": 0.5661078661356493,
-    "vmin_simt": 0.6812576299864096,
-    "vmin_dsp": 0.7240354381531665,
+    "vmin_npu": 0.46833151557090713,
+    "vmin_cpu": 0.5311024070706688,
+    "vmin_simt": 0.7034568919586911,
+    "vmin_dsp": 0.6575539604329216,
     "lv_arith_factor": 1.0,
     "transport": "zero_copy"
    },
    "inputs_encoded": {
-    "npu_tiles": 8.0,
-    "npu_array": 120.0,
-    "npu_sram_mb": 1.625709568322445,
-    "cache_mb": 3.0,
+    "npu_tiles": 4.0,
+    "npu_array": 128.0,
+    "npu_sram_mb": 2.9226955739408207,
+    "cache_mb": 5.0,
     "cache_partition": 0.0,
-    "qos": 0.0,
-    "noc_bits": 2.0,
-    "dram_gbps": 65.91495229788421,
-    "cpu_cores": 7.0,
+    "qos": 1.0,
+    "noc_bits": 1.0,
+    "dram_gbps": 71.92779349572979,
+    "cpu_cores": 9.0,
     "scheduler": 2.0,
     "power_policy": 1.0,
-    "vmin_npu": 0.45616100453292313,
-    "vmin_cpu": 0.5661078661356493,
-    "vmin_simt": 0.6812576299864096,
-    "vmin_dsp": 0.7240354381531665,
+    "vmin_npu": 0.46833151557090713,
+    "vmin_cpu": 0.5311024070706688,
+    "vmin_simt": 0.7034568919586911,
+    "vmin_dsp": 0.6575539604329216,
     "lv_arith_factor": 1.0,
     "transport": 1.0,
-    "scenario": 2.0,
+    "scenario": 1.0,
     "bitrate_gbps": 1.0,
     "ambient_c": 35.0
    },
    "predicted": {
-    "energy_wh_mean": 3.188566464137806,
+    "energy_wh_mean": 2.6149694624429323,
     "energy_wh_interval_mean": [
-     2.9492304479005402,
-     3.427902480375073
+     2.2094833361068043,
+     3.0204555887790603
     ],
-    "worst_safety_miss_upper_90": 0.0039026214571468527,
-    "t4_miss_upper_90": 0.017467378695983266,
-    "t2_miss_upper_90": 0.0005276177346307835,
-    "area_mm2": 53.56038611028314,
+    "worst_safety_miss_upper_90": 0.004368353668231943,
+    "t4_miss_upper_90": 0.03171311067104342,
+    "t2_miss_upper_90": 0.0020120385973415025,
+    "area_mm2": 50.82860118522871,
     "per_workload": {
      "S1": {
       "energy_per_robot_hour_wh": {
-       "point": 3.0947204292631443,
-       "lo": 2.855384413025878,
-       "hi": 3.3340564455004107
+       "point": 2.6069209820276265,
+       "lo": 2.2014348556914984,
+       "hi": 3.0124071083637545
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0034547278373144317
+       "hi": 0.004027229563741153
       },
       "T4_vla.miss_rate": {
-       "point": 8.21375927232981e-05,
+       "point": 0.0004520757580400096,
        "lo": 0.0,
-       "hi": 0.010122923149631095
+       "hi": 0.025375784189317557
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005276177346307835
+       "hi": 0.0020120385973415025
       },
       "avg_power_w": {
-       "point": 3.0947204292631443,
-       "lo": 2.855384413025878,
-       "hi": 3.3340564455004107
+       "point": 2.6069209820276265,
+       "lo": 2.2014348556914984,
+       "hi": 3.0124071083637545
       },
       "peak_temp_c": {
-       "point": 74.03672851147309,
-       "lo": 73.23081094999063,
-       "hi": 74.84264607295555
+       "point": 55.86154202029185,
+       "lo": 52.175046950661965,
+       "hi": 59.548037089921735
       },
       "T4_vla.p99_ms": {
-       "point": 81.17319346185494,
-       "lo": 62.300005617579636,
-       "hi": 100.39448199133763
+       "point": 80.10945986859291,
+       "lo": 63.85370709215244,
+       "hi": 89.45816622313383
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 111.56009657660513,
-       "lo": 87.3175954196677,
-       "hi": 1000.0
+       "point": 104.39111391503005,
+       "lo": 84.23674810343132,
+       "hi": 1003.5803112838025
       }
      },
      "S2": {
       "energy_per_robot_hour_wh": {
-       "point": 3.132585663487813,
-       "lo": 2.8932496472505465,
-       "hi": 3.3719216797250793
+       "point": 2.601578681912067,
+       "lo": 2.196092555575939,
+       "hi": 3.007064808248195
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.003377712640914796
+       "hi": 0.004027229563741153
       },
       "T4_vla.miss_rate": {
-       "point": 8.637093572088153e-05,
+       "point": 0.00036293945599044663,
        "lo": 0.0,
-       "hi": 0.0101664362381189
+       "hi": 0.023756695203584127
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005276177346307835
+       "hi": 0.0020120385973415025
       },
       "avg_power_w": {
-       "point": 3.132585663487813,
-       "lo": 2.8932496472505465,
-       "hi": 3.3719216797250793
+       "point": 2.601578681912067,
+       "lo": 2.196092555575939,
+       "hi": 3.007064808248195
       },
       "peak_temp_c": {
-       "point": 74.02952899751153,
-       "lo": 73.22361143602907,
-       "hi": 74.835446558994
+       "point": 56.06099338579945,
+       "lo": 52.374498316169564,
+       "hi": 59.747488455429334
       },
       "T4_vla.p99_ms": {
-       "point": 85.69109945207695,
-       "lo": 62.70660422751232,
-       "hi": 101.3771774681005
+       "point": 81.38251714712042,
+       "lo": 63.84299853303449,
+       "hi": 89.45816622313383
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 110.80023624944123,
-       "lo": 87.3175954196677,
-       "hi": 1000.0
+       "point": 104.8514595803922,
+       "lo": 84.23674810343132,
+       "hi": 1003.5803112838025
       }
      },
      "S3": {
       "energy_per_robot_hour_wh": {
-       "point": 3.2727159315507053,
-       "lo": 3.033379915313439,
-       "hi": 3.5120519477879717
+       "point": 2.6395427860055167,
+       "lo": 2.2340566596693887,
+       "hi": 3.0450289123416447
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0035335705142952234
+       "hi": 0.0043524017442666315
       },
       "T4_vla.miss_rate": {
-       "point": 7.099853455947987e-05,
+       "point": 0.0004586231125949102,
        "lo": 0.0,
-       "hi": 0.010008428570800674
+       "hi": 0.02549471160050449
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005276177346307835
+       "hi": 0.0020120385973415025
       },
       "avg_power_w": {
-       "point": 3.2727159315507053,
-       "lo": 3.033379915313439,
-       "hi": 3.5120519477879717
+       "point": 2.6395427860055167,
+       "lo": 2.2340566596693887,
+       "hi": 3.0450289123416447
       },
       "peak_temp_c": {
-       "point": 74.6759310768237,
-       "lo": 73.87001351534124,
-       "hi": 75.48184863830616
+       "point": 56.29702175862583,
+       "lo": 52.61052668899595,
+       "hi": 59.983516828255716
       },
       "T4_vla.p99_ms": {
-       "point": 85.6846858618157,
-       "lo": 63.013871765539186,
-       "hi": 101.27096671288434
+       "point": 83.19635977994064,
+       "lo": 63.858697398748326,
+       "hi": 89.4882528809018
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 110.64672150999532,
-       "lo": 87.06031084060172,
-       "hi": 1000.0
+       "point": 104.57798205760258,
+       "lo": 84.23674810343132,
+       "hi": 1003.5803112838025
       }
      },
      "S6": {
       "energy_per_robot_hour_wh": {
-       "point": 3.254243832249563,
-       "lo": 3.0149078160122964,
-       "hi": 3.4935798484868292
+       "point": 2.6118353998265187,
+       "lo": 2.2063492734903907,
+       "hi": 3.0173215261626467
       },
       "worst_safety_miss_rate": {
-       "point": 2.9849777032798543e-05,
+       "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0039026214571468527
+       "hi": 0.004368353668231943
       },
       "T4_vla.miss_rate": {
-       "point": 0.0007966720130259698,
+       "point": 0.0008009669261223645,
        "lo": 0.0,
-       "hi": 0.017467378695983266
+       "hi": 0.03171311067104342
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005276177346307835
+       "hi": 0.0020120385973415025
       },
       "avg_power_w": {
-       "point": 3.254243832249563,
-       "lo": 3.0149078160122964,
-       "hi": 3.4935798484868292
+       "point": 2.6118353998265187,
+       "lo": 2.2063492734903907,
+       "hi": 3.0173215261626467
       },
       "peak_temp_c": {
-       "point": 75.2678934984034,
-       "lo": 74.46197593692094,
-       "hi": 76.07381105988586
+       "point": 56.45578607448786,
+       "lo": 52.769291004857976,
+       "hi": 60.142281144117746
       },
       "T4_vla.p99_ms": {
-       "point": 87.8168122730585,
-       "lo": 62.86959779596608,
-       "hi": 105.2950309037338
+       "point": 85.08305045087764,
+       "lo": 64.55268773850239,
+       "hi": 89.96753029881853
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 111.19538390407136,
-       "lo": 87.06031084060172,
-       "hi": 1000.0
+       "point": 104.00259209491168,
+       "lo": 84.23674810343132,
+       "hi": 1003.5803112838025
       }
      }
     }
    },
    "verified": {
-    "energy_wh_mean_1p2s": 3.2534179101335186,
-    "energy_wh_mean_4p8s": 3.1828240276297066,
-    "worst_safety_miss_1p2s": 0,
-    "worst_safety_miss_4p8s": 0,
-    "worst_t4_t2_miss_4p8s": 0,
+    "energy_wh_mean_2s": 2.666923986209108,
+    "energy_wh_mean_6s": 2.6669335039557973,
+    "worst_safety_miss_2s": 0,
+    "worst_safety_miss_6s": 0,
+    "worst_t4_t2_miss_6s": 0,
     "runs": {
-     "1.2s": {
+     "2s": {
       "S1": {
-       "energy_per_robot_hour_wh": 3.163214342019624,
+       "energy_per_robot_hour_wh": 2.6129273198576612,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 82.76373527346,
-       "T8_safety.p99_ms": 2.8437302287700006,
+       "T4_vla.p99_ms": 77.42853981745999,
+       "T8_safety.p99_ms": 2.9998996684400008,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 112.001832359,
-       "avg_power_w": 3.163214342019624,
-       "peak_power_w": 5.832529515881673,
-       "peak_temp_c": 74.65258694364461,
-       "cpu_s": 1.2225110000000001
+       "chain_camera_to_plan.p99_ms": 99.001850186,
+       "avg_power_w": 2.6129273198576612,
+       "peak_power_w": 4.691648397169755,
+       "peak_temp_c": 55.04499401497725,
+       "cpu_s": 2.531246
       },
       "S2": {
-       "energy_per_robot_hour_wh": 3.199436145612652,
+       "energy_per_robot_hour_wh": 2.6497876711391823,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 89.59942759044,
-       "T8_safety.p99_ms": 2.84359611103,
+       "T4_vla.p99_ms": 79.69315848554001,
+       "T8_safety.p99_ms": 2.55773713679,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 114.921832359,
-       "avg_power_w": 3.199436145612652,
-       "peak_power_w": 5.97982831217927,
-       "peak_temp_c": 74.65258694364461,
-       "cpu_s": 1.248798
+       "chain_camera_to_plan.p99_ms": 105.96185018599999,
+       "avg_power_w": 2.6497876711391823,
+       "peak_power_w": 4.759399425115452,
+       "peak_temp_c": 55.274372915954565,
+       "cpu_s": 2.591335
       },
       "S3": {
-       "energy_per_robot_hour_wh": 3.374281349766366,
+       "energy_per_robot_hour_wh": 2.7224880186478018,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 91.83312517566,
-       "T8_safety.p99_ms": 2.900757007629999,
+       "T4_vla.p99_ms": 80.60288211555,
+       "T8_safety.p99_ms": 2.7726921764399988,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 109.961832359,
-       "avg_power_w": 3.374281349766366,
-       "peak_power_w": 6.6958888405414365,
-       "peak_temp_c": 74.85986225507558,
-       "cpu_s": 1.3157130000000001
+       "chain_camera_to_plan.p99_ms": 101.981850186,
+       "avg_power_w": 2.7224880186478018,
+       "peak_power_w": 4.948700422657245,
+       "peak_temp_c": 55.699193533178644,
+       "cpu_s": 2.839541
       },
       "S6": {
-       "energy_per_robot_hour_wh": 3.2767398031354316,
+       "energy_per_robot_hour_wh": 2.682492935191786,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 96.24322891614,
-       "T8_safety.p99_ms": 2.8639428342400035,
+       "T4_vla.p99_ms": 90.86358976631999,
+       "T8_safety.p99_ms": 2.69709421007,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 112.94364611499999,
-       "avg_power_w": 3.2767398031354316,
-       "peak_power_w": 5.999318939114257,
-       "peak_temp_c": 76.33502089240865,
-       "cpu_s": 1.3745690000000002
+       "chain_camera_to_plan.p99_ms": 102.003681769,
+       "avg_power_w": 2.682492935191786,
+       "peak_power_w": 4.847389270160525,
+       "peak_temp_c": 55.51813655162884,
+       "cpu_s": 2.800452
       }
      },
-     "4.8s": {
+     "6s": {
       "S1": {
-       "energy_per_robot_hour_wh": 3.111731894835818,
+       "energy_per_robot_hour_wh": 2.6122658025087877,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 89.407674696,
-       "T8_safety.p99_ms": 2.8423734381599997,
+       "T4_vla.p99_ms": 77.80522584019,
+       "T8_safety.p99_ms": 3.063002128,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 118.681832359,
-       "avg_power_w": 3.111731894835818,
-       "peak_power_w": 5.834456937906569,
-       "peak_temp_c": 74.65258694364461,
-       "cpu_s": 5.242369
+       "chain_camera_to_plan.p99_ms": 99.001850186,
+       "avg_power_w": 2.6122658025087877,
+       "peak_power_w": 5.116481492199306,
+       "peak_temp_c": 55.07072800329277,
+       "cpu_s": 7.619711000000001
       },
       "S2": {
-       "energy_per_robot_hour_wh": 3.151490532695757,
+       "energy_per_robot_hour_wh": 2.649431060094755,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 91.927378313,
-       "T8_safety.p99_ms": 2.8747684368899984,
+       "T4_vla.p99_ms": 79.741968623,
+       "T8_safety.p99_ms": 2.7715384611299982,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 117.001832359,
-       "avg_power_w": 3.151490532695757,
-       "peak_power_w": 6.134778188575675,
-       "peak_temp_c": 74.65258694364461,
-       "cpu_s": 4.730077
+       "chain_camera_to_plan.p99_ms": 106.001850186,
+       "avg_power_w": 2.649431060094755,
+       "peak_power_w": 5.025235377304064,
+       "peak_temp_c": 55.30025248514134,
+       "cpu_s": 7.732336
       },
       "S3": {
-       "energy_per_robot_hour_wh": 3.274150030264072,
+       "energy_per_robot_hour_wh": 2.7225372866026185,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 91.73590441249999,
-       "T8_safety.p99_ms": 2.89794906455,
+       "T4_vla.p99_ms": 81.89766127402,
+       "T8_safety.p99_ms": 2.8901843118399992,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 112.001832359,
-       "avg_power_w": 3.274150030264072,
-       "peak_power_w": 6.865159439530149,
-       "peak_temp_c": 74.85986225507558,
-       "cpu_s": 5.034577
+       "chain_camera_to_plan.p99_ms": 102.001850186,
+       "avg_power_w": 2.7225372866026185,
+       "peak_power_w": 5.0146549174313915,
+       "peak_temp_c": 55.72193890875625,
+       "cpu_s": 8.434462
       },
       "S6": {
-       "energy_per_robot_hour_wh": 3.1939236527231794,
+       "energy_per_robot_hour_wh": 2.683499866617029,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 96.6855198348,
-       "T8_safety.p99_ms": 2.852867617,
+       "T4_vla.p99_ms": 91.751622312,
+       "T8_safety.p99_ms": 2.72386229422,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 115.003646115,
-       "avg_power_w": 3.1939236527231794,
-       "peak_power_w": 6.245669371337468,
-       "peak_temp_c": 76.33502089240865,
-       "cpu_s": 5.092307
+       "chain_camera_to_plan.p99_ms": 105.643681769,
+       "avg_power_w": 2.683499866617029,
+       "peak_power_w": 5.171293141162039,
+       "peak_temp_c": 55.54706818171753,
+       "cpu_s": 8.182635000000001
       }
      }
     },
@@ -420,10 +422,10 @@
      {
       "workload": "S1",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.163214342019624,
-      "point": 3.0947204292631443,
-      "lo": 2.855384413025878,
-      "hi": 3.3340564455004107,
+      "full_model": 2.6129273198576612,
+      "point": 2.6069209820276265,
+      "lo": 2.2014348556914984,
+      "hi": 3.0124071083637545,
       "inside_90": true
      },
      {
@@ -432,34 +434,34 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0034547278373144317,
+      "hi": 0.004027229563741153,
       "inside_90": true
      },
      {
       "workload": "S1",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 8.21375927232981e-05,
+      "point": 0.0004520757580400096,
       "lo": 0.0,
-      "hi": 0.010122923149631095,
+      "hi": 0.025375784189317557,
       "inside_90": true
      },
      {
       "workload": "S1",
       "output": "T4_vla.p99_ms",
-      "full_model": 82.76373527346,
-      "point": 81.17319346185494,
-      "lo": 62.300005617579636,
-      "hi": 100.39448199133763,
+      "full_model": 77.42853981745999,
+      "point": 80.10945986859291,
+      "lo": 63.85370709215244,
+      "hi": 89.45816622313383,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.199436145612652,
-      "point": 3.132585663487813,
-      "lo": 2.8932496472505465,
-      "hi": 3.3719216797250793,
+      "full_model": 2.6497876711391823,
+      "point": 2.601578681912067,
+      "lo": 2.196092555575939,
+      "hi": 3.007064808248195,
       "inside_90": true
      },
      {
@@ -468,34 +470,34 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.003377712640914796,
+      "hi": 0.004027229563741153,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 8.637093572088153e-05,
+      "point": 0.00036293945599044663,
       "lo": 0.0,
-      "hi": 0.0101664362381189,
+      "hi": 0.023756695203584127,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "T4_vla.p99_ms",
-      "full_model": 89.59942759044,
-      "point": 85.69109945207695,
-      "lo": 62.70660422751232,
-      "hi": 101.3771774681005,
+      "full_model": 79.69315848554001,
+      "point": 81.38251714712042,
+      "lo": 63.84299853303449,
+      "hi": 89.45816622313383,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.374281349766366,
-      "point": 3.2727159315507053,
-      "lo": 3.033379915313439,
-      "hi": 3.5120519477879717,
+      "full_model": 2.7224880186478018,
+      "point": 2.6395427860055167,
+      "lo": 2.2340566596693887,
+      "hi": 3.0450289123416447,
       "inside_90": true
      },
      {
@@ -504,66 +506,66 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0035335705142952234,
+      "hi": 0.0043524017442666315,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 7.099853455947987e-05,
+      "point": 0.0004586231125949102,
       "lo": 0.0,
-      "hi": 0.010008428570800674,
+      "hi": 0.02549471160050449,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "T4_vla.p99_ms",
-      "full_model": 91.83312517566,
-      "point": 85.6846858618157,
-      "lo": 63.013871765539186,
-      "hi": 101.27096671288434,
+      "full_model": 80.60288211555,
+      "point": 83.19635977994064,
+      "lo": 63.858697398748326,
+      "hi": 89.4882528809018,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.2767398031354316,
-      "point": 3.254243832249563,
-      "lo": 3.0149078160122964,
-      "hi": 3.4935798484868292,
+      "full_model": 2.682492935191786,
+      "point": 2.6118353998265187,
+      "lo": 2.2063492734903907,
+      "hi": 3.0173215261626467,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "worst_safety_miss_rate",
       "full_model": 0.0,
-      "point": 2.9849777032798543e-05,
+      "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0039026214571468527,
+      "hi": 0.004368353668231943,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 0.0007966720130259698,
+      "point": 0.0008009669261223645,
       "lo": 0.0,
-      "hi": 0.017467378695983266,
+      "hi": 0.03171311067104342,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "T4_vla.p99_ms",
-      "full_model": 96.24322891614,
-      "point": 87.8168122730585,
-      "lo": 62.86959779596608,
-      "hi": 105.2950309037338,
-      "inside_90": true
+      "full_model": 90.86358976631999,
+      "point": 85.08305045087764,
+      "lo": 64.55268773850239,
+      "hi": 89.96753029881853,
+      "inside_90": false
      }
     ],
-    "frac_inside_90": 1.0,
-    "wall_s": 14.081602811813354
+    "frac_inside_90": 0.9375,
+    "wall_s": 12.160232067108154
    },
    "on_pareto_all": false,
    "on_pareto_feasible": true
@@ -574,362 +576,362 @@
    "design": {
     "npu_tiles": 3,
     "npu_array": 88,
-    "npu_sram_mb": 0.8249337457268863,
-    "cache_mb": 2,
-    "cache_partition": 1,
+    "npu_sram_mb": 1.257628652536416,
+    "cache_mb": 5,
+    "cache_partition": 0,
     "qos": 1,
     "noc_bits": 256,
-    "dram_gbps": 76.76099177570256,
+    "dram_gbps": 77.99409281689148,
     "cpu_cores": 4,
-    "scheduler": "edf_mc",
-    "power_policy": "pace_to_deadline",
-    "vmin_npu": 0.6471692242775539,
-    "vmin_cpu": 0.5669835461521374,
-    "vmin_simt": 0.6567795608999851,
-    "vmin_dsp": 0.5280770097411857,
+    "scheduler": "fixed_priority",
+    "power_policy": "race_to_idle",
+    "vmin_npu": 0.7281320644279783,
+    "vmin_cpu": 0.73347671835964,
+    "vmin_simt": 0.7101132619650077,
+    "vmin_dsp": 0.7198958085134184,
     "lv_arith_factor": 1.0,
     "transport": "zero_copy"
    },
    "inputs_encoded": {
     "npu_tiles": 3.0,
     "npu_array": 88.0,
-    "npu_sram_mb": 0.8249337457268863,
-    "cache_mb": 2.0,
-    "cache_partition": 1.0,
+    "npu_sram_mb": 1.257628652536416,
+    "cache_mb": 5.0,
+    "cache_partition": 0.0,
     "qos": 1.0,
     "noc_bits": 1.0,
-    "dram_gbps": 76.76099177570256,
+    "dram_gbps": 77.99409281689148,
     "cpu_cores": 4.0,
-    "scheduler": 3.0,
-    "power_policy": 2.0,
-    "vmin_npu": 0.6471692242775539,
-    "vmin_cpu": 0.5669835461521374,
-    "vmin_simt": 0.6567795608999851,
-    "vmin_dsp": 0.5280770097411857,
+    "scheduler": 1.0,
+    "power_policy": 1.0,
+    "vmin_npu": 0.7281320644279783,
+    "vmin_cpu": 0.73347671835964,
+    "vmin_simt": 0.7101132619650077,
+    "vmin_dsp": 0.7198958085134184,
     "lv_arith_factor": 1.0,
     "transport": 1.0,
-    "scenario": 2.0,
+    "scenario": 1.0,
     "bitrate_gbps": 1.0,
     "ambient_c": 35.0
    },
    "predicted": {
-    "energy_wh_mean": 4.651815578228879,
+    "energy_wh_mean": 3.392894381198114,
     "energy_wh_interval_mean": [
-     4.4124795619916135,
-     4.8911515944661454
+     2.987408254861986,
+     3.7983805075342416
     ],
-    "worst_safety_miss_upper_90": 0.003839433622286741,
-    "t4_miss_upper_90": 0.023679516022849633,
-    "t2_miss_upper_90": 0.0005362566368178833,
-    "area_mm2": 34.93103862017034,
+    "worst_safety_miss_upper_90": 0.004325692868527827,
+    "t4_miss_upper_90": 0.0336501044634936,
+    "t2_miss_upper_90": 0.0021379232943422254,
+    "area_mm2": 36.62502895400121,
     "per_workload": {
      "S1": {
       "energy_per_robot_hour_wh": {
-       "point": 4.595811454549914,
-       "lo": 4.356475438312647,
-       "hi": 4.83514747078718
+       "point": 3.3556656497242012,
+       "lo": 2.950179523388073,
+       "hi": 3.7611517760603292
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0033879145274574004
+       "hi": 0.0036767074916976995
       },
       "T4_vla.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.007683519912563218
+       "hi": 0.01310238066541065
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005362566368178833
+       "hi": 0.0021379232943422254
       },
       "avg_power_w": {
-       "point": 4.595811454549914,
-       "lo": 4.356475438312647,
-       "hi": 4.83514747078718
+       "point": 3.3556656497242012,
+       "lo": 2.950179523388073,
+       "hi": 3.7611517760603292
       },
       "peak_temp_c": {
-       "point": 75.53133038956489,
-       "lo": 74.72541282808243,
-       "hi": 76.33724795104735
+       "point": 60.19907526397401,
+       "lo": 56.512580194344125,
+       "hi": 63.885570333603894
       },
       "T4_vla.p99_ms": {
-       "point": 76.72418901564001,
-       "lo": 70.81043472747785,
-       "hi": 93.28793703285909
+       "point": 69.25578519532841,
+       "lo": 62.12845155293006,
+       "hi": 109.03389138838894
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 104.82141905296626,
-       "lo": 95.0729040316918,
-       "hi": 1000.0
+       "point": 95.3817798526186,
+       "lo": 88.90739677764653,
+       "hi": 1003.5803112838025
       }
      },
      "S2": {
       "energy_per_robot_hour_wh": {
-       "point": 4.635925573297482,
-       "lo": 4.396589557060215,
-       "hi": 4.875261589534748
+       "point": 3.3895105990902605,
+       "lo": 2.9840244727541325,
+       "hi": 3.7949967254263886
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0033879145274574004
+       "hi": 0.0036767074916976995
       },
       "T4_vla.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.007649152748734306
+       "hi": 0.013803280285593907
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005362566368178833
+       "hi": 0.0021379232943422254
       },
       "avg_power_w": {
-       "point": 4.635925573297482,
-       "lo": 4.396589557060215,
-       "hi": 4.875261589534748
+       "point": 3.3895105990902605,
+       "lo": 2.9840244727541325,
+       "hi": 3.7949967254263886
       },
       "peak_temp_c": {
-       "point": 75.79198653050281,
-       "lo": 74.98606896902035,
-       "hi": 76.59790409198527
+       "point": 60.46568867838245,
+       "lo": 56.779193608752564,
+       "hi": 64.15218374801233
       },
       "T4_vla.p99_ms": {
-       "point": 79.25040841174115,
-       "lo": 70.98350346288225,
-       "hi": 93.63760015925041
+       "point": 70.11067259181966,
+       "lo": 62.16887054858373,
+       "hi": 109.2074993962935
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 105.51084746397778,
-       "lo": 95.0729040316918,
-       "hi": 1000.0
+       "point": 95.39579707184572,
+       "lo": 88.90739677764653,
+       "hi": 1003.5803112838025
       }
      },
      "S3": {
       "energy_per_robot_hour_wh": {
-       "point": 4.6875687576611345,
-       "lo": 4.448232741423868,
-       "hi": 4.926904773898401
+       "point": 3.4189992040195225,
+       "lo": 3.0135130776833945,
+       "hi": 3.8244853303556505
       },
       "worst_safety_miss_rate": {
-       "point": 1.657647453317179e-05,
+       "point": 0.0,
        "lo": 0.0,
-       "hi": 0.003839433622286741
+       "hi": 0.004325692868527827
       },
       "T4_vla.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.008161560236967819
+       "hi": 0.014220408859905415
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005362566368178833
+       "hi": 0.0021379232943422254
       },
       "avg_power_w": {
-       "point": 4.6875687576611345,
-       "lo": 4.448232741423868,
-       "hi": 4.926904773898401
+       "point": 3.4189992040195225,
+       "lo": 3.0135130776833945,
+       "hi": 3.8244853303556505
       },
       "peak_temp_c": {
-       "point": 76.50413858384921,
-       "lo": 75.69822102236675,
-       "hi": 77.31005614533167
+       "point": 60.59603180437163,
+       "lo": 56.90953673474174,
+       "hi": 64.28252687400152
       },
       "T4_vla.p99_ms": {
-       "point": 79.89266125939352,
-       "lo": 71.37068272556402,
-       "hi": 93.63760015925041
+       "point": 71.88113259659174,
+       "lo": 62.14408391415617,
+       "hi": 109.18035024337473
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 112.65515590521318,
-       "lo": 95.0729040316918,
-       "hi": 1000.0
+       "point": 96.50356850343883,
+       "lo": 88.90739677764653,
+       "hi": 1003.5803112838025
       }
      },
      "S6": {
       "energy_per_robot_hour_wh": {
-       "point": 4.687956527406986,
-       "lo": 4.44862051116972,
-       "hi": 4.927292543644253
+       "point": 3.407402071958472,
+       "lo": 3.001915945622344,
+       "hi": 3.8128881982946
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0035923146237738443
+       "hi": 0.0037351009853016266
       },
       "T4_vla.miss_rate": {
-       "point": 0.0014010443746910483,
+       "point": 0.0009076049585426493,
        "lo": 0.0,
-       "hi": 0.023679516022849633
+       "hi": 0.0336501044634936
       },
       "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005358020488931609
+       "hi": 0.0021379232943422254
       },
       "avg_power_w": {
-       "point": 4.687956527406986,
-       "lo": 4.44862051116972,
-       "hi": 4.927292543644253
+       "point": 3.407402071958472,
+       "lo": 3.001915945622344,
+       "hi": 3.8128881982946
       },
       "peak_temp_c": {
-       "point": 77.08059537838638,
-       "lo": 76.27467781690392,
-       "hi": 77.88651293986884
+       "point": 60.66438037454501,
+       "lo": 56.97788530491513,
+       "hi": 64.3508754441749
       },
       "T4_vla.p99_ms": {
-       "point": 92.1642767182364,
-       "lo": 73.07616902073974,
-       "hi": 98.19763989060093
+       "point": 78.75093279412748,
+       "lo": 64.37998914423487,
+       "hi": 108.74908648073752
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 112.8532871484057,
-       "lo": 95.0729040316918,
-       "hi": 1000.0
+       "point": 96.34392057883807,
+       "lo": 88.90739677764653,
+       "hi": 1003.5803112838025
       }
      }
     }
    },
    "verified": {
-    "energy_wh_mean_1p2s": 4.52313859077266,
-    "energy_wh_mean_4p8s": 4.284211592466602,
-    "worst_safety_miss_1p2s": 0,
-    "worst_safety_miss_4p8s": 0,
-    "worst_t4_t2_miss_4p8s": 0,
+    "energy_wh_mean_2s": 3.187605842478514,
+    "energy_wh_mean_6s": 3.1878201590162405,
+    "worst_safety_miss_2s": 0,
+    "worst_safety_miss_6s": 0,
+    "worst_t4_t2_miss_6s": 0,
     "runs": {
-     "1.2s": {
+     "2s": {
       "S1": {
-       "energy_per_robot_hour_wh": 4.415007005702358,
+       "energy_per_robot_hour_wh": 3.110150264082277,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 78.71346967806,
-       "T8_safety.p99_ms": 2.4909419396,
+       "T4_vla.p99_ms": 66.76407809978,
+       "T8_safety.p99_ms": 1.81006718174,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 108.763101859,
-       "avg_power_w": 4.415007005702358,
-       "peak_power_w": 7.6116268631355055,
-       "peak_temp_c": 76.08000579540143,
-       "cpu_s": 2.387945
+       "chain_camera_to_plan.p99_ms": 89.001850186,
+       "avg_power_w": 3.110150264082277,
+       "peak_power_w": 6.411036912424815,
+       "peak_temp_c": 58.60626322626356,
+       "cpu_s": 2.5420089999999997
       },
       "S2": {
-       "energy_per_robot_hour_wh": 4.443157154927845,
+       "energy_per_robot_hour_wh": 3.172400000248423,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 79.95016314701999,
-       "T8_safety.p99_ms": 2.4322668938099996,
+       "T4_vla.p99_ms": 67.2364019612,
+       "T8_safety.p99_ms": 1.81008749774,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 108.763101859,
-       "avg_power_w": 4.443157154927845,
-       "peak_power_w": 7.63513304696497,
-       "peak_temp_c": 76.17178533610729,
-       "cpu_s": 2.511915
+       "chain_camera_to_plan.p99_ms": 89.001850186,
+       "avg_power_w": 3.172400000248423,
+       "peak_power_w": 6.504923362614136,
+       "peak_temp_c": 58.97570895460543,
+       "cpu_s": 2.5583220000000004
       },
       "S3": {
-       "energy_per_robot_hour_wh": 4.590272927945268,
+       "energy_per_robot_hour_wh": 3.2462882009184777,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 83.7232118071,
-       "T8_safety.p99_ms": 2.465744134119999,
+       "T4_vla.p99_ms": 67.23503147507,
+       "T8_safety.p99_ms": 1.853495809,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 102.82310185899999,
-       "avg_power_w": 4.590272927945268,
-       "peak_power_w": 8.788896589205866,
-       "peak_temp_c": 76.79874365313346,
-       "cpu_s": 2.695827
+       "chain_camera_to_plan.p99_ms": 89.001850186,
+       "avg_power_w": 3.2462882009184777,
+       "peak_power_w": 6.528992410528504,
+       "peak_temp_c": 59.4246433678392,
+       "cpu_s": 2.8044160000000002
       },
       "S6": {
-       "energy_per_robot_hour_wh": 4.644117274515168,
+       "energy_per_robot_hour_wh": 3.221584904664878,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 86.66921817154,
-       "T8_safety.p99_ms": 2.4337706162900004,
+       "T4_vla.p99_ms": 73.52990251410999,
+       "T8_safety.p99_ms": 1.7449352620200003,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 108.766172227,
-       "avg_power_w": 4.644117274515168,
-       "peak_power_w": 7.663382585683477,
-       "peak_temp_c": 77.95042904539808,
-       "cpu_s": 3.118264
+       "chain_camera_to_plan.p99_ms": 89.003681769,
+       "avg_power_w": 3.221584904664878,
+       "peak_power_w": 6.8928541291225285,
+       "peak_temp_c": 59.517471709717825,
+       "cpu_s": 2.6843019999999997
       }
      },
-     "4.8s": {
+     "6s": {
       "S1": {
-       "energy_per_robot_hour_wh": 4.204847708254737,
+       "energy_per_robot_hour_wh": 3.1099798818323983,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 78.85505693555,
-       "T8_safety.p99_ms": 2.49497619876,
+       "T4_vla.p99_ms": 67.26199320342,
+       "T8_safety.p99_ms": 1.80398705101,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 121.003101859,
-       "avg_power_w": 4.204847708254737,
-       "peak_power_w": 7.754288614781888,
-       "peak_temp_c": 76.08000579540143,
-       "cpu_s": 10.574907
+       "chain_camera_to_plan.p99_ms": 89.001850186,
+       "avg_power_w": 3.1099798818323983,
+       "peak_power_w": 6.9059400369654735,
+       "peak_temp_c": 58.608967731216694,
+       "cpu_s": 7.554742
       },
       "S2": {
-       "energy_per_robot_hour_wh": 4.228654723934771,
+       "energy_per_robot_hour_wh": 3.172325111786907,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 79.9490803692,
-       "T8_safety.p99_ms": 2.4419573188599997,
+       "T4_vla.p99_ms": 67.73382106924,
+       "T8_safety.p99_ms": 1.83008277326,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 108.363101859,
-       "avg_power_w": 4.228654723934771,
-       "peak_power_w": 7.63513304696497,
-       "peak_temp_c": 76.17178533610729,
-       "cpu_s": 11.18459
+       "chain_camera_to_plan.p99_ms": 89.911850186,
+       "avg_power_w": 3.172325111786907,
+       "peak_power_w": 6.504945367417003,
+       "peak_temp_c": 58.992719720567074,
+       "cpu_s": 7.632405
       },
       "S3": {
-       "energy_per_robot_hour_wh": 4.332272046635753,
+       "energy_per_robot_hour_wh": 3.2467282893215867,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 84.3906986424,
-       "T8_safety.p99_ms": 2.4861531008699997,
+       "T4_vla.p99_ms": 67.26216724149,
+       "T8_safety.p99_ms": 1.8556800464099998,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 132.443101859,
-       "avg_power_w": 4.332272046635753,
-       "peak_power_w": 8.788896589205866,
-       "peak_temp_c": 76.79874365313346,
-       "cpu_s": 11.777018
+       "chain_camera_to_plan.p99_ms": 89.001850186,
+       "avg_power_w": 3.2467282893215867,
+       "peak_power_w": 6.876527652890852,
+       "peak_temp_c": 59.43087259787201,
+       "cpu_s": 8.299506000000001
       },
       "S6": {
-       "energy_per_robot_hour_wh": 4.371071891041146,
+       "energy_per_robot_hour_wh": 3.2222473531240703,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 87.50133087525,
-       "T8_safety.p99_ms": 2.4585638618899983,
+       "T4_vla.p99_ms": 73.992119799,
+       "T8_safety.p99_ms": 1.83119532571,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 111.006172227,
-       "avg_power_w": 4.371071891041146,
-       "peak_power_w": 7.773204060050026,
-       "peak_temp_c": 77.95042904539808,
-       "cpu_s": 13.869783
+       "chain_camera_to_plan.p99_ms": 90.003681769,
+       "avg_power_w": 3.2222473531240703,
+       "peak_power_w": 7.218872131411256,
+       "peak_temp_c": 59.55105873508306,
+       "cpu_s": 8.077226
       }
      }
     },
@@ -937,10 +939,10 @@
      {
       "workload": "S1",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 4.415007005702358,
-      "point": 4.595811454549914,
-      "lo": 4.356475438312647,
-      "hi": 4.83514747078718,
+      "full_model": 3.110150264082277,
+      "point": 3.3556656497242012,
+      "lo": 2.950179523388073,
+      "hi": 3.7611517760603292,
       "inside_90": true
      },
      {
@@ -949,7 +951,7 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0033879145274574004,
+      "hi": 0.0036767074916976995,
       "inside_90": true
      },
      {
@@ -958,25 +960,25 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.007683519912563218,
+      "hi": 0.01310238066541065,
       "inside_90": true
      },
      {
       "workload": "S1",
       "output": "T4_vla.p99_ms",
-      "full_model": 78.71346967806,
-      "point": 76.72418901564001,
-      "lo": 70.81043472747785,
-      "hi": 93.28793703285909,
+      "full_model": 66.76407809978,
+      "point": 69.25578519532841,
+      "lo": 62.12845155293006,
+      "hi": 109.03389138838894,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 4.443157154927845,
-      "point": 4.635925573297482,
-      "lo": 4.396589557060215,
-      "hi": 4.875261589534748,
+      "full_model": 3.172400000248423,
+      "point": 3.3895105990902605,
+      "lo": 2.9840244727541325,
+      "hi": 3.7949967254263886,
       "inside_90": true
      },
      {
@@ -985,7 +987,7 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0033879145274574004,
+      "hi": 0.0036767074916976995,
       "inside_90": true
      },
      {
@@ -994,34 +996,34 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.007649152748734306,
+      "hi": 0.013803280285593907,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "T4_vla.p99_ms",
-      "full_model": 79.95016314701999,
-      "point": 79.25040841174115,
-      "lo": 70.98350346288225,
-      "hi": 93.63760015925041,
+      "full_model": 67.2364019612,
+      "point": 70.11067259181966,
+      "lo": 62.16887054858373,
+      "hi": 109.2074993962935,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 4.590272927945268,
-      "point": 4.6875687576611345,
-      "lo": 4.448232741423868,
-      "hi": 4.926904773898401,
+      "full_model": 3.2462882009184777,
+      "point": 3.4189992040195225,
+      "lo": 3.0135130776833945,
+      "hi": 3.8244853303556505,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "worst_safety_miss_rate",
       "full_model": 0.0,
-      "point": 1.657647453317179e-05,
+      "point": 0.0,
       "lo": 0.0,
-      "hi": 0.003839433622286741,
+      "hi": 0.004325692868527827,
       "inside_90": true
      },
      {
@@ -1030,25 +1032,25 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.008161560236967819,
+      "hi": 0.014220408859905415,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "T4_vla.p99_ms",
-      "full_model": 83.7232118071,
-      "point": 79.89266125939352,
-      "lo": 71.37068272556402,
-      "hi": 93.63760015925041,
+      "full_model": 67.23503147507,
+      "point": 71.88113259659174,
+      "lo": 62.14408391415617,
+      "hi": 109.18035024337473,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 4.644117274515168,
-      "point": 4.687956527406986,
-      "lo": 4.44862051116972,
-      "hi": 4.927292543644253,
+      "full_model": 3.221584904664878,
+      "point": 3.407402071958472,
+      "lo": 3.001915945622344,
+      "hi": 3.8128881982946,
       "inside_90": true
      },
      {
@@ -1057,32 +1059,32 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0035923146237738443,
+      "hi": 0.0037351009853016266,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 0.0014010443746910483,
+      "point": 0.0009076049585426493,
       "lo": 0.0,
-      "hi": 0.023679516022849633,
+      "hi": 0.0336501044634936,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "T4_vla.p99_ms",
-      "full_model": 86.66921817154,
-      "point": 92.1642767182364,
-      "lo": 73.07616902073974,
-      "hi": 98.19763989060093,
+      "full_model": 73.52990251410999,
+      "point": 78.75093279412748,
+      "lo": 64.37998914423487,
+      "hi": 108.74908648073752,
       "inside_90": true
      }
     ],
     "frac_inside_90": 1.0,
-    "wall_s": 36.959224224090576
+    "wall_s": 11.76947808265686
    },
-   "on_pareto_all": true,
+   "on_pareto_all": false,
    "on_pareto_feasible": true
   },
   {
@@ -1090,363 +1092,363 @@
    "why": "Knee of the feasible frontier: minimum of normalized energy plus normalized area.",
    "design": {
     "npu_tiles": 4,
-    "npu_array": 104,
-    "npu_sram_mb": 0.7118407798399913,
-    "cache_mb": 3,
+    "npu_array": 120,
+    "npu_sram_mb": 1.8610487376908897,
+    "cache_mb": 2,
     "cache_partition": 0,
-    "qos": 0,
-    "noc_bits": 512,
-    "dram_gbps": 64.96826482949916,
-    "cpu_cores": 6,
+    "qos": 1,
+    "noc_bits": 256,
+    "dram_gbps": 73.37782023926138,
+    "cpu_cores": 4,
     "scheduler": "edf_mc",
     "power_policy": "race_to_idle",
-    "vmin_npu": 0.6115253231835673,
-    "vmin_cpu": 0.537447913095769,
-    "vmin_simt": 0.5806337785522196,
-    "vmin_dsp": 0.6274225338510578,
+    "vmin_npu": 0.5987239429414775,
+    "vmin_cpu": 0.6947360254889622,
+    "vmin_simt": 0.6040899698545703,
+    "vmin_dsp": 0.6203610805382989,
     "lv_arith_factor": 1.0,
-    "transport": "copy"
+    "transport": "zero_copy"
    },
    "inputs_encoded": {
     "npu_tiles": 4.0,
-    "npu_array": 104.0,
-    "npu_sram_mb": 0.7118407798399913,
-    "cache_mb": 3.0,
+    "npu_array": 120.0,
+    "npu_sram_mb": 1.8610487376908897,
+    "cache_mb": 2.0,
     "cache_partition": 0.0,
-    "qos": 0.0,
-    "noc_bits": 2.0,
-    "dram_gbps": 64.96826482949916,
-    "cpu_cores": 6.0,
+    "qos": 1.0,
+    "noc_bits": 1.0,
+    "dram_gbps": 73.37782023926138,
+    "cpu_cores": 4.0,
     "scheduler": 3.0,
     "power_policy": 1.0,
-    "vmin_npu": 0.6115253231835673,
-    "vmin_cpu": 0.537447913095769,
-    "vmin_simt": 0.5806337785522196,
-    "vmin_dsp": 0.6274225338510578,
+    "vmin_npu": 0.5987239429414775,
+    "vmin_cpu": 0.6947360254889622,
+    "vmin_simt": 0.6040899698545703,
+    "vmin_dsp": 0.6203610805382989,
     "lv_arith_factor": 1.0,
-    "transport": 0.0,
-    "scenario": 0.0,
+    "transport": 1.0,
+    "scenario": 3.0,
     "bitrate_gbps": 1.0,
     "ambient_c": 35.0
    },
    "predicted": {
-    "energy_wh_mean": 3.435551251913235,
+    "energy_wh_mean": 2.8461085758712916,
     "energy_wh_interval_mean": [
-     3.196215235675968,
-     3.674887268150501
+     2.4406224495351636,
+     3.2515947022074196
     ],
-    "worst_safety_miss_upper_90": 0.0035317429901396934,
-    "t4_miss_upper_90": 0.027241898236167645,
-    "t2_miss_upper_90": 0.0005867877310358996,
-    "area_mm2": 40.728107897332606,
+    "worst_safety_miss_upper_90": 0.004200867461593804,
+    "t4_miss_upper_90": 0.016460971241081826,
+    "t2_miss_upper_90": 0.002197674702742283,
+    "area_mm2": 40.100493847892146,
     "per_workload": {
      "S1": {
       "energy_per_robot_hour_wh": {
-       "point": 3.3485832696776017,
-       "lo": 3.1092472534403353,
-       "hi": 3.587919285914868
+       "point": 2.7860761969193466,
+       "lo": 2.3805900705832186,
+       "hi": 3.1915623232554746
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0033687430275794513
+       "hi": 0.003973320470664323
       },
       "T4_vla.miss_rate": {
-       "point": 0.000640979045038573,
+       "point": 0.0,
        "lo": 0.0,
-       "hi": 0.015867063791938904
+       "hi": 0.013888106191752767
       },
       "T2_detect.miss_rate": {
-       "point": 3.0431726000619466e-05,
+       "point": 1.6342810066806088e-05,
        "lo": 0.0,
-       "hi": 0.0005867877310358996
+       "hi": 0.002197674702742283
       },
       "avg_power_w": {
-       "point": 3.3485832696776017,
-       "lo": 3.1092472534403353,
-       "hi": 3.587919285914868
+       "point": 2.7860761969193466,
+       "lo": 2.3805900705832186,
+       "hi": 3.1915623232554746
       },
       "peak_temp_c": {
-       "point": 72.75081860596306,
-       "lo": 71.9449010444806,
-       "hi": 73.55673616744552
+       "point": 57.775395006083755,
+       "lo": 54.08889993645387,
+       "hi": 61.46189007571364
       },
       "T4_vla.p99_ms": {
-       "point": 75.20811500855761,
-       "lo": 64.85852371947404,
-       "hi": 88.85133249727076
+       "point": 54.27697419466066,
+       "lo": 52.193295312464095,
+       "hi": 81.32681070143435
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 109.56061616832194,
-       "lo": 88.33085201711815,
-       "hi": 1000.0
+       "point": 75.69009753388441,
+       "lo": 75.69009753388441,
+       "hi": 1003.5803112838025
       }
      },
      "S2": {
       "energy_per_robot_hour_wh": {
-       "point": 3.4091766956531493,
-       "lo": 3.169840679415883,
-       "hi": 3.6485127118904157
+       "point": 2.819988695615925,
+       "lo": 2.414502569279797,
+       "hi": 3.225474821952053
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0033687430275794513
+       "hi": 0.003973320470664323
       },
       "T4_vla.miss_rate": {
-       "point": 0.0007001218609204735,
+       "point": 0.0,
        "lo": 0.0,
-       "hi": 0.016474972620105225
+       "hi": 0.014628057000245828
       },
       "T2_detect.miss_rate": {
-       "point": 3.0431726000619466e-05,
+       "point": 1.6342810066806088e-05,
        "lo": 0.0,
-       "hi": 0.0005867877310358996
+       "hi": 0.002197674702742283
       },
       "avg_power_w": {
-       "point": 3.4091766956531493,
-       "lo": 3.169840679415883,
-       "hi": 3.6485127118904157
+       "point": 2.819988695615925,
+       "lo": 2.414502569279797,
+       "hi": 3.225474821952053
       },
       "peak_temp_c": {
-       "point": 73.82536269845488,
-       "lo": 73.01944513697242,
-       "hi": 74.63128025993734
+       "point": 58.13747626071435,
+       "lo": 54.450981191084466,
+       "hi": 61.823971330344236
       },
       "T4_vla.p99_ms": {
-       "point": 80.26066238534864,
-       "lo": 65.58646703443641,
-       "hi": 89.42250788598062
+       "point": 55.014654762041985,
+       "lo": 52.58920483964584,
+       "hi": 81.32681070143435
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 110.10980694384031,
-       "lo": 88.33085201711815,
-       "hi": 1000.0
+       "point": 76.02388910430363,
+       "lo": 76.02388910430363,
+       "hi": 1003.5803112838025
       }
      },
      "S3": {
       "energy_per_robot_hour_wh": {
-       "point": 3.496010065033978,
-       "lo": 3.2566740487967114,
-       "hi": 3.7353460812712442
+       "point": 2.891566046404655,
+       "lo": 2.486079920068527,
+       "hi": 3.297052172740783
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0035317429901396934
+       "hi": 0.004200867461593804
       },
       "T4_vla.miss_rate": {
-       "point": 0.0008769411303036503,
+       "point": 0.0,
        "lo": 0.0,
-       "hi": 0.01829243756906195
+       "hi": 0.014547992205604758
       },
       "T2_detect.miss_rate": {
-       "point": 3.0431726000619466e-05,
+       "point": 1.6342810066806088e-05,
        "lo": 0.0,
-       "hi": 0.0005867877310358996
+       "hi": 0.002197674702742283
       },
       "avg_power_w": {
-       "point": 3.496010065033978,
-       "lo": 3.2566740487967114,
-       "hi": 3.7353460812712442
+       "point": 2.891566046404655,
+       "lo": 2.486079920068527,
+       "hi": 3.297052172740783
       },
       "peak_temp_c": {
-       "point": 73.66985405574663,
-       "lo": 72.86393649426417,
-       "hi": 74.47577161722909
+       "point": 58.52514023055476,
+       "lo": 54.83864516092488,
+       "hi": 62.211635300184646
       },
       "T4_vla.p99_ms": {
-       "point": 81.84518045239851,
-       "lo": 65.8054790388267,
-       "hi": 89.55804311939725
+       "point": 55.69597878212836,
+       "lo": 52.56191700914614,
+       "hi": 81.03555479229802
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 114.4330750416371,
-       "lo": 88.26220544571504,
-       "hi": 1000.0
+       "point": 76.52322741345625,
+       "lo": 76.52322741345625,
+       "hi": 1003.5803112838025
       }
      },
      "S6": {
       "energy_per_robot_hour_wh": {
-       "point": 3.488434977288211,
-       "lo": 3.2490989610509446,
-       "hi": 3.7277709935254775
+       "point": 2.8868033645452402,
+       "lo": 2.481317238209112,
+       "hi": 3.2922894908813682
       },
       "worst_safety_miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.003348786351467903
+       "hi": 0.003909430903914728
       },
       "T4_vla.miss_rate": {
-       "point": 0.0017476248248857532,
-       "lo": 0.0,
-       "hi": 0.027241898236167645
-      },
-      "T2_detect.miss_rate": {
        "point": 0.0,
        "lo": 0.0,
-       "hi": 0.0005311505777709324
+       "hi": 0.016460971241081826
+      },
+      "T2_detect.miss_rate": {
+       "point": 1.6342810066806088e-05,
+       "lo": 0.0,
+       "hi": 0.002197674702742283
       },
       "avg_power_w": {
-       "point": 3.488434977288211,
-       "lo": 3.2490989610509446,
-       "hi": 3.7277709935254775
+       "point": 2.8868033645452402,
+       "lo": 2.481317238209112,
+       "hi": 3.2922894908813682
       },
       "peak_temp_c": {
-       "point": 76.6314882595233,
-       "lo": 75.82557069804083,
-       "hi": 77.43740582100575
+       "point": 58.56744994451975,
+       "lo": 54.880954874889866,
+       "hi": 62.253945014149636
       },
       "T4_vla.p99_ms": {
-       "point": 85.53445048169789,
-       "lo": 66.53741684070407,
-       "hi": 91.9339403280585
+       "point": 58.667386040309815,
+       "lo": 53.70639911181524,
+       "hi": 81.69405269982799
       },
       "chain_camera_to_plan.p99_ms": {
-       "point": 111.7085793146147,
-       "lo": 88.26220544571504,
-       "hi": 1000.0
+       "point": 76.36003958799347,
+       "lo": 76.36003958799347,
+       "hi": 1003.5803112838025
       }
      }
     }
    },
    "verified": {
-    "energy_wh_mean_1p2s": 3.530334161089452,
-    "energy_wh_mean_4p8s": 3.4376777714583593,
-    "worst_safety_miss_1p2s": 0,
-    "worst_safety_miss_4p8s": 0,
-    "worst_t4_t2_miss_4p8s": 0,
+    "energy_wh_mean_2s": 2.837537465021989,
+    "energy_wh_mean_6s": 2.837743516338225,
+    "worst_safety_miss_2s": 0,
+    "worst_safety_miss_6s": 0,
+    "worst_t4_t2_miss_6s": 0,
     "runs": {
-     "1.2s": {
+     "2s": {
       "S1": {
-       "energy_per_robot_hour_wh": 3.4135374299441357,
+       "energy_per_robot_hour_wh": 2.769540336666722,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 82.02020010487999,
-       "T8_safety.p99_ms": 2.9711862829699998,
+       "T4_vla.p99_ms": 58.33454941798,
+       "T8_safety.p99_ms": 1.7381424621900003,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 119.961832359,
-       "avg_power_w": 3.4135374299441357,
-       "peak_power_w": 6.1088396542023755,
-       "peak_temp_c": 74.56841065430406,
-       "cpu_s": 1.2501259999999998
+       "chain_camera_to_plan.p99_ms": 82.991850186,
+       "avg_power_w": 2.769540336666722,
+       "peak_power_w": 5.84484427331538,
+       "peak_temp_c": 56.625203969279454,
+       "cpu_s": 2.531948
       },
       "S2": {
-       "energy_per_robot_hour_wh": 3.457021234978206,
+       "energy_per_robot_hour_wh": 2.8177268649164016,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 82.15999694221999,
-       "T8_safety.p99_ms": 3.0482838662900003,
+       "T4_vla.p99_ms": 60.50494608742,
+       "T8_safety.p99_ms": 1.5873495778400004,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 127.88183235899999,
-       "avg_power_w": 3.457021234978206,
-       "peak_power_w": 6.382032775520969,
-       "peak_temp_c": 74.56841065430406,
-       "cpu_s": 1.267341
+       "chain_camera_to_plan.p99_ms": 86.001850186,
+       "avg_power_w": 2.8177268649164016,
+       "peak_power_w": 5.8459957019538304,
+       "peak_temp_c": 56.883166995989356,
+       "cpu_s": 2.565545
       },
       "S3": {
-       "energy_per_robot_hour_wh": 3.628277170610681,
-       "worst_safety_miss_rate": 0.0,
-       "worst_rt_miss_rate": 0.16666666666666666,
-       "T4_vla.miss_rate": 0.0,
-       "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 88.01263821244,
-       "T8_safety.p99_ms": 2.9645142358700003,
-       "T7_control.miss_rate": 0.0,
-       "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 142.901832359,
-       "avg_power_w": 3.628277170610681,
-       "peak_power_w": 6.246703002509942,
-       "peak_temp_c": 74.56841065430406,
-       "cpu_s": 1.3440079999999999
-      },
-      "S6": {
-       "energy_per_robot_hour_wh": 3.6225008088247854,
+       "energy_per_robot_hour_wh": 2.9019470144629804,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 91.7191346791,
-       "T8_safety.p99_ms": 3.23637271312,
+       "T4_vla.p99_ms": 61.935236908,
+       "T8_safety.p99_ms": 1.67475143272,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 119.983646115,
-       "avg_power_w": 3.6225008088247854,
-       "peak_power_w": 6.609689654053784,
-       "peak_temp_c": 76.76456503468026,
-       "cpu_s": 1.51609
+       "chain_camera_to_plan.p99_ms": 86.001850186,
+       "avg_power_w": 2.9019470144629804,
+       "peak_power_w": 5.522224207795206,
+       "peak_temp_c": 57.4298416068843,
+       "cpu_s": 2.761418
+      },
+      "S6": {
+       "energy_per_robot_hour_wh": 2.8609356440418527,
+       "worst_safety_miss_rate": 0.0,
+       "worst_rt_miss_rate": 0.0,
+       "T4_vla.miss_rate": 0.0,
+       "T2_detect.miss_rate": 0.0,
+       "T4_vla.p99_ms": 66.95771111492,
+       "T8_safety.p99_ms": 1.6392246279600005,
+       "T7_control.miss_rate": 0.0,
+       "T8_safety.miss_rate": 0.0,
+       "chain_camera_to_plan.p99_ms": 86.003681769,
+       "avg_power_w": 2.8609356440418527,
+       "peak_power_w": 6.168493526551845,
+       "peak_temp_c": 57.30800834946713,
+       "cpu_s": 2.753934
       }
      },
-     "4.8s": {
+     "6s": {
       "S1": {
-       "energy_per_robot_hour_wh": 3.349366770854748,
+       "energy_per_robot_hour_wh": 2.7698546665532002,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 82.15337642335,
-       "T8_safety.p99_ms": 2.9817068854899995,
+       "T4_vla.p99_ms": 58.78301531722,
+       "T8_safety.p99_ms": 1.7381326218399993,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 127.36183235899999,
-       "avg_power_w": 3.349366770854748,
-       "peak_power_w": 6.2288203609079495,
-       "peak_temp_c": 74.56841065430406,
-       "cpu_s": 4.704839000000001
+       "chain_camera_to_plan.p99_ms": 83.001850186,
+       "avg_power_w": 2.7698546665532002,
+       "peak_power_w": 5.84484427331538,
+       "peak_temp_c": 56.625203969279454,
+       "cpu_s": 7.379714
       },
       "S2": {
-       "energy_per_robot_hour_wh": 3.395595544140046,
+       "energy_per_robot_hour_wh": 2.817994242126116,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 82.8657823561,
-       "T8_safety.p99_ms": 2.97400010423,
+       "T4_vla.p99_ms": 61.43075483084,
+       "T8_safety.p99_ms": 1.6948869634099997,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 130.001832359,
-       "avg_power_w": 3.395595544140046,
-       "peak_power_w": 6.382032775520969,
-       "peak_temp_c": 74.56841065430406,
-       "cpu_s": 4.854039
+       "chain_camera_to_plan.p99_ms": 86.001850186,
+       "avg_power_w": 2.817994242126116,
+       "peak_power_w": 5.8459957019538304,
+       "peak_temp_c": 56.883166995989356,
+       "cpu_s": 7.5766480000000005
       },
       "S3": {
-       "energy_per_robot_hour_wh": 3.5223281931813966,
-       "worst_safety_miss_rate": 0.0,
-       "worst_rt_miss_rate": 0.36,
-       "T4_vla.miss_rate": 0.0,
-       "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 88.07770942315,
-       "T8_safety.p99_ms": 2.9870284964,
-       "T7_control.miss_rate": 0.0,
-       "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 143.001832359,
-       "avg_power_w": 3.5223281931813966,
-       "peak_power_w": 6.292547807820624,
-       "peak_temp_c": 74.56841065430406,
-       "cpu_s": 5.127828
-      },
-      "S6": {
-       "energy_per_robot_hour_wh": 3.4834205776572476,
+       "energy_per_robot_hour_wh": 2.9019181917804895,
        "worst_safety_miss_rate": 0.0,
        "worst_rt_miss_rate": 0.0,
        "T4_vla.miss_rate": 0.0,
        "T2_detect.miss_rate": 0.0,
-       "T4_vla.p99_ms": 94.004419337,
-       "T8_safety.p99_ms": 3.185636873539999,
+       "T4_vla.p99_ms": 62.28445114432,
+       "T8_safety.p99_ms": 1.76660259674,
        "T7_control.miss_rate": 0.0,
        "T8_safety.miss_rate": 0.0,
-       "chain_camera_to_plan.p99_ms": 129.003646115,
-       "avg_power_w": 3.4834205776572476,
-       "peak_power_w": 6.609689654053784,
-       "peak_temp_c": 76.76456503468026,
-       "cpu_s": 5.354070999999999
+       "chain_camera_to_plan.p99_ms": 86.911850186,
+       "avg_power_w": 2.9019181917804895,
+       "peak_power_w": 5.925962061884507,
+       "peak_temp_c": 57.4298416068843,
+       "cpu_s": 8.037948
+      },
+      "S6": {
+       "energy_per_robot_hour_wh": 2.8612069648930962,
+       "worst_safety_miss_rate": 0.0,
+       "worst_rt_miss_rate": 0.0,
+       "T4_vla.miss_rate": 0.0,
+       "T2_detect.miss_rate": 0.0,
+       "T4_vla.p99_ms": 67.85357563699,
+       "T8_safety.p99_ms": 1.6778633003399994,
+       "T7_control.miss_rate": 0.0,
+       "T8_safety.miss_rate": 0.0,
+       "chain_camera_to_plan.p99_ms": 86.003681769,
+       "avg_power_w": 2.8612069648930962,
+       "peak_power_w": 6.886377977042864,
+       "peak_temp_c": 57.30800834946713,
+       "cpu_s": 7.935778000000001
       }
      }
     },
@@ -1454,10 +1456,10 @@
      {
       "workload": "S1",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.4135374299441357,
-      "point": 3.3485832696776017,
-      "lo": 3.1092472534403353,
-      "hi": 3.587919285914868,
+      "full_model": 2.769540336666722,
+      "point": 2.7860761969193466,
+      "lo": 2.3805900705832186,
+      "hi": 3.1915623232554746,
       "inside_90": true
      },
      {
@@ -1466,34 +1468,34 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0033687430275794513,
+      "hi": 0.003973320470664323,
       "inside_90": true
      },
      {
       "workload": "S1",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 0.000640979045038573,
+      "point": 0.0,
       "lo": 0.0,
-      "hi": 0.015867063791938904,
+      "hi": 0.013888106191752767,
       "inside_90": true
      },
      {
       "workload": "S1",
       "output": "T4_vla.p99_ms",
-      "full_model": 82.02020010487999,
-      "point": 75.20811500855761,
-      "lo": 64.85852371947404,
-      "hi": 88.85133249727076,
+      "full_model": 58.33454941798,
+      "point": 54.27697419466066,
+      "lo": 52.193295312464095,
+      "hi": 81.32681070143435,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.457021234978206,
-      "point": 3.4091766956531493,
-      "lo": 3.169840679415883,
-      "hi": 3.6485127118904157,
+      "full_model": 2.8177268649164016,
+      "point": 2.819988695615925,
+      "lo": 2.414502569279797,
+      "hi": 3.225474821952053,
       "inside_90": true
      },
      {
@@ -1502,34 +1504,34 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0033687430275794513,
+      "hi": 0.003973320470664323,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 0.0007001218609204735,
+      "point": 0.0,
       "lo": 0.0,
-      "hi": 0.016474972620105225,
+      "hi": 0.014628057000245828,
       "inside_90": true
      },
      {
       "workload": "S2",
       "output": "T4_vla.p99_ms",
-      "full_model": 82.15999694221999,
-      "point": 80.26066238534864,
-      "lo": 65.58646703443641,
-      "hi": 89.42250788598062,
+      "full_model": 60.50494608742,
+      "point": 55.014654762041985,
+      "lo": 52.58920483964584,
+      "hi": 81.32681070143435,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.628277170610681,
-      "point": 3.496010065033978,
-      "lo": 3.2566740487967114,
-      "hi": 3.7353460812712442,
+      "full_model": 2.9019470144629804,
+      "point": 2.891566046404655,
+      "lo": 2.486079920068527,
+      "hi": 3.297052172740783,
       "inside_90": true
      },
      {
@@ -1538,34 +1540,34 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.0035317429901396934,
+      "hi": 0.004200867461593804,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 0.0008769411303036503,
+      "point": 0.0,
       "lo": 0.0,
-      "hi": 0.01829243756906195,
+      "hi": 0.014547992205604758,
       "inside_90": true
      },
      {
       "workload": "S3",
       "output": "T4_vla.p99_ms",
-      "full_model": 88.01263821244,
-      "point": 81.84518045239851,
-      "lo": 65.8054790388267,
-      "hi": 89.55804311939725,
+      "full_model": 61.935236908,
+      "point": 55.69597878212836,
+      "lo": 52.56191700914614,
+      "hi": 81.03555479229802,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "energy_per_robot_hour_wh",
-      "full_model": 3.6225008088247854,
-      "point": 3.488434977288211,
-      "lo": 3.2490989610509446,
-      "hi": 3.7277709935254775,
+      "full_model": 2.8609356440418527,
+      "point": 2.8868033645452402,
+      "lo": 2.481317238209112,
+      "hi": 3.2922894908813682,
       "inside_90": true
      },
      {
@@ -1574,32 +1576,32 @@
       "full_model": 0.0,
       "point": 0.0,
       "lo": 0.0,
-      "hi": 0.003348786351467903,
+      "hi": 0.003909430903914728,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "T4_vla.miss_rate",
       "full_model": 0.0,
-      "point": 0.0017476248248857532,
+      "point": 0.0,
       "lo": 0.0,
-      "hi": 0.027241898236167645,
+      "hi": 0.016460971241081826,
       "inside_90": true
      },
      {
       "workload": "S6",
       "output": "T4_vla.p99_ms",
-      "full_model": 91.7191346791,
-      "point": 85.53445048169789,
-      "lo": 66.53741684070407,
-      "hi": 91.9339403280585,
+      "full_model": 66.95771111492,
+      "point": 58.667386040309815,
+      "lo": 53.70639911181524,
+      "hi": 81.69405269982799,
       "inside_90": true
      }
     ],
     "frac_inside_90": 1.0,
-    "wall_s": 14.254181861877441
+    "wall_s": 11.479079961776733
    },
-   "on_pareto_all": false,
+   "on_pareto_all": true,
    "on_pareto_feasible": true
   }
  ],
@@ -1645,158 +1647,158 @@
    "bitrate_gbps": 1.0,
    "ambient_c": 35.0
   },
-  "predicted_energy_wh_mean": 5.796192551778589,
-  "predicted_safety_upper": 0.004971820126417177,
+  "predicted_energy_wh_mean": 5.1362696251025355,
+  "predicted_safety_upper": 0.004735846824160553,
   "area_mm2": 47.917931020800005,
   "feasible_by_surrogate": true,
-  "verified_energy_wh_mean_1p2s": 6.117821842680767,
-  "verified_energy_wh_mean_4p8s": 6.017842874137295,
-  "verified_worst_safety_miss_4p8s": 0,
+  "verified_energy_wh_mean_2s": 5.509912855009141,
+  "verified_energy_wh_mean_6s": 5.512110937075766,
+  "verified_worst_safety_miss_6s": 0,
   "runs": {
-   "1.2s": {
+   "2s": {
     "S1": {
-     "energy_per_robot_hour_wh": 6.030427721179934,
+     "energy_per_robot_hour_wh": 5.4225397053626265,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 78.49805335338,
-     "T8_safety.p99_ms": 2.2917719034000026,
+     "T4_vla.p99_ms": 57.047441393490004,
+     "T8_safety.p99_ms": 2.2238818099100013,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 96.833101859,
-     "avg_power_w": 6.030427721179934,
-     "peak_power_w": 8.802378817980646,
-     "peak_temp_c": 83.51996382928633,
-     "cpu_s": 2.298261
+     "chain_camera_to_plan.p99_ms": 79.993132038,
+     "avg_power_w": 5.4225397053626265,
+     "peak_power_w": 8.542393940904638,
+     "peak_temp_c": 75.61234136388687,
+     "cpu_s": 4.657401
     },
     "S2": {
-     "energy_per_robot_hour_wh": 6.06753009143804,
+     "energy_per_robot_hour_wh": 5.493403650250175,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 79.52356601606,
-     "T8_safety.p99_ms": 2.6835851782300004,
+     "T4_vla.p99_ms": 58.191595137049994,
+     "T8_safety.p99_ms": 2.4333378281700018,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 85.953101859,
-     "avg_power_w": 6.06753009143804,
-     "peak_power_w": 8.813568681904453,
-     "peak_temp_c": 83.43038150499777,
-     "cpu_s": 2.470242
+     "chain_camera_to_plan.p99_ms": 79.993132038,
+     "avg_power_w": 5.493403650250175,
+     "peak_power_w": 8.383545826537315,
+     "peak_temp_c": 76.0562366081145,
+     "cpu_s": 4.894007
     },
     "S3": {
-     "energy_per_robot_hour_wh": 6.209737154806071,
+     "energy_per_robot_hour_wh": 5.5599144433378695,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 61.84078507884,
-     "T8_safety.p99_ms": 2.0528766289599996,
+     "T4_vla.p99_ms": 78.67134599412,
+     "T8_safety.p99_ms": 2.242769926489997,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 81.003101859,
-     "avg_power_w": 6.209737154806071,
-     "peak_power_w": 10.90229263829269,
-     "peak_temp_c": 84.82244936639148,
-     "cpu_s": 2.54826
+     "chain_camera_to_plan.p99_ms": 99.803132038,
+     "avg_power_w": 5.5599144433378695,
+     "peak_power_w": 8.32317885796456,
+     "peak_temp_c": 76.45799912759963,
+     "cpu_s": 5.095096
     },
     "S6": {
-     "energy_per_robot_hour_wh": 6.163592403299022,
+     "energy_per_robot_hour_wh": 5.563793621085894,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 75.87079049536,
-     "T8_safety.p99_ms": 3.8290432779500017,
+     "T4_vla.p99_ms": 86.99719218490999,
+     "T8_safety.p99_ms": 2.6953014035000016,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 81.006172227,
-     "avg_power_w": 6.163592403299022,
-     "peak_power_w": 8.931235110948833,
-     "peak_temp_c": 83.94502997810675,
-     "cpu_s": 2.852805
+     "chain_camera_to_plan.p99_ms": 101.006232585,
+     "avg_power_w": 5.563793621085894,
+     "peak_power_w": 8.124069683862142,
+     "peak_temp_c": 75.88533099337094,
+     "cpu_s": 5.650240999999999
     }
    },
-   "4.8s": {
+   "6s": {
     "S1": {
-     "energy_per_robot_hour_wh": 5.948094218542587,
+     "energy_per_robot_hour_wh": 5.422042445157151,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 79.002065913,
-     "T8_safety.p99_ms": 2.473030209929999,
+     "T4_vla.p99_ms": 57.068669098,
+     "T8_safety.p99_ms": 2.42398947837,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 97.923101859,
-     "avg_power_w": 5.948094218542587,
-     "peak_power_w": 8.802378817980646,
-     "peak_temp_c": 83.51996382928633,
-     "cpu_s": 10.497104
+     "chain_camera_to_plan.p99_ms": 80.003132038,
+     "avg_power_w": 5.422042445157151,
+     "peak_power_w": 8.542689635091858,
+     "peak_temp_c": 75.61579967608773,
+     "cpu_s": 16.440421
     },
     "S2": {
-     "energy_per_robot_hour_wh": 5.988049696863293,
+     "energy_per_robot_hour_wh": 5.4928675789610635,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 80.562019126,
-     "T8_safety.p99_ms": 2.7016222660499998,
+     "T4_vla.p99_ms": 59.81445034581,
+     "T8_safety.p99_ms": 2.42992937755,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 99.003101859,
-     "avg_power_w": 5.988049696863293,
-     "peak_power_w": 8.813568681904453,
-     "peak_temp_c": 83.43038150499777,
-     "cpu_s": 11.146671999999999
+     "chain_camera_to_plan.p99_ms": 80.003132038,
+     "avg_power_w": 5.4928675789610635,
+     "peak_power_w": 8.438186851004446,
+     "peak_temp_c": 76.0744481675488,
+     "cpu_s": 17.543209
     },
     "S3": {
-     "energy_per_robot_hour_wh": 6.081425600661702,
+     "energy_per_robot_hour_wh": 5.562506889933716,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 62.6540922139,
-     "T8_safety.p99_ms": 2.05152639526,
+     "T4_vla.p99_ms": 80.35125121974,
+     "T8_safety.p99_ms": 2.3946094677499983,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 81.003101859,
-     "avg_power_w": 6.081425600661702,
-     "peak_power_w": 11.08607198157491,
-     "peak_temp_c": 84.82244936639148,
-     "cpu_s": 11.081829
+     "chain_camera_to_plan.p99_ms": 100.003132038,
+     "avg_power_w": 5.562506889933716,
+     "peak_power_w": 8.32317885796456,
+     "peak_temp_c": 76.45799912759963,
+     "cpu_s": 17.771682
     },
     "S6": {
-     "energy_per_robot_hour_wh": 6.053801980481597,
+     "energy_per_robot_hour_wh": 5.571026834251135,
      "worst_safety_miss_rate": 0.0,
      "worst_rt_miss_rate": 0.0,
      "T4_vla.miss_rate": 0.0,
      "T2_detect.miss_rate": 0.0,
-     "T4_vla.p99_ms": 90.391724126,
-     "T8_safety.p99_ms": 3.198957588499966,
+     "T4_vla.p99_ms": 87.65226655647,
+     "T8_safety.p99_ms": 2.6928271190800004,
      "T7_control.miss_rate": 0.0,
      "T8_safety.miss_rate": 0.0,
-     "chain_camera_to_plan.p99_ms": 99.006172227,
-     "avg_power_w": 6.053801980481597,
-     "peak_power_w": 8.931235110948833,
-     "peak_temp_c": 83.94502997810675,
-     "cpu_s": 13.119568
+     "chain_camera_to_plan.p99_ms": 101.006232585,
+     "avg_power_w": 5.571026834251135,
+     "peak_power_w": 8.541923835220281,
+     "peak_temp_c": 75.89419482535627,
+     "cpu_s": 20.317166999999998
     }
    }
   },
-  "p0_fifo_predicted_energy_wh_mean": 5.675609030179509
+  "p0_fifo_predicted_energy_wh_mean": 4.920492306757485
  },
  "hypothetical_low_voltage_arith": [
   {
    "lv_arith_factor": 2.0,
-   "predicted_energy_wh_mean": 2.986878291043444,
+   "predicted_energy_wh_mean": 2.3868119450874756,
    "label": "hypothetical (represents the class of techniques Velaura claims for Titan Core; not their technology)"
   },
   {
    "lv_arith_factor": 4.0,
-   "predicted_energy_wh_mean": 2.9364722800500553,
+   "predicted_energy_wh_mean": 2.4004358725230865,
    "label": "hypothetical (represents the class of techniques Velaura claims for Titan Core; not their technology)"
   }
  ],
@@ -1807,514 +1809,484 @@
   "y_label": "Worst safety-task miss rate, 90% upper bound (max over workloads)",
   "points": [
    [
-    2.7277,
+    2.2826,
     1.0,
+    43.05
+   ],
+   [
+    2.2877,
+    0.120019,
+    52.2
+   ],
+   [
+    2.2879,
+    0.27127,
+    40.5
+   ],
+   [
+    2.2914,
+    0.35288,
     39.59
    ],
    [
-    2.7883,
-    1.0,
-    35.64
-   ],
-   [
-    2.7991,
-    0.104848,
-    49.7
-   ],
-   [
-    2.8086,
-    0.018441,
-    50.01
-   ],
-   [
-    2.8104,
-    0.023055,
-    42.45
-   ],
-   [
-    2.8123,
-    0.00818,
-    42.07
-   ],
-   [
-    2.8682,
-    0.010743,
-    38.63
-   ],
-   [
-    2.8769,
-    0.006359,
-    38.64
-   ],
-   [
-    2.8838,
-    0.005587,
+    2.2957,
+    0.044289,
     56.0
    ],
    [
-    2.8888,
-    0.004692,
-    60.17
+    2.3016,
+    0.026363,
+    59.57
    ],
    [
-    2.903,
-    0.00586,
-    50.09
+    2.3113,
+    0.627181,
+    38.85
    ],
    [
-    2.9097,
-    0.015322,
-    34.17
+    2.3126,
+    0.106038,
+    38.63
    ],
    [
-    2.9109,
-    0.005685,
+    2.3187,
+    0.013057,
+    41.29
+   ],
+   [
+    2.3271,
+    0.061163,
+    40.22
+   ],
+   [
+    2.3364,
+    0.102443,
+    38.64
+   ],
+   [
+    2.3391,
+    0.350613,
+    38.41
+   ],
+   [
+    2.3463,
+    0.010475,
     48.99
    ],
    [
-    2.9117,
-    0.004966,
-    47.59
+    2.3471,
+    0.037984,
+    39.9
    ],
    [
-    2.9351,
-    0.00595,
-    45.08
+    2.3534,
+    0.016713,
+    40.8
    ],
    [
-    2.9369,
-    0.0047,
-    49.85
+    2.3772,
+    1.0,
+    35.48
    ],
    [
-    2.9384,
-    0.003782,
-    54.98
+    2.3827,
+    0.175246,
+    35.64
    ],
    [
-    2.9492,
-    0.003987,
-    46.18
+    2.3941,
+    0.975934,
+    35.39
    ],
    [
-    2.9568,
-    0.004334,
+    2.4064,
+    0.013015,
+    47.87
+   ],
+   [
+    2.4218,
+    0.007532,
+    56.88
+   ],
+   [
+    2.4327,
+    0.059569,
+    38.3
+   ],
+   [
+    2.465,
+    0.042796,
+    34.17
+   ],
+   [
+    2.4661,
+    0.028046,
+    36.46
+   ],
+   [
+    2.4678,
+    0.023365,
+    37.92
+   ],
+   [
+    2.4724,
+    0.005419,
+    43.99
+   ],
+   [
+    2.4858,
+    0.011996,
     43.41
    ],
    [
-    2.9689,
-    0.003556,
-    47.7
+    2.4905,
+    0.007285,
+    40.85
    ],
    [
-    2.9822,
-    0.00813,
-    38.62
+    2.4944,
+    0.019481,
+    38.15
    ],
    [
-    2.9874,
-    0.00541,
-    40.43
+    2.5072,
+    0.011961,
+    38.63
    ],
    [
-    3.019,
-    0.005307,
-    42.65
+    2.5118,
+    0.005362,
+    53.21
    ],
    [
-    3.0269,
-    0.004177,
-    43.16
+    2.5121,
+    0.00438,
+    59.6
    ],
    [
-    3.0405,
-    0.003954,
-    36.44
+    2.5183,
+    0.009942,
+    38.11
    ],
    [
-    3.1196,
-    0.003432,
-    58.1
+    2.5192,
+    0.004344,
+    44.27
    ],
    [
-    3.1218,
+    2.5213,
     1.0,
     33.69
    ],
    [
-    3.1257,
-    0.003424,
-    42.9
+    2.5278,
+    0.005606,
+    40.58
    ],
    [
-    3.1331,
-    0.006798,
+    2.5385,
+    0.004448,
+    40.7
+   ],
+   [
+    2.5453,
+    0.004218,
+    36.44
+   ],
+   [
+    2.5695,
+    0.026315,
     35.75
    ],
    [
-    3.1964,
-    0.006556,
-    36.16
+    2.6212,
+    0.004118,
+    64.12
    ],
    [
-    3.2363,
-    0.003285,
-    59.11
-   ],
-   [
-    3.2365,
-    0.003282,
-    60.82
-   ],
-   [
-    3.2582,
-    0.003664,
-    38.63
-   ],
-   [
-    3.2595,
-    0.003303,
-    48.22
-   ],
-   [
-    3.2738,
-    0.003389,
-    47.71
-   ],
-   [
-    3.2741,
-    0.432171,
+    2.6546,
+    0.386538,
     33.44
    ],
    [
-    3.275,
-    0.003397,
-    45.9
+    2.6676,
+    0.004139,
+    50.4
    ],
    [
-    3.2976,
-    0.002834,
-    56.28
+    2.668,
+    0.004203,
+    43.95
    ],
    [
-    3.3237,
-    0.002961,
-    48.01
+    2.6774,
+    0.003879,
+    53.42
    ],
    [
-    3.3302,
-    0.003929,
-    36.63
+    2.6956,
+    0.003578,
+    61.5
    ],
    [
-    3.3331,
-    0.003409,
-    44.66
+    2.7035,
+    0.00382,
+    54.06
    ],
    [
-    3.334,
-    0.003463,
-    40.34
+    2.7353,
+    0.004186,
+    42.98
    ],
    [
-    3.3387,
-    0.003324,
-    44.82
+    2.737,
+    0.003638,
+    41.96
    ],
    [
-    3.4121,
-    0.003238,
-    43.56
+    2.7691,
+    0.003135,
+    53.93
    ],
    [
-    3.4323,
-    0.005403,
+    2.8266,
+    0.004199,
+    40.73
+   ],
+   [
+    2.8461,
+    0.004201,
+    40.1
+   ],
+   [
+    2.8642,
+    0.003936,
+    41.8
+   ],
+   [
+    2.914,
+    0.032357,
+    35.13
+   ],
+   [
+    2.9211,
+    0.003808,
+    38.7
+   ],
+   [
+    2.9512,
+    0.024553,
+    35.77
+   ],
+   [
+    2.9521,
+    0.003615,
+    48.98
+   ],
+   [
+    2.9676,
+    0.011249,
+    35.57
+   ],
+   [
+    2.9727,
+    0.005862,
     36.28
    ],
    [
-    3.4385,
-    0.003439,
-    42.45
+    2.974,
+    0.003615,
+    43.3
    ],
    [
-    3.4523,
-    0.0148,
-    35.64
+    2.9831,
+    0.003572,
+    53.06
    ],
    [
-    3.4564,
-    0.006807,
-    35.57
+    3.0094,
+    0.003441,
+    50.94
    ],
    [
-    3.4706,
-    0.003411,
-    41.63
+    3.0196,
+    0.003742,
+    38.91
    ],
    [
-    3.533,
-    0.003625,
-    38.74
-   ],
-   [
-    3.5409,
-    0.003333,
-    43.37
-   ],
-   [
-    3.5441,
-    0.003267,
-    42.34
-   ],
-   [
-    3.5803,
-    0.00325,
-    38.89
-   ],
-   [
-    3.581,
-    0.044416,
-    33.76
-   ],
-   [
-    3.5857,
-    0.009974,
-    34.94
-   ],
-   [
-    3.5969,
-    0.003578,
+    3.026,
+    0.003849,
     38.02
    ],
    [
-    3.6014,
-    0.003232,
-    46.44
-   ],
-   [
-    3.6048,
-    0.003227,
-    46.47
-   ],
-   [
-    3.6548,
-    0.006167,
+    3.0792,
+    0.010613,
     35.57
    ],
    [
-    3.7612,
-    0.004874,
+    3.0818,
+    0.00559,
     35.53
    ],
    [
-    3.7626,
-    0.059167,
+    3.0821,
+    0.073621,
+    33.76
+   ],
+   [
+    3.0929,
+    0.010449,
+    34.94
+   ],
+   [
+    3.0977,
+    0.003741,
+    41.0
+   ],
+   [
+    3.121,
+    0.036707,
+    34.32
+   ],
+   [
+    3.1409,
+    0.003539,
+    48.11
+   ],
+   [
+    3.1491,
+    0.003339,
+    48.38
+   ],
+   [
+    3.1609,
+    0.003582,
+    44.55
+   ],
+   [
+    3.1745,
+    0.003311,
+    53.19
+   ],
+   [
+    3.1773,
+    0.149784,
     33.72
    ],
    [
-    3.8124,
-    0.003236,
-    45.79
+    3.2942,
+    0.003098,
+    50.81
    ],
    [
-    3.8199,
-    0.003064,
-    47.27
+    3.3019,
+    0.003567,
+    44.47
    ],
    [
-    3.8242,
-    0.012428,
+    3.3033,
+    0.029429,
     34.79
    ],
    [
-    3.8365,
-    0.003381,
-    36.63
+    3.3256,
+    0.002951,
+    47.85
    ],
    [
-    3.848,
-    0.003187,
-    47.06
+    3.3376,
+    0.004127,
+    37.0
    ],
    [
-    3.9727,
-    0.011362,
-    34.65
+    3.3971,
+    0.003481,
+    41.94
    ],
    [
-    3.9923,
-    0.003182,
-    44.29
+    3.4557,
+    0.003204,
+    47.37
    ],
    [
-    4.0014,
+    3.4894,
+    0.003308,
+    37.72
+   ],
+   [
+    3.4903,
     1.0,
     32.97
    ],
    [
-    4.0074,
-    0.002852,
-    56.08
+    3.5263,
+    0.002907,
+    56.73
    ],
    [
-    4.0097,
-    0.003331,
-    37.0
+    3.5271,
+    0.033769,
+    34.65
    ],
    [
-    4.0227,
-    0.002805,
-    59.62
-   ],
-   [
-    4.0314,
-    0.002885,
-    51.99
-   ],
-   [
-    4.0353,
-    0.004011,
+    3.6519,
+    0.007205,
     34.79
    ],
    [
-    4.0741,
-    0.00311,
-    44.25
+    3.7084,
+    0.00409,
+    37.67
    ],
    [
-    4.1597,
-    0.002833,
-    47.52
-   ],
-   [
-    4.2126,
-    0.003247,
-    39.23
-   ],
-   [
-    4.2173,
-    0.002555,
-    56.94
-   ],
-   [
-    4.2288,
-    0.003211,
-    40.69
-   ],
-   [
-    4.2713,
-    0.0031,
-    41.86
-   ],
-   [
-    4.294,
-    0.003055,
-    47.41
-   ],
-   [
-    4.3167,
-    0.011783,
+    3.7181,
+    0.015483,
     33.08
    ],
    [
-    4.3218,
-    0.002989,
-    47.11
-   ],
-   [
-    4.3431,
-    0.00331,
-    38.32
-   ],
-   [
-    4.3853,
-    0.003476,
+    3.8649,
+    0.004956,
     35.85
    ],
    [
-    4.4245,
-    0.002814,
-    41.57
+    3.8889,
+    0.006011,
+    35.31
    ],
    [
-    4.466,
-    0.179112,
-    32.11
-   ],
-   [
-    4.5388,
-    0.00366,
-    35.67
-   ],
-   [
-    4.5509,
-    0.00321,
-    38.02
-   ],
-   [
-    4.5636,
-    0.003154,
-    40.44
-   ],
-   [
-    4.5999,
-    0.003207,
-    38.6
-   ],
-   [
-    4.6282,
-    0.00546,
-    33.58
-   ],
-   [
-    4.6382,
-    0.003135,
-    36.82
-   ],
-   [
-    4.6518,
-    0.003839,
+    3.9248,
+    0.006774,
     34.93
    ],
    [
-    4.7856,
-    0.003108,
-    36.0
+    3.9468,
+    0.131514,
+    32.11
    ],
    [
-    4.8267,
-    0.00301,
-    41.43
+    4.3426,
+    0.003276,
+    45.67
    ],
    [
-    4.8375,
-    0.002778,
-    44.1
+    4.3687,
+    0.002687,
+    77.4
    ],
    [
-    4.9053,
-    0.002609,
-    50.93
+    4.4267,
+    0.002728,
+    57.76
    ],
    [
-    5.0236,
-    0.003993,
-    34.8
+    4.6717,
+    0.00329,
+    40.71
    ],
    [
-    5.8859,
-    0.002736,
-    45.7
-   ],
-   [
-    6.1182,
-    0.002511,
-    54.22
-   ],
-   [
-    6.9743,
-    0.002662,
-    50.4
+    5.0816,
+    0.002734,
+    46.68
    ]
   ],
   "point_fields": [
@@ -2330,6 +2302,6 @@
  "caveats": [
   "VX-1 is fictional; the area proxy is rough.",
   "Feasibility uses the surrogate's 90% marginal upper bounds; the guarantee is marginal, so each recommendation is re-run with the full model.",
-  "Runs are 1.2 simulated seconds (verification also at 4.8 s); rare events longer than that are not sampled."
+  "Runs are 2.0 simulated seconds with a 1.0 s burn-in (verification also at 6 s); rare events longer than that are not sampled."
  ]
 }

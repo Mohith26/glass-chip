@@ -62,7 +62,7 @@ def _run_one(args: tuple[int, dict[str, float]]) -> dict[str, Any]:
     ov: dict[str, Any] = {
         "policy": {"scheduler": cfg["scheduler"]},
         "power": {"vmin": vmin, "low_voltage_arith": {"enabled": lvf > 1.0 + 1e-9, "reduction_x": max(lvf, 1.0)},
-                  "thermal_init": "steady"},
+                  "thermal_init": "settle"},
         "scenario": {"transport": cfg["transport"], "ambient_c": float(cfg["ambient_c"])},
         "qos": bool(cfg["qos"]),
         "cache_partition": {"safety": 2, "realtime": 10, "best_effort": 4} if cfg["cache_partition"] else None,

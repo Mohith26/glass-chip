@@ -109,11 +109,12 @@ def t5_alone(tab: dict[str, Any], variant: str, esdf_override: dict[str, float] 
         sim.set_l2_tables({"cpu_cpi": cpi})
     sim.release_job("T5_plan", 0, tag=0)
     j = sim.run_until(5_000_000_000_000)[0]
-    return {"variant": variant, "response_ms": j["response_ps"] / 1e9, "deadline_ms": g["deadline_us"] / 1e3,
+    return {"variant": variant, "core_build_id": sim.info().get("build_id"), "t5_ops": len(g["ops"]), "response_ms": j["response_ps"] / 1e9, "deadline_ms": g["deadline_us"] / 1e3,
             "meets_deadline": j["response_ps"] <= g["deadline_us"] * 1e6,
             "attribution_ms": {k: v / 1e9 for k, v in j["attribution"].items() if v},
             "collision_ms_ideal_8_cores": summ.get("collision_ms_ideal_shards_at_2ghz"),
-            "collision_blocks": summ.get("blocks", [])[:1]}
+            "collision_ops_replaced": len(summ.get("blocks", [])),
+            "collision_op_example": summ.get("blocks", [])[:1]}
 
 
 def t5_section(tab: dict[str, Any]) -> dict[str, Any]:
@@ -146,6 +147,7 @@ def s3_one(variant: str, seed: int, duration: float) -> dict[str, Any]:
     ev = 3.0  # S3 human_enter event time (configs/scenarios/S3_*.yaml)
     burst = [j for j in t5 if ev * 1e12 <= j["release_ps"] <= (ev + 1.0) * 1e12]
     return {"variant": variant, "seed": seed, "duration_s": duration,
+            "core_build": r.get("provenance", {}).get("core_build"), "t5_ops": len(g["ops"]),
             "t5": r["tasks"]["T5_plan"],
             "t5_jobs": [{"release_ms": j["release_ps"] / 1e9, "response_ms": j["response_ps"] / 1e9, "missed": j["missed"],
                          "attribution_ms": {k: v / 1e9 for k, v in j["attribution"].items() if v > 1e6}} for j in t5],
@@ -194,7 +196,8 @@ def s3_section(seeds: list[int], duration: float, jobs: int, reuse: bool = False
                     o["missed"] += m or 0
                     o["completed"] += r.get("other_tasks_completed", {}).get(t) or 0
             summary[v]["other_tasks_with_misses"] = {t: o for t, o in other.items() if o["missed"]}
-    return {"seeds": seeds, "duration_s": duration, "policy": "P0",
+    build_ids = sorted({str((r.get("core_build") or {}).get("build_id")) for r in runs if "error" not in r})
+    return {"seeds": seeds, "duration_s": duration, "policy": "P0", "core_build_ids": build_ids,
             "fidelity": "interactive + cpu L2 (all variants, including the SIMT baseline)",
             "summary": summary, "runs": runs}
 
@@ -346,6 +349,10 @@ def main() -> None:
     if a.regen_gem5:
         subprocess.run([sys.executable, str(ROOT / "riscv/run_gem5.py")], check=True, cwd=ROOT)
     tab = load_table()
+    import glasschip_core as gc
+
+    build_id = gc.Sim(yaml.safe_load(SOC.read_text()), yaml.safe_load(FID.read_text()), seed=0).info().get("build_id")
+    t5_graph = json.loads(T5_PATH.read_text())
     res: dict[str, Any] = {
         "provenance": {"script": "studies/s13_riscv.py", "git_sha": git_sha(),
                        "config_files": ["configs/soc/vx1.yaml", "configs/fidelity/interactive.yaml",
@@ -353,6 +360,9 @@ def main() -> None:
                                         "riscv/gem5/se_xcol.py"],
                        "inputs": ["riscv/tables/rvv_kernels.json", "workloads/graphs/T5_plan.json", "riscv/core_hook.py"],
                        "seed": a.seeds, "date": dt.date.today().isoformat(),
+                       "core_build_id": build_id,
+                       "t5_graph": {"date": t5_graph["provenance"].get("date"), "ops": len(t5_graph["ops"]),
+                                    "script_sha256": t5_graph["provenance"].get("script_sha256")},
                        "gem5_table_provenance": tab["provenance"]},
         "question": "RVV vs scalar per kernel, xcol.sdf speedup on the ESDF collision kernel, and T5 replan latency on VX-1",
         "honesty": [

@@ -9,3 +9,26 @@ gemm_vit_mlp_1024x768x3072/dram_noc_L0 {"export_wall_s": 0.01746649999404326, "d
 attention_vit_12h_1024/study_L1 {"export_wall_s": 0.5026169169868808, "dram": -0.1938821633711891, "noc": 0.48654581820866144}
 attention_vit_12h_1024/dram_noc_L0 {"export_wall_s": 0.2498041669896338, "dram": -0.9964058342664109, "noc": -0.9997129313614299}
 S1_first_10ms/study_L1 {"export_wall_s": 3.509616915980587, "dram": -0.6967586257127112, "noc": 1.036031009556784}
+S1_first_10ms/dram_noc_L0 {"export_wall_s": 4.666253666015109, "dram": -0.9967119512827443, "noc": -0.9997413179685404}
+{
+ "study_L1/dram": {
+  "n_cases": 6,
+  "mean_abs_rel_err_of_mean": 0.3307569686507889,
+  "mean_abs_rel_err_of_p99": 0.2804215263105964
+ },
+ "study_L1/noc": {
+  "n_cases": 6,
+  "mean_abs_rel_err_of_mean": 0.4865016980103487,
+  "mean_abs_rel_err_of_p99": 0.8737670695963705
+ },
+ "dram_noc_L0/dram": {
+  "n_cases": 5,
+  "mean_abs_rel_err_of_mean": 0.888804758143673,
+  "mean_abs_rel_err_of_p99": 0.968651106148046
+ },
+ "dram_noc_L0/noc": {
+  "n_cases": 5,
+  "mean_abs_rel_err_of_mean": 0.9991060330021595,
+  "mean_abs_rel_err_of_p99": 0.9993982175579786
+ }
+}
