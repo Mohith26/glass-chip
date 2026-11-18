@@ -67,7 +67,9 @@ class PowerManager:
         self.predictor = ExecTimePredictor(
             quantile=float(pp.get("quantile", 0.95)), safety_quantile=float(pp.get("safety_quantile", 0.999)),
             prior_inflation=float(pp.get("prior_inflation", 1.25)), min_samples=int(pp.get("min_samples", 5)),
-            window=int(pp.get("window", 200)), task_info=task_info)
+            window=int(pp.get("window", 200)), task_info=task_info,
+            nominal_freqs={d: v.nominal.freq_hz for d, v in build_domain_vf(soc_cfg, domains).items()},
+            anchor_window=int(pp.get("anchor_window", 50)))
 
         # V/f tables, with the hypothetical low-voltage arithmetic extension if enabled.
         self.vf: dict[str, DomainVF] = build_domain_vf(soc_cfg, domains)
@@ -101,10 +103,23 @@ class PowerManager:
         self.throttle = {d: self._new_throttle(d) for d in domains if not self.vf[d].fixed}
         if thermal_init == "steady":
             self.warm_start(warm_start_w)
+        # "settle": after a burn-in window, jump the thermal state to the steady state (with
+        # temperature-dependent leakage) for the power measured so far, and restart the energy
+        # accounting there. Approximates long-run operation in a short run (enclosure time
+        # constants are minutes). Misses and robot metrics are not reset.
+        self.thermal_init = thermal_init
+        self._settle_ps = int(round(float(self.params["thermal"].get("settle_s", 1.0)) * 1e12)) \
+            if thermal_init == "settle" else None
+        self.settle_info: dict[str, Any] | None = None
+        self._v_time: dict[str, float] = defaultdict(float)
+        self._gated_time: dict[str, float] = defaultdict(float)
 
         # Run state.
         self.opp: dict[str, int] = {d: self.vf[d].nominal_index for d in domains}
         self._last_t_ps: int | None = None
+        self._f_hist_t: list[int] = []                       # step boundary times
+        self._f_hist_cum: dict[str, list[float]] = {d: [] for d in domains}   # cumulative f * dt (Hz*ps)
+        self._f_at: dict[str, list[float]] = {d: [] for d in domains}         # f of the segment from step k
         self.last_util: dict[str, float] = {}
         self._pending_transition: dict[str, tuple[float, float]] = {}
         self._gating_enabled_on_sim = False
@@ -112,9 +127,12 @@ class PowerManager:
         self.record_series = record_series
         self.series: dict[str, Any] = {"t_s": [], "power_w": defaultdict(list), "power_in_w": [], "volts": defaultdict(list),
                                        "freq_hz": defaultdict(list), "opp": defaultdict(list), "temp_c": defaultdict(list),
-                                       "energy_j": [], "throttled": defaultdict(list), "gated_frac": defaultdict(list)}
+                                       "energy_j": [], "throttled": defaultdict(list), "gated_frac": defaultdict(list),
+                                       "throttle_cap": defaultdict(list), "throttle_binding": defaultdict(list),
+                                       "ambient_c": []}
         self.energy_by_domain_j: dict[str, float] = defaultdict(float)
         self.energy_parts_j: dict[str, float] = defaultdict(float)
+        self.energy_parts_by_domain_j: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
         self.reg_loss_j = 0.0
         self.total_energy_j = 0.0
         self.peak_power_w = 0.0
@@ -132,6 +150,12 @@ class PowerManager:
         self.job_trace: list[dict[str, Any]] = []
         self._pending_seen: dict[int, dict[str, Any]] = {}
         self.vmin_notes: list[str] = []
+        self.accounted_from_ps = 0
+        self.first_throttle_ps: int | None = None          # first step any OPP cap is below max
+        self.first_binding_ps: int | None = None           # first step a cap lowers the policy's choice
+        self.binding_ps = 0
+        self._binding_now: set[str] = set()
+        self.binding_ps_by_domain: dict[str, int] = defaultdict(int)
 
     # ------------------------------------------------------------------ setup
     def _new_throttle(self, d: str) -> ThrottleController:
@@ -213,10 +237,34 @@ class PowerManager:
         self.energy.vf = self.vf
 
     # ------------------------------------------------------------- per step
+    def _cum_f(self, d: str, t_ps: int) -> float:
+        """Integral of domain d's OPP frequency from the first step to t_ps (Hz * ps)."""
+        import bisect
+        ts = self._f_hist_t
+        cum = self._f_hist_cum[d]
+        f_now = self.vf[d].opps[self.opp[d]].freq_hz
+        if not ts:
+            return f_now * t_ps
+        k = bisect.bisect_right(ts, t_ps) - 1
+        if k < 0:
+            return 0.0
+        # the OPP set at step k holds until step k+1
+        f_k = self._f_at[d][k]
+        return cum[k] + f_k * (t_ps - ts[k])
+
+    def avg_freq(self, d: str, t0_ps: int, t1_ps: int) -> float:
+        """Time-averaged frequency of domain d over [t0, t1] from the manager's OPP history."""
+        if t1_ps <= t0_ps or not self._f_hist_t:
+            return self.vf[d].opps[self.opp[d]].freq_hz
+        return (self._cum_f(d, t1_ps) - self._cum_f(d, t0_ps)) / (t1_ps - t0_ps)
+
     def observe_completions(self, completions: Iterable[Mapping[str, Any]]) -> None:
         """Feed completed jobs (sim.run_until output) into statistics, miss counts and the job trace."""
         for c in completions:
-            self.predictor.observe_completion(c)
+            t0 = int(c.get("start_ps", c["release_ps"]))
+            t1 = int(c.get("finish_ps", t0))
+            freqs = {d: self.avg_freq(d, t0, t1) for d in self.domains}
+            self.predictor.observe_completion(c, freqs)
             task = str(c["task_id"])
             self.completions += 1
             self.jobs_by_task[task] += 1
@@ -236,6 +284,12 @@ class PowerManager:
         t_ps = int(t_ps)
         if not self._gating_enabled_on_sim and self.policy.gating and hasattr(sim, "set_power_gating"):
             for d in self.gating.gateable:
+                if self.gating.idle_before_gate_ps > 0:
+                    try:
+                        sim.set_power_gating(d, True, self.gating.wake_latency_ps, self.gating.idle_before_gate_ps)
+                        continue
+                    except TypeError:
+                        pass   # simulator without idle hysteresis
                 sim.set_power_gating(d, True, self.gating.wake_latency_ps)
             self._gating_enabled_on_sim = True
         counters = sim.counters(True) or {}
@@ -248,14 +302,20 @@ class PowerManager:
         for j in pending:
             if int(j["job_id"]) not in self._pending_seen and not j.get("started") and not j.get("frac_done"):
                 self._pending_seen[int(j["job_id"])] = {"est": dict(j.get("est_remaining_cycles") or {})}
+        new_seg = self._record_freq_step(t_ps)
         ctx = PolicyContext(t_ps, self.step_ps, self.vf, dict(self.opp), pending, self.predictor, self.parallel_units,
                             dict(self.last_util))
         choice = self.policy.decide(ctx)
+        self._binding_now = set()
         for d, idx in choice.items():
             dvf = self.vf[d]
             idx = max(int(idx), dvf.floor_index)
             if dvf.pinned_index is not None:
                 idx = dvf.pinned_index
+            if idx > self.throttle[d].cap:
+                self._binding_now.add(d)
+                if self.first_binding_ps is None:
+                    self.first_binding_ps = t_ps
             idx = min(idx, self.throttle[d].cap)
             idx = max(0, min(idx, dvf.max_index))
             if idx != self.opp[d]:
@@ -264,7 +324,22 @@ class PowerManager:
                 self._pending_transition[d] = (v0, dvf.opps[idx].volts)
                 self.transitions += 1
                 sim.set_domain_freq(d, dvf.opps[idx].freq_hz)
+        if new_seg:
+            for d in self.domains:
+                self._f_at[d].append(self.vf[d].opps[self.opp[d]].freq_hz)
         return dict(self.opp)
+
+    def _record_freq_step(self, t_ps: int) -> bool:
+        """Called before the policy sets new OPPs at t_ps: closes the previous segment."""
+        if self._f_hist_t and t_ps <= self._f_hist_t[-1]:
+            return False
+        for d in self.domains:
+            f_prev = self._f_at[d][-1] if self._f_at[d] else self.vf[d].opps[self.opp[d]].freq_hz
+            cum_prev = self._f_hist_cum[d][-1] if self._f_hist_cum[d] else 0.0
+            t_prev = self._f_hist_t[-1] if self._f_hist_t else 0
+            self._f_hist_cum[d].append(cum_prev + f_prev * (t_ps - t_prev) if self._f_hist_t else f_prev * t_ps)
+        self._f_hist_t.append(t_ps)
+        return True
 
     def _account(self, counters: Mapping[str, Mapping[str, Any]], dt_ps: int, t_ps: int) -> None:
         dt_s = dt_ps / PS_PER_S
@@ -310,9 +385,14 @@ class PowerManager:
             loss_total += loss
             total_in += p_in
             self.energy_by_domain_j[d] += p_in * dt_s
-            for k, e in (("dynamic", e_dyn), ("clock", e_clk), ("leakage", e_leak), ("wake", e_wake), ("dvfs", e_dvfs)):
-                self.energy_parts_j[k] += e
+            for k, e in (("dynamic", e_dyn), ("clock", e_clk), ("leakage", e_leak), ("wake", e_wake), ("dvfs", e_dvfs),
+                         ("regulator", loss * dt_s)):
+                if k != "regulator":
+                    self.energy_parts_j[k] += e
+                self.energy_parts_by_domain_j[d][k] += e
             self.wakeups += wakes
+            self._v_time[d] += v * dt_ps
+            self._gated_time[d] += gated
             self.busy_cycles[d] += busy / PS_PER_S * f
             vn = dvf.nominal.volts
             self.dyn_energy_nominal_j[d] += self.energy.dynamic_energy_j(d, c, vn)[0] if not dvf.fixed else e_dyn
@@ -338,6 +418,14 @@ class PowerManager:
                 self.throttled_ps_by_domain[d] += dt_ps
         if any_thr:
             self.throttled_ps += dt_ps
+            if self.first_throttle_ps is None:
+                self.first_throttle_ps = t_ps
+        if self._binding_now:
+            self.binding_ps += dt_ps
+            for d in self._binding_now:
+                self.binding_ps_by_domain[d] += dt_ps
+        if self._settle_ps is not None and self.elapsed_ps >= self._settle_ps:
+            self._settle()
         if self.record_series:
             self.series["t_s"].append(t_ps / PS_PER_S)
             self.series["power_in_w"].append(total_in)
@@ -346,6 +434,41 @@ class PowerManager:
                 self.series["temp_c"][n].append(tc)
             for d, ctl in self.throttle.items():
                 self.series["throttled"][d].append(ctl.throttled)
+                self.series["throttle_cap"][d].append(ctl.cap)
+                self.series["throttle_binding"][d].append(d in self._binding_now)
+            self.series["ambient_c"].append(self.thermal.ambient_c)
+
+    def _settle(self) -> None:
+        from .thermal_analysis import steady_state_with_leakage
+        el = float(self.elapsed_ps)
+        pnl = {d: sum(v for k, v in parts.items() if k in ("dynamic", "clock", "wake", "dvfs")) / (el / PS_PER_S)
+               for d, parts in self.energy_parts_by_domain_j.items()}
+        volts = {d: self._v_time[d] / el for d in self.domains}
+        gf = {d: self._gated_time[d] / el for d in self.domains}
+        ss = steady_state_with_leakage(self, pnl, volts, self.thermal.ambient_c, gated_frac=gf)
+        # Without a steady state (runaway) start from the throttle threshold: the die would have heated to
+        # it and throttling takes over from there.
+        cap = self._throttle_cfg[0]
+        self.thermal.T = np.array([min(ss["temps_c"][n], cap) for n in self.thermal.names])
+        self.settle_info = {"t_s": self.elapsed_ps / PS_PER_S, "steady_t_max_c": ss["t_max_c"],
+                            "runaway": ss["runaway"], "capped_at_c": cap if ss["runaway"] else None,
+                            "nonleak_w": sum(pnl.values())}
+        self._settle_ps = None
+        self.energy_by_domain_j.clear()
+        self.energy_parts_j.clear()
+        self.energy_parts_by_domain_j.clear()
+        self.reg_loss_j = 0.0
+        self.total_energy_j = 0.0
+        self.peak_power_w = 0.0
+        self.peak_temp_c = float(max(self.thermal.T))
+        self.throttled_ps = 0
+        self.throttled_ps_by_domain.clear()
+        self.binding_ps = 0
+        self.binding_ps_by_domain.clear()
+        self.busy_cycles.clear()
+        self.dyn_energy_nominal_j.clear()
+        self.accounted_from_ps = self.elapsed_ps
+        self.elapsed_ps = 0
 
     # ---------------------------------------------------------------- results
     def cycle_energy_profile(self) -> dict[str, float]:
@@ -383,8 +506,13 @@ class PowerManager:
             "peak_temp_c": self.peak_temp_c,
             "time_throttled_s": self.throttled_ps / PS_PER_S,
             "time_throttled_s_by_domain": {d: v / PS_PER_S for d, v in self.throttled_ps_by_domain.items()},
+            "first_throttle_s": None if self.first_throttle_ps is None else self.first_throttle_ps / PS_PER_S,
+            "first_throttle_binding_s": None if self.first_binding_ps is None else self.first_binding_ps / PS_PER_S,
+            "time_throttle_binding_s": self.binding_ps / PS_PER_S,
+            "time_throttle_binding_s_by_domain": {d: v / PS_PER_S for d, v in self.binding_ps_by_domain.items()},
             "energy_j_by_domain": dict(self.energy_by_domain_j),
             "energy_j_by_part": dict(self.energy_parts_j),
+            "energy_j_by_domain_part": {d: dict(v) for d, v in self.energy_parts_by_domain_j.items()},
             "dvfs_transitions": self.transitions,
             "wakeups": self.wakeups,
             "jobs_completed": self.completions,
@@ -394,14 +522,21 @@ class PowerManager:
             "hypothetical": self.hypothetical,
             "labels": labels,
             "low_voltage_arith": dict(self.params.get("low_voltage_arith", {})),
+            "surrogate": getattr(self.policy, "surrogate_kind", None),
+            "surrogate_stats": self.policy.surrogate_stats() if hasattr(self.policy, "surrogate_stats") else None,
+            "thermal_init": self.thermal_init,
+            "accounted_from_s": self.accounted_from_ps / PS_PER_S,
+            "settle": self.settle_info,
+            "ambient_c_end": self.thermal.ambient_c,
         }
 
     def series_arrays(self) -> dict[str, Any]:
         """Time series as numpy arrays (power per domain, V, f, OPP, temperature per node, energy)."""
         s = self.series
         out: dict[str, Any] = {"t_s": np.asarray(s["t_s"]), "power_in_w": np.asarray(s["power_in_w"]),
-                               "energy_j": np.asarray(s["energy_j"])}
-        for k in ("power_w", "volts", "freq_hz", "opp", "temp_c", "throttled", "gated_frac"):
+                               "energy_j": np.asarray(s["energy_j"]), "ambient_c": np.asarray(s["ambient_c"])}
+        for k in ("power_w", "volts", "freq_hz", "opp", "temp_c", "throttled", "gated_frac", "throttle_cap",
+                  "throttle_binding"):
             out[k] = {n: np.asarray(v) for n, v in s[k].items()}
         return out
 

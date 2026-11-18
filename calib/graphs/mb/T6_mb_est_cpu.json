@@ -1,0 +1,40 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T6_mb_est_cpu",
+ "name": "T6 estimate_step on an app core",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 5000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 5000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "estimate_step",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "instr": {
+    "scalar": 6810,
+    "vector": 662,
+    "mem": 4964
+   },
+   "bytes_in": 4096,
+   "bytes_out": 4096,
+   "reuse": 1.0,
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0
+  }
+ ]
+}

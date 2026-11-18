@@ -1,0 +1,184 @@
+{
+ "gpu_wide_primary/analytic": {
+  "n_within_30pct": 2,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.26647253441827634,
+  "rel_err_by_model": {
+   "T90_resnet50": -0.630564065625,
+   "T91_retinanet": -0.11067725706940869,
+   "T92_bert_large": -0.05817628056042039
+  }
+ },
+ "gpu_wide_primary/interactive": {
+  "n_within_30pct": 2,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.20928730844241059,
+  "rel_err_by_model": {
+   "T90_resnet50": -0.356661665625,
+   "T91_retinanet": -0.08835329280205655,
+   "T92_bert_large": 0.18284696690017516
+  }
+ },
+ "gpu_wide_primary/memory_focus": {
+  "n_within_30pct": 2,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.16982326754350055,
+  "rel_err_by_model": {
+   "T90_resnet50": -0.357600140625,
+   "T91_retinanet": 0.041875139588689,
+   "T92_bert_large": 0.10999452241681264
+  }
+ },
+ "gpu_wide_primary/study": {
+  "n_within_30pct": 2,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.14907736166291818,
+  "rel_err_by_model": {
+   "T90_resnet50": -0.3204781953125,
+   "T91_retinanet": -0.0013893395886889293,
+   "T92_bert_large": 0.12536455008756564
+  }
+ },
+ "vx1_default_sensitivity/analytic": {
+  "n_within_30pct": 1,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.6736882713853655,
+  "rel_err_by_model": {
+   "T90_resnet50": -0.033136607812500087,
+   "T91_retinanet": 0.5314177142245072,
+   "T92_bert_large": 1.4565104921190892
+  }
+ },
+ "vx1_default_sensitivity/interactive": {
+  "n_within_30pct": 1,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.7806553005916091,
+  "rel_err_by_model": {
+   "T90_resnet50": 0.08646499374999998,
+   "T91_retinanet": 0.8875346094258783,
+   "T92_bert_large": 1.3679662985989494
+  }
+ },
+ "vx1_default_sensitivity/memory_focus": {
+  "n_within_30pct": 1,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.789138560704966,
+  "rel_err_by_model": {
+   "T90_resnet50": 0.04340548749999992,
+   "T91_retinanet": 0.9723423299914309,
+   "T92_bert_large": 1.3516678646234677
+  }
+ },
+ "vx1_default_sensitivity/study": {
+  "n_within_30pct": 1,
+  "n_models": 3,
+  "mean_abs_rel_err": 0.7764773479701595,
+  "rel_err_by_model": {
+   "T90_resnet50": 0.07265058593750005,
+   "T91_retinanet": 0.9262871197943444,
+   "T92_bert_large": 1.330494338178634
+  }
+ }
+}
+{
+ "T11_speech": {
+  "n_ops": 47,
+  "total_core_l1_cycles": 10731876.0,
+  "total_scalesim_cycles": 29816543.0,
+  "total_rel_err": -0.6400697424916094,
+  "per_op_abs_rel_err_median": 0.03726228241752823,
+  "per_op_abs_rel_err_p90": 0.9969943742356299,
+  "by_type_median_rel_err": {
+   "conv2d": -0.02850462215481884,
+   "matmul": -0.03726228241752823
+  }
+ },
+ "T2_detect": {
+  "n_ops": 64,
+  "total_core_l1_cycles": 1803760.0,
+  "total_scalesim_cycles": 1859136.0,
+  "total_rel_err": -0.029785879031980447,
+  "per_op_abs_rel_err_median": 0.03513563846297101,
+  "per_op_abs_rel_err_p90": 0.10673760534865107,
+  "by_type_median_rel_err": {
+   "conv2d": -0.03513563846297101
+  }
+ },
+ "T2_detect_overhead": {
+  "n_ops": 64,
+  "total_core_l1_cycles": 1803760.0,
+  "total_scalesim_cycles": 1859136.0,
+  "total_rel_err": -0.029785879031980447,
+  "per_op_abs_rel_err_median": 0.03513563846297101,
+  "per_op_abs_rel_err_p90": 0.10673760534865107,
+  "by_type_median_rel_err": {
+   "conv2d": -0.03513563846297101
+  }
+ },
+ "T4_vla": {
+  "n_ops": 1373,
+  "total_core_l1_cycles": 163213064.0,
+  "total_scalesim_cycles": 191752756.0,
+  "total_rel_err": -0.14883588948260018,
+  "per_op_abs_rel_err_median": 0.26173096976016685,
+  "per_op_abs_rel_err_p90": 0.26249599878471563,
+  "by_type_median_rel_err": {
+   "conv2d": -0.05188913994794497,
+   "matmul": -0.26173096976016685
+  }
+ },
+ "T8_safety": {
+  "n_ops": 66,
+  "total_core_l1_cycles": 431103.0,
+  "total_scalesim_cycles": 493470.0,
+  "total_rel_err": -0.12638458264940117,
+  "per_op_abs_rel_err_median": 0.12837939607540733,
+  "per_op_abs_rel_err_p90": 0.3297365915582355,
+  "by_type_median_rel_err": {
+   "conv2d": -0.12849058354207255,
+   "dwconv2d": -0.1279782164737917
+  }
+ }
+}
+{"n_ops": 1614, "per_op_abs_rel_err_median": 0.26173096976016685, "per_op_abs_rel_err_p90": 0.26249599878471563, "cycle_weighted_abs_rel_err": 0.21186901162352245, "no_weight_load_overlap_diagnostic": {"per_op_abs_rel_err_median": 0.004177562690567389, "per_op_abs_rel_err_p90": 0.005563282336578581, "cycle_weighted_abs_rel_err": 0.0849171299551232}} {
+ "T11_speech": {
+  "table_hits": 47,
+  "fallbacks": 0,
+  "ops_traced": 47,
+  "op_duration_over_table_min": 1.0,
+  "op_duration_over_table_median": 1.0617479674061776,
+  "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
+ },
+ "T2_detect": {
+  "table_hits": 64,
+  "fallbacks": 0,
+  "ops_traced": 64,
+  "op_duration_over_table_min": 1.00296439669715,
+  "op_duration_over_table_median": 1.0727057297163076,
+  "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
+ },
+ "T2_detect_overhead": {
+  "table_hits": 64,
+  "fallbacks": 0,
+  "ops_traced": 64,
+  "op_duration_over_table_min": 1.00296439669715,
+  "op_duration_over_table_median": 1.0727057297163076,
+  "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
+ },
+ "T4_vla": {
+  "table_hits": 1373,
+  "fallbacks": 0,
+  "ops_traced": 1373,
+  "op_duration_over_table_min": 1.0,
+  "op_duration_over_table_median": 1.1353930218805441,
+  "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
+ },
+ "T8_safety": {
+  "table_hits": 66,
+  "fallbacks": 0,
+  "ops_traced": 66,
+  "op_duration_over_table_min": 1.005761720563206,
+  "op_duration_over_table_median": 1.1877472538437117,
+  "note": "durations include memory stall time, so ratios >= 1 are expected; a minimum near 1 shows the L2 path uses the table cycles"
+ }
+}

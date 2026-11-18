@@ -1,0 +1,39 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T7_mb_ctrl_rt",
+ "name": "T7 control_step on the RT core",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 1000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 1000,
+ "criticality": "safety",
+ "qos_class": "safety",
+ "ops": [
+  {
+   "op_id": "control_step",
+   "type": "control_law",
+   "dtype": "fp32",
+   "instr": {
+    "scalar": 1463,
+    "vector": 0,
+    "mem": 817
+   },
+   "bytes_in": 640,
+   "bytes_out": 168,
+   "eligible": [
+    "rt"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0
+  }
+ ]
+}

@@ -1,0 +1,290 @@
+{
+ "replays": {
+  "S2_P0": {
+   "bytes": 6743640,
+   "wall_s": 328.60391500001424,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 6.0866325769590235,
+   "vla_p99_ms": 79.754574089
+  },
+  "S3_P0": {
+   "bytes": 6543804,
+   "wall_s": 311.5782567909919,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 3,
+    "grasp_success": 3,
+    "placed": 3,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 6.019944384636164,
+   "vla_p99_ms": 61.830819768
+  },
+  "S1_P0": {
+   "bytes": 6387725,
+   "wall_s": 332.4082575000066,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 6.015215323190833,
+   "vla_p99_ms": 78.82936784099999
+  },
+  "S2_P2Q": {
+   "bytes": 6381734,
+   "wall_s": 333.8813980409759,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 6.09848635018195,
+   "vla_p99_ms": 80.36856669858
+  },
+  "S1_P4": {
+   "bytes": 6817125,
+   "wall_s": 596.622789874993,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 4.953902225246577,
+   "vla_p99_ms": 95.47494717976001
+  },
+  "S2_P4": {
+   "bytes": 7150792,
+   "wall_s": 573.7061130420188,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 5.078230083691464,
+   "vla_p99_ms": 95.20964264062
+  },
+  "S4_P0": {
+   "bytes": 6373607,
+   "wall_s": 313.2274785419868,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 5,
+    "placed": 4,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 6.027477172698828,
+   "vla_p99_ms": 78.82936784099999
+  },
+  "S5_P0": {
+   "bytes": 8470338,
+   "wall_s": 209.4051380000019,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 79,
+    "safety": 0,
+    "by_task": {
+     "T4_vla": 79
+    }
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 4,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 5.667277449304934,
+   "vla_p99_ms": 177.87465966039002
+  },
+  "S6_P0": {
+   "bytes": 7477686,
+   "wall_s": 303.2117761669797,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 16,
+    "safety": 16,
+    "by_task": {
+     "T8_safety": 16
+    }
+   },
+   "robot": {
+    "grasp_attempts": 6,
+    "grasp_success": 6,
+    "placed": 6,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 6.154971145918834,
+   "vla_p99_ms": 91.405254862
+  },
+  "S8_P0": {
+   "bytes": 7508991,
+   "wall_s": 219.7067190000089,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 38,
+    "safety": 0,
+    "by_task": {
+     "T4_vla": 36,
+     "T6_estimate": 2
+    }
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 5.48437683298126,
+   "vla_p99_ms": 133.012531873
+  },
+  "S7_P0": {
+   "bytes": 7129303,
+   "wall_s": 525.9040353749879,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 870,
+    "safety": 154,
+    "by_task": {
+     "T6_estimate": 195,
+     "T8_safety": 154,
+     "T2_detect": 40,
+     "T1_ingest_overhead": 98,
+     "T10_record_4k": 239,
+     "T1_ingest_wrist": 98,
+     "T4_vla": 34,
+     "T3_esdf": 11,
+     "T5_plan": 1
+    }
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 7.125168918430958,
+   "vla_p99_ms": 228.35773452456988
+  },
+  "S7_P2": {
+   "bytes": 7006286,
+   "wall_s": 489.64929641599883,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 372,
+    "safety": 21,
+    "by_task": {
+     "T10_record_4k": 240,
+     "T6_estimate": 22,
+     "T4_vla": 13,
+     "T8_safety": 21,
+     "T1_ingest_wrist": 34,
+     "T1_ingest_overhead": 33,
+     "T2_detect": 6,
+     "T3_esdf": 3
+    }
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 7.240929191254198,
+   "vla_p99_ms": 187.3899861597201
+  },
+  "S7_P2MQ": {
+   "bytes": 6485898,
+   "wall_s": 224.90608562499983,
+   "duration_s": 20.0,
+   "misses": {
+    "total": 246,
+    "safety": 0,
+    "by_task": {
+     "T10_record_4k": 246
+    }
+   },
+   "robot": {
+    "grasp_attempts": 5,
+    "grasp_success": 5,
+    "placed": 5,
+    "oscillation_episodes": 0
+   },
+   "energy_per_robot_hour_wh": 7.338719628460847,
+   "vla_p99_ms": 80.40899916035
+  }
+ },
+ "site_sizes_bytes": {
+  "S1_P0": 6387725,
+  "S2_P0": 6743640,
+  "S2_P2Q": 6381734,
+  "S1_P4": 6817125,
+  "S2_P4": 7150792,
+  "S3_P0": 6543804,
+  "S4_P0": 6373607,
+  "S5_P0": 8470338,
+  "S6_P0": 7477686,
+  "S7_P0": 7129303,
+  "S7_P2": 7006286,
+  "S7_P2MQ": 6485898,
+  "S8_P0": 7508991
+ },
+ "total_bytes": 90476929,
+ "seed": 1,
+ "provenance": {
+  "script": "studies/make_replays.py"
+ },
+ "core_build": {
+  "sha256_12": "c0d9646069fd",
+  "mtime": "2026-11-17T23:48:49"
+ }
+}

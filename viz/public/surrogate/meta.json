@@ -1,0 +1,1130 @@
+{
+ "model": "surrogate.onnx",
+ "model_bytes": 5067788,
+ "input_name": "x",
+ "inputs": [
+  {
+   "name": "npu_tiles",
+   "label": "NPU tiles",
+   "unit": "",
+   "min": 2,
+   "max": 8,
+   "step": 1,
+   "default": 4.0
+  },
+  {
+   "name": "npu_array",
+   "label": "NPU array size (rows = cols)",
+   "unit": "PEs",
+   "min": 32,
+   "max": 128,
+   "step": 8,
+   "default": 64.0
+  },
+  {
+   "name": "npu_sram_mb",
+   "label": "NPU SRAM per tile",
+   "unit": "MB",
+   "min": 0.5,
+   "max": 4.0,
+   "step": 0.035,
+   "default": 2.0
+  },
+  {
+   "name": "cache_mb",
+   "label": "System cache",
+   "unit": "MB",
+   "min": 2,
+   "max": 16,
+   "step": 1,
+   "default": 8.0
+  },
+  {
+   "name": "cache_partition",
+   "label": "Cache way partitioning",
+   "unit": "",
+   "min": 0,
+   "max": 1,
+   "step": 1,
+   "default": 0.0,
+   "choices": [
+    "off",
+    "on"
+   ]
+  },
+  {
+   "name": "qos",
+   "label": "NoC/DRAM QoS arbitration",
+   "unit": "",
+   "min": 0,
+   "max": 1,
+   "step": 1,
+   "default": 0.0,
+   "choices": [
+    "off",
+    "on"
+   ]
+  },
+  {
+   "name": "noc_bits",
+   "label": "NoC link width",
+   "unit": "bits",
+   "min": 0,
+   "max": 2,
+   "step": 1,
+   "default": 1.0,
+   "choices": [
+    "128",
+    "256",
+    "512"
+   ]
+  },
+  {
+   "name": "dram_gbps",
+   "label": "DRAM bandwidth",
+   "unit": "GB/s",
+   "min": 64.0,
+   "max": 204.0,
+   "step": 1.4,
+   "default": 136.0
+  },
+  {
+   "name": "cpu_cores",
+   "label": "App CPU cores",
+   "unit": "",
+   "min": 4,
+   "max": 16,
+   "step": 1,
+   "default": 8.0
+  },
+  {
+   "name": "scheduler",
+   "label": "Scheduler (FIFO, RM, EDF, EDF-MC)",
+   "unit": "",
+   "min": 0,
+   "max": 3,
+   "step": 1,
+   "default": 2.0,
+   "choices": [
+    "FIFO",
+    "Rate monotonic",
+    "EDF",
+    "EDF mixed criticality"
+   ]
+  },
+  {
+   "name": "power_policy",
+   "label": "Power policy (P0, P3, P4)",
+   "unit": "",
+   "min": 0,
+   "max": 2,
+   "step": 1,
+   "default": 2.0,
+   "choices": [
+    "P0 nominal",
+    "P3 race to idle",
+    "P4 pace to deadline"
+   ]
+  },
+  {
+   "name": "vmin_npu",
+   "label": "NPU Vmin",
+   "unit": "V",
+   "min": 0.45,
+   "max": 0.75,
+   "step": 0.003,
+   "default": 0.75
+  },
+  {
+   "name": "vmin_cpu",
+   "label": "CPU Vmin",
+   "unit": "V",
+   "min": 0.5,
+   "max": 0.75,
+   "step": 0.0025,
+   "default": 0.75
+  },
+  {
+   "name": "vmin_simt",
+   "label": "SIMT Vmin",
+   "unit": "V",
+   "min": 0.5,
+   "max": 0.75,
+   "step": 0.0025,
+   "default": 0.75
+  },
+  {
+   "name": "vmin_dsp",
+   "label": "DSP Vmin",
+   "unit": "V",
+   "min": 0.5,
+   "max": 0.75,
+   "step": 0.0025,
+   "default": 0.75
+  },
+  {
+   "name": "lv_arith_factor",
+   "label": "Low-voltage arithmetic factor (hypothetical)",
+   "unit": "x",
+   "min": 1.0,
+   "max": 4.0,
+   "step": 0.03,
+   "default": 1.0,
+   "note": "hypothetical: 1x is off; other values represent the class of techniques Velaura claims for Titan Core, not their technology"
+  },
+  {
+   "name": "transport",
+   "label": "Transport (copy, zero-copy)",
+   "unit": "",
+   "min": 0,
+   "max": 1,
+   "step": 1,
+   "default": 0.0,
+   "choices": [
+    "copy",
+    "zero-copy"
+   ]
+  },
+  {
+   "name": "scenario",
+   "label": "Workload (S1, S2, S3, S6)",
+   "unit": "",
+   "min": 0,
+   "max": 3,
+   "step": 1,
+   "default": 0.0,
+   "choices": [
+    "S1 nominal",
+    "S2 second camera",
+    "S3 human enters",
+    "S6 fifteen at once"
+   ]
+  },
+  {
+   "name": "bitrate_gbps",
+   "label": "Recording bitrate",
+   "unit": "Gbit/s",
+   "min": 0.2,
+   "max": 48.0,
+   "step": 0.478,
+   "default": 0.2,
+   "scale": "log"
+  },
+  {
+   "name": "ambient_c",
+   "label": "Ambient temperature",
+   "unit": "C",
+   "min": 25.0,
+   "max": 50.0,
+   "step": 0.25,
+   "default": 25.0
+  }
+ ],
+ "outputs": [
+  {
+   "name": "energy_per_robot_hour_wh",
+   "key": "energy_per_robot_hour_wh",
+   "label": "Energy per robot-hour",
+   "unit": "Wh",
+   "lo": "energy_per_robot_hour_wh__lo",
+   "hi": "energy_per_robot_hour_wh__hi",
+   "method": "split conformal",
+   "model": "lgb",
+   "qhat": 0.2393360162372664,
+   "test_coverage": 0.8826666666666667,
+   "test_coverage_ci95": [
+    0.8574503928259587,
+    0.9048239131801338
+   ],
+   "n_calib": 750,
+   "n_test": 750
+  },
+  {
+   "name": "peak_power_w",
+   "key": "peak_power_w",
+   "label": "Peak SoC power",
+   "unit": "W",
+   "lo": "peak_power_w__lo",
+   "hi": "peak_power_w__hi",
+   "method": "split conformal",
+   "model": "lgb",
+   "qhat": 0.9429525577918092,
+   "test_coverage": 0.9266666666666666,
+   "test_coverage_ci95": [
+    0.9056135764160123,
+    0.9442806713428236
+   ],
+   "n_calib": 750,
+   "n_test": 750
+  },
+  {
+   "name": "peak_temp_c",
+   "key": "peak_temp_c",
+   "label": "Peak junction temperature",
+   "unit": "C",
+   "lo": "peak_temp_c__lo",
+   "hi": "peak_temp_c__hi",
+   "method": "split conformal",
+   "model": "mlp",
+   "qhat": 0.8059175614824596,
+   "test_coverage": 0.8733333333333333,
+   "test_coverage_ci95": [
+    0.847387895023158,
+    0.8962978018629164
+   ],
+   "n_calib": 750,
+   "n_test": 750
+  },
+  {
+   "name": "worst_safety_miss_rate",
+   "key": "worst_safety_miss_rate",
+   "label": "Worst safety-task miss rate",
+   "unit": "",
+   "lo": "worst_safety_miss_rate__lo",
+   "hi": "worst_safety_miss_rate__hi",
+   "method": "split conformal",
+   "model": "lgb",
+   "qhat": 1.5603571092504547,
+   "test_coverage": 0.9013333333333333,
+   "test_coverage_ci95": [
+    0.8777191969457931,
+    0.9217301971994684
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "uncertain_if_width_gt": 0.05
+  },
+  {
+   "name": "worst_rt_miss_rate",
+   "key": "worst_rt_miss_rate",
+   "label": "Worst real-time miss rate",
+   "unit": "",
+   "lo": "worst_rt_miss_rate__lo",
+   "hi": "worst_rt_miss_rate__hi",
+   "method": "split conformal",
+   "model": "lgb",
+   "qhat": 2.208624683552583,
+   "test_coverage": 0.8986666666666666,
+   "test_coverage_ci95": [
+    0.8748107048677631,
+    0.9193281710988712
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "uncertain_if_width_gt": 0.05
+  },
+  {
+   "name": "T8_safety__p99_ms",
+   "key": "T8_safety.p99_ms",
+   "label": "Safety monitor (T8) p99",
+   "unit": "ms",
+   "lo": "T8_safety__p99_ms__lo",
+   "hi": "T8_safety__p99_ms__hi",
+   "method": "CQR",
+   "model": "lgb",
+   "qhat": 0.05690089416603805,
+   "test_coverage": 0.876,
+   "test_coverage_ci95": [
+    0.8502584483167279,
+    0.8987383399945972
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "deadline_ms": 10.0,
+   "uncertain_if_width_gt": 5.0
+  },
+  {
+   "name": "T2_detect__miss_rate",
+   "key": "T2_detect.miss_rate",
+   "label": "Detection (T2) miss rate",
+   "unit": "",
+   "lo": "T2_detect__miss_rate__lo",
+   "hi": "T2_detect__miss_rate__hi",
+   "method": "split conformal",
+   "model": "lgb",
+   "qhat": 0.4317338118584626,
+   "test_coverage": 0.892,
+   "test_coverage_ci95": [
+    0.8675590760655418,
+    0.9133031786357333
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "uncertain_if_width_gt": 0.05
+  },
+  {
+   "name": "T2_detect__p99_ms",
+   "key": "T2_detect.p99_ms",
+   "label": "Detection (T2) p99",
+   "unit": "ms",
+   "lo": "T2_detect__p99_ms__lo",
+   "hi": "T2_detect__p99_ms__hi",
+   "method": "CQR",
+   "model": "lgb",
+   "qhat": 0.04639221116663439,
+   "test_coverage": 0.9093333333333333,
+   "test_coverage_ci95": [
+    0.8864736965798764,
+    0.9289067370685198
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "deadline_ms": 33.0,
+   "uncertain_if_width_gt": 16.5
+  },
+  {
+   "name": "T4_vla__miss_rate",
+   "key": "T4_vla.miss_rate",
+   "label": "VLA policy (T4) miss rate",
+   "unit": "",
+   "lo": "T4_vla__miss_rate__lo",
+   "hi": "T4_vla__miss_rate__hi",
+   "method": "split conformal",
+   "model": "lgb",
+   "qhat": 2.3300697899274696,
+   "test_coverage": 0.8893333333333333,
+   "test_coverage_ci95": [
+    0.8646658820643401,
+    0.9108856054159342
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "uncertain_if_width_gt": 0.05
+  },
+  {
+   "name": "T4_vla__p99_ms",
+   "key": "T4_vla.p99_ms",
+   "label": "VLA policy (T4) p99",
+   "unit": "ms",
+   "lo": "T4_vla__p99_ms__lo",
+   "hi": "T4_vla__p99_ms__hi",
+   "method": "CQR",
+   "model": "lgb",
+   "qhat": 0.027601246501983923,
+   "test_coverage": 0.8773333333333333,
+   "test_coverage_ci95": [
+    0.8516950340905156,
+    0.899957282499828
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "deadline_ms": 100.0,
+   "uncertain_if_width_gt": 50.0
+  },
+  {
+   "name": "T5_plan__p99_ms",
+   "key": "T5_plan.p99_ms",
+   "label": "Motion planning (T5) p99",
+   "unit": "ms",
+   "lo": "T5_plan__p99_ms__lo",
+   "hi": "T5_plan__p99_ms__hi",
+   "method": "CQR",
+   "model": "lgb",
+   "qhat": -1.0955663221068335e-07,
+   "test_coverage": 0.8946666666666667,
+   "test_coverage_ci95": [
+    0.8704564613795316,
+    0.9157164947975804
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "deadline_ms": 50.0,
+   "uncertain_if_width_gt": 25.0
+  },
+  {
+   "name": "chain_camera_to_plan__p99_ms",
+   "key": "chain_camera_to_plan.p99_ms",
+   "label": "Camera to plan chain p99",
+   "unit": "ms",
+   "lo": "chain_camera_to_plan__p99_ms__lo",
+   "hi": "chain_camera_to_plan__p99_ms__hi",
+   "method": "CQR",
+   "model": "lgb",
+   "qhat": -1.0955663221068335e-07,
+   "test_coverage": 0.8906666666666667,
+   "test_coverage_ci95": [
+    0.8661119635206397,
+    0.9120949155432367
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "deadline_ms": 250.0,
+   "uncertain_if_width_gt": 125.0
+  },
+  {
+   "name": "chain_human_to_control__p99_ms",
+   "key": "chain_human_to_control.p99_ms",
+   "label": "Human detection to control chain p99",
+   "unit": "ms",
+   "lo": "chain_human_to_control__p99_ms__lo",
+   "hi": "chain_human_to_control__p99_ms__hi",
+   "method": "CQR",
+   "model": "lgb",
+   "qhat": 0.0008144396116174235,
+   "test_coverage": 0.8933333333333333,
+   "test_coverage_ci95": [
+    0.8690072363111454,
+    0.9145103775964758
+   ],
+   "n_calib": 750,
+   "n_test": 750,
+   "deadline_ms": 50.0,
+   "uncertain_if_width_gt": 25.0
+  },
+  {
+   "name": "area_mm2",
+   "key": "area_mm2",
+   "label": "Area proxy (rough)",
+   "unit": "mm2",
+   "lo": "area_mm2__lo",
+   "hi": "area_mm2__hi",
+   "method": "closed form (rough proxy)",
+   "exact": true
+  }
+ ],
+ "coverage": 0.9,
+ "coverage_achieved": {
+  "min": 0.8733333333333333,
+  "median": 0.892,
+  "max": 0.9266666666666666,
+  "per_output": "see outputs[].test_coverage (held-out test split, Clopper-Pearson 95% CI)"
+ },
+ "fallback_rule": {
+  "latency": "uncertain, run full model when interval width > 0.5 x deadline",
+  "miss_rate": "uncertain, run full model when interval width > 0.05"
+ },
+ "guarantee": "Split conformal / CQR: marginal coverage >= nominal over design points drawn like the calibration set (exchangeability). Not conditional on a specific design, and not valid outside the sampled ranges or for a changed simulator.",
+ "labels": [
+  "VX-1 is a fictional reference SoC",
+  "area_mm2 is a rough proxy",
+  "low-voltage arithmetic factor above 1x is hypothetical",
+  "trained on chip-only runs at the interactive fidelity mix (1.2 s simulated per sample)"
+ ],
+ "provenance": {
+  "script": "surrogate/dataset.py",
+  "driver": "surrogate/chiprun.py",
+  "git_sha": "e65c22e",
+  "core_so_sha256": "4953d653bf13b89d",
+  "graphs_sha256": "8fb8e69f48389e43",
+  "core_so_path": "data/surrogate/snapshot/glasschip_core.cpython-312-darwin.so",
+  "soc": "data/surrogate/snapshot/vx1.yaml",
+  "soc_sha256": "0d467c5ec8fc7edc",
+  "power_params_sha256": "d6a7c086d29b410d",
+  "fidelity": "surrogate/fidelity_dse.yaml",
+  "fidelity_sha256": "8e21af1bae307def",
+  "duration_s": 1.2,
+  "warmup_s": 0.2,
+  "machine": "Darwin arm64, Python 3.12.13",
+  "date": "2026-11-18",
+  "exporter": "surrogate/export_onnx.py",
+  "n_samples": 5600,
+  "n_lhs": 5000,
+  "n_active": 600,
+  "split": {
+   "train": 3600,
+   "val": 500,
+   "calib": 750,
+   "test": 750
+  }
+ },
+ "pareto": {
+  "x": "energy_per_robot_hour_wh",
+  "y": "worst_safety_miss_rate",
+  "x_label": "Energy per robot-hour (Wh, mean of S1/S2/S3/S6)",
+  "y_label": "Worst safety-task miss rate, 90% upper bound (max over workloads)",
+  "points": [
+   [
+    2.7277,
+    1.0,
+    39.59
+   ],
+   [
+    2.7883,
+    1.0,
+    35.64
+   ],
+   [
+    2.7991,
+    0.104848,
+    49.7
+   ],
+   [
+    2.8086,
+    0.018441,
+    50.01
+   ],
+   [
+    2.8104,
+    0.023055,
+    42.45
+   ],
+   [
+    2.8123,
+    0.00818,
+    42.07
+   ],
+   [
+    2.8682,
+    0.010743,
+    38.63
+   ],
+   [
+    2.8769,
+    0.006359,
+    38.64
+   ],
+   [
+    2.8838,
+    0.005587,
+    56.0
+   ],
+   [
+    2.8888,
+    0.004692,
+    60.17
+   ],
+   [
+    2.903,
+    0.00586,
+    50.09
+   ],
+   [
+    2.9097,
+    0.015322,
+    34.17
+   ],
+   [
+    2.9109,
+    0.005685,
+    48.99
+   ],
+   [
+    2.9117,
+    0.004966,
+    47.59
+   ],
+   [
+    2.9351,
+    0.00595,
+    45.08
+   ],
+   [
+    2.9369,
+    0.0047,
+    49.85
+   ],
+   [
+    2.9384,
+    0.003782,
+    54.98
+   ],
+   [
+    2.9492,
+    0.003987,
+    46.18
+   ],
+   [
+    2.9568,
+    0.004334,
+    43.41
+   ],
+   [
+    2.9689,
+    0.003556,
+    47.7
+   ],
+   [
+    2.9822,
+    0.00813,
+    38.62
+   ],
+   [
+    2.9874,
+    0.00541,
+    40.43
+   ],
+   [
+    3.019,
+    0.005307,
+    42.65
+   ],
+   [
+    3.0269,
+    0.004177,
+    43.16
+   ],
+   [
+    3.0405,
+    0.003954,
+    36.44
+   ],
+   [
+    3.1196,
+    0.003432,
+    58.1
+   ],
+   [
+    3.1218,
+    1.0,
+    33.69
+   ],
+   [
+    3.1257,
+    0.003424,
+    42.9
+   ],
+   [
+    3.1331,
+    0.006798,
+    35.75
+   ],
+   [
+    3.1964,
+    0.006556,
+    36.16
+   ],
+   [
+    3.2363,
+    0.003285,
+    59.11
+   ],
+   [
+    3.2365,
+    0.003282,
+    60.82
+   ],
+   [
+    3.2582,
+    0.003664,
+    38.63
+   ],
+   [
+    3.2595,
+    0.003303,
+    48.22
+   ],
+   [
+    3.2738,
+    0.003389,
+    47.71
+   ],
+   [
+    3.2741,
+    0.432171,
+    33.44
+   ],
+   [
+    3.275,
+    0.003397,
+    45.9
+   ],
+   [
+    3.2976,
+    0.002834,
+    56.28
+   ],
+   [
+    3.3237,
+    0.002961,
+    48.01
+   ],
+   [
+    3.3302,
+    0.003929,
+    36.63
+   ],
+   [
+    3.3331,
+    0.003409,
+    44.66
+   ],
+   [
+    3.334,
+    0.003463,
+    40.34
+   ],
+   [
+    3.3387,
+    0.003324,
+    44.82
+   ],
+   [
+    3.4121,
+    0.003238,
+    43.56
+   ],
+   [
+    3.4323,
+    0.005403,
+    36.28
+   ],
+   [
+    3.4385,
+    0.003439,
+    42.45
+   ],
+   [
+    3.4523,
+    0.0148,
+    35.64
+   ],
+   [
+    3.4564,
+    0.006807,
+    35.57
+   ],
+   [
+    3.4706,
+    0.003411,
+    41.63
+   ],
+   [
+    3.533,
+    0.003625,
+    38.74
+   ],
+   [
+    3.5409,
+    0.003333,
+    43.37
+   ],
+   [
+    3.5441,
+    0.003267,
+    42.34
+   ],
+   [
+    3.5803,
+    0.00325,
+    38.89
+   ],
+   [
+    3.581,
+    0.044416,
+    33.76
+   ],
+   [
+    3.5857,
+    0.009974,
+    34.94
+   ],
+   [
+    3.5969,
+    0.003578,
+    38.02
+   ],
+   [
+    3.6014,
+    0.003232,
+    46.44
+   ],
+   [
+    3.6048,
+    0.003227,
+    46.47
+   ],
+   [
+    3.6548,
+    0.006167,
+    35.57
+   ],
+   [
+    3.7612,
+    0.004874,
+    35.53
+   ],
+   [
+    3.7626,
+    0.059167,
+    33.72
+   ],
+   [
+    3.8124,
+    0.003236,
+    45.79
+   ],
+   [
+    3.8199,
+    0.003064,
+    47.27
+   ],
+   [
+    3.8242,
+    0.012428,
+    34.79
+   ],
+   [
+    3.8365,
+    0.003381,
+    36.63
+   ],
+   [
+    3.848,
+    0.003187,
+    47.06
+   ],
+   [
+    3.9727,
+    0.011362,
+    34.65
+   ],
+   [
+    3.9923,
+    0.003182,
+    44.29
+   ],
+   [
+    4.0014,
+    1.0,
+    32.97
+   ],
+   [
+    4.0074,
+    0.002852,
+    56.08
+   ],
+   [
+    4.0097,
+    0.003331,
+    37.0
+   ],
+   [
+    4.0227,
+    0.002805,
+    59.62
+   ],
+   [
+    4.0314,
+    0.002885,
+    51.99
+   ],
+   [
+    4.0353,
+    0.004011,
+    34.79
+   ],
+   [
+    4.0741,
+    0.00311,
+    44.25
+   ],
+   [
+    4.1597,
+    0.002833,
+    47.52
+   ],
+   [
+    4.2126,
+    0.003247,
+    39.23
+   ],
+   [
+    4.2173,
+    0.002555,
+    56.94
+   ],
+   [
+    4.2288,
+    0.003211,
+    40.69
+   ],
+   [
+    4.2713,
+    0.0031,
+    41.86
+   ],
+   [
+    4.294,
+    0.003055,
+    47.41
+   ],
+   [
+    4.3167,
+    0.011783,
+    33.08
+   ],
+   [
+    4.3218,
+    0.002989,
+    47.11
+   ],
+   [
+    4.3431,
+    0.00331,
+    38.32
+   ],
+   [
+    4.3853,
+    0.003476,
+    35.85
+   ],
+   [
+    4.4245,
+    0.002814,
+    41.57
+   ],
+   [
+    4.466,
+    0.179112,
+    32.11
+   ],
+   [
+    4.5388,
+    0.00366,
+    35.67
+   ],
+   [
+    4.5509,
+    0.00321,
+    38.02
+   ],
+   [
+    4.5636,
+    0.003154,
+    40.44
+   ],
+   [
+    4.5999,
+    0.003207,
+    38.6
+   ],
+   [
+    4.6282,
+    0.00546,
+    33.58
+   ],
+   [
+    4.6382,
+    0.003135,
+    36.82
+   ],
+   [
+    4.6518,
+    0.003839,
+    34.93
+   ],
+   [
+    4.7856,
+    0.003108,
+    36.0
+   ],
+   [
+    4.8267,
+    0.00301,
+    41.43
+   ],
+   [
+    4.8375,
+    0.002778,
+    44.1
+   ],
+   [
+    4.9053,
+    0.002609,
+    50.93
+   ],
+   [
+    5.0236,
+    0.003993,
+    34.8
+   ],
+   [
+    5.8859,
+    0.002736,
+    45.7
+   ],
+   [
+    6.1182,
+    0.002511,
+    54.22
+   ],
+   [
+    6.9743,
+    0.002662,
+    50.4
+   ]
+  ],
+  "point_fields": [
+   "energy_wh",
+   "safety_miss_upper",
+   "area_mm2"
+  ]
+ },
+ "recommended": [
+  {
+   "name": "lowest_energy",
+   "inputs": {
+    "npu_tiles": 8.0,
+    "npu_array": 120.0,
+    "npu_sram_mb": 1.625709568322445,
+    "cache_mb": 3.0,
+    "cache_partition": 0.0,
+    "qos": 0.0,
+    "noc_bits": 2.0,
+    "dram_gbps": 65.91495229788421,
+    "cpu_cores": 7.0,
+    "scheduler": 2.0,
+    "power_policy": 1.0,
+    "vmin_npu": 0.45616100453292313,
+    "vmin_cpu": 0.5661078661356493,
+    "vmin_simt": 0.6812576299864096,
+    "vmin_dsp": 0.7240354381531665,
+    "lv_arith_factor": 1.0,
+    "transport": 1.0,
+    "scenario": 2.0,
+    "bitrate_gbps": 1.0,
+    "ambient_c": 35.0
+   }
+  },
+  {
+   "name": "smallest_area",
+   "inputs": {
+    "npu_tiles": 3.0,
+    "npu_array": 88.0,
+    "npu_sram_mb": 0.8249337457268863,
+    "cache_mb": 2.0,
+    "cache_partition": 1.0,
+    "qos": 1.0,
+    "noc_bits": 1.0,
+    "dram_gbps": 76.76099177570256,
+    "cpu_cores": 4.0,
+    "scheduler": 3.0,
+    "power_policy": 2.0,
+    "vmin_npu": 0.6471692242775539,
+    "vmin_cpu": 0.5669835461521374,
+    "vmin_simt": 0.6567795608999851,
+    "vmin_dsp": 0.5280770097411857,
+    "lv_arith_factor": 1.0,
+    "transport": 1.0,
+    "scenario": 2.0,
+    "bitrate_gbps": 1.0,
+    "ambient_c": 35.0
+   }
+  },
+  {
+   "name": "balanced",
+   "inputs": {
+    "npu_tiles": 4.0,
+    "npu_array": 104.0,
+    "npu_sram_mb": 0.7118407798399913,
+    "cache_mb": 3.0,
+    "cache_partition": 0.0,
+    "qos": 0.0,
+    "noc_bits": 2.0,
+    "dram_gbps": 64.96826482949916,
+    "cpu_cores": 6.0,
+    "scheduler": 3.0,
+    "power_policy": 1.0,
+    "vmin_npu": 0.6115253231835673,
+    "vmin_cpu": 0.537447913095769,
+    "vmin_simt": 0.5806337785522196,
+    "vmin_dsp": 0.6274225338510578,
+    "lv_arith_factor": 1.0,
+    "transport": 0.0,
+    "scenario": 0.0,
+    "bitrate_gbps": 1.0,
+    "ambient_c": 35.0
+   }
+  }
+ ]
+}

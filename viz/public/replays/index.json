@@ -1,138 +1,152 @@
 {
- "format": "glasschip-replay-index",
- "version": 1,
- "replays": [
-  {
-   "id": "S1_P0",
-   "path": "S1_P0/manifest.json",
-   "scenario": "S1_nominal",
-   "scenario_label": "Nominal pick",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": true
-  },
-  {
-   "id": "S2_P0",
-   "path": "S2_P0/manifest.json",
-   "scenario": "S2_second_camera",
-   "scenario_label": "Second camera",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S2_P2Q",
-   "path": "S2_P2Q/manifest.json",
-   "scenario": "S2_second_camera",
-   "scenario_label": "Second camera",
-   "policy": "P2_edf_qos",
-   "policy_label": "P2 EDF + QoS + cache partition",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S1_P4",
-   "path": "S1_P4/manifest.json",
-   "scenario": "S1_nominal",
-   "scenario_label": "Nominal pick",
-   "policy": "P4_pace_to_deadline",
-   "policy_label": "P4 Pace to deadline",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S2_P4",
-   "path": "S2_P4/manifest.json",
-   "scenario": "S2_second_camera",
-   "scenario_label": "Second camera",
-   "policy": "P4_pace_to_deadline",
-   "policy_label": "P4 Pace to deadline",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S3_P0",
-   "path": "S3_P0/manifest.json",
-   "scenario": "S3_human_enters",
-   "scenario_label": "Human enters",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S4_P0",
-   "path": "S4_P0/manifest.json",
-   "scenario": "S4_conveyor_ramp",
-   "scenario_label": "Conveyor ramp",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S5_P0",
-   "path": "S5_P0/manifest.json",
-   "scenario": "S5_hot_day",
-   "scenario_label": "Hot day (45 C ambient, steady state)",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S6_P0",
-   "path": "S6_P0/manifest.json",
-   "scenario": "S6_fifteen_at_once",
-   "scenario_label": "Fifteen at once",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S7_P0",
-   "path": "S7_P0/manifest.json",
-   "scenario": "S7_bandwidth_hog",
-   "scenario_label": "Bandwidth hog",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S7_P2",
-   "path": "S7_P2/manifest.json",
-   "scenario": "S7_bandwidth_hog",
-   "scenario_label": "Bandwidth hog",
-   "policy": "P2_edf",
-   "policy_label": "P2 EDF",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
-  },
-  {
-   "id": "S8_P0",
-   "path": "S8_P0/manifest.json",
-   "scenario": "S8_low_voltage_sweep",
-   "scenario_label": "Low-voltage sweep",
-   "policy": "P0_nominal",
-   "policy_label": "P0 Nominal",
-   "seed": 1,
-   "synthetic": false,
-   "default": false
+  "format": "glasschip-replay-index",
+  "version": 1,
+  "replays": [
+    {
+      "id": "S1_P0",
+      "path": "S1_P0/manifest.json",
+      "scenario": "S1_nominal",
+      "scenario_label": "Nominal pick",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": true
+    },
+    {
+      "id": "S2_P0",
+      "path": "S2_P0/manifest.json",
+      "scenario": "S2_second_camera",
+      "scenario_label": "Second camera",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S2_P2Q",
+      "path": "S2_P2Q/manifest.json",
+      "scenario": "S2_second_camera",
+      "scenario_label": "Second camera",
+      "policy": "P2_edf_qos",
+      "policy_label": "P2 EDF + QoS + cache partition",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S1_P4",
+      "path": "S1_P4/manifest.json",
+      "scenario": "S1_nominal",
+      "scenario_label": "Nominal pick",
+      "policy": "P4_pace_to_deadline",
+      "policy_label": "P4 Pace to deadline",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S2_P4",
+      "path": "S2_P4/manifest.json",
+      "scenario": "S2_second_camera",
+      "scenario_label": "Second camera",
+      "policy": "P4_pace_to_deadline",
+      "policy_label": "P4 Pace to deadline",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S3_P0",
+      "path": "S3_P0/manifest.json",
+      "scenario": "S3_human_enters",
+      "scenario_label": "Human enters",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S4_P0",
+      "path": "S4_P0/manifest.json",
+      "scenario": "S4_conveyor_ramp",
+      "scenario_label": "Conveyor ramp",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S5_P0",
+      "path": "S5_P0/manifest.json",
+      "scenario": "S5_hot_day",
+      "scenario_label": "Hot day (45 C ambient, steady state)",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S6_P0",
+      "path": "S6_P0/manifest.json",
+      "scenario": "S6_fifteen_at_once",
+      "scenario_label": "Fifteen at once",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S7_P0",
+      "path": "S7_P0/manifest.json",
+      "scenario": "S7_bandwidth_hog",
+      "scenario_label": "Bandwidth hog",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S7_P2",
+      "path": "S7_P2/manifest.json",
+      "scenario": "S7_bandwidth_hog",
+      "scenario_label": "Bandwidth hog",
+      "policy": "P2_edf",
+      "policy_label": "P2 EDF",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S7_P2MQ",
+      "path": "S7_P2MQ/manifest.json",
+      "scenario": "S7_bandwidth_hog",
+      "scenario_label": "Bandwidth hog",
+      "policy": "P2_edf_mc_qos",
+      "policy_label": "EDF mixed-criticality + QoS + cache partition",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    },
+    {
+      "id": "S8_P0",
+      "path": "S8_P0/manifest.json",
+      "scenario": "S8_low_voltage_sweep",
+      "scenario_label": "Low-voltage sweep",
+      "policy": "P0_nominal",
+      "policy_label": "P0 Nominal",
+      "seed": 1,
+      "synthetic": false,
+      "default": false
+    }
+  ],
+  "surrogate": {
+    "meta": "../surrogate/meta.json"
   }
- ]
 }

@@ -1,0 +1,3824 @@
+{
+ "headline": {
+  "vla_first_miss_bitrate_gbps": {
+   "P0": 24.0,
+   "P0+QoS+part": 24.0,
+   "P2": 96.0,
+   "P2+QoS+part": 96.0,
+   "EDF-MC": 96.0,
+   "EDF-MC+QoS+part": null
+  },
+  "robot_stack_first_miss_bitrate_gbps": {
+   "P0": 5.97,
+   "P0+QoS+part": 5.97,
+   "P2": 96.0,
+   "P2+QoS+part": 96.0,
+   "EDF-MC": 96.0,
+   "EDF-MC+QoS+part": null
+  },
+  "safety_misses_at_max_bitrate": {
+   "P0": 137,
+   "P0+QoS+part": 128,
+   "P2": 89,
+   "P2+QoS+part": 10,
+   "EDF-MC": 0,
+   "EDF-MC+QoS+part": 0
+  },
+  "dram_gbps_at_max_bitrate": {
+   "P0": 56.101155184734125,
+   "P0+QoS+part": 59.05570859991326,
+   "P2": 57.761402991933515,
+   "P2+QoS+part": 60.804216694903175,
+   "EDF-MC": 61.118662813884725,
+   "EDF-MC+QoS+part": 61.3094557309277
+  }
+ },
+ "points": [
+  {
+   "config": "P0",
+   "bitrate_gbps": 1.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 60.35266879791,
+      "lo": 60.34370242591539,
+      "hi": 60.36163516990461
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.56151826082,
+      "lo": 3.554034166520828,
+      "hi": 5.569002355119172
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 1.588377899,
+      "lo": 1.588377899,
+      "hi": 1.588377899
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.475022178735,
+      "lo": 2.4710638589275984,
+      "hi": 2.478980498542402
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.267780041474998,
+      "lo": -0.2946036513513346,
+      "hi": 4.83016373430133
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.8093558745199942,
+      "lo": 2.289179453172123,
+      "hi": 3.3295322958678657
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 13.753743250916127,
+    "lo": 13.337500278245658,
+    "hi": 14.169986223586596
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.150581348983588,
+    "lo": 6.116214830767484,
+    "hi": 6.184947867199691
+   }
+  },
+  {
+   "config": "P0",
+   "bitrate_gbps": 5.97,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 63.770589154285005,
+      "lo": 63.768717717299175,
+      "hi": 63.772460591270836
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 9.749113520329999,
+      "lo": -4.964793529748922,
+      "hi": 24.463020570408922
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.006542526421741319,
+     "missed": 26,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.68281137046,
+      "lo": 4.682765967632736,
+      "hi": 4.682856773287264
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.002506265664160401,
+     "missed": 5,
+     "p99_ms": {
+      "n": 2,
+      "mean": 6.930617485394997,
+      "lo": 4.515930835352085,
+      "hi": 9.345304135437908
+     },
+     "dominant_missed": [
+      null,
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.234535189549998,
+      "lo": 0.09470015845862445,
+      "hi": 4.374370220641372
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 10.205036707859996,
+      "lo": -17.27393133725874,
+      "hi": 37.68400475297874
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 5,
+   "robot_misses": 31,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 16.23795199671627,
+    "lo": 15.837248893048054,
+    "hi": 16.638655100384486
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.322264343890627,
+    "lo": 6.28991584676931,
+    "hi": 6.354612841011943
+   }
+  },
+  {
+   "config": "P0",
+   "bitrate_gbps": 11.9,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 76.30247179219,
+      "lo": 75.58723341336508,
+      "hi": 77.01771017101493
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 13.264296026899999,
+      "lo": 12.610774982119933,
+      "hi": 13.917817071680064
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.17773788150807898,
+     "missed": 594,
+     "p99_ms": {
+      "n": 2,
+      "mean": 10.222951025855,
+      "lo": 10.182399712119055,
+      "hi": 10.263502339590945
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.08577633007600434,
+     "missed": 158,
+     "p99_ms": {
+      "n": 2,
+      "mean": 10.950501697399998,
+      "lo": 10.038658390622405,
+      "hi": 11.862345004177591
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.5457289239899987,
+      "lo": 0.7146232825184513,
+      "hi": 4.376834565461547
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 14.936464199715001,
+      "lo": 14.919983435226753,
+      "hi": 14.95294496420325
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 158,
+   "robot_misses": 752,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 19.169135160970356,
+    "lo": 18.748720731119576,
+    "hi": 19.589549590821136
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.520282576675446,
+    "lo": 6.485672079508481,
+    "hi": 6.554893073842411
+   }
+  },
+  {
+   "config": "P0",
+   "bitrate_gbps": 24.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.05625,
+     "missed": 9,
+     "p99_ms": {
+      "n": 2,
+      "mean": 110.99115824933997,
+      "lo": 94.26740157512943,
+      "hi": 127.71491492355052
+     },
+     "dominant_missed": [
+      "compute",
+      "runqueue"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.041666666666666664,
+     "missed": 25,
+     "p99_ms": {
+      "n": 2,
+      "mean": 44.221716376195,
+      "lo": 43.78273166698166,
+      "hi": 44.660701085408334
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.14791117802032366,
+     "missed": 393,
+     "p99_ms": {
+      "n": 2,
+      "mean": 27.471936122290245,
+      "lo": -56.86483960865232,
+      "hi": 111.80871185323281
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.2696011004126547,
+     "missed": 392,
+     "p99_ms": {
+      "n": 2,
+      "mean": 41.116682476579996,
+      "lo": 16.338163187338996,
+      "hi": 65.895201765821
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.041666666666666664,
+     "missed": 25,
+     "p99_ms": {
+      "n": 2,
+      "mean": 16.713878766845,
+      "lo": 15.67572337134547,
+      "hi": 17.75203416234453
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.12186978297161936,
+     "missed": 73,
+     "p99_ms": {
+      "n": 2,
+      "mean": 50.734704188764994,
+      "lo": 48.2314246651832,
+      "hi": 53.23798371234679
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 392,
+   "robot_misses": 874,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 25.169733134181534,
+    "lo": 24.718619066578366,
+    "hi": 25.620847201784702
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.9289626419473045,
+    "lo": 6.899346246939304,
+    "hi": 6.958579036955305
+   }
+  },
+  {
+   "config": "P0",
+   "bitrate_gbps": 48.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.2108843537414966,
+     "missed": 31,
+     "p99_ms": {
+      "n": 2,
+      "mean": 132.91646383990502,
+      "lo": -43.84338274328823,
+      "hi": 309.67631042309824
+     },
+     "dominant_missed": [
+      "runqueue",
+      "compute"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.10331384015594541,
+     "missed": 53,
+     "p99_ms": {
+      "n": 2,
+      "mean": 44.04619686256501,
+      "lo": 35.566688862920735,
+      "hi": 52.52570486220929
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.22814631122132673,
+     "missed": 368,
+     "p99_ms": {
+      "n": 2,
+      "mean": 39.915424112775,
+      "lo": 39.630253181920715,
+      "hi": 40.200595043629285
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.34407484407484407,
+     "missed": 331,
+     "p99_ms": {
+      "n": 2,
+      "mean": 42.046640876880005,
+      "lo": 29.82638225424016,
+      "hi": 54.26689949951985
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.5262172284644194,
+     "missed": 281,
+     "p99_ms": {
+      "n": 2,
+      "mean": 40.755569520049974,
+      "lo": 37.87386228725289,
+      "hi": 43.63727675284706
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 597,
+     "p99_ms": {
+      "n": 2,
+      "mean": 115.35720601093496,
+      "lo": -27.098293585142017,
+      "hi": 257.81270560701194
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 331,
+   "robot_misses": 1370,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 36.103211042896234,
+    "lo": 25.888850231728377,
+    "hi": 46.31757185406409
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 7.6583501157510625,
+    "lo": 6.732488163101219,
+    "hi": 8.584212068400905
+   }
+  },
+  {
+   "config": "P0",
+   "bitrate_gbps": 96.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.8877551020408163,
+     "missed": 87,
+     "p99_ms": {
+      "n": 2,
+      "mean": 233.35266400472,
+      "lo": 212.98033297150678,
+      "hi": 253.7249950379332
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.09900990099009901,
+     "missed": 30,
+     "p99_ms": {
+      "n": 2,
+      "mean": 106.85046552881968,
+      "lo": -226.2140169306658,
+      "hi": 439.91494798830513
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0761758691206544,
+     "missed": 149,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.02566400215001,
+      "lo": 69.8593655106449,
+      "hi": 90.19196249365511
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.13352826510721247,
+     "missed": 137,
+     "p99_ms": {
+      "n": 2,
+      "mean": 81.62313271162,
+      "lo": 68.3864334331471,
+      "hi": 94.8598319900929
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.6246153846153846,
+     "missed": 203,
+     "p99_ms": {
+      "n": 2,
+      "mean": 147.94611738070995,
+      "lo": 146.65090670100784,
+      "hi": 149.24132806041206
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 586,
+     "p99_ms": {
+      "n": 2,
+      "mean": 339.9624627707398,
+      "lo": 157.49089608690284,
+      "hi": 522.4340294545768
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 137,
+   "robot_misses": 877,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 56.101155184734125,
+    "lo": 54.430388968361264,
+    "hi": 57.77192140110699
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 8.968797530175145,
+    "lo": 8.835691518381985,
+    "hi": 9.101903541968305
+   }
+  },
+  {
+   "config": "P0+QoS+part",
+   "bitrate_gbps": 1.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 60.459317018055,
+      "lo": 59.815928329194186,
+      "hi": 61.10270570691582
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.472799045935,
+      "lo": 2.3926767705717102,
+      "hi": 6.55292132129829
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 1.588377899,
+      "lo": 1.588377899,
+      "hi": 1.588377899
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4615756014249994,
+      "lo": 1.7780310304682265,
+      "hi": 3.1451201723817723
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.228247620394998,
+      "lo": 0.02552162372355582,
+      "hi": 4.43097361706644
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.6061398101699997,
+      "lo": 3.3434735345062836,
+      "hi": 3.868806085833716
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 13.956135801996346,
+    "lo": 13.537166195957223,
+    "hi": 14.37510540803547
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.159794386640147,
+    "lo": 6.125421506638864,
+    "hi": 6.19416726664143
+   }
+  },
+  {
+   "config": "P0+QoS+part",
+   "bitrate_gbps": 5.97,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 62.680166330160006,
+      "lo": 59.649113068614,
+      "hi": 65.71121959170601
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.568293919804999,
+      "lo": 8.146477830873422,
+      "hi": 8.990110008736576
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.005530417295123178,
+     "missed": 22,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.68281069046,
+      "lo": 4.682780011836914,
+      "hi": 4.682841369083087
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.001001001001001001,
+     "missed": 2,
+     "p99_ms": {
+      "n": 2,
+      "mean": 6.8158578062099995,
+      "lo": 5.305745860673093,
+      "hi": 8.325969751746907
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2298589275149974,
+      "lo": 0.006792099436089494,
+      "hi": 4.452925755593905
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.021095982189998,
+      "lo": 7.9003909443542675,
+      "hi": 8.141801020025728
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 2,
+   "robot_misses": 24,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 16.440721684961524,
+    "lo": 16.022178609697363,
+    "hi": 16.859264760225685
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.331561446944519,
+    "lo": 6.297432525148472,
+    "hi": 6.365690368740567
+   }
+  },
+  {
+   "config": "P0+QoS+part",
+   "bitrate_gbps": 11.9,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 76.23967003802,
+      "lo": 76.02984295578406,
+      "hi": 76.44949712025593
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 13.224503594504998,
+      "lo": 11.328910402511694,
+      "hi": 15.120096786498303
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.168002374591867,
+     "missed": 566,
+     "p99_ms": {
+      "n": 2,
+      "mean": 10.21507970741,
+      "lo": 10.104108484264067,
+      "hi": 10.326050930555933
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.07816711590296496,
+     "missed": 145,
+     "p99_ms": {
+      "n": 2,
+      "mean": 10.777471354285,
+      "lo": 10.644658039850885,
+      "hi": 10.910284668719115
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4029795667449996,
+      "lo": 2.402411571249048,
+      "hi": 2.4035475622409512
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 14.88595321321,
+      "lo": 14.782769119527043,
+      "hi": 14.989137306892957
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 145,
+   "robot_misses": 711,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 19.359732887712543,
+    "lo": 18.94542578251777,
+    "hi": 19.774039992907316
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.5293081264908235,
+    "lo": 6.495183339546402,
+    "hi": 6.563432913435245
+   }
+  },
+  {
+   "config": "P0+QoS+part",
+   "bitrate_gbps": 24.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.08125,
+     "missed": 13,
+     "p99_ms": {
+      "n": 2,
+      "mean": 110.161243072675,
+      "lo": 104.22762639895215,
+      "hi": 116.09485974639786
+     },
+     "dominant_missed": [
+      "runqueue",
+      "compute"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.04,
+     "missed": 24,
+     "p99_ms": {
+      "n": 2,
+      "mean": 44.26713778995,
+      "lo": 43.886992735069946,
+      "hi": 44.64728284483005
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.14456481135599553,
+     "missed": 387,
+     "p99_ms": {
+      "n": 2,
+      "mean": 29.65727997586497,
+      "lo": -82.50139681186374,
+      "hi": 141.81595676359368
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.261758691206544,
+     "missed": 384,
+     "p99_ms": {
+      "n": 2,
+      "mean": 38.83502802586979,
+      "lo": -16.29439004328197,
+      "hi": 93.96444609502154
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.035,
+     "missed": 21,
+     "p99_ms": {
+      "n": 2,
+      "mean": 16.232265427595,
+      "lo": 15.766917224453577,
+      "hi": 16.69761363073642
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.13833333333333334,
+     "missed": 83,
+     "p99_ms": {
+      "n": 2,
+      "mean": 50.19772861247,
+      "lo": 49.891222863188695,
+      "hi": 50.50423436175131
+     },
+     "dominant_missed": [
+      "compute",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 384,
+   "robot_misses": 859,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 25.28373918255349,
+    "lo": 24.659801024405105,
+    "hi": 25.907677340701873
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.935072372080738,
+    "lo": 6.862959871797756,
+    "hi": 7.00718487236372
+   }
+  },
+  {
+   "config": "P0+QoS+part",
+   "bitrate_gbps": 48.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.11688311688311688,
+     "missed": 18,
+     "p99_ms": {
+      "n": 2,
+      "mean": 126.83915323566495,
+      "lo": -60.876335085278896,
+      "hi": 314.5546415566088
+     },
+     "dominant_missed": [
+      "runqueue",
+      "compute"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.04665314401622718,
+     "missed": 23,
+     "p99_ms": {
+      "n": 2,
+      "mean": 42.156187884175,
+      "lo": 35.41587212765489,
+      "hi": 48.8965036406951
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.25536193029490617,
+     "missed": 381,
+     "p99_ms": {
+      "n": 2,
+      "mean": 39.811637282805,
+      "lo": 39.126686994304535,
+      "hi": 40.49658757130547
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.38311688311688313,
+     "missed": 354,
+     "p99_ms": {
+      "n": 2,
+      "mean": 40.30723034813,
+      "lo": 39.33021615069522,
+      "hi": 41.284244545564775
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.5675675675675675,
+     "missed": 294,
+     "p99_ms": {
+      "n": 2,
+      "mean": 41.01565420816,
+      "lo": 33.86689199473351,
+      "hi": 48.164416421586495
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 596,
+     "p99_ms": {
+      "n": 2,
+      "mean": 106.41542029452498,
+      "lo": 102.879974589198,
+      "hi": 109.95086599985196
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 354,
+   "robot_misses": 1402,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 36.59624819704993,
+    "lo": 32.8240472063297,
+    "hi": 40.36844918777016
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 7.699284609611781,
+    "lo": 7.366609535180119,
+    "hi": 8.031959684043443
+   }
+  },
+  {
+   "config": "P0+QoS+part",
+   "bitrate_gbps": 96.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.4962962962962963,
+     "missed": 67,
+     "p99_ms": {
+      "n": 2,
+      "mean": 151.28023879584498,
+      "lo": -66.6056534016154,
+      "hi": 369.1661309933054
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.06956521739130435,
+     "missed": 24,
+     "p99_ms": {
+      "n": 2,
+      "mean": 78.074244692675,
+      "lo": 77.96621562611433,
+      "hi": 78.18227375923566
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.08312593330014932,
+     "missed": 167,
+     "p99_ms": {
+      "n": 2,
+      "mean": 78.5016917455,
+      "lo": 74.07204696871167,
+      "hi": 82.93133652228832
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.11895910780669144,
+     "missed": 128,
+     "p99_ms": {
+      "n": 2,
+      "mean": 79.87426119307,
+      "lo": 72.5972611009851,
+      "hi": 87.1512612851549
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.5932203389830508,
+     "missed": 210,
+     "p99_ms": {
+      "n": 2,
+      "mean": 110.3963230721551,
+      "lo": 81.02863930342156,
+      "hi": 139.76400684088864
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 591,
+     "p99_ms": {
+      "n": 2,
+      "mean": 308.82518402397017,
+      "lo": 263.80252210424874,
+      "hi": 353.8478459436916
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 128,
+   "robot_misses": 856,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 59.05570859991326,
+    "lo": 57.543228297990154,
+    "hi": 60.568188901836365
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 9.230855520009705,
+    "lo": 9.107518704964715,
+    "hi": 9.354192335054694
+   }
+  },
+  {
+   "config": "P2",
+   "bitrate_gbps": 1.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 78.90770747716999,
+      "lo": 78.62164509379404,
+      "hi": 79.19376986054594
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.950221781665,
+      "lo": 2.7730533572643083,
+      "hi": 7.127390206065693
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.5022616606599994,
+      "lo": 1.078352894872648,
+      "hi": 3.926170426447351
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2474646419549997,
+      "lo": 0.2786433201977119,
+      "hi": 4.216285963712288
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.152005013254996,
+      "lo": -2.013702890780343,
+      "hi": 8.317712917290336
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 13.77835823031614,
+    "lo": 13.3235366610374,
+    "hi": 14.23317979959488
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.153240544510901,
+    "lo": 6.115692465213118,
+    "hi": 6.190788623808683
+   }
+  },
+  {
+   "config": "P2",
+   "bitrate_gbps": 5.97,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.420418419615,
+      "lo": 80.24260746659226,
+      "hi": 80.59822937263775
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.255409375140001,
+      "lo": 8.101324476104415,
+      "hi": 8.409494274175588
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.16853205275,
+      "lo": 1.221805617247934,
+      "hi": 3.1152584882520657
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2296944294000003,
+      "lo": 1.648453160872762,
+      "hi": 2.8109356979272384
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.144078511634998,
+      "lo": 7.5706343745774545,
+      "hi": 8.717522648692542
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 16.263044150530746,
+    "lo": 15.877952359949191,
+    "hi": 16.6481359411123
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.325183354132964,
+    "lo": 6.294992798700464,
+    "hi": 6.355373909565464
+   }
+  },
+  {
+   "config": "P2",
+   "bitrate_gbps": 11.9,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.44373112431,
+      "lo": 80.42727780960757,
+      "hi": 80.46018443901244
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.77027647814,
+      "lo": 8.717625589904062,
+      "hi": 8.822927366375938
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.347769020014999,
+      "lo": 1.3076188427460127,
+      "hi": 3.3879191972839853
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2958365681549964,
+      "lo": 0.6628463054229188,
+      "hi": 3.9288268308870737
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 14.435300219984999,
+      "lo": 14.400989609911228,
+      "hi": 14.46961083005877
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 19.234716756348206,
+    "lo": 18.808173613164332,
+    "hi": 19.66125989953208
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.531364344411633,
+    "lo": 6.496277118069667,
+    "hi": 6.5664515707536
+   }
+  },
+  {
+   "config": "P2",
+   "bitrate_gbps": 24.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.56023684439,
+      "lo": 78.94538157786812,
+      "hi": 82.17509211091189
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 5.405572077599988,
+      "lo": 4.988547486721321,
+      "hi": 5.822596668478655
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.56660760566,
+      "lo": 0.0734466747636171,
+      "hi": 5.0597685365563825
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.5470264623649843,
+      "lo": 1.1994936709689639,
+      "hi": 3.8945592537610048
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.10833333333333334,
+     "missed": 65,
+     "p99_ms": {
+      "n": 2,
+      "mean": 50.125355730635,
+      "lo": 48.7496619623122,
+      "hi": 51.5010494989578
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 25.283977390983992,
+    "lo": 24.8186022793041,
+    "hi": 25.749352502663886
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.951128198353305,
+    "lo": 6.911891067951025,
+    "hi": 6.990365328755585
+   }
+  },
+  {
+   "config": "P2",
+   "bitrate_gbps": 48.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 61.315124909865,
+      "lo": 53.23160783668772,
+      "hi": 69.39864198304227
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 6.414158118,
+      "lo": 6.414158118,
+      "hi": 6.414158118
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.404490285825,
+      "lo": -0.1353981178718784,
+      "hi": 4.944378689521878
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.457615693489992,
+      "lo": -9.256302584798327,
+      "hi": 16.17153397177831
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 598,
+     "p99_ms": {
+      "n": 2,
+      "mean": 53.603272837999995,
+      "lo": 51.54962198211489,
+      "hi": 55.6569236938851
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 37.227940939158344,
+    "lo": 36.81116321442749,
+    "hi": 37.6447186638892
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 7.784738496523431,
+    "lo": 7.75004031845807,
+    "hi": 7.819436674588792
+   }
+  },
+  {
+   "config": "P2",
+   "bitrate_gbps": 96.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.4117647058823529,
+     "missed": 49,
+     "p99_ms": {
+      "n": 2,
+      "mean": 242.98757270157992,
+      "lo": -159.05698573996804,
+      "hi": 645.0321311431279
+     },
+     "dominant_missed": [
+      "runqueue",
+      "compute"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.02968036529680365,
+     "missed": 13,
+     "p99_ms": {
+      "n": 2,
+      "mean": 71.13231773730958,
+      "lo": -331.8863175525506,
+      "hi": 474.15095302716975
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.029950669485553208,
+     "missed": 85,
+     "p99_ms": {
+      "n": 2,
+      "mean": 64.25011290147745,
+      "lo": -66.05452141548301,
+      "hi": 194.5547472184379
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0629865534324133,
+     "missed": 89,
+     "p99_ms": {
+      "n": 2,
+      "mean": 77.01922116306,
+      "lo": 54.047902875278105,
+      "hi": 99.99053945084188
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.27973568281938327,
+     "missed": 127,
+     "p99_ms": {
+      "n": 2,
+      "mean": 108.58356024272993,
+      "lo": -309.72187350615957,
+      "hi": 526.8889939916194
+     },
+     "dominant_missed": [
+      "runqueue",
+      "runqueue"
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 587,
+     "p99_ms": {
+      "n": 2,
+      "mean": 322.62079247057,
+      "lo": 11.686783442505714,
+      "hi": 633.5548014986343
+     },
+     "dominant_missed": [
+      "noc",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 89,
+   "robot_misses": 524,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 57.761402991933515,
+    "lo": 36.81956726738457,
+    "hi": 78.70323871648246
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 9.14471770373407,
+    "lo": 6.978911732397956,
+    "hi": 11.310523675070185
+   }
+  },
+  {
+   "config": "P2+QoS+part",
+   "bitrate_gbps": 1.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 78.51918437963499,
+      "lo": 76.37030349028066,
+      "hi": 80.66806526898932
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.9298055903449995,
+      "lo": 2.5500672721867685,
+      "hi": 7.3095439085032305
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2982046941349994,
+      "lo": 2.1317521642782746,
+      "hi": 2.464657223991724
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.545494634419997,
+      "lo": 0.28934131851174394,
+      "hi": 4.801647950328251
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.742697946564995,
+      "lo": 2.541594956254157,
+      "hi": 2.943800936875833
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 13.95553945439635,
+    "lo": 13.537739268993096,
+    "hi": 14.373339639799603
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.161659102099774,
+    "lo": 6.127533319497117,
+    "hi": 6.195784884702431
+   }
+  },
+  {
+   "config": "P2+QoS+part",
+   "bitrate_gbps": 5.97,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 93.22926024846001,
+      "lo": 92.46937645275945,
+      "hi": 93.98914404416057
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.166653079229999,
+      "lo": 5.743529221891407,
+      "hi": 10.58977693656859
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.5870734988749993,
+      "lo": 3.4318627600250706,
+      "hi": 3.742284237724928
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4512814869999975,
+      "lo": 2.0849262610040458,
+      "hi": 2.817636712995949
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.110600380554999,
+      "lo": 7.59004019199015,
+      "hi": 8.631160569119848
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 16.440694827010745,
+    "lo": 16.020780489237456,
+    "hi": 16.860609164784034
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.333270037657442,
+    "lo": 6.302850991649889,
+    "hi": 6.363689083664996
+   }
+  },
+  {
+   "config": "P2+QoS+part",
+   "bitrate_gbps": 11.9,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.39710114456,
+      "lo": 79.90573194254031,
+      "hi": 80.88847034657968
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.77028914844,
+      "lo": 8.75136775842087,
+      "hi": 8.78921053845913
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.1082571223,
+      "lo": 2.075705837285193,
+      "hi": 2.140808407314807
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2530016483349913,
+      "lo": 0.057324298540376795,
+      "hi": 4.448678998129606
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 14.407118914915,
+      "lo": 14.402700760099453,
+      "hi": 14.411537069730546
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 19.40590733662826,
+    "lo": 18.987171390070955,
+    "hi": 19.824643283185566
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.53856252754623,
+    "lo": 6.50430606124554,
+    "hi": 6.572818993846919
+   }
+  },
+  {
+   "config": "P2+QoS+part",
+   "bitrate_gbps": 24.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 70.41389237687,
+      "lo": -56.53423777238271,
+      "hi": 197.3620225261227
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 5.768125761219999,
+      "lo": -2.4404936302201365,
+      "hi": 13.976745152660136
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.319421507605,
+      "lo": 2.2923846940357335,
+      "hi": 2.3464583211742664
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.5068130731549987,
+      "lo": 1.8165491789289159,
+      "hi": 3.1970769673810815
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.085,
+     "missed": 51,
+     "p99_ms": {
+      "n": 2,
+      "mean": 50.10234149603,
+      "lo": 48.87511813472181,
+      "hi": 51.32956485733819
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 25.45607123476428,
+    "lo": 25.040883636917783,
+    "hi": 25.871258832610778
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.9585666375503905,
+    "lo": 6.91385365236901,
+    "hi": 7.003279622731771
+   }
+  },
+  {
+   "config": "P2+QoS+part",
+   "bitrate_gbps": 48.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 69.10300561395499,
+      "lo": -42.47911129634829,
+      "hi": 180.68512252425828
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 6.414158118,
+      "lo": 6.414158118,
+      "hi": 6.414158118
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.40344273,
+      "lo": 0.40344273,
+      "hi": 0.40344273
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.333288885205,
+      "lo": 1.9736621003873327,
+      "hi": 2.6929156700226673
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4437854006149857,
+      "lo": 2.1195974065494356,
+      "hi": 2.767973394680536
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 598,
+     "p99_ms": {
+      "n": 2,
+      "mean": 68.27502938590989,
+      "lo": -119.9163824615509,
+      "hi": 256.4664412333707
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 37.429217208037656,
+    "lo": 37.01009220892616,
+    "hi": 37.84834220714915
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 7.794200675959351,
+    "lo": 7.760279784177598,
+    "hi": 7.828121567741103
+   }
+  },
+  {
+   "config": "P2+QoS+part",
+   "bitrate_gbps": 96.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.03870967741935484,
+     "missed": 6,
+     "p99_ms": {
+      "n": 2,
+      "mean": 110.68442686815007,
+      "lo": -509.89139267522495,
+      "hi": 731.260246411525
+     },
+     "dominant_missed": [
+      "runqueue",
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.739191700195001,
+      "lo": -4.048145334643866,
+      "hi": 13.526528735033867
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0028504793988079814,
+     "missed": 11,
+     "p99_ms": {
+      "n": 2,
+      "mean": 1.2229282126700074,
+      "lo": -9.189622108458044,
+      "hi": 11.635478533798059
+     },
+     "dominant_missed": [
+      "runqueue",
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.00516795865633075,
+     "missed": 10,
+     "p99_ms": {
+      "n": 2,
+      "mean": 24.67999188890401,
+      "lo": -259.92918188072196,
+      "hi": 309.28916565852995
+     },
+     "dominant_missed": [
+      "runqueue",
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.02910958904109589,
+     "missed": 17,
+     "p99_ms": {
+      "n": 2,
+      "mean": 34.44961248409004,
+      "lo": -364.0241415344217,
+      "hi": 432.92336650260177
+     },
+     "dominant_missed": [
+      "runqueue",
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 590,
+     "p99_ms": {
+      "n": 2,
+      "mean": 190.7613283433,
+      "lo": -829.1317635792207,
+      "hi": 1210.6544202658206
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 10,
+   "robot_misses": 59,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 60.804216694903175,
+    "lo": 53.75917752041802,
+    "hi": 67.84925586938833
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 9.435007632149087,
+    "lo": 8.829849429537756,
+    "hi": 10.040165834760419
+   }
+  },
+  {
+   "config": "EDF-MC",
+   "bitrate_gbps": 1.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 79.513435864365,
+      "lo": 78.92765397531734,
+      "hi": 80.09921775341265
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.669975292005,
+      "lo": 2.8064098839277074,
+      "hi": 6.533540700082292
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.3108791104249997,
+      "lo": 2.111639575633933,
+      "hi": 2.5101186452160666
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.3071384722749952,
+      "lo": 0.9700809209122228,
+      "hi": 3.6441960236377677
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.5728493424499974,
+      "lo": 3.547416432659864,
+      "hi": 3.5982822522401308
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 13.786746414516156,
+    "lo": 13.374368318635788,
+    "hi": 14.199124510396523
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.154073795151691,
+    "lo": 6.120859354453805,
+    "hi": 6.187288235849576
+   }
+  },
+  {
+   "config": "EDF-MC",
+   "bitrate_gbps": 5.97,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 79.647587091285,
+      "lo": 78.75754883924172,
+      "hi": 80.53762534332829
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.570802134365,
+      "lo": 3.6860081643920637,
+      "hi": 5.4555961043379355
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2742569722650003,
+      "lo": 1.8811767193304747,
+      "hi": 2.667337225199526
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.3079007910349993,
+      "lo": 1.9041776071680232,
+      "hi": 2.7116239749019755
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 10.481550787404991,
+      "lo": -15.350436501707375,
+      "hi": 36.31353807651736
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 16.266305001330885,
+    "lo": 15.907084903780556,
+    "hi": 16.625525098881212
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.325494448161559,
+    "lo": 6.2978533993062396,
+    "hi": 6.353135497016879
+   }
+  },
+  {
+   "config": "EDF-MC",
+   "bitrate_gbps": 11.9,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 79.95082776237001,
+      "lo": 79.42669758738003,
+      "hi": 80.47495793735999
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.601996607215,
+      "lo": 3.9296545908859764,
+      "hi": 5.274338623544024
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2346035042,
+      "lo": 2.0685500221691417,
+      "hi": 2.400656986230858
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.3417686217599987,
+      "lo": 1.1322276361733739,
+      "hi": 3.5513096073466235
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 14.41683439265,
+      "lo": 14.318418907490832,
+      "hi": 14.515249877809167
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 19.232866719748237,
+    "lo": 18.736464916290924,
+    "hi": 19.72926852320555
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.531080732166211,
+    "lo": 6.4887356639444835,
+    "hi": 6.573425800387939
+   }
+  },
+  {
+   "config": "EDF-MC",
+   "bitrate_gbps": 24.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 65.78294705362993,
+      "lo": 48.387266274547585,
+      "hi": 83.17862783271227
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.665224734519999,
+      "lo": 4.367572452820417,
+      "hi": 4.962877016219581
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2259181104900003,
+      "lo": 2.224341428928615,
+      "hi": 2.2274947920513855
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4279717491449944,
+      "lo": 1.7281130907077396,
+      "hi": 3.127830407582249
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.075,
+     "missed": 45,
+     "p99_ms": {
+      "n": 2,
+      "mean": 50.23576286421,
+      "lo": 50.113749263267394,
+      "hi": 50.35777646515261
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 25.254328879384026,
+    "lo": 24.839269250808183,
+    "hi": 25.66938850795987
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.948347213484749,
+    "lo": 6.914373990278517,
+    "hi": 6.982320436690981
+   }
+  },
+  {
+   "config": "EDF-MC",
+   "bitrate_gbps": 48.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 62.01985968744,
+      "lo": 60.13282153690857,
+      "hi": 63.90689783797142
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.6542220227849995,
+      "lo": 3.890649899769717,
+      "hi": 5.417794145800282
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2792842525949997,
+      "lo": 1.5358766294874169,
+      "hi": 3.0226918757025825
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.2564363909999994,
+      "lo": 1.234160033140468,
+      "hi": 3.2787127488595305
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 598,
+     "p99_ms": {
+      "n": 2,
+      "mean": 53.80370021593998,
+      "lo": 53.03419730674668,
+      "hi": 54.57320312513329
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 37.228531218758256,
+    "lo": 36.81278278809428,
+    "hi": 37.64427964942223
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 7.784526260515159,
+    "lo": 7.750577097935629,
+    "hi": 7.818475423094689
+   }
+  },
+  {
+   "config": "EDF-MC",
+   "bitrate_gbps": 96.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.00625,
+     "missed": 1,
+     "p99_ms": {
+      "n": 2,
+      "mean": 82.60552461047499,
+      "lo": -143.99712843715085,
+      "hi": 309.2081776581008
+     },
+     "dominant_missed": [
+      null,
+      "compute"
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 6.2788528380549975,
+      "lo": -7.967143035877988,
+      "hi": 20.524848711987982
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.4510864789199998,
+      "lo": -3.7976917839365063,
+      "hi": 10.699864741776505
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.219691056234983,
+      "lo": 0.3923029301952625,
+      "hi": 6.047079182274704
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 594,
+     "p99_ms": {
+      "n": 2,
+      "mean": 182.21745805120054,
+      "lo": -3.5587556431393637,
+      "hi": 367.99367174554044
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 1,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 61.118662813884725,
+    "lo": 60.74657462146108,
+    "hi": 61.49075100630837
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 9.469635928472574,
+    "lo": 9.43139940179727,
+    "hi": 9.507872455147877
+   }
+  },
+  {
+   "config": "EDF-MC+QoS+part",
+   "bitrate_gbps": 1.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 79.54373553679,
+      "lo": 78.83138526966133,
+      "hi": 80.25608580391867
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.673237682755,
+      "lo": 1.561098366757557,
+      "hi": 7.785376998752444
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.04598159898,
+      "lo": 1.982147288611165,
+      "hi": 2.109815909348835
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.346122680604997,
+      "lo": 0.7253494516424801,
+      "hi": 3.966895909567514
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.2933776858099963,
+      "lo": -0.19359141540087021,
+      "hi": 6.7803467870208625
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 13.955678036696346,
+    "lo": 13.537479721426958,
+    "hi": 14.373876351965734
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.161430780095866,
+    "lo": 6.128402594003575,
+    "hi": 6.194458966188158
+   }
+  },
+  {
+   "config": "EDF-MC+QoS+part",
+   "bitrate_gbps": 5.97,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 79.78528183559,
+      "lo": 77.86702240105919,
+      "hi": 81.70354127012081
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.68540558585,
+      "lo": 1.5111022350127206,
+      "hi": 7.859708936687279
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.041861972505,
+      "lo": 2.0319905283350352,
+      "hi": 2.051733416674965
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4442025273799977,
+      "lo": 2.2107399606666376,
+      "hi": 2.6776650940933577
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 8.455343361039958,
+      "lo": 6.701321543728912,
+      "hi": 10.209365178351005
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 16.440573506910884,
+    "lo": 16.021402470678733,
+    "hi": 16.859744543143034
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.333605266043414,
+    "lo": 6.299887988970015,
+    "hi": 6.3673225431168134
+   }
+  },
+  {
+   "config": "EDF-MC+QoS+part",
+   "bitrate_gbps": 11.9,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.044243999495,
+      "lo": 76.29624263464113,
+      "hi": 83.79224536434886
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.686288905515,
+      "lo": 1.4411978519736923,
+      "hi": 7.931379959056308
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.043345613985,
+      "lo": 2.0225802929908565,
+      "hi": 2.0641109349791438
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4031319351399976,
+      "lo": 2.2231241515532014,
+      "hi": 2.5831397187267937
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 14.41263992467,
+      "lo": 14.385327892101378,
+      "hi": 14.439951957238621
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 19.405652541628193,
+    "lo": 18.98803697229675,
+    "hi": 19.823268110959635
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.539275902684272,
+    "lo": 6.505601460267859,
+    "hi": 6.572950345100685
+   }
+  },
+  {
+   "config": "EDF-MC+QoS+part",
+   "bitrate_gbps": 24.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 80.23227492965998,
+      "lo": 71.41205309689987,
+      "hi": 89.05249676242009
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.501556692784998,
+      "lo": 3.625817524146802,
+      "hi": 5.377295861423194
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.0712488473449993,
+      "lo": 1.707724643241587,
+      "hi": 2.4347730514484116
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.4459625655799977,
+      "lo": 2.183535659820161,
+      "hi": 2.708389471339834
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 0.10833333333333334,
+     "missed": 65,
+     "p99_ms": {
+      "n": 2,
+      "mean": 50.303051705955,
+      "lo": 50.16518805988214,
+      "hi": 50.44091535202786
+     },
+     "dominant_missed": [
+      "noc",
+      "noc"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 25.455689176364373,
+    "lo": 25.038366308436373,
+    "hi": 25.873012044292373
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 6.959463246195382,
+    "lo": 6.923666070334896,
+    "hi": 6.995260422055868
+   }
+  },
+  {
+   "config": "EDF-MC+QoS+part",
+   "bitrate_gbps": 48.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 70.40017972068,
+      "lo": -50.440012977848596,
+      "hi": 191.2403724192086
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.598318249919998,
+      "lo": 3.451878635451842,
+      "hi": 5.744757864388155
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.06564759404,
+      "lo": 1.714946060317148,
+      "hi": 2.416349127762852
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.3113415541949958,
+      "lo": 0.9571833419405691,
+      "hi": 3.6654997664494227
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 598,
+     "p99_ms": {
+      "n": 2,
+      "mean": 95.95401944417,
+      "lo": 95.36187322154936,
+      "hi": 96.54616566679064
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 37.429182893737924,
+    "lo": 37.01295389408276,
+    "hi": 37.845411893393084
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 7.794407466784511,
+    "lo": 7.755769571346944,
+    "hi": 7.833045362222078
+   }
+  },
+  {
+   "config": "EDF-MC+QoS+part",
+   "bitrate_gbps": 96.0,
+   "tasks": {
+    "T4_vla": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 81.12661162008999,
+      "lo": 79.20723291936349,
+      "hi": 83.04599032081649
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T2_detect": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 4.449512256059999,
+      "lo": 3.565212619266984,
+      "hi": 5.3338118928530145
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T6_estimate": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 0.826893399,
+      "lo": 0.826893399,
+      "hi": 0.826893399
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T8_safety": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 2.09204215496,
+      "lo": 2.0794856394805823,
+      "hi": 2.104598670439418
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T1_ingest_wrist": {
+     "miss_rate": 0.0,
+     "missed": 0,
+     "p99_ms": {
+      "n": 2,
+      "mean": 3.660571554294995,
+      "lo": -5.891455818888213,
+      "hi": 13.212598927478203
+     },
+     "dominant_missed": [
+      null,
+      null
+     ]
+    },
+    "T10_record_4k": {
+     "miss_rate": 1.0,
+     "missed": 594,
+     "p99_ms": {
+      "n": 2,
+      "mean": 128.61277891216002,
+      "lo": 48.648546439486566,
+      "hi": 208.5770113848335
+     },
+     "dominant_missed": [
+      "compute",
+      "compute"
+     ]
+    }
+   },
+   "safety_misses": 0,
+   "robot_misses": 0,
+   "dram_gbps": {
+    "n": 2,
+    "mean": 61.3094557309277,
+    "lo": 60.9979087656244,
+    "hi": 61.621002696231
+   },
+   "avg_power_w": {
+    "n": 2,
+    "mean": 9.479189196424441,
+    "lo": 9.455795933557754,
+    "hi": 9.502582459291128
+   }
+  }
+ ],
+ "figures": [
+  "results/figures/s04_bandwidth_wall.svg",
+  "results/figures/s04_bandwidth_wall.png"
+ ],
+ "assumptions": {
+  "cache_partition_ways": {
+   "safety": 2,
+   "realtime": 10,
+   "best_effort": 4
+  },
+  "recording_dram_passes": 3
+ },
+ "provenance": {
+  "script": "studies/s04_bandwidth_wall.py",
+  "git_sha": "ac0148a",
+  "date": "2026-11-18",
+  "config_files": [
+   "configs/scenarios/S7_bandwidth_hog.yaml",
+   "workloads/graphs/T10_record_4k.json"
+  ],
+  "seeds": [
+   1,
+   2
+  ],
+  "core_build": {
+   "file": "glasschip_core.cpython-312-darwin.so",
+   "sha256_12": "c0d9646069fd",
+   "mtime": "2026-11-17T23:48:49"
+  },
+  "fidelity": "configs/fidelity/interactive.yaml",
+  "soc": "configs/soc/vx1.yaml",
+  "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph",
+  "compute": {
+   "runs": 72,
+   "failed": 0,
+   "wall_s_total": 5236.593275004008,
+   "sim_s_total": 720.0
+  },
+  "duration_s": 10.0,
+  "mode": "chip_only",
+  "quick": false
+ }
+}

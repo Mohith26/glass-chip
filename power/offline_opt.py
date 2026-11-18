@@ -28,7 +28,14 @@ lower bound on any deadline-meeting run evaluated with the same energy model:
   * regulator loss uses the regulator's best efficiency at every load;
   * jobs whose deadline falls after the horizon are dropped;
   * domains with activity but no job cycles (NoC, DRAM traffic) are charged their
-    recorded switching energy scaled to their lowest allowed OPP voltage.
+    recorded switching energy scaled to their lowest allowed OPP voltage;
+  * capacity per slot is units * f * dt (job cycles from the core are summed over the
+    domain's cores/tiles), and busy time is charged as cycles / (units * f);
+  * large problems (more than `max_binaries` OPP choices) are solved as the LP relaxation,
+    which lets OPPs time-share inside a slot.
+One approximation that is not a relaxation: switching energy per cycle is the domain's average
+over the run (the core reports activity per domain, not per job), so the bound is exact only if
+every cycle on a domain costs the same energy.
 I always report HiGHS's dual bound (<= the optimum), so the number stays a valid lower
 bound even when the solver stops at its gap tolerance or time limit.
 """
@@ -66,7 +73,8 @@ def _window(rel: int, dl: int, slot_ps: int, n_slots: int) -> range:
 
 def solve_domain(domain: str, jobs: list[tuple[int, int, float]], pm: Any, slot_ps: int, horizon_ps: int,
                  t_ref_c: float, gate_idle: bool, time_limit_s: float = 20.0, integral: bool = True,
-                 mip_rel_gap: float = 1e-3) -> DomainBound:
+                 mip_rel_gap: float = 1e-3, e_nom: float | None = None, units: int = 1,
+                 max_binaries: int = 20000) -> DomainBound:
     """Solve the per-domain MILP. `pm` is a PowerManager after a run (supplies models and activity profile).
 
     Aggregated form (same optimum as the per-job-per-OPP form, fewer variables):
@@ -81,9 +89,11 @@ def solve_domain(domain: str, jobs: list[tuple[int, int, float]], pm: Any, slot_
     n_slots = int(math.ceil(horizon_ps / slot_ps))
     dt_s = slot_ps / PS_PER_S
     vn = dvf.nominal.volts
-    e_nom = pm.cycle_energy_profile().get(domain, 0.0)
+    if e_nom is None or e_nom <= 0:
+        e_nom = pm.cycle_energy_profile().get(domain, 0.0)
     if e_nom <= 0:
         e_nom = pm.energy.energy_per_busy_cycle_j(domain, vn)
+    units = max(int(units), 1)
     gate = gate_idle and domain in pm.gating.gateable
     eta = pm.regulators[domain].max_efficiency()
     f = np.array([o.freq_hz for o in opps])
@@ -106,13 +116,16 @@ def solve_domain(domain: str, jobs: list[tuple[int, int, float]], pm: Any, slot_
     ny = nz = n_s * n_o
     oy, oz, ox, ou = 0, ny, ny + nz, ny + nz + nx
     nvar = ou + nj
-    a_o = (e_o + (p_busy - p_idle) / f) / eta
+    # Busy time of the domain is at least cycles / (units * f): cycles are summed over parallel units.
+    a_o = (e_o + (p_busy - p_idle) / (units * f)) / eta
     cost = np.zeros(nvar)
     cost[oy:oy + ny] = np.tile(p_idle * dt_s / eta, n_s)
     cost[oz:oz + nz] = np.tile(a_o, n_s)
     big = float(np.max(a_o)) * 1e4
     cost[ou:] = big
-    cap = f * dt_s
+    cap = units * f * dt_s
+    if integral and ny > max_binaries:
+        integral = False          # LP relaxation (time-sharing OPPs in a slot): looser, still a valid bound
 
     rows: list[int] = []
     cols: list[int] = []
@@ -184,13 +197,17 @@ def solve_domain(domain: str, jobs: list[tuple[int, int, float]], pm: Any, slot_
 
 def solve_trace(trace: Iterable[Mapping[str, Any]], pm: Any, horizon_ps: int | None = None,
                 slot_ms: float = 1.0, t_ref_c: float | None = None, gate_idle: bool = True,
-                time_limit_s: float = 20.0, integral: bool = True, mip_rel_gap: float = 1e-3) -> dict[str, Any]:
+                time_limit_s: float = 20.0, integral: bool = True, mip_rel_gap: float = 1e-3,
+                start_ps: int | None = None, use_units: bool = True, max_binaries: int = 20000) -> dict[str, Any]:
     """Lower-bound energy for a job trace under the manager's energy model.
 
     trace: dicts with release_ps, deadline_ps, cycles_by_domain (PowerManager.job_trace).
     pm: the PowerManager whose models (and run activity profile) define the energy model.
     """
-    trace = list(trace)
+    start = int(start_ps if start_ps is not None else getattr(pm, "accounted_from_ps", 0))
+    # shift to the accounted window [start, start + horizon]; drop jobs released before it
+    trace = [dict(j, release_ps=int(j["release_ps"]) - start, deadline_ps=int(j["deadline_ps"]) - start)
+             for j in trace if int(j["release_ps"]) >= start]
     horizon_ps = int(horizon_ps if horizon_ps is not None else pm.elapsed_ps)
     slot_ps = int(round(slot_ms * 1e9))
     t_ref = pm.thermal.ambient_c if t_ref_c is None else float(t_ref_c)
@@ -212,8 +229,14 @@ def solve_trace(trace: Iterable[Mapping[str, Any]], pm: Any, horizon_ps: int | N
             e = (dyn + p_idle * horizon_ps / PS_PER_S) / eta
             per_domain[d] = DomainBound(d, e, "analytic_no_jobs", 0)
             continue
+        # Switching energy per cycle at nominal V from this run: measured dynamic energy (scaled to
+        # nominal V) divided by the cycles the trace's jobs report on this domain.
+        cyc_total = sum(c for _, dl, c in jobs if dl <= horizon_ps)
+        dyn_nom = pm.dyn_energy_nominal_j.get(d, 0.0)
+        e_nom = dyn_nom / cyc_total if cyc_total > 0 and dyn_nom > 0 else None
+        units = pm.parallel_units.get(d, 1) if use_units else 1
         per_domain[d] = solve_domain(d, jobs, pm, slot_ps, horizon_ps, t_ref, gate_idle, time_limit_s, integral,
-                                     mip_rel_gap)
+                                     mip_rel_gap, e_nom=e_nom, units=units, max_binaries=max_binaries)
     total = float(sum(b.energy_j for b in per_domain.values()))
     dur_s = horizon_ps / PS_PER_S
     return {
@@ -226,6 +249,7 @@ def solve_trace(trace: Iterable[Mapping[str, Any]], pm: Any, horizon_ps: int | N
         "gate_idle": gate_idle,
         "solver": "HiGHS MILP via scipy.optimize.milp",
         "is_lower_bound": True,
+        "window_start_s": start / PS_PER_S,
         "per_domain": {d: {"energy_j": b.energy_j, "status": b.status, "n_jobs": b.n_jobs,
                            "unmet_cycles": b.unmet_cycles, "mip_gap": b.mip_gap, "solve_s": b.solve_s}
                        for d, b in per_domain.items()},

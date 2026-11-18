@@ -1,0 +1,10634 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T91_retinanet",
+ "name": "RetinaNet ResNeXt50-FPN 800x800 (MLPerf Edge object detection)",
+ "provenance": {
+  "source": "torchvision resnet_fpn_backbone(resnext50_32x4d) + RetinaNetHead(264 classes)",
+  "captured_by": "calib/public_models.py",
+  "date": "2026-11-17",
+  "method": "onnx_graph_walk",
+  "model_name": "RetinaNet (ResNeXt50 FPN)",
+  "model_hash": "sha256:371ab5ca00f927b321266ac27061db3ad0a0cd6ba378b96f5d48da2a6f2646cf (onnx, random weights)",
+  "notes": "587 ONNX nodes, 300 ops kept, 40 activations fused. dtype int8 is a deployment assumption. Anchor decode and NMS excluded (plugins on TensorRT, NMS offloaded in NVIDIA's MLPerf submission)."
+ },
+ "release": {
+  "kind": "event",
+  "on_overrun": "queue"
+ },
+ "deadline_us": 1000000,
+ "criticality": "best_effort",
+ "qos_class": "best_effort",
+ "ops": [
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1505280000,
+   "flops": 3010560000,
+   "bytes_w": 9408,
+   "shape": {
+    "N": 1,
+    "C": 3,
+    "H": 800,
+    "W": 800,
+    "K": 64,
+    "R": 7,
+    "S": 7,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 400,
+    "Wo": 400,
+    "out": [
+     1,
+     64,
+     400,
+     400
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1920000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.conv1.001.conv",
+   "layer": "retina.backbone.body.conv1",
+   "depends_on": [],
+   "preempt_boundary": true,
+   "arith_intensity": 247.3875
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 64,
+   "shape": {
+    "out": [
+     1,
+     64,
+     400,
+     400
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.bn1.002.mul",
+   "layer": "retina.backbone.body.bn1",
+   "depends_on": [
+    "retina.backbone.body.conv1.001.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 64,
+   "shape": {
+    "out": [
+     1,
+     64,
+     400,
+     400
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.bn1.003.add",
+   "layer": "retina.backbone.body.bn1",
+   "depends_on": [
+    "retina.backbone.body.bn1.002.mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     64,
+     400,
+     400
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.relu.004.relu",
+   "layer": "retina.backbone.body.relu",
+   "depends_on": [
+    "retina.backbone.body.bn1.003.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 23040000,
+   "bytes_w": 0,
+   "shape": {
+    "kernel": [
+     3,
+     3
+    ],
+    "out": [
+     1,
+     64,
+     200,
+     200
+    ],
+    "onnx_op": "MaxPool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.maxpool.005.maxpool",
+   "layer": "retina.backbone.body.maxpool",
+   "depends_on": [
+    "retina.backbone.body.relu.004.relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 1.8
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 327680000,
+   "flops": 655360000,
+   "bytes_w": 8192,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 200,
+    "W": 200,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.006.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.maxpool.005.maxpool"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 85.2424
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.007.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.006.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.008.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.007.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.009.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.008.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 4608,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 200,
+    "W": 200,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.010.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.009.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.9838
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.011.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.010.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.012.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.011.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.013.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.012.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 32768,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 200,
+    "W": 200,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.014.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.013.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 170.3034
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.015.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.014.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.016.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.015.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 655360000,
+   "flops": 1310720000,
+   "bytes_w": 16384,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 200,
+    "W": 200,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.017.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.maxpool.005.maxpool"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 102.2691
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.018.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.017.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.019.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.018.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 20480000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.020.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.016.add",
+    "retina.backbone.body.layer1.019.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.021.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.020.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 32768,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 200,
+    "W": 200,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.022.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.021.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 170.3034
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.023.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.022.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.024.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.023.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.025.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.024.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 4608,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 200,
+    "W": 200,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.026.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.025.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.9838
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.027.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.026.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.028.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.027.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.029.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.028.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 32768,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 200,
+    "W": 200,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.030.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.029.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 170.3034
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.031.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.030.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.032.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.031.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 20480000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.033.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.021.relu",
+    "retina.backbone.body.layer1.032.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.034.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.033.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 32768,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 200,
+    "W": 200,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.035.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.034.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 170.3034
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.036.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.035.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.037.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.036.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.038.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.037.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 4608,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 200,
+    "W": 200,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.039.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.038.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.9838
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.040.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.039.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 128,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.041.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.040.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer1.042.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.041.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 32768,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 200,
+    "W": 200,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.043.conv",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.042.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 170.3034
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.044.mul",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.043.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.045.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.044.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 20480000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.046.add",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.034.relu",
+    "retina.backbone.body.layer1.045.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer1.047.relu",
+   "layer": "retina.backbone.body.layer1",
+   "depends_on": [
+    "retina.backbone.body.layer1.046.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 2621440000,
+   "flops": 5242880000,
+   "bytes_w": 65536,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 200,
+    "W": 200,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 200,
+    "Wo": 200,
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer2.048.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer1.047.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 255.1834
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer2.049.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.048.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer2.050.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.049.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 10240000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     200,
+     200
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "op_id": "retina.backbone.body.layer2.051.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.050.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 18432,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 200,
+    "W": 200,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 32,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.052.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.051.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 28.7586
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.053.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.052.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.054.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.053.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.055.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.054.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.056.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.055.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.057.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.056.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.058.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.057.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 200,
+    "W": 200,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.059.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer1.047.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 169.2226
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.060.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.059.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.061.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.060.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.062.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.058.add",
+    "retina.backbone.body.layer2.061.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.063.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.062.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.064.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.063.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.065.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.064.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.066.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.065.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.067.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.066.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 18432,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.068.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.067.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 71.7417
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.069.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.068.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.070.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.069.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.071.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.070.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.072.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.071.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.073.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.072.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.074.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.073.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.075.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.063.relu",
+    "retina.backbone.body.layer2.074.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.076.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.075.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.077.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.076.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.078.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.077.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.079.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.078.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.080.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.079.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 18432,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.081.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.080.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 71.7417
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.082.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.081.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.083.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.082.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.084.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.083.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.085.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.084.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.086.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.085.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.087.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.086.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.088.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.076.relu",
+    "retina.backbone.body.layer2.087.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.089.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.088.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.090.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.089.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.091.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.090.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.092.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.091.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.093.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.092.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 18432,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.094.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.093.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 71.7417
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.095.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.094.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 256,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.096.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.095.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer2.097.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.096.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 131072,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.098.conv",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.097.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 335.6057
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.099.mul",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.098.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.100.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.099.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 10240000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.101.add",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.089.relu",
+    "retina.backbone.body.layer2.100.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer2.102.relu",
+   "layer": "retina.backbone.body.layer2",
+   "depends_on": [
+    "retina.backbone.body.layer2.101.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 2621440000,
+   "flops": 5242880000,
+   "bytes_w": 262144,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer3.103.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer2.102.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 499.22
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer3.104.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.103.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer3.105.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.104.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 5120000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     100,
+     100
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 5120000,
+   "op_id": "retina.backbone.body.layer3.106.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.105.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 73728,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 512,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 32,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.107.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.106.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 56.944
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.108.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.107.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.109.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.108.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.110.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.109.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.111.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.110.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.112.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.111.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.113.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.112.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.114.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer2.102.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 319.5207
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.115.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.114.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.116.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.115.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.117.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.113.add",
+    "retina.backbone.body.layer3.116.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.118.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.117.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.119.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.118.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.120.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.119.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.121.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.120.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.122.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.121.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 73728,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.123.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.122.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 139.9689
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.124.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.123.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.125.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.124.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.126.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.125.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.127.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.126.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.128.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.127.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.129.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.128.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.130.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.118.relu",
+    "retina.backbone.body.layer3.129.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.131.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.130.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.132.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.131.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.133.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.132.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.134.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.133.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.135.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.134.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 73728,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.136.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.135.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 139.9689
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.137.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.136.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.138.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.137.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.139.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.138.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.140.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.139.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.141.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.140.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.142.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.141.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.143.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.131.relu",
+    "retina.backbone.body.layer3.142.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.144.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.143.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.145.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.144.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.146.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.145.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.147.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.146.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.148.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.147.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 73728,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.149.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.148.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 139.9689
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.150.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.149.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.151.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.150.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.152.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.151.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.153.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.152.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.154.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.153.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.155.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.154.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.156.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.144.relu",
+    "retina.backbone.body.layer3.155.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.157.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.156.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.158.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.157.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.159.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.158.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.160.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.159.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.161.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.160.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 73728,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.162.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.161.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 139.9689
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.163.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.162.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.164.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.163.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.165.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.164.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.166.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.165.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.167.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.166.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.168.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.167.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.169.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.157.relu",
+    "retina.backbone.body.layer3.168.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.170.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.169.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.171.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.170.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.172.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.171.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.173.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.172.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.174.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.173.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 73728,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 512,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.175.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.174.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 139.9689
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.176.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.175.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 512,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.177.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.176.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer3.178.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.177.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 524288,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.179.conv",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.178.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 600.657
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.180.mul",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.179.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.181.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.180.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.182.add",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.170.relu",
+    "retina.backbone.body.layer3.181.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer3.183.relu",
+   "layer": "retina.backbone.body.layer3",
+   "depends_on": [
+    "retina.backbone.body.layer3.182.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 2621440000,
+   "flops": 5242880000,
+   "bytes_w": 1048576,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer4.184.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer3.183.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 849.9336
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer4.185.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.184.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer4.186.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.185.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4999
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     50,
+     50
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.body.layer4.187.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.186.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 294912,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 1024,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 32,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.188.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.187.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 105.4791
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.189.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.188.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.190.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.189.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.191.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.190.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 2097152,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 25,
+    "W": 25,
+    "K": 2048,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.192.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.191.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 652.5618
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.193.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.192.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.194.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.193.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 2097152,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 2048,
+    "R": 1,
+    "S": 1,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.195.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer3.183.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 441.5316
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.196.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.195.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.197.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.196.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.198.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.194.add",
+    "retina.backbone.body.layer4.197.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.199.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.198.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 2097152,
+   "shape": {
+    "N": 1,
+    "C": 2048,
+    "H": 25,
+    "W": 25,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.200.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.199.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 652.5618
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.201.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.200.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.202.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.201.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.203.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.202.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 294912,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 25,
+    "W": 25,
+    "K": 1024,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.204.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.203.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 234.0702
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.205.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.204.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.206.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.205.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.207.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.206.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 2097152,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 25,
+    "W": 25,
+    "K": 2048,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.208.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.207.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 652.5618
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.209.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.208.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.210.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.209.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.211.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.199.relu",
+    "retina.backbone.body.layer4.210.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.212.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.211.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 2097152,
+   "shape": {
+    "N": 1,
+    "C": 2048,
+    "H": 25,
+    "W": 25,
+    "K": 1024,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.213.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.212.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 652.5618
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.214.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.213.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.215.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.214.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.216.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.215.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 184320000,
+   "flops": 368640000,
+   "bytes_w": 294912,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 25,
+    "W": 25,
+    "K": 1024,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 32,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.217.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.216.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 234.0702
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.218.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.217.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 1024,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.219.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.218.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1024,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.body.layer4.220.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.219.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 2097152,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 25,
+    "W": 25,
+    "K": 2048,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.221.conv",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.220.relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 652.5618
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.222.mul",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.221.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 2048,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.223.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.222.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4996
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.224.add",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.212.relu",
+    "retina.backbone.body.layer4.223.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2048,
+     25,
+     25
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 1280000,
+   "op_id": "retina.backbone.body.layer4.225.relu",
+   "layer": "retina.backbone.body.layer4",
+   "depends_on": [
+    "retina.backbone.body.layer4.224.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 327680000,
+   "flops": 655360000,
+   "bytes_w": 525312,
+   "shape": {
+    "N": 1,
+    "C": 2048,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 160000,
+   "op_id": "retina.backbone.fpn.inner_blocks.2.226.conv",
+   "layer": "retina.backbone.fpn.inner_blocks.2",
+   "depends_on": [
+    "retina.backbone.body.layer4.225.relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 333.4636
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.backbone.fpn.layer_blocks.2.227.conv",
+   "layer": "retina.backbone.fpn.layer_blocks.2",
+   "depends_on": [
+    "retina.backbone.fpn.inner_blocks.2.226.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 655360000,
+   "flops": 1310720000,
+   "bytes_w": 263168,
+   "shape": {
+    "N": 1,
+    "C": 1024,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.fpn.inner_blocks.1.228.conv",
+   "layer": "retina.backbone.fpn.inner_blocks.1",
+   "depends_on": [
+    "retina.backbone.body.layer3.183.relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 378.4743
+  },
+  {
+   "type": "resize",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "mode": "nearest",
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Resize"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.fpn.229.resize",
+   "layer": "retina.backbone.fpn",
+   "depends_on": [
+    "retina.backbone.fpn.inner_blocks.2.226.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.8
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 640000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1280000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.fpn.230.add",
+   "layer": "retina.backbone.fpn",
+   "depends_on": [
+    "retina.backbone.fpn.229.resize",
+    "retina.backbone.fpn.inner_blocks.1.228.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.backbone.fpn.layer_blocks.1.231.conv",
+   "layer": "retina.backbone.fpn.layer_blocks.1",
+   "depends_on": [
+    "retina.backbone.fpn.230.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1310720000,
+   "flops": 2621440000,
+   "bytes_w": 132096,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.fpn.inner_blocks.0.232.conv",
+   "layer": "retina.backbone.fpn.inner_blocks.0",
+   "depends_on": [
+    "retina.backbone.body.layer2.102.relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 335.5617
+  },
+  {
+   "type": "resize",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "mode": "nearest",
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Resize"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.fpn.233.resize",
+   "layer": "retina.backbone.fpn",
+   "depends_on": [
+    "retina.backbone.fpn.230.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.8
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2560000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 5120000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.fpn.234.add",
+   "layer": "retina.backbone.fpn",
+   "depends_on": [
+    "retina.backbone.fpn.233.resize",
+    "retina.backbone.fpn.inner_blocks.0.232.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.backbone.fpn.layer_blocks.0.235.conv",
+   "layer": "retina.backbone.fpn.layer_blocks.0",
+   "depends_on": [
+    "retina.backbone.fpn.234.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 43264,
+   "op_id": "retina.backbone.fpn.extra_blocks.236.conv",
+   "layer": "retina.backbone.fpn.extra_blocks",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.2.227.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 251.0484
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 43264,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Relu"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.backbone.fpn.extra_blocks.237.relu",
+   "layer": "retina.backbone.fpn.extra_blocks",
+   "depends_on": [
+    "retina.backbone.fpn.extra_blocks.236.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 12544,
+   "op_id": "retina.backbone.fpn.extra_blocks.238.conv",
+   "layer": "retina.backbone.fpn.extra_blocks",
+   "depends_on": [
+    "retina.backbone.fpn.extra_blocks.237.relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 89.3872
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.classification_head.conv.239.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.0.235.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.classification_head.conv.240.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.239.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.classification_head.conv.241.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.240.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.classification_head.conv.242.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.241.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 54743040000,
+   "flops": 109486080000,
+   "bytes_w": 5483808,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 2376,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     2376,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 23760000,
+   "op_id": "retina.head.classification_head.cls_logits.243.conv",
+   "layer": "retina.head.classification_head.cls_logits",
+   "depends_on": [
+    "retina.head.classification_head.conv.242.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 3442.5463
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     100,
+     100,
+     9,
+     264
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 23760000,
+   "bytes_out": 23760000,
+   "op_id": "retina.head.classification_head.244.transpose",
+   "layer": "retina.head.classification_head",
+   "depends_on": [
+    "retina.head.classification_head.cls_logits.243.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.classification_head.conv.245.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.1.231.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.classification_head.conv.246.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.245.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.classification_head.conv.247.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.246.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.classification_head.conv.248.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.247.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 13685760000,
+   "flops": 27371520000,
+   "bytes_w": 5483808,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 2376,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     2376,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 5940000,
+   "op_id": "retina.head.classification_head.cls_logits_1.249.conv",
+   "layer": "retina.head.classification_head.cls_logits_1",
+   "depends_on": [
+    "retina.head.classification_head.conv.248.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 2268.8955
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     50,
+     50,
+     9,
+     264
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 5940000,
+   "bytes_out": 5940000,
+   "op_id": "retina.head.classification_head.250.transpose",
+   "layer": "retina.head.classification_head",
+   "depends_on": [
+    "retina.head.classification_head.cls_logits_1.249.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.classification_head.conv.251.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.2.227.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.classification_head.conv.252.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.251.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.classification_head.conv.253.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.252.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.classification_head.conv.254.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.253.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3421440000,
+   "flops": 6842880000,
+   "bytes_w": 5483808,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 2376,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     2376,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 1485000,
+   "op_id": "retina.head.classification_head.cls_logits_2.255.conv",
+   "layer": "retina.head.classification_head.cls_logits_2",
+   "depends_on": [
+    "retina.head.classification_head.conv.254.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 959.8912
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     25,
+     25,
+     9,
+     264
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 1485000,
+   "bytes_out": 1485000,
+   "op_id": "retina.head.classification_head.256.transpose",
+   "layer": "retina.head.classification_head",
+   "depends_on": [
+    "retina.head.classification_head.cls_logits_2.255.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.classification_head.conv.257.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.extra_blocks.236.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.classification_head.conv.258.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.257.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.classification_head.conv.259.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.258.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.classification_head.conv.260.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.259.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 925157376,
+   "flops": 1850314752,
+   "bytes_w": 5483808,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 2376,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     2376,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 401544,
+   "op_id": "retina.head.classification_head.cls_logits_3.261.conv",
+   "layer": "retina.head.classification_head.cls_logits_3",
+   "depends_on": [
+    "retina.head.classification_head.conv.260.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 312.0989
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     13,
+     13,
+     9,
+     264
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 401544,
+   "bytes_out": 401544,
+   "op_id": "retina.head.classification_head.262.transpose",
+   "layer": "retina.head.classification_head",
+   "depends_on": [
+    "retina.head.classification_head.cls_logits_3.261.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.classification_head.conv.263.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.extra_blocks.238.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.classification_head.conv.264.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.263.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.classification_head.conv.265.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.264.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.classification_head.conv.266.conv",
+   "layer": "retina.head.classification_head.conv",
+   "depends_on": [
+    "retina.head.classification_head.conv.265.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 268240896,
+   "flops": 536481792,
+   "bytes_w": 5483808,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 2376,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     2376,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 116424,
+   "op_id": "retina.head.classification_head.cls_logits_4.267.conv",
+   "layer": "retina.head.classification_head.cls_logits_4",
+   "depends_on": [
+    "retina.head.classification_head.conv.266.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 95.5823
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     7,
+     7,
+     9,
+     264
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 116424,
+   "bytes_out": 116424,
+   "op_id": "retina.head.classification_head.268.transpose",
+   "layer": "retina.head.classification_head",
+   "depends_on": [
+    "retina.head.classification_head.cls_logits_4.267.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     120087,
+     264
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 31702968,
+   "bytes_out": 31702968,
+   "op_id": "retina.head.classification_head.269.concat",
+   "layer": "retina.head.classification_head",
+   "depends_on": [
+    "retina.head.classification_head.244.transpose",
+    "retina.head.classification_head.250.transpose",
+    "retina.head.classification_head.256.transpose",
+    "retina.head.classification_head.262.transpose",
+    "retina.head.classification_head.268.transpose"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.regression_head.conv.270.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.0.235.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.regression_head.conv.271.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.270.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.regression_head.conv.272.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.271.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5898240000,
+   "flops": 11796480000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     256,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 2560000,
+   "op_id": "retina.head.regression_head.conv.273.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.272.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 2065.6267
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 829440000,
+   "flops": 1658880000,
+   "bytes_w": 83088,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 100,
+    "W": 100,
+    "K": 36,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 100,
+    "Wo": 100,
+    "out": [
+     1,
+     36,
+     100,
+     100
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2560000,
+   "bytes_out": 360000,
+   "op_id": "retina.head.regression_head.bbox_reg.274.conv",
+   "layer": "retina.head.regression_head.bbox_reg",
+   "depends_on": [
+    "retina.head.regression_head.conv.273.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 552.3914
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     100,
+     100,
+     9,
+     4
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 360000,
+   "bytes_out": 360000,
+   "op_id": "retina.head.regression_head.275.transpose",
+   "layer": "retina.head.regression_head",
+   "depends_on": [
+    "retina.head.regression_head.bbox_reg.274.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.regression_head.conv.276.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.1.231.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.regression_head.conv.277.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.276.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.regression_head.conv.278.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.277.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1474560000,
+   "flops": 2949120000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     256,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 640000,
+   "op_id": "retina.head.regression_head.conv.279.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.278.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 1576.3547
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 207360000,
+   "flops": 414720000,
+   "bytes_w": 83088,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 50,
+    "W": 50,
+    "K": 36,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 50,
+    "Wo": 50,
+    "out": [
+     1,
+     36,
+     50,
+     50
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 640000,
+   "bytes_out": 90000,
+   "op_id": "retina.head.regression_head.bbox_reg_1.280.conv",
+   "layer": "retina.head.regression_head.bbox_reg_1",
+   "depends_on": [
+    "retina.head.regression_head.conv.279.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 510.0555
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     50,
+     50,
+     9,
+     4
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 90000,
+   "bytes_out": 90000,
+   "op_id": "retina.head.regression_head.281.transpose",
+   "layer": "retina.head.regression_head",
+   "depends_on": [
+    "retina.head.regression_head.bbox_reg_1.280.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.regression_head.conv.282.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.layer_blocks.2.227.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.regression_head.conv.283.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.282.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.regression_head.conv.284.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.283.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     256,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 160000,
+   "op_id": "retina.head.regression_head.conv.285.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.284.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 809.4435
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 51840000,
+   "flops": 103680000,
+   "bytes_w": 83088,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 25,
+    "W": 25,
+    "K": 36,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 25,
+    "Wo": 25,
+    "out": [
+     1,
+     36,
+     25,
+     25
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 160000,
+   "bytes_out": 22500,
+   "op_id": "retina.head.regression_head.bbox_reg_2.286.conv",
+   "layer": "retina.head.regression_head.bbox_reg_2",
+   "depends_on": [
+    "retina.head.regression_head.conv.285.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 390.3791
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     25,
+     25,
+     9,
+     4
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 22500,
+   "bytes_out": 22500,
+   "op_id": "retina.head.regression_head.287.transpose",
+   "layer": "retina.head.regression_head",
+   "depends_on": [
+    "retina.head.regression_head.bbox_reg_2.286.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.regression_head.conv.288.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.extra_blocks.236.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.regression_head.conv.289.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.288.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.regression_head.conv.290.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.289.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 99680256,
+   "flops": 199360512,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     256,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 43264,
+   "op_id": "retina.head.regression_head.conv.291.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.290.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 294.3129
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 14017536,
+   "flops": 28035072,
+   "bytes_w": 83088,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 13,
+    "W": 13,
+    "K": 36,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 13,
+    "Wo": 13,
+    "out": [
+     1,
+     36,
+     13,
+     13
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 43264,
+   "bytes_out": 6084,
+   "op_id": "retina.head.regression_head.bbox_reg_3.292.conv",
+   "layer": "retina.head.regression_head.bbox_reg_3",
+   "depends_on": [
+    "retina.head.regression_head.conv.291.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 211.6877
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     13,
+     13,
+     9,
+     4
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 6084,
+   "bytes_out": 6084,
+   "op_id": "retina.head.regression_head.293.transpose",
+   "layer": "retina.head.regression_head",
+   "depends_on": [
+    "retina.head.regression_head.bbox_reg_3.292.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.regression_head.conv.294.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.backbone.fpn.extra_blocks.238.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.regression_head.conv.295.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.294.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.regression_head.conv.296.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.295.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 28901376,
+   "flops": 57802752,
+   "bytes_w": 590848,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     256,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 12544,
+   "op_id": "retina.head.regression_head.conv.297.conv",
+   "layer": "retina.head.regression_head.conv",
+   "depends_on": [
+    "retina.head.regression_head.conv.296.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 93.8454
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4064256,
+   "flops": 8128512,
+   "bytes_w": 83088,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 7,
+    "W": 7,
+    "K": 36,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 7,
+    "Wo": 7,
+    "out": [
+     1,
+     36,
+     7,
+     7
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 12544,
+   "bytes_out": 1764,
+   "op_id": "retina.head.regression_head.bbox_reg_4.298.conv",
+   "layer": "retina.head.regression_head.bbox_reg_4",
+   "depends_on": [
+    "retina.head.regression_head.conv.297.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 83.4584
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     7,
+     7,
+     9,
+     4
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 1764,
+   "bytes_out": 1764,
+   "op_id": "retina.head.regression_head.299.transpose",
+   "layer": "retina.head.regression_head",
+   "depends_on": [
+    "retina.head.regression_head.bbox_reg_4.298.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     120087,
+     4
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 480348,
+   "bytes_out": 480348,
+   "op_id": "retina.head.regression_head.300.concat",
+   "layer": "retina.head.regression_head",
+   "depends_on": [
+    "retina.head.regression_head.275.transpose",
+    "retina.head.regression_head.281.transpose",
+    "retina.head.regression_head.287.transpose",
+    "retina.head.regression_head.293.transpose",
+    "retina.head.regression_head.299.transpose"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  }
+ ],
+ "summary": {
+  "macs": 201208394752,
+  "flops": 403048512768,
+  "bytes_in": 979091240,
+  "bytes_w": 78323120,
+  "bytes_out": 925575484,
+  "instr": {
+   "scalar": 0,
+   "vector": 0,
+   "mem": 0
+  },
+  "num_ops": 300,
+  "num_layers": 30,
+  "arith_intensity": 203.2529
+ }
+}

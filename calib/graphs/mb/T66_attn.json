@@ -1,0 +1,80 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T66_attn",
+ "name": "attention QK^T, softmax, AV",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "qk",
+   "type": "matmul",
+   "dtype": "int8",
+   "shape": {
+    "M": 1024,
+    "K": 64,
+    "N": 1024,
+    "heads": 12
+   },
+   "macs": 805306368,
+   "bytes_in": 786432,
+   "bytes_w": 0,
+   "bytes_out": 12582912,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  },
+  {
+   "op_id": "softmax",
+   "type": "softmax",
+   "dtype": "bf16",
+   "bytes_in": 25165824,
+   "bytes_out": 25165824,
+   "flops": 62914560,
+   "eligible": [
+    "npu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "depends_on": [
+    "qk"
+   ]
+  },
+  {
+   "op_id": "av",
+   "type": "matmul",
+   "dtype": "int8",
+   "shape": {
+    "M": 1024,
+    "K": 1024,
+    "N": 64,
+    "heads": 12
+   },
+   "macs": 805306368,
+   "bytes_in": 12582912,
+   "bytes_w": 0,
+   "bytes_out": 786432,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0,
+   "depends_on": [
+    "softmax"
+   ]
+  }
+ ]
+}

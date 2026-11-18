@@ -1,0 +1,41 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T65_gemm_lm_decode_1x960x5120_bf16",
+ "name": "GEMM 1x960x5120 bf16",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "shape": {
+    "M": 1,
+    "K": 960,
+    "N": 5120,
+    "heads": 1
+   },
+   "macs": 4915200,
+   "bytes_in": 1920,
+   "bytes_w": 9830400,
+   "bytes_out": 10240,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}

@@ -46,6 +46,16 @@ The run is deterministic for a given seed (physics, belt disturbances, sensor no
 
 Recordings: `CoSim.save_recording(prefix)` writes `prefix.npz` (60 Hz body poses for every body, object states, chip job records) and `prefix.json` (body names, robot events, chains, metrics). `cosim/replay.py` writes the same run in the viewer's replay format through `tools/replay_writer.py`.
 
+## Experiments on the real chip model
+
+`studies/runner.py` runs one experiment end to end: this co-sim, `glasschip_core` (through `cosim/core_chip.py`), the power manager from `power/`, and the scenario's events (second camera, person entering, conveyor ramp, ambient, recording bitrate, voltage floor). It returns robot metrics, per-task response quantiles and miss rates, end-to-end chain latencies, attribution of every miss, power and energy per robot-hour, and provenance including a hash of the core binary.
+
+```
+.venv/bin/python -m studies.runner --scenario S2 --policy P0 --replay
+```
+
+The core cannot rescale a task after it is added, so for S7's recording bitrate changes I add a scaled copy of the recording graph per bitrate and switch between them; completions are reported under the original task id. A chip-only mode (no physics) drives the same release schedule for fast sweeps.
+
 ## Results
 
 The latency tolerance numbers (baseline success per speed, success at each injected latency, and where success falls under 90 % of baseline) are in `results/s14.json`, with the figure in `results/figures/s14_latency_tolerance.svg`.

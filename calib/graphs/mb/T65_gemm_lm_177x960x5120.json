@@ -1,0 +1,41 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T65_gemm_lm_177x960x5120",
+ "name": "GEMM 177x960x5120 int8",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "mm",
+   "type": "matmul",
+   "dtype": "int8",
+   "shape": {
+    "M": 177,
+    "K": 960,
+    "N": 5120,
+    "heads": 1
+   },
+   "macs": 869990400,
+   "bytes_in": 169920,
+   "bytes_w": 4915200,
+   "bytes_out": 906240,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}

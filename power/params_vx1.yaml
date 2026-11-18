@@ -109,6 +109,7 @@ gating:
   retention_leak_fraction: 0.05
   wake_energy_rail_cap_nf: 200.0   # recharge of the gated rail: C * V^2 per wake
   gateable: [cpu_a, cpu_b, npu, simt, dsp]   # rt (safety island), noc_cache and dram_io stay on
+  idle_before_gate_us: 100.0 # idle timer before gating (hysteresis), assumption; 0 = gate at once
 
 # ---------------------------------------------------------------------------
 # Low-voltage arithmetic toggle (HYPOTHETICAL when enabled with non-default values).
@@ -134,9 +135,18 @@ thermal:
   c_spec_j_per_k_mm2: 4.9e-4 # silicon 1.63 J/(cm^3 K) x 0.3 mm thickness
   min_node_area_mm2: 2.0     # dram_io and noc_cache use their floorplan blocks
   package_c_j_per_k: 5.0
-  package_to_enclosure_r_k_per_w: 2.0
+  package_to_enclosure_r_k_per_w: 2.0   # TIM + spreader + internal air, assumption
   enclosure_c_j_per_k: 60.0
-  enclosure_to_ambient_r_k_per_w: 3.0
+  # Sealed fanless enclosure. Design rule (assumption): the thermal solution is sized so the
+  # S1 nominal (P0) operating point keeps the hottest junction at 85 C at a 40 C rated ambient
+  # (steady state, leakage feedback included). Solved with power/thermal_analysis.py on a
+  # measured S1 P0 run (Nov 17 2026 core build): 4.56 K/W, rounded to 4.5. Phase A used 3.0.
+  enclosure_to_ambient_r_k_per_w: 4.5
+  # Divides package and enclosure heat capacity. 1.0 = physical. Scenario S5 compresses a
+  # slow hot-day ramp into 60 s; study s08 uses a larger value there (stated in results/s08.json)
+  # so the slow nodes stay quasi-static relative to the ramp. Junction nodes are never scaled.
+  slow_node_time_scale: 1.0
+  settle_s: 1.0              # burn-in before the thermal "settle" jump (thermal_init="settle")
   tj_limit_c: 105.0
   throttle_c: 100.0
   release_c: 95.0

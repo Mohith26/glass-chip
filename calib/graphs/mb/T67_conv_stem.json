@@ -1,0 +1,48 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T67_conv_stem",
+ "name": "conv 3->16 3x3 s2 at 640x640",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "c",
+   "type": "conv2d",
+   "dtype": "int8",
+   "shape": {
+    "N": 1,
+    "C": 3,
+    "H": 640,
+    "W": 640,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 320,
+    "Wo": 320
+   },
+   "macs": 44236800,
+   "bytes_in": 1228800,
+   "bytes_w": 432,
+   "bytes_out": 1638400,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}

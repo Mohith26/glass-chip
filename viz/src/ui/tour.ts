@@ -18,6 +18,8 @@ export interface TourHost {
   highlight(selector: string | null): void;
   replayId(): string;
   surrogateLoaded(): boolean;
+  /** Release time (s) of the first missed job in the loaded replay, or null. */
+  firstMissSeconds(): Promise<number | null>;
 }
 
 interface Step {
@@ -130,15 +132,25 @@ const STEPS: Step[] = [
     at: 80, title: 'Arbitration and partitioning',
     run: async (h) => {
       h.clearSelection();
-      const pairs: [string, string, string][] = [['S7', 'P0', 'P2'], ['S2', 'P0', 'P2']];
-      for (const [s, a, b] of pairs) {
-        const ea = find(h, s, a), eb = find(h, s, b);
-        if (!ea || !eb) continue;
-        const ma = await h.manifestOf(ea.id), mb = await h.manifestOf(eb.id);
-        if (!ma || !mb) continue;
-        await h.loadReplay(eb.id, false);
+      for (const sc of ['S7', 'S2']) {
+        const ea = find(h, sc, 'P0');
+        if (!ea) continue;
+        const ma = await h.manifestOf(ea.id);
+        if (!ma) continue;
+        // among the other policies for this scenario, show the one that removes the most misses
+        let best: { e: ReplayIndexEntry; m: Manifest } | null = null;
+        for (const e of real(h).filter((r) => r.scenario.startsWith(sc) && !r.policy.startsWith('P0') && !r.policy.startsWith('P4'))) {
+          const m = await h.manifestOf(e.id);
+          if (m && (!best || misses(m).total < misses(best.m).total)) best = { e, m };
+        }
+        if (!best || misses(ma).total === 0) continue;
+        await h.loadReplay(best.e.id, false);
         h.seekSeconds(4); h.setSpeed(0.5); h.setPlaying(true); h.highlight('#policies');
-        return `Same scenario and seed, scheduled with "${eb.policy_label}" instead of "${ea.policy_label}": ${misses(ma).total} missed jobs become ${misses(mb).total}.`;
+        const crit = (m: Manifest): number => misses(m).byTask
+          .filter(([id]) => ['safety', 'high'].includes(m.tasks.find((x) => x.id === id)?.criticality ?? 'low'))
+          .reduce((s2, [, n]) => s2 + n, 0);
+        return `Same scenario and seed, scheduled with "${best.e.policy_label}" instead of "${ea.policy_label}": ${misses(ma).total} missed jobs become ${misses(best.m).total}, ` +
+          `and misses on safety and high-criticality tasks go from ${crit(ma)} to ${crit(best.m)}.`;
       }
       return 'There is no matched pair of replays for this comparison yet, so this step is skipped.';
     },
@@ -169,11 +181,14 @@ const STEPS: Step[] = [
       if (!e) return 'The low-voltage sweep replay (S8) has not been generated yet, so this step is skipped.';
       const m = await h.manifestOf(e.id);
       await h.loadReplay(e.id, false);
-      h.seekSeconds(1.5); h.setSpeed(1); h.setPlaying(true);
+      // start just before the first voltage step that produces a miss, if there is one
+      const firstMiss = await h.firstMissSeconds();
+      const steps = (m?.scenario_events ?? []).map((x) => x.t_s).filter((t) => firstMiss == null || t <= firstMiss);
+      h.seekSeconds(Math.max(0, (steps.length ? steps[steps.length - 1] : firstMiss ?? 2) - 1.5)); h.setSpeed(1); h.setPlaying(true);
       if (!m) return '';
       const mm = misses(m);
       const rm = (m as unknown as { robot_metrics?: RM }).robot_metrics;
-      return `Here the NPU and CPU voltages step down from nominal toward their minimums. This run records ${mm.total} missed jobs` +
+      return `Here the NPU and CPU voltages step down from nominal toward their minimums.${firstMiss != null ? ` The first deadline miss comes at ${fmt(firstMiss, 1)} s.` : ''} This run records ${mm.total} missed jobs` +
         (mm.byTask.length ? ` (mostly ${SHORT[mm.byTask[0][0]] ?? mm.byTask[0][0]})` : '') +
         (rm?.oscillation_episodes != null ? ` and ${rm.oscillation_episodes} arm oscillation episodes.` : '.');
     },

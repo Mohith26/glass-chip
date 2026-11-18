@@ -1,0 +1,48 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T67_conv33",
+ "name": "conv 64->64 3x3 at 160x160",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "c",
+   "type": "conv2d",
+   "dtype": "int8",
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 160,
+    "W": 160,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 160,
+    "Wo": 160
+   },
+   "macs": 943718400,
+   "bytes_in": 1638400,
+   "bytes_w": 36864,
+   "bytes_out": 1638400,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}

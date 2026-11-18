@@ -118,6 +118,10 @@ def to_chrome(records: Iterable[dict[str, Any]], include_xfers: bool = False, ma
         elif kind == "preempt":
             events.append({"ph": "i", "s": "t", "pid": PID_ENGINES, "tid": engine_tid(r["block"], int(r["unit"])), "ts": us(r["t_ps"]),
                            "name": "preempted", "args": {"task": r["task_id"], "job": r["job_id"]}})
+        elif kind == "fault":
+            names = {0: "npu bit flip", 1: "noc delay", 2: "noc drop+retry"}
+            events.append({"ph": "i", "s": "g", "pid": PID_TASKS, "tid": task_tid(r["task_id"] or "faults"), "ts": us(r["t_ps"]),
+                           "name": names.get(int(r["unit"]), "fault"), "args": {"job": r["job_id"], "op": r["op_id"], "value": r["value"]}})
         elif kind == "freq":
             events.append({"ph": "C", "pid": PID_COUNTERS, "ts": us(r["t_ps"]), "name": f"freq {r['block']} (MHz)",
                            "args": {"MHz": r["value"] / 1e6}})

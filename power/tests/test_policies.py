@@ -199,7 +199,7 @@ def test_low_voltage_toggle_labels_hypothetical():
 def test_hot_ambient_throttles_and_records_series():
     tasks = synthetic_tasks(0.8)
     pm = PowerManager(load_policy("P3"), SOC, 60.0, task_info=task_info(tasks), thermal_init="steady",
-                      warm_start_w=16.0)
+                      warm_start_w=9.0)
     s = run_closed_loop(make_fakesim(pm, tasks, seed=0), pm, 200 * MS)
     assert s["time_throttled_s"] > 0
     assert s["peak_temp_c"] > 100

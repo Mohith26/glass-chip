@@ -1,0 +1,39 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T68_collision",
+ "name": "sphere-vs-ESDF collision cost (SIMT)",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "collide",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 7495680,
+   "bytes_in": 5996544,
+   "bytes_out": 499712,
+   "shape": {
+    "threads": 124928,
+    "kernel_launches": 1
+   },
+   "eligible": [
+    "simt"
+   ],
+   "notes": "per sphere: trilinear ESDF lookup (8 voxels x 4 B), distance, cost; 60 flops",
+   "macs": 0,
+   "bytes_w": 0
+  }
+ ]
+}

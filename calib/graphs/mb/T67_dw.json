@@ -1,0 +1,48 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T67_dw",
+ "name": "depthwise 3x3, 72 ch at 120x160",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "c",
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "shape": {
+    "N": 1,
+    "C": 72,
+    "H": 120,
+    "W": 160,
+    "K": 72,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 72,
+    "Ho": 120,
+    "Wo": 160
+   },
+   "macs": 12441600,
+   "bytes_in": 1382400,
+   "bytes_w": 648,
+   "bytes_out": 1382400,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}

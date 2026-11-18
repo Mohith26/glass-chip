@@ -24,6 +24,9 @@ VX-1 is a fictional reference SoC sized for a mid-range humanoid or arm controll
 | `policies/` | P0 to P6 (`make_policy` reads `configs/policies/*.yaml`) |
 | `offline_opt.py` | P5: minimum-energy OPP assignment for a recorded job trace (HiGHS MILP) |
 | `manager.py` | `PowerManager`, the per-step loop the co-sim bridge calls |
+| `cosim_hooks.py` | `ObservedChip` (feeds completions to the manager) and the `set_ambient` / `set_vmin` event hook |
+| `thermal_analysis.py` | Steady state with temperature-dependent leakage (runaway detection) and open-loop throttle-onset time |
+| `run_cosim.py` | Minimal co-sim harness; the studies use the shared `studies/runner.py` instead |
 | `demo_fake.py` | Synthetic comparison of P0, P2, P3, P4 and the P5 bound on FakeSim |
 | `tests/` | pytest suite, `FakeSim`, and a guarded integration test against the real core |
 
@@ -72,7 +75,7 @@ with fraction 0.10 (0.04 for `dram_io`), assumptions. P_peak_dyn_nominal is comp
 
     P_leak = V * I0 * exp(cT * (T - T0))
 
-T0 = 25 C and cT = 0.025 per C (leakage roughly doubles every 28 C), assumptions. I0 per domain is set so that leakage at (0.75 V, 25 C) is 5 percent of the domain's estimated peak dynamic power (assumption). The form ignores DIBL, so leakage falls only linearly with V here; that understates low-voltage savings.
+T0 = 25 C and cT = 0.025 per C (leakage roughly doubles every 28 C), assumptions. I0 per domain is set so that leakage at (0.75 V, 25 C) is 5 percent of the domain's estimated peak dynamic power (assumption). The form ignores DIBL, so leakage falls only linearly with V here; that understates low-voltage savings. Temperatures above 175 C are clamped inside the leakage fit so a runaway stays finite (the fit means nothing there).
 
 ### Regulator, DVFS and power gating
 
@@ -81,7 +84,7 @@ T0 = 25 C and cT = 0.025 per C (leakage roughly doubles every 28 C), assumptions
 a0 = 0.01, a1 = 0.06, a2 = 0.03, and P_rated = 1.2 x (peak dynamic at the top OPP + leakage at 105 C), all assumptions chosen to give the usual buck-converter shape (poor at very light load, peak about 0.9, slight droop at heavy load). Regulator loss heats the enclosure node (the PMIC is off die).
 
 - OPPs are discrete (the table in vx1.yaml). A change takes `dvfs_transition_us` (20 us, assumption from vx1.yaml), during which the simulator stalls the domain, and costs 0.5 * C_rail * |V1^2 - V0^2| with C_rail = 200 nF (assumption).
-- Power gating (P3 only): gated domains draw 5 percent of their leakage (retention), each wake costs C_rail * V^2 and 10 us of wake latency (assumptions). Gateable domains are cpu_a, cpu_b, npu, simt and dsp. The RT safety island, NoC/cache and DRAM I/O stay on.
+- Power gating (P3, and the P4G variant): gated domains draw 5 percent of their leakage (retention), each wake costs C_rail * V^2 and 10 us of wake latency, and a domain gates only after 100 us with no work (idle timer, all assumptions). The core applies the wake latency and the idle timer in its timing and reports `gated_ps` and `wakeups`. Gateable domains are cpu_a, cpu_b, npu, simt and dsp. The RT safety island, NoC/cache and DRAM I/O stay on. Without the idle timer the NPU woke about 36,000 times per second in S1 and the wake stalls broke deadline pacing.
 
 ### Thermal
 
@@ -89,7 +92,7 @@ One junction node per power domain, a package node, an enclosure node and ambien
 
     C_i dT_i/dt = P_i - sum_j G_ij (T_i - T_j) - G_i,amb (T_i - T_amb)
 
-integrated with backward Euler, which is unconditionally stable at 1 ms steps. Junction R = 30 K mm^2/W divided by the domain's floorplan area on a 100 mm^2 die; junction C = 4.9e-4 J/K per mm^2 (silicon, 0.3 mm thick); package 5 J/K and 2 K/W to the enclosure; enclosure 60 J/K and 3 K/W to ambient. All are assumptions for a fanless module, and lateral coupling between domains is ignored. The Tj limit is 105 C. Throttling steps a domain's OPP cap down by one every 10 ms above 100 C, holds between 95 C and 100 C, steps back up below 95 C, and drops straight to the lowest OPP at 105 C. Because the enclosure time constant is about 3 minutes, short runs should start from a warm steady state (`thermal_init="steady"`).
+integrated with backward Euler, which is unconditionally stable at 1 ms steps. Junction R = 30 K mm^2/W divided by the domain's floorplan area on a 100 mm^2 die; junction C = 4.9e-4 J/K per mm^2 (silicon, 0.3 mm thick); package 5 J/K and 2 K/W to the enclosure; enclosure 60 J/K and 4.5 K/W to ambient. All are assumptions for a sealed fanless module. I picked the 4.5 K/W from a design rule, not from a target outcome: the enclosure is sized so the S1 nominal (P0) operating point keeps the hottest junction at 85 C at a 40 C rated ambient, steady state with leakage feedback, solved with `thermal_analysis.py` on a measured S1 run (phase A used 3 K/W, which never throttled at S5's 50 C). Leakage feedback matters: above a few watts the steady state stops existing (thermal runaway) unless throttling cuts power, and lateral coupling between domains is ignored. The Tj limit is 105 C. Throttling steps a domain's OPP cap down by one every 10 ms above 100 C, holds between 95 C and 100 C, steps back up below 95 C, and drops straight to the lowest OPP at 105 C. Because the enclosure time constant is about 3 minutes, short runs should start from a warm steady state (`thermal_init="steady"`).
 
 ## Policies
 
@@ -103,11 +106,23 @@ integrated with backward Euler, which is unconditionally stable at 1 ms steps. J
 | P5 | `P5_offline_optimal.yaml` | Offline lower bound from a recorded trace (online run behaves like P0 and records the trace) |
 | P6 | `P6_surrogate_guided.yaml` | P4 with a surrogate upper bound on finish time; P4 when no surrogate is passed |
 
-P4 in detail: for each pending job with remaining cycles on a domain, I inflate `est_remaining_cycles` by a high quantile (0.95, or 0.999 for safety-critical tasks) of that task's observed actual-to-estimate cycle ratio (prior 1.25 until 5 samples exist). Each job's remaining window is split across the domains it still needs in proportion to their remaining time at nominal frequency. The required frequency is the EDF demand bound `max_k sum_{dl_i <= dl_k} R_i / (dl_k - now)` with 10 percent headroom and a 50 us margin (100 us for safety tasks) plus the transition latency. Jobs whose next periodic release falls before the next decision are reserved for, and a domain that hosts a safety-critical task never drops below the frequency that task's high-quantile demand needs within its deadline. Domains with no job demand (the NoC) follow a utilization governor (target 70 percent). The decision is re-evaluated every step.
+P4 in detail. Per DVFS domain, every 1 ms:
 
-P5 in detail (`offline_opt.solve_trace`): per domain, 1 ms slots, one OPP per slot (binary), continuous work per job per slot, every job's cycles placed inside its [release, deadline] window, minimizing switching energy plus static energy at the reference temperature, divided by the regulator's best efficiency. I solve it with HiGHS through `scipy.optimize.milp` and report the solver's dual bound. The simplifications (domains solved independently, whole-slot windows, perfect packing, no transition or wake cost, leakage at ambient, best-case regulator) can only lower the optimum, so the result stays a lower bound under this energy model.
+1. Time model per task, learned from completions (the core reports critical-path attribution and `cycles_by_domain`): the critical-path compute time, split across the task's domains by cycle-time share and converted to cycles at the job's time-averaged frequency on each domain (the manager integrates its OPP history), so it rescales as cycles / f; and a frequency-independent time M = response - compute - queueing (memory and NoC stalls, middleware, DVFS and wake stalls). I use the 0.95 quantile of each (0.999 for safety-critical tasks). Compute attribution still holds some stall time that does not shrink with frequency, so samples taken at a low clock understate demand at a higher one; a pacing policy that mostly runs low then drifts optimistic as its window fills with low-clock samples (I saw T4 misses appear after about 50 s). Samples taken at or above nominal clock therefore also go into an anchor window that low-clock samples never evict, and the demand used is the larger of the two quantiles. Domain occupancy cycles from the core are summed over tiles and cores, so they overstate time; the critical-path split avoids that. Before a task has 5 completions its domains stay at or above nominal (warm-up), and its demand falls back to `est_remaining_cycles` times a 1.25 prior.
+2. Each pending job's remaining window is its deadline minus now, minus M (scaled by the fraction left), minus a margin of 50 us (100 us safety) plus the DVFS transition, minus 8 percent of its relative deadline (10 percent for safety tasks). Slack feedback raises a task's fraction when the 5th percentile of its last 40 slacks falls below it (capped at 30 percent). I set the 8 percent after 60 s S1 pilot runs (seeds 1 to 3) showed about 0.2 percent T4 misses at 5 percent; with 8 percent the same pilots had none. What is left is split across the job's domains in proportion to their remaining time at nominal frequency.
+3. Future periodic releases whose deadlines can fall before a pending deadline on the domain are added as jobs (EDF processor-demand view).
+4. Required frequency: `max_k sum_{dl_i <= dl_k} R_i / (dl_k - now)` with 10 percent headroom. A domain that hosts a safety-critical task never drops below the frequency that task's high-quantile demand needs within its deadline. Pick the lowest OPP at or above it.
+5. Infrastructure domains (`noc_cache`) stay at nominal: the NoC clock sets every task's memory time, and when I let a utilization governor lower it, the VLA missed every deadline on the real core. Compute domains no task uses (cpu_b in S1) follow a utilization governor (target 70 percent).
+
+P4G is P4 plus idle power gating (`gate_idle: true`), a labeled variant I added because P4 and P3 win on different domains (P4 on busy ones, P3 on idle ones).
+
+P6 runs P4's machinery with a finish-time upper bound from a surrogate callable: per domain, the lowest OPP at which every pending job's bound is inside its deadline minus margin, never below the safety floor. The conformal surrogate (`surrogate/p6.py`, surrogate worker) is selected with `surrogate_factory: {callable: "surrogate.p6:SurrogateFinishBound", kwargs: {scenario: S1}}`; it is a calibrated heuristic with marginal coverage over design points, not a per-job guarantee. `placeholder_surrogate: true` instead uses a conservative stand-in, finish <= now + 1.5 x (M + remaining critical-path cycles / f), labeled placeholder.
+
+P5 in detail (`offline_opt.solve_trace`): per domain, 1 ms slots, one OPP per slot (binary), continuous work per job per slot, every job's cycles placed inside its [release, deadline] window, minimizing switching energy plus static energy at the reference temperature, divided by the regulator's best efficiency. I solve it with HiGHS through `scipy.optimize.milp` and report the solver's dual bound. Slot capacity is units x f x dt because the core's job cycles are summed over a domain's cores or tiles. Problems with more than 20,000 OPP choices are solved as the LP relaxation (OPPs may time-share inside a slot). The simplifications (domains solved independently, whole-slot windows, perfect packing, no transition or wake cost, leakage at ambient, best-case regulator, LP relaxation) can only lower the optimum. One approximation is not a relaxation: switching energy per cycle is the domain's average over the run, because the core reports activity per domain, not per job. On a co-sim run the bound is computed over the accounted window (after the thermal settle) on that run's own job trace.
 
 ## Using it from the co-sim bridge
+
+The studies go through `studies/runner.py` (co-sim worker), which wires it like this:
 
 ```python
 from power.manager import PowerManager
@@ -118,7 +133,7 @@ pm.apply_scheduler(sim)                 # sim.set_scheduler(engine, pm.scheduler
 for t in physics_steps:                 # every 1 ms
     release_jobs_due(t)
     pm.step(sim, t)                     # accounts [t_prev, t], updates thermal, sets OPPs
-    pm.observe_completions(sim.run_until(t + 1_000_000_000))
+    pm.observe_completions(sim.run_until(t + 1_000_000_000))   # or wrap the chip in cosim_hooks.ObservedChip
 summary = pm.summary()                  # energy, Wh per robot-hour, peak power and temperature, time throttled
 series = pm.series_arrays()             # per-step power, V, f, OPP per domain, temperature per node, energy
 bound = solve_trace(pm.job_trace, pm)   # P5 lower bound for the same jobs

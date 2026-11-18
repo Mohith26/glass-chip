@@ -1,0 +1,11 @@
+stream_copy_dma_8MB/study_L1 {"export_wall_s": 0.07189316698350012, "dram": -0.09610034411352028, "noc": 0.020585931488485414}
+stream_copy_dma_8MB/dram_noc_L0 {"export_wall_s": 0.001579625008162111, "dram": null, "noc": null}
+random_access_cpu_64B/study_L1 {"export_wall_s": 1.0131674580043182, "dram": 0.6792989268097844, "noc": 0.15695425699961388}
+random_access_cpu_64B/dram_noc_L0 {"export_wall_s": 0.9654516250011511, "dram": -0.46593755421801875, "noc": -0.9982799363367475}
+all_to_one_hotspot_6x4MB/study_L1 {"export_wall_s": 0.6018310420040507, "dram": -0.21376929267270506, "noc": 1.065957860312906}
+all_to_one_hotspot_6x4MB/dram_noc_L0 {"export_wall_s": 0.41044308300479315, "dram": -0.9996203095146386, "noc": -0.9997419656160043}
+gemm_vit_mlp_1024x768x3072/study_L1 {"export_wall_s": 0.022552749986061826, "dram": -0.10473245922482319, "noc": 0.15293531149564113}
+gemm_vit_mlp_1024x768x3072/dram_noc_L0 {"export_wall_s": 0.01746649999404326, "dram": -0.9853481414365521, "noc": -0.9980540137280753}
+attention_vit_12h_1024/study_L1 {"export_wall_s": 0.5026169169868808, "dram": -0.1938821633711891, "noc": 0.48654581820866144}
+attention_vit_12h_1024/dram_noc_L0 {"export_wall_s": 0.2498041669896338, "dram": -0.9964058342664109, "noc": -0.9997129313614299}
+S1_first_10ms/study_L1 {"export_wall_s": 3.509616915980587, "dram": -0.6967586257127112, "noc": 1.036031009556784}

@@ -132,6 +132,7 @@ class CoSim:
         self._human_auto_leave = not any(e.action == "human_enter" and e.args.get("leave")
                                          for e in self.events_todo)
         self._t8_period_nominal = self.tasks["T8_safety"].period_us
+        self._extra_releases: list[tuple[int, str]] = []   # (t_ps, task): load-only releases (replan bursts)
         self.latest_frame: dict[str, Frame] = {}
         self.safety_frame: Frame | None = None
         self.det_queue: list[DetectionSet] = []
@@ -251,6 +252,16 @@ class CoSim:
         self._human_start = np.array(wps[0], dtype=float)
         self.human.xy = self._human_start.copy()
         self.human.add_path(HumanPath(t, wps, speed, float(a.get("dwell_s", 2.0))))
+        burst = a.get("replan_burst")
+        if isinstance(burst, dict) and int(burst.get("count", 0)) > 0:
+            # Collision-aware replans around the person: load-only planner jobs, evenly spaced over the
+            # window, released through the chip like any T5 job (on_overrun skip applies).
+            n, win = int(burst["count"]), float(burst.get("window_ms", 200.0)) * 1e-3
+            task = str(burst.get("task", "T5_plan"))
+            for k in range(n):
+                tk = t + k * win / max(n, 1)
+                self._extra_releases.append((int(round(tk * 1000)) * STEP_PS, task))
+            self._extra_releases.sort()
         esc = a.get("safety_escalation")
         if isinstance(esc, dict) and esc.get("period_us") and "T8_safety" in self.tasks:
             self.tasks["T8_safety"].period_us = int(esc["period_us"])
@@ -353,6 +364,8 @@ class CoSim:
                         self.last_goal_sig = sig
         elif task == "T5_plan":
             g = p.extra
+            if g is None:
+                return  # load-only replan (burst): nothing to install
             if out is None:
                 self.rejected.add(g.plan_id)
                 self._event(t, "plan_rejected", plan_id=g.plan_id, uid=g.uid)
@@ -472,6 +485,15 @@ class CoSim:
         self.frames_status.append(self.conv.status.copy())
         self.frames_alpha.append(self.ctrl.alpha)
 
+    def _release_load_only(self, task: str, t_ps: int) -> None:
+        """Release a job that only loads the chip (its output is ignored)."""
+        self.tag_seq += 1
+        jid = self.chip.release_job(task, t_ps, self.tag_seq)
+        if jid is None or jid < 0:
+            self.skipped[task] = self.skipped.get(task, 0) + 1
+            return
+        self.pending[jid] = _Pending(task, None, t_ps / PS_PER_S, None)
+
     def _drain(self, t_ps: int, t: float) -> None:
         """Run the chip to t_ps and apply completions until nothing new completes."""
         for _ in range(32):
@@ -510,6 +532,9 @@ class CoSim:
                     while nr <= t_ps:
                         nr += per
                     self.next_release_ps[task] = nr
+            while self._extra_releases and self._extra_releases[0][0] <= t_ps:
+                _, task = self._extra_releases.pop(0)
+                self._release_load_only(task, t_ps)
             self._drain(t_ps, t)
             if self.power_manager is not None:
                 self.power_manager.step(self.chip, t_ps)

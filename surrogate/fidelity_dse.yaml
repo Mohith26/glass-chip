@@ -1,0 +1,24 @@
+# DSE mix used for the surrogate dataset: the `interactive` mix (configs/fidelity/interactive.yaml).
+# CPU, SIMT and DSP are analytic traffic sources (L0); NPU, NoC, system cache and DRAM are
+# transaction level (L1), so memory contention, cache size, NoC width and DRAM bandwidth are
+# resolved at packet granularity. I picked it over the all-L1 `study` mix for cost: on this
+# shared machine the study mix ran at about 5 CPU-seconds per simulated second versus about 1.9,
+# which put 5,000 samples out of reach. The NPU L2 SCALE-Sim tables are for the 64x64 array
+# only, so L2 could not follow the array-size knob anyway. The fidelity gap is measured on a
+# small study-mix reference subset (surrogate/fidelity_check.py, reported in s11).
+name: dse_interactive
+cpu: L0
+npu: L1
+simt: L0
+dsp: L0
+noc: L1
+dram: L1
+cache: L1
+quantum_ns: 100
+params:
+  bulk_chunk_bytes: 4096
+  noc_model_requests: false
+  cpu_miss_bytes: 64
+  cache_block_bytes: 1024
+  stream_bypass_bytes: 2000000
+  exec_cv: 0.0

@@ -1,0 +1,70 @@
+{
+ "stream_copy_dma_8MB": [
+  "T60_copy_dma"
+ ],
+ "stream_copy_cpu_2MB": [
+  "T61_copy_cpu"
+ ],
+ "random_access_cpu_64B": [
+  "T62_random_cpu"
+ ],
+ "all_to_one_hotspot_6x4MB": [
+  "T63_hot0",
+  "T63_hot1",
+  "T63_hot2",
+  "T63_hot3",
+  "T63_hot4",
+  "T63_hot5"
+ ],
+ "npu_elementwise_16MB": [
+  "T64_npu_vec"
+ ],
+ "gemm_64": [
+  "T65_gemm_64"
+ ],
+ "gemm_256": [
+  "T65_gemm_256"
+ ],
+ "gemm_vit_1024x768x768": [
+  "T65_gemm_vit_1024x768x768"
+ ],
+ "gemm_vit_mlp_1024x768x3072": [
+  "T65_gemm_vit_mlp_1024x768x3072"
+ ],
+ "gemm_lm_177x960x5120": [
+  "T65_gemm_lm_177x960x5120"
+ ],
+ "gemm_lm_decode_1x960x5120_bf16": [
+  "T65_gemm_lm_decode_1x960x5120_bf16"
+ ],
+ "attention_vit_12h_1024": [
+  "T66_attn"
+ ],
+ "conv_stem_640_s2": [
+  "T67_conv_stem"
+ ],
+ "conv3x3_64_160": [
+  "T67_conv33"
+ ],
+ "conv1x1_960_15x20": [
+  "T67_conv11"
+ ],
+ "dwconv3x3_72_120x160": [
+  "T67_dw"
+ ],
+ "curobo_collision_simt": [
+  "T68_collision"
+ ],
+ "control_step_rt": [
+  "T7_mb_ctrl_rt"
+ ],
+ "control_step_cpu": [
+  "T7_mb_ctrl_cpu"
+ ],
+ "estimate_step_cpu": [
+  "T6_mb_est_cpu"
+ ],
+ "ssm_step_rt": [
+  "T8_mb_ssm_rt"
+ ]
+}

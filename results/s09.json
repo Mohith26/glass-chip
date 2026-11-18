@@ -1,0 +1,630 @@
+{
+ "headline": {
+  "S1": {
+   "camera_to_detection_p50_ms": {
+    "copy": 6.0,
+    "zero_copy": 5.0
+   },
+   "dram_gbps": {
+    "copy": 13.192890291572146,
+    "zero_copy": 12.761875079763245
+   },
+   "dram_saving_frac": 0.0326702642319584
+  },
+  "S2": {
+   "camera_to_detection_p50_ms": {
+    "copy": 6.0,
+    "zero_copy": 5.0
+   },
+   "dram_gbps": {
+    "copy": 13.539398136406797,
+    "zero_copy": 13.058682539024247
+   },
+   "dram_saving_frac": 0.03550494582842123
+  },
+  "S6": {
+   "camera_to_detection_p50_ms": {
+    "copy": 6.0,
+    "zero_copy": 5.0
+   },
+   "dram_gbps": {
+    "copy": 14.503290542145308,
+    "zero_copy": 13.931831870356694
+   },
+   "dram_saving_frac": 0.0394020012305486
+  }
+ },
+ "points": [
+  {
+   "scenario": "S1",
+   "transport": "copy",
+   "executor": "single_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 6.0,
+    "lo": 6.0,
+    "hi": 6.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 7.333333333333333,
+    "lo": 5.899115756750179,
+    "hi": 8.767550909916487
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 98.0,
+    "lo": 91.42758939227157,
+    "hi": 104.57241060772843
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.0,
+    "lo": 22.0,
+    "hi": 22.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 13.192890291572146,
+    "lo": 13.10385016938456,
+    "hi": 13.281930413759733
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.35859569333333335,
+    "lo": 0.35851344956062176,
+    "hi": 0.35867793710604495
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.7985804120000001,
+    "T2_detect": 0.450805057,
+    "T4_vla": 0.515092745,
+    "T6_estimate": 0.39692723,
+    "T8_safety": 0.42562423
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.137423946276233,
+    "lo": 6.131789709775497,
+    "hi": 6.1430581827769695
+   }
+  },
+  {
+   "scenario": "S1",
+   "transport": "zero_copy",
+   "executor": "single_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 5.0,
+    "lo": 5.0,
+    "hi": 5.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 6.203333333333329,
+    "lo": 5.328460611617626,
+    "hi": 7.078206055049032
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 96.16666666666667,
+    "lo": 94.2693751498683,
+    "hi": 98.06395818346505
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.0,
+    "lo": 22.0,
+    "hi": 22.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 12.761875079763245,
+    "lo": 12.702912796545004,
+    "hi": 12.820837362981486
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.35860525066666665,
+    "lo": 0.35856412878031085,
+    "hi": 0.35864637255302245
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.3835324,
+    "T2_detect": 0.3835324,
+    "T4_vla": 0.384554,
+    "T6_estimate": 0.3820432,
+    "T8_safety": 0.3810216
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.10069754560829,
+    "lo": 6.09627067664545,
+    "hi": 6.10512441457113
+   }
+  },
+  {
+   "scenario": "S2",
+   "transport": "copy",
+   "executor": "single_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 6.0,
+    "lo": 6.0,
+    "hi": 6.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 7.470000000000009,
+    "lo": 6.221241984531611,
+    "hi": 8.718758015468406
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 97.0,
+    "lo": 84.57931144124835,
+    "hi": 109.42068855875165
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.0,
+    "lo": 22.0,
+    "hi": 22.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 13.539398136406797,
+    "lo": 13.400253406863886,
+    "hi": 13.678542865949709
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.3587677253333333,
+    "lo": 0.358658927048594,
+    "hi": 0.3588765236180726
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.7985804120000001,
+    "T2_detect": 0.450805057,
+    "T4_vla": 0.519362006,
+    "T6_estimate": 0.401134361,
+    "T8_safety": 0.42562423
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.175564732701953,
+    "lo": 6.166756812040838,
+    "hi": 6.184372653363068
+   }
+  },
+  {
+   "scenario": "S2",
+   "transport": "zero_copy",
+   "executor": "single_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 5.0,
+    "lo": 5.0,
+    "hi": 5.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 6.803333333333342,
+    "lo": 5.957144963149316,
+    "hi": 7.649521703517367
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 92.66666666666667,
+    "lo": 83.26187307774924,
+    "hi": 102.0714602555841
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.0,
+    "lo": 22.0,
+    "hi": 22.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 13.058682539024247,
+    "lo": 12.854110512976908,
+    "hi": 13.263254565071586
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.358758168,
+    "lo": 0.35861571760705735,
+    "hi": 0.3589006183929426
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.3835324,
+    "T2_detect": 0.3835324,
+    "T4_vla": 0.38506480000000004,
+    "T6_estimate": 0.382554,
+    "T8_safety": 0.3810216
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.135183056939358,
+    "lo": 6.121265841674819,
+    "hi": 6.1491002722038965
+   }
+  },
+  {
+   "scenario": "S6",
+   "transport": "copy",
+   "executor": "single_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 6.0,
+    "lo": 6.0,
+    "hi": 6.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 11.573333333333343,
+    "lo": 10.063448901613157,
+    "hi": 13.08321776505353
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 97.33333333333333,
+    "lo": 79.02246909136625,
+    "hi": 115.64419757530041
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.833333333333332,
+    "lo": 22.116224545041756,
+    "hi": 23.550442121624908
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 14.503290542145308,
+    "lo": 14.352547588518664,
+    "hi": 14.654033495771952
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.36886836,
+    "lo": 0.36878668670663495,
+    "hi": 0.36895003329336507
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.7985804120000001,
+    "T2_detect": 0.450805057,
+    "T4_vla": 0.523545839,
+    "T6_estimate": 0.405333726,
+    "T8_safety": 0.42562423
+   },
+   "misses_total": 7,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.247439926798332,
+    "lo": 6.236790751447247,
+    "hi": 6.258089102149418
+   }
+  },
+  {
+   "scenario": "S6",
+   "transport": "zero_copy",
+   "executor": "single_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 5.0,
+    "lo": 5.0,
+    "hi": 5.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 11.080000000000004,
+    "lo": 8.709112106887083,
+    "hi": 13.450887893112924
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 93.83333333333333,
+    "lo": 83.87093965765038,
+    "hi": 103.79572700901628
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.333333333333332,
+    "lo": 20.899115756750177,
+    "hi": 23.767550909916487
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 13.931831870356694,
+    "lo": 13.722761142532297,
+    "hi": 14.140902598181091
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.36888830666666667,
+    "lo": 0.36880635958221947,
+    "hi": 0.36897025375111386
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.3835324,
+    "T2_detect": 0.3835324,
+    "T4_vla": 0.38557559999999996,
+    "T6_estimate": 0.3830647999999999,
+    "T8_safety": 0.3810216
+   },
+   "misses_total": 1,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.202728234809347,
+    "lo": 6.189114669595514,
+    "hi": 6.216341800023179
+   }
+  },
+  {
+   "scenario": "S1",
+   "transport": "copy",
+   "executor": "multi_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 6.0,
+    "lo": 6.0,
+    "hi": 6.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 7.666666666666667,
+    "lo": 6.232449090083513,
+    "hi": 9.100884243249821
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 98.16666666666667,
+    "lo": 95.58109416039554,
+    "hi": 100.7522391729378
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.0,
+    "lo": 22.0,
+    "hi": 22.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 13.197218769072284,
+    "lo": 13.078487466547209,
+    "hi": 13.31595007159736
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.35859569333333335,
+    "lo": 0.35851344956062176,
+    "hi": 0.35867793710604495
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 1.498580412,
+    "T2_detect": 1.150805057,
+    "T4_vla": 1.215092745,
+    "T6_estimate": 1.09692723,
+    "T8_safety": 1.12562423
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.231580846976915,
+    "lo": 6.222909823612141,
+    "hi": 6.24025187034169
+   }
+  },
+  {
+   "scenario": "S1",
+   "transport": "copy",
+   "executor": "events",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 5.0,
+    "lo": 5.0,
+    "hi": 5.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 7.666666666666667,
+    "lo": 6.232449090083513,
+    "hi": 9.100884243249821
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 100.16666666666667,
+    "lo": 91.89656467850553,
+    "hi": 108.43676865482782
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 21.0,
+    "lo": 21.0,
+    "hi": 21.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 13.209319841072215,
+    "lo": 13.094532973968345,
+    "hi": 13.324106708176085
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.35859569333333335,
+    "lo": 0.35851344956062176,
+    "hi": 0.35867793710604495
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.618580412,
+    "T2_detect": 0.270805057,
+    "T4_vla": 0.335092745,
+    "T6_estimate": 0.21692723,
+    "T8_safety": 0.24562423
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.114406898350494,
+    "lo": 6.1061013057436595,
+    "hi": 6.122712490957329
+   }
+  },
+  {
+   "scenario": "S1",
+   "transport": "zero_copy",
+   "executor": "multi_threaded",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 6.0,
+    "lo": 6.0,
+    "hi": 6.0
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 7.203333333333329,
+    "lo": 6.328460611617626,
+    "hi": 8.078206055049032
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 97.66666666666667,
+    "lo": 96.23244909008352,
+    "hi": 99.10088424324982
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 22.0,
+    "lo": 22.0,
+    "hi": 22.0
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 12.742735284061055,
+    "lo": 12.640632051567735,
+    "hi": 12.844838516554375
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.358586136,
+    "lo": 0.35851491080352865,
+    "hi": 0.35865736119647135
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 1.0835324,
+    "T2_detect": 1.0835324,
+    "T4_vla": 1.084554,
+    "T6_estimate": 1.082043201,
+    "T8_safety": 1.0810216
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.193408883608579,
+    "lo": 6.185962500964873,
+    "hi": 6.200855266252285
+   }
+  },
+  {
+   "scenario": "S1",
+   "transport": "zero_copy",
+   "executor": "events",
+   "camera_to_detection_p50_ms": {
+    "n": 3,
+    "mean": 4.333333333333333,
+    "lo": 2.899115756750179,
+    "hi": 5.767550909916487
+   },
+   "camera_to_detection_p99_ms": {
+    "n": 3,
+    "mean": 5.333333333333333,
+    "lo": 3.899115756750179,
+    "hi": 6.767550909916487
+   },
+   "camera_to_grasp_p50_ms": {
+    "n": 3,
+    "mean": 98.66666666666667,
+    "lo": 84.98510297002787,
+    "hi": 112.34823036330548
+   },
+   "human_to_slowdown_p50_ms": {
+    "n": 3,
+    "mean": 21.333333333333332,
+    "lo": 20.616224545041756,
+    "hi": 22.050442121624908
+   },
+   "dram_gbps": {
+    "n": 3,
+    "mean": 12.778794040429956,
+    "lo": 12.694896642318676,
+    "hi": 12.862691438541235
+   },
+   "dma_gbps": {
+    "n": 3,
+    "mean": 0.35860525066666665,
+    "lo": 0.35856412878031085,
+    "hi": 0.35864637255302245
+   },
+   "middleware_ms_per_job": {
+    "T1_ingest_wrist": 0.20353239999999997,
+    "T2_detect": 0.20353239999999997,
+    "T4_vla": 0.204554,
+    "T6_estimate": 0.2020432,
+    "T8_safety": 0.2010216
+   },
+   "misses_total": 0,
+   "avg_power_w": {
+    "n": 3,
+    "mean": 6.077850413737916,
+    "lo": 6.070565425358545,
+    "hi": 6.085135402117286
+   }
+  }
+ ],
+ "figures": [
+  "results/figures/s09_middleware.svg",
+  "results/figures/s09_middleware.png"
+ ],
+ "assumptions": {
+  "middleware_costs": "workloads/graphs/middleware.json (Mac in Docker, scaled; see its provenance)"
+ },
+ "provenance": {
+  "script": "studies/s09_middleware.py",
+  "git_sha": "ac0148a",
+  "date": "2026-11-18",
+  "config_files": [
+   "configs/scenarios/S1_nominal.yaml",
+   "configs/scenarios/S2_second_camera.yaml",
+   "configs/scenarios/S6_fifteen_at_once.yaml",
+   "workloads/graphs/middleware.json"
+  ],
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "core_build": {
+   "file": "glasschip_core.cpython-312-darwin.so",
+   "sha256_12": "c0d9646069fd",
+   "mtime": "2026-11-17T23:48:49"
+  },
+  "fidelity": "configs/fidelity/interactive.yaml",
+  "soc": "configs/soc/vx1.yaml",
+  "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph",
+  "compute": {
+   "runs": 30,
+   "failed": 0,
+   "wall_s_total": 1872.360305834969,
+   "sim_s_total": 240.0
+  },
+  "duration_s": 8.0,
+  "mode": "cosim",
+  "quick": false
+ },
+ "notes": "chain latencies are measured at 1 ms physics steps, so their medians move in 1 ms increments; middleware_ms_per_job is the core's exact per-job middleware attribution"
+}

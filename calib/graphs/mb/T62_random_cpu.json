@@ -1,0 +1,41 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T62_random_cpu",
+ "name": "CPU pointer-chase style 64 B misses over 16 MiB",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "chase",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "bytes_in": 16777216,
+   "bytes_out": 0,
+   "instr": {
+    "scalar": 262144,
+    "vector": 0,
+    "mem": 262144
+   },
+   "reuse": 0.0,
+   "eligible": [
+    "cpu"
+   ],
+   "notes": "one 64 B line per load, no reuse; the core has no address pattern field, so randomness is not represented",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0
+  }
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T65_gemm_64",
+ "name": "GEMM 64x64x64 int8",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "mm",
+   "type": "matmul",
+   "dtype": "int8",
+   "shape": {
+    "M": 64,
+    "K": 64,
+    "N": 64,
+    "heads": 1
+   },
+   "macs": 262144,
+   "bytes_in": 4096,
+   "bytes_w": 4096,
+   "bytes_out": 4096,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}

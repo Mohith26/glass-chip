@@ -100,6 +100,22 @@ cd calib/booksim && ../../.venv/bin/python replay.py trace.csv out.csv
   I use the scalar and in-order numbers as the more conservative reference.
 - Spike was not needed because gem5 built.
 
+## Validation studies (phase B)
+
+- `studies/s10_cross_fidelity.py` compares L0, L1, the named fidelity mixes and one-component
+  swaps against the L2 models on 21 microbenchmarks (`microbench.py`, graphs in
+  `graphs/mb/`) and scenarios S1-S8, checks the CPU model against gem5, replays the core's own
+  DRAM and NoC traces through Ramulator 2 and BookSim 2 per request (`s10_traces.py`), and
+  measures simulation speed. Output: `results/s10.json`.
+- `studies/s15_external_sanity.py` runs ResNet-50, RetinaNet and BERT-Large (graphs from
+  `public_models.py`, in `graphs/T9*.json`) on `orin_like.yaml` against the public MLPerf numbers,
+  and compares the core's NPU model with SCALE-Sim per op. Output: `results/s15.json`.
+- `VALIDATION.md` summarizes both, with every number taken from those two files.
+
+The core now runs Ramulator 2 and BookSim 2 in-process as its DRAM and NoC L2 backends (the
+core worker built them on the libraries in `third_party/`). They are about four orders of
+magnitude slower than real time, so s10 uses them on microbenchmarks and a short S1 window only.
+
 ## Honesty notes
 
 - Accuracy statements made with these tables are relative to these reference simulators, not

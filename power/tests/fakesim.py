@@ -107,7 +107,8 @@ class FakeSim:
     def domain_freq(self, domain: str) -> float:
         return self.freq[domain]
 
-    def set_power_gating(self, domain: str, enabled: bool, wake_latency_ps: int) -> None:
+    def set_power_gating(self, domain: str, enabled: bool, wake_latency_ps: int, idle_before_gate_ps: int = 0) -> None:
+        # FakeSim gates at once (no idle timer); the argument is accepted for API parity.
         self._gating[domain] = int(wake_latency_ps) if enabled else None
         self._gated[domain] = bool(enabled) and not self._ready[domain]
 

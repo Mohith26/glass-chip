@@ -111,6 +111,13 @@ class App implements TourHost {
     return p;
   }
   surrogateLoaded(): boolean { return this.dse.loaded; }
+  firstMissSeconds(): Promise<number | null> {
+    const st = this.store;
+    if (!st || st.missIndices.length === 0) return Promise.resolve(null);
+    let t = Infinity;
+    for (const i of st.missIndices) t = Math.min(t, st.jobs.release[i]);
+    return Promise.resolve(t / 1e12);
+  }
   replayId(): string { return this.store?.entry?.id ?? ''; }
   seekSeconds(s: number): void { this.clock.seek(s * 1e12); }
   setSpeed(s: number): void { this.clock.setSpeed(s); }

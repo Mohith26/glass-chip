@@ -12,5 +12,13 @@ params:
   margin_frac: 0.10         # extra frequency headroom
   margin_us: 50             # deadline margin, normal tasks (plus DVFS transition)
   safety_margin_us: 100     # deadline margin, safety-critical tasks
-  anticipate: true          # reserve capacity for releases before the next decision
+  anticipate: true          # reserve capacity for future releases within the EDF demand horizon
   use_parallel_units: false # true: divide summed demand by cores/tiles in the domain
+  deadline_margin_frac: 0.08         # slack reserved as a fraction of the relative deadline (0.05 gave ~0.2% T4 misses in 60 s pilots)
+  safety_deadline_margin_frac: 0.10  # same, safety-critical tasks
+  infrastructure_domains: [noc_cache] # shared memory-system domains stay at nominal
+  govern_infrastructure: false       # true: utilization governor on them instead
+  unmapped_target_util: 0.7          # governor target for compute domains no task uses
+  slack_feedback: true               # raise a task margin when its recent 5th-pct slack < base
+  max_margin_frac: 0.30
+  anchor_window: 50                  # nominal-clock samples kept for the time model

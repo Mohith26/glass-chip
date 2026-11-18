@@ -56,6 +56,7 @@ class GatingParams:
     retention_leak_fraction: float
     wake_cap_f: float
     gateable: tuple[str, ...]
+    idle_before_gate_ps: int = 0
 
     def wake_energy_j(self, v: float) -> float:
         return self.wake_cap_f * v * v
@@ -73,4 +74,5 @@ def gating_from_params(params: Mapping[str, Any]) -> GatingParams:
         retention_leak_fraction=float(g["retention_leak_fraction"]),
         wake_cap_f=float(g["wake_energy_rail_cap_nf"]) * 1e-9,
         gateable=tuple(g.get("gateable", [])),
+        idle_before_gate_ps=int(round(float(g.get("idle_before_gate_us", 0.0)) * 1e6)),
     )

@@ -1,0 +1,40 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T7_mb_ctrl_cpu",
+ "name": "T7 control_step on an app core",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 1000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 1000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "control_step",
+   "type": "control_law",
+   "dtype": "fp32",
+   "instr": {
+    "scalar": 1463,
+    "vector": 0,
+    "mem": 817
+   },
+   "bytes_in": 640,
+   "bytes_out": 168,
+   "reuse": 1.0,
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0
+  }
+ ]
+}

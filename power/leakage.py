@@ -29,6 +29,9 @@ class LeakageModel:
         i0 = {d: frac * p / v_nominal_by_domain[d] for d, p in peak_dyn_nominal_w.items()}
         return cls(i0, float(lk["c_t_per_c"]), float(lk["t0_c"]))
 
+    T_CLAMP_C = 175.0   # the fit is meaningless far above Tj limits; clamp to keep runaway finite
+
     def power_w(self, domain: str, v: float, t_c: float) -> float:
         """Leakage power of `domain` at supply v (volts) and temperature t_c (Celsius)."""
-        return v * self.i0_a[domain] * math.exp(self.c_t * (t_c - self.t0_c))
+        t = min(t_c, self.T_CLAMP_C)
+        return v * self.i0_a[domain] * math.exp(self.c_t * (t - self.t0_c))

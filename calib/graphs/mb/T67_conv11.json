@@ -1,0 +1,48 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T67_conv11",
+ "name": "conv 960->160 1x1 at 15x20",
+ "provenance": {
+  "source": "synthetic microbenchmark",
+  "captured_by": "calib/microbench.py",
+  "date": "generated",
+  "method": "config_derived"
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "c",
+   "type": "conv2d",
+   "dtype": "int8",
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 15,
+    "W": 20,
+    "K": 160,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20
+   },
+   "macs": 46080000,
+   "bytes_in": 288000,
+   "bytes_w": 153600,
+   "bytes_out": 48000,
+   "eligible": [
+    "npu"
+   ],
+   "preempt_boundary": true,
+   "flops": 0
+  }
+ ]
+}
