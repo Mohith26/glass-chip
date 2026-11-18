@@ -1,0 +1,17 @@
+notes/
+.venv/
+build/
+third_party/
+data/
+*.gct
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+viz/dist/
+*.so
+.cache/
+MUJOCO_LOG.TXT
+viz/public/replays/*/
+viz/public/scenes/
+*.dSYM/

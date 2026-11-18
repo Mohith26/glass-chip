@@ -1,0 +1,17 @@
+numpy
+pyyaml
+jsonschema
+onnx
+onnxruntime
+pybind11
+mujoco
+ortools
+lightgbm
+scikit-learn
+pandas
+pyarrow
+matplotlib
+msgpack
+websockets
+scipy
+pytest
