@@ -1,0 +1,197 @@
+# Orin-like calibration config (sanity check only)
+#
+# Built only from public NVIDIA Jetson AGX Orin 64GB specifications, so I can run public models
+# through the same model as VX-1 and compare against public benchmark latencies
+# (calib/tables/orin_public.json). This is a sanity check, not validation of any hardware,
+# and it is not a model of NVIDIA's internal microarchitecture.
+#
+# Sources (accessed 2026-11-17):
+#  [S1] NVIDIA Jetson Orin product page, technical specifications table:
+#       https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin
+#  [S2] NVIDIA Jetson AGX Orin Series Technical Brief v1.2:
+#       https://www.nvidia.com/content/dam/en-zz/Solutions/gtcf21/jetson-orin/nvidia-jetson-agx-orin-technical-brief.pdf
+#  [S3] NVIDIA Jetson AGX Orin Series Data Sheet DS-10662-001 v1.2:
+#       https://media.digikey.com/pdf/Data%20Sheets/Nvidia%20PDFs/Jetson_AGX_Orin_Series.pdf
+#
+# Tags on each value: [S1]/[S2]/[S3] = cited; "derived" = arithmetic on cited numbers (shown);
+# "mapping" = how I fit Orin onto the VX-1 schema; "assumption" = not public, placeholder.
+#
+# Mapping summary:
+#  * npu  <- GPU tensor cores (TensorRT runs the MLPerf single-stream models on the GPU).
+#            16 SMs as 16 "tiles", 4 third-gen tensor cores per SM.
+#  * simt <- GPU CUDA cores (same 16 SMs). The tensor-core and CUDA-core paths share SMs on the
+#            real chip; this config does not model that sharing.
+#  * dla  <- 2x NVDLA v2 as a second npu-kind block (extra key; VX-1 has no equivalent).
+#  * dsp  <- PVA v2.
+#  * cpu_a/cpu_b <- the 12 Cortex-A78AE cores split 8 + 4 (three 4-core clusters).
+#  * rt   <- AGX Orin lists no safety cluster engine for this module [S1]; modeled as one
+#            reserved A78AE core (mapping).
+
+name: Orin-like
+version: 1
+process:
+  node: samsung-8nm-class       # assumption (widely reported, not in S1-S3)
+  v_nominal: 0.75               # assumption, placeholder (no public V-f data)
+  vth: 0.30                     # assumption
+  alpha: 1.3                    # assumption
+
+noc:
+  topology: mesh                # assumption: Orin's on-chip fabric is not public; reuse VX-1 shape
+  dims: [4, 4]
+  link_bits: 512                # assumption: wide enough that 2 DRAM ports (2 x 64 B x 1.5 GHz = 192 GB/s)
+                                # do not cap traffic far below the 204.8 GB/s DRAM peak
+  freq_hz: 1.5e9                # assumption
+  routing: xy
+  virtual_channels: 4
+  router_latency_cycles: 2
+  link_latency_cycles: 1
+  flit_bytes: 64                # = link_bits / 8
+  max_packet_bytes: 256
+  qos_classes: [safety, realtime, best_effort]
+  power_domain: noc_cache
+
+blocks:
+  cpu_a:
+    kind: cpu
+    cores: 8                    # mapping: 2 of the 3 four-core clusters; 12 cores total [S1]
+    isa: armv8.2-a              # Cortex-A78AE v8.2 [S1]
+    vlen_bits: 128              # NEON 128-bit (Armv8.2-A)
+    freq_hz: 2.2e9              # CPU max frequency [S1]
+    l1d_kb: 64                  # Cortex-A78AE 64 KB L1D (Arm public docs; assumption for Orin config)
+    l1i_kb: 64
+    l2_kb: 1024                 # derived: 3 MB L2 / 12 cores = 256 KB per core x 4 cores per cluster [S1]
+    ipc_scalar: 2.0             # assumption (same as VX-1 placeholder)
+    vector_flops_per_cycle: 8   # assumption: 2x 128-bit FMA pipes, FP32
+    context_switch_ns: 2000     # assumption
+    nodes: [[0, 0]]
+    power_domain: cpu_a
+    floorplan: {x: 0.02, y: 0.02, w: 0.22, h: 0.22}
+  cpu_b:
+    kind: cpu
+    cores: 4                    # mapping: third cluster [S1]
+    isa: armv8.2-a
+    vlen_bits: 128
+    freq_hz: 2.2e9              # [S1]
+    l1d_kb: 64
+    l1i_kb: 64
+    l2_kb: 1024                 # derived as above
+    ipc_scalar: 2.0
+    vector_flops_per_cycle: 8
+    context_switch_ns: 2000
+    nodes: [[1, 0]]
+    power_domain: cpu_b
+    floorplan: {x: 0.26, y: 0.02, w: 0.22, h: 0.22}
+  rt:
+    kind: rtcpu
+    cores: 1                    # mapping: one reserved A78AE core (no RT cluster listed for AGX Orin [S1])
+    lockstep: false
+    isa: armv8.2-a
+    freq_hz: 2.2e9              # [S1]
+    tcm_kb: 0
+    ipc_scalar: 2.0             # assumption
+    nodes: [[2, 0]]
+    power_domain: rt
+    floorplan: {x: 0.50, y: 0.02, w: 0.20, h: 0.22}
+  dsp:
+    kind: dsp
+    units: 1                    # 1x PVA v2 [S1]
+    simd_bits: 512              # assumption (PVA vector width not in S1-S3)
+    freq_hz: 1.0e9              # assumption (PVA clock not in S1-S3)
+    ops_per_cycle_int8: 64      # assumption
+    nodes: [[3, 0], [3, 1]]
+    power_domain: dsp
+    floorplan: {x: 0.72, y: 0.02, w: 0.26, h: 0.47}
+  npu:
+    kind: npu
+    tiles: 16                   # mapping: 16 SMs [S2], each with 4 tensor cores (64 total [S1])
+    array: [32, 64]             # mapping: MAC-equivalent shape of 2048 INT8 MACs/cycle per SM, not a systolic array
+    dataflow: output_stationary # mapping: closest SCALE-Sim dataflow for GPU tensor-core GEMM tiles
+    freq_hz: 1.3e9              # GPU max frequency [S1]
+    int8_macs_per_cycle_per_tile: 2048
+                                # derived: 170 sparse INT8 TOPS [S2,S3] / 2 (sparsity) / 2 (ops per MAC)
+                                # / 1.3e9 Hz = 32,692 MACs/cycle / 16 SMs = 2043, rounded to 2048
+    bf16_rate_fraction: 0.5     # assumption: Ampere dense FP16/BF16 tensor rate is half of INT8
+    fp8_rate_fraction: 0.5      # assumption: no FP8 on Ampere; FP8 ops treated at FP16 rate
+    sram_per_tile_kb: 192       # 192 KB L1/shared per SM [S2]
+    shared_sram_kb: 4096        # 4 MB GPU L2 [S2]
+    preemption: layer           # assumption
+    preempt_save_restore_us: 20 # assumption
+    nodes: [[0, 1], [1, 1], [0, 2], [1, 2]]
+    power_domain: npu
+    floorplan: {x: 0.02, y: 0.26, w: 0.46, h: 0.46}
+  simt:
+    kind: simt
+    compute_units: 16           # 16 SMs [S2]
+    lanes_per_cu: 128           # 128 CUDA cores per SM [S2]; 2048 total [S1]
+    freq_hz: 1.3e9              # [S1]; derived FP32 peak 2048 x 2 x 1.3e9 = 5.3 TFLOPS, matches [S2]
+    shared_mem_kb_per_cu: 192   # [S2]
+    launch_overhead_us: 5       # assumption
+    coalescing_efficiency: 0.7  # assumption
+    nodes: [[3, 2], [3, 3]]
+    power_domain: simt
+    floorplan: {x: 0.72, y: 0.51, w: 0.26, h: 0.47}
+  dla:
+    kind: npu
+    tiles: 2                    # 2x NVDLA v2 [S1]
+    array: [64, 128]            # mapping: MAC-equivalent shape of the derived rate below
+    dataflow: weight_stationary # assumption
+    freq_hz: 1.6e9              # DLA max frequency [S1]
+    int8_macs_per_cycle_per_tile: 8192
+                                # derived: (275 - 170) = 105 sparse INT8 TOPS for the DLAs [S1,S2]
+                                # / 2 (sparsity) / 2 (ops per MAC) / 1.6e9 / 2 DLAs = 8203, rounded to 8192
+    bf16_rate_fraction: 0.5     # assumption (DLA supports INT8 and FP16)
+    fp8_rate_fraction: 0.5      # assumption
+    sram_per_tile_kb: 1024      # assumption (DLA local SRAM size not in S1-S3)
+    shared_sram_kb: 0
+    preemption: layer
+    preempt_save_restore_us: 20
+    nodes: [[1, 2]]
+    power_domain: npu
+    floorplan: {x: 0.26, y: 0.50, w: 0.22, h: 0.22}
+  sys_cache:
+    kind: cache
+    size_kb: 6144               # mapping: 6 MB CPU L3 [S1]; the 4 MB GPU L2 is under npu.shared_sram_kb
+    ways: 16                    # assumption
+    line_bytes: 64
+    hit_latency_cycles: 30      # assumption
+    partitionable: false
+    nodes: [[2, 1], [2, 2]]
+    power_domain: noc_cache
+    floorplan: {x: 0.50, y: 0.26, w: 0.20, h: 0.46}
+  dram:
+    kind: dram
+    standard: LPDDR5            # 64 GB 256-bit LPDDR5, 204.8 GB/s [S1]
+    data_rate_mts: 6400         # derived: 204.8e9 B/s / (256 / 8) B = 6.4e9 transfers/s
+    bus_bits_total: 256         # [S1]
+    controllers: 2              # assumption (controller count not in S1-S3)
+    channels_per_controller: 8  # mapping: 16 x16 LPDDR5 channels = 256 bits
+    bank_groups: 4              # LPDDR5 bank-group mode (JEDEC), assumption for Orin
+    banks_per_group: 4
+    row_bytes: 2048
+    timing_ns: {tRCD: 18, tRP: 18, CL: 17, tRAS: 42, tRFC: 210, tREFI: 3900, tWTR: 10, tRTW: 8}
+                                # assumption: same LPDDR5-class values as VX-1 (Orin's are not public)
+    scheduler: fr_fcfs
+    nodes: [[0, 3], [2, 3]]
+    power_domain: dram_io
+    floorplan: {x: 0.02, y: 0.74, w: 0.46, h: 0.24}
+  dma:
+    kind: dma
+    engines: 8                  # assumption
+    descriptor_latency_ns: 200  # assumption
+    nodes: [[1, 3]]
+    power_domain: noc_cache
+    floorplan: {x: 0.50, y: 0.74, w: 0.20, h: 0.24}
+
+# Module power range 15 W to 60 W [S1, S3 "Module Power: 15W - 60W"]. NVIDIA does not publish
+# per-rail V-f tables, so the OPP tables below are the VX-1 placeholders, not Orin data.
+module_power_w: {min: 15, max: 60}
+power_domains:
+  cpu_a:     {v_min: 0.50, v_max: 0.85, opp_volts: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85]}
+  cpu_b:     {v_min: 0.50, v_max: 0.85, opp_volts: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85]}
+  rt:        {v_min: 0.55, v_max: 0.80, opp_volts: [0.55, 0.60, 0.65, 0.70, 0.75, 0.80]}
+  npu:       {v_min: 0.45, v_max: 0.80, opp_volts: [0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80]}
+  simt:      {v_min: 0.50, v_max: 0.80, opp_volts: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80]}
+  dsp:       {v_min: 0.50, v_max: 0.80, opp_volts: [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80]}
+  noc_cache: {v_min: 0.60, v_max: 0.80, opp_volts: [0.60, 0.65, 0.70, 0.75, 0.80]}
+  dram_io:   {v_min: 0.50, v_max: 0.50, opp_volts: [0.50]}
+  dvfs_transition_us: 20         # assumption

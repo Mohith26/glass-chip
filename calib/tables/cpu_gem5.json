@@ -1,0 +1,884 @@
+{
+ "provenance": {
+  "script": "calib/run_gem5.py",
+  "tool": "gem5 26.0.0.0 (RISCV/gem5.opt, SE mode)",
+  "tool_commit": "9d368896ce119c17e1289dcbb18f33624724b843",
+  "compiler": "zig cc 0.17.1 (LLVM, ld.lld, musl), -O2 -mcpu=baseline_rv64+v",
+  "kernel_sources": [
+   "workloads/capture/control/control.cpp",
+   "workloads/capture/control/estimate.cpp",
+   "workloads/capture/control/ssm.cpp",
+   "calib/riscv/kernels/control_bench.cpp",
+   "calib/riscv/kernels/axpy.c",
+   "calib/riscv/kernels/gemm.c"
+  ],
+  "config_files": [
+   "configs/soc/vx1.yaml",
+   "calib/gem5/se_run.py"
+  ],
+  "date": "2026-11-17"
+ },
+ "setup": {
+  "system": "1 core, 64 KiB L1I + 64 KiB L1D (4-way, 2-cycle tag/data/response), 1 MiB L2 (16-way, 12-cycle), DDR4_2400_8x8 memory controller, 2 GHz",
+  "vlen_bits": 256,
+  "cpu_models": {
+   "timing": "TimingSimpleCPU",
+   "minor": "MinorCPU (RT core proxy)",
+   "o3": "O3CPU, gem5 default parameters (app core proxy)"
+  },
+  "method": "marginal per-call cost from two iteration counts, rdcycle/rdinstret CSRs",
+  "notes": [
+   "control kernels built with +v in one binary; control_step and ssm_step contain no vector code at -O2 unless the compiler auto-vectorizes",
+   "cache latencies and DDR4 backing memory are gem5-style assumptions, not VX-1 parameters (vx1.yaml gives sizes, not latencies)"
+  ]
+ },
+ "kernels": {
+  "T7_control_step": {
+   "timing": {
+    "cycles_per_call": 7508.92,
+    "instr_per_call": 2302.96,
+    "cpi": 3.260551637892104,
+    "ipc": 0.3066965688807445,
+    "cold_cycles_per_call": 7947.94,
+    "us_per_call_at_app_cpu_freq": 3.75446,
+    "us_per_call_at_rt_freq": 6.257433333333333,
+    "runs": [
+     {
+      "kernel": "T7_control_step",
+      "cpu": "timing",
+      "iters": 50,
+      "cycles": 397397,
+      "instret": 114736,
+      "check": -190.521,
+      "wall_s": 1.4194259643554688,
+      "whole_run_sim_insts": 125420,
+      "whole_run_num_cycles": 464443,
+      "gem5_cmd": "--outdir=data/calib/gem5/T7_control_step_timing_50 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/control_bench --args 50 control"
+     },
+     {
+      "kernel": "T7_control_step",
+      "cpu": "timing",
+      "iters": 100,
+      "cycles": 772843,
+      "instret": 229884,
+      "check": 190.833,
+      "wall_s": 1.5289268493652344,
+      "whole_run_sim_insts": 240302,
+      "whole_run_num_cycles": 838885,
+      "gem5_cmd": "--outdir=data/calib/gem5/T7_control_step_timing_100 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/control_bench --args 100 control"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 4064.44,
+    "instr_per_call": 2302.96,
+    "cpi": 1.764876506756522,
+    "ipc": 0.5666118825717688,
+    "cold_cycles_per_call": 4341.28,
+    "us_per_call_at_app_cpu_freq": 2.03222,
+    "us_per_call_at_rt_freq": 3.387033333333333,
+    "runs": [
+     {
+      "kernel": "T7_control_step",
+      "cpu": "minor",
+      "iters": 50,
+      "cycles": 217064,
+      "instret": 114736,
+      "check": -190.521,
+      "wall_s": 1.8864550590515137,
+      "whole_run_sim_insts": 125420,
+      "whole_run_num_cycles": 267616,
+      "gem5_cmd": "--outdir=data/calib/gem5/T7_control_step_minor_50 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/control_bench --args 50 control"
+     },
+     {
+      "kernel": "T7_control_step",
+      "cpu": "minor",
+      "iters": 100,
+      "cycles": 420286,
+      "instret": 229884,
+      "check": 190.833,
+      "wall_s": 2.447415828704834,
+      "whole_run_sim_insts": 240302,
+      "whole_run_num_cycles": 470501,
+      "gem5_cmd": "--outdir=data/calib/gem5/T7_control_step_minor_100 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/control_bench --args 100 control"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 803.02,
+    "instr_per_call": 2302.96,
+    "cpi": 0.34869038107479067,
+    "ipc": 2.8678737764937363,
+    "cold_cycles_per_call": 1150.74,
+    "us_per_call_at_app_cpu_freq": 0.40151,
+    "us_per_call_at_rt_freq": 0.6691833333333332,
+    "runs": [
+     {
+      "kernel": "T7_control_step",
+      "cpu": "o3",
+      "iters": 50,
+      "cycles": 57537,
+      "instret": 114736,
+      "check": -190.521,
+      "wall_s": 1.9264121055603027,
+      "whole_run_sim_insts": 125403,
+      "whole_run_num_cycles": 87413,
+      "gem5_cmd": "--outdir=data/calib/gem5/T7_control_step_o3_50 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/control_bench --args 50 control"
+     },
+     {
+      "kernel": "T7_control_step",
+      "cpu": "o3",
+      "iters": 100,
+      "cycles": 97688,
+      "instret": 229884,
+      "check": 190.833,
+      "wall_s": 2.525242805480957,
+      "whole_run_sim_insts": 240285,
+      "whole_run_num_cycles": 127821,
+      "gem5_cmd": "--outdir=data/calib/gem5/T7_control_step_o3_100 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/control_bench --args 100 control"
+     }
+    ]
+   }
+  },
+  "T6_estimate_step": {
+   "timing": {
+    "cycles_per_call": 19632.0,
+    "instr_per_call": 5460.666666666667,
+    "cpi": 3.5951654254669756,
+    "ipc": 0.27815131757674544,
+    "cold_cycles_per_call": 22652.958333333332,
+    "us_per_call_at_app_cpu_freq": 9.816,
+    "us_per_call_at_rt_freq": 16.36,
+    "runs": [
+     {
+      "kernel": "T6_estimate_step",
+      "cpu": "timing",
+      "iters": 24,
+      "cycles": 543671,
+      "instret": 131071,
+      "check": 4.38339,
+      "wall_s": 0.8972947597503662,
+      "whole_run_sim_insts": 141439,
+      "whole_run_num_cycles": 609046,
+      "gem5_cmd": "--outdir=data/calib/gem5/T6_estimate_step_timing_24 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/control_bench --args 24 estimate"
+     },
+     {
+      "kernel": "T6_estimate_step",
+      "cpu": "timing",
+      "iters": 48,
+      "cycles": 1014839,
+      "instret": 262127,
+      "check": 8.84114,
+      "wall_s": 1.175353765487671,
+      "whole_run_sim_insts": 272525,
+      "whole_run_num_cycles": 1079818,
+      "gem5_cmd": "--outdir=data/calib/gem5/T6_estimate_step_timing_48 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/control_bench --args 48 estimate"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 12965.0,
+    "instr_per_call": 5460.666666666667,
+    "cpi": 2.3742522280551825,
+    "ipc": 0.4211852423190642,
+    "cold_cycles_per_call": 15422.5,
+    "us_per_call_at_app_cpu_freq": 6.4825,
+    "us_per_call_at_rt_freq": 10.804166666666667,
+    "runs": [
+     {
+      "kernel": "T6_estimate_step",
+      "cpu": "minor",
+      "iters": 24,
+      "cycles": 370140,
+      "instret": 131071,
+      "check": 4.38339,
+      "wall_s": 1.6842360496520996,
+      "whole_run_sim_insts": 141439,
+      "whole_run_num_cycles": 421437,
+      "gem5_cmd": "--outdir=data/calib/gem5/T6_estimate_step_minor_24 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/control_bench --args 24 estimate"
+     },
+     {
+      "kernel": "T6_estimate_step",
+      "cpu": "minor",
+      "iters": 48,
+      "cycles": 681300,
+      "instret": 262127,
+      "check": 8.84114,
+      "wall_s": 2.7299211025238037,
+      "whole_run_sim_insts": 272508,
+      "whole_run_num_cycles": 731669,
+      "gem5_cmd": "--outdir=data/calib/gem5/T6_estimate_step_minor_48 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/control_bench --args 48 estimate"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 8555.625,
+    "instr_per_call": 5460.666666666667,
+    "cpi": 1.5667729825418142,
+    "ipc": 0.638254559622081,
+    "cold_cycles_per_call": 10559.875,
+    "us_per_call_at_app_cpu_freq": 4.2778125,
+    "us_per_call_at_rt_freq": 7.129687499999999,
+    "runs": [
+     {
+      "kernel": "T6_estimate_step",
+      "cpu": "o3",
+      "iters": 24,
+      "cycles": 253437,
+      "instret": 131071,
+      "check": 4.38339,
+      "wall_s": 1.8449368476867676,
+      "whole_run_sim_insts": 141439,
+      "whole_run_num_cycles": 283714,
+      "gem5_cmd": "--outdir=data/calib/gem5/T6_estimate_step_o3_24 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/control_bench --args 24 estimate"
+     },
+     {
+      "kernel": "T6_estimate_step",
+      "cpu": "o3",
+      "iters": 48,
+      "cycles": 458772,
+      "instret": 262127,
+      "check": 8.84114,
+      "wall_s": 3.450706958770752,
+      "whole_run_sim_insts": 272508,
+      "whole_run_num_cycles": 489305,
+      "gem5_cmd": "--outdir=data/calib/gem5/T6_estimate_step_o3_48 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/control_bench --args 48 estimate"
+     }
+    ]
+   }
+  },
+  "T8_ssm_step": {
+   "timing": {
+    "cycles_per_call": 129171.4,
+    "instr_per_call": 49971.0,
+    "cpi": 2.5849272578095293,
+    "ipc": 0.3868580815877199,
+    "cold_cycles_per_call": 131330.4,
+    "us_per_call_at_app_cpu_freq": 64.5857,
+    "us_per_call_at_rt_freq": 107.64283333333333,
+    "runs": [
+     {
+      "kernel": "T8_ssm_step",
+      "cpu": "timing",
+      "iters": 5,
+      "cycles": 656652,
+      "instret": 249867,
+      "check": 6.14919,
+      "wall_s": 0.8121128082275391,
+      "whole_run_sim_insts": 258379,
+      "whole_run_num_cycles": 719795,
+      "gem5_cmd": "--outdir=data/calib/gem5/T8_ssm_step_timing_5 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/control_bench --args 5 ssm"
+     },
+     {
+      "kernel": "T8_ssm_step",
+      "cpu": "timing",
+      "iters": 10,
+      "cycles": 1302509,
+      "instret": 499722,
+      "check": 12.2984,
+      "wall_s": 1.143765926361084,
+      "whole_run_sim_insts": 508523,
+      "whole_run_num_cycles": 1366721,
+      "gem5_cmd": "--outdir=data/calib/gem5/T8_ssm_step_timing_10 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/control_bench --args 10 ssm"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 90761.6,
+    "instr_per_call": 49971.0,
+    "cpi": 1.816285445558424,
+    "ipc": 0.5505742516659027,
+    "cold_cycles_per_call": 92790.4,
+    "us_per_call_at_app_cpu_freq": 45.38080000000001,
+    "us_per_call_at_rt_freq": 75.63466666666667,
+    "runs": [
+     {
+      "kernel": "T8_ssm_step",
+      "cpu": "minor",
+      "iters": 5,
+      "cycles": 463952,
+      "instret": 249867,
+      "check": 6.14919,
+      "wall_s": 2.619767904281616,
+      "whole_run_sim_insts": 258379,
+      "whole_run_num_cycles": 513660,
+      "gem5_cmd": "--outdir=data/calib/gem5/T8_ssm_step_minor_5 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/control_bench --args 5 ssm"
+     },
+     {
+      "kernel": "T8_ssm_step",
+      "cpu": "minor",
+      "iters": 10,
+      "cycles": 917760,
+      "instret": 499722,
+      "check": 12.2984,
+      "wall_s": 3.92602801322937,
+      "whole_run_sim_insts": 508506,
+      "whole_run_num_cycles": 968558,
+      "gem5_cmd": "--outdir=data/calib/gem5/T8_ssm_step_minor_10 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/control_bench --args 10 ssm"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 12790.4,
+    "instr_per_call": 49971.0,
+    "cpi": 0.2559564547437514,
+    "ipc": 3.906914560920691,
+    "cold_cycles_per_call": 14680.0,
+    "us_per_call_at_app_cpu_freq": 6.3952,
+    "us_per_call_at_rt_freq": 10.658666666666667,
+    "runs": [
+     {
+      "kernel": "T8_ssm_step",
+      "cpu": "o3",
+      "iters": 5,
+      "cycles": 73400,
+      "instret": 249867,
+      "check": 6.14919,
+      "wall_s": 2.5049991607666016,
+      "whole_run_sim_insts": 258362,
+      "whole_run_num_cycles": 101875,
+      "gem5_cmd": "--outdir=data/calib/gem5/T8_ssm_step_o3_5 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/control_bench --args 5 ssm"
+     },
+     {
+      "kernel": "T8_ssm_step",
+      "cpu": "o3",
+      "iters": 10,
+      "cycles": 137352,
+      "instret": 499722,
+      "check": 12.2984,
+      "wall_s": 3.8011398315429688,
+      "whole_run_sim_insts": 508506,
+      "whole_run_num_cycles": 166013,
+      "gem5_cmd": "--outdir=data/calib/gem5/T8_ssm_step_o3_10 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/control_bench --args 10 ssm"
+     }
+    ]
+   }
+  },
+  "axpy_rvv_4096": {
+   "timing": {
+    "cycles_per_call": 5554.0,
+    "instr_per_call": 659.0,
+    "cpi": 8.427921092564493,
+    "ipc": 0.11865322290241267,
+    "cold_cycles_per_call": 5590.4,
+    "us_per_call_at_app_cpu_freq": 2.7769999999999997,
+    "us_per_call_at_rt_freq": 4.628333333333334,
+    "runs": [
+     {
+      "kernel": "axpy_rvv_4096",
+      "cpu": "timing",
+      "iters": 5,
+      "cycles": 27952,
+      "instret": 3306,
+      "check": 11.2375,
+      "wall_s": 1.3716819286346436,
+      "whole_run_sim_insts": 13531,
+      "whole_run_num_cycles": 157788,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_rvv_4096_timing_5 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/axpy --args 5"
+     },
+     {
+      "kernel": "axpy_rvv_4096",
+      "cpu": "timing",
+      "iters": 10,
+      "cycles": 55722,
+      "instret": 6601,
+      "check": 21.475,
+      "wall_s": 0.9049620628356934,
+      "whole_run_sim_insts": 16615,
+      "whole_run_num_cycles": 184943,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_rvv_4096_timing_10 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/axpy --args 10"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 4136.0,
+    "instr_per_call": 659.0,
+    "cpi": 6.276176024279211,
+    "ipc": 0.15933268858800773,
+    "cold_cycles_per_call": 4219.4,
+    "us_per_call_at_app_cpu_freq": 2.068,
+    "us_per_call_at_rt_freq": 3.4466666666666668,
+    "runs": [
+     {
+      "kernel": "axpy_rvv_4096",
+      "cpu": "minor",
+      "iters": 5,
+      "cycles": 21097,
+      "instret": 3306,
+      "check": 11.2375,
+      "wall_s": 1.0599429607391357,
+      "whole_run_sim_insts": 13531,
+      "whole_run_num_cycles": 130850,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_rvv_4096_minor_5 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/axpy --args 5"
+     },
+     {
+      "kernel": "axpy_rvv_4096",
+      "cpu": "minor",
+      "iters": 10,
+      "cycles": 41777,
+      "instret": 6601,
+      "check": 21.475,
+      "wall_s": 1.3383760452270508,
+      "whole_run_sim_insts": 16615,
+      "whole_run_num_cycles": 150830,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_rvv_4096_minor_10 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/axpy --args 10"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 463.0,
+    "instr_per_call": 659.0,
+    "cpi": 0.7025796661608498,
+    "ipc": 1.4233261339092873,
+    "cold_cycles_per_call": 507.6,
+    "us_per_call_at_app_cpu_freq": 0.2315,
+    "us_per_call_at_rt_freq": 0.3858333333333333,
+    "runs": [
+     {
+      "kernel": "axpy_rvv_4096",
+      "cpu": "o3",
+      "iters": 5,
+      "cycles": 2538,
+      "instret": 3306,
+      "check": 11.2375,
+      "wall_s": 1.4558939933776855,
+      "whole_run_sim_insts": 13514,
+      "whole_run_num_cycles": 35849,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_rvv_4096_o3_5 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/axpy --args 5"
+     },
+     {
+      "kernel": "axpy_rvv_4096",
+      "cpu": "o3",
+      "iters": 10,
+      "cycles": 4853,
+      "instret": 6601,
+      "check": 21.475,
+      "wall_s": 1.4179930686950684,
+      "whole_run_sim_insts": 16598,
+      "whole_run_num_cycles": 38487,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_rvv_4096_o3_10 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/axpy --args 10"
+     }
+    ]
+   }
+  },
+  "axpy_scalar_4096": {
+   "timing": {
+    "cycles_per_call": 122934.0,
+    "instr_per_call": 28694.0,
+    "cpi": 4.284310308775353,
+    "ipc": 0.23340979712691362,
+    "cold_cycles_per_call": 123025.0,
+    "us_per_call_at_app_cpu_freq": 61.467,
+    "us_per_call_at_rt_freq": 102.445,
+    "runs": [
+     {
+      "kernel": "axpy_scalar_4096",
+      "cpu": "timing",
+      "iters": 2,
+      "cycles": 246050,
+      "instret": 57399,
+      "check": 5.095,
+      "wall_s": 0.9260306358337402,
+      "whole_run_sim_insts": 67438,
+      "whole_run_num_cycles": 376560,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_scalar_4096_timing_2 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/axpy --args 2 s"
+     },
+     {
+      "kernel": "axpy_scalar_4096",
+      "cpu": "timing",
+      "iters": 4,
+      "cycles": 491918,
+      "instret": 114787,
+      "check": 9.19,
+      "wall_s": 0.839447021484375,
+      "whole_run_sim_insts": 124806,
+      "whole_run_num_cycles": 620920,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_scalar_4096_timing_4 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/axpy --args 4 s"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 45153.0,
+    "instr_per_call": 28694.0,
+    "cpi": 1.5736042378197532,
+    "ipc": 0.6354837995260558,
+    "cold_cycles_per_call": 45187.0,
+    "us_per_call_at_app_cpu_freq": 22.5765,
+    "us_per_call_at_rt_freq": 37.6275,
+    "runs": [
+     {
+      "kernel": "axpy_scalar_4096",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 90374,
+      "instret": 57399,
+      "check": 5.095,
+      "wall_s": 1.1392951011657715,
+      "whole_run_sim_insts": 67421,
+      "whole_run_num_cycles": 200397,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_scalar_4096_minor_2 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/axpy --args 2 s"
+     },
+     {
+      "kernel": "axpy_scalar_4096",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 180680,
+      "instret": 114787,
+      "check": 9.19,
+      "wall_s": 1.2505948543548584,
+      "whole_run_sim_insts": 124806,
+      "whole_run_num_cycles": 290057,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_scalar_4096_minor_4 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/axpy --args 4 s"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 36864.0,
+    "instr_per_call": 28694.0,
+    "cpi": 1.2847285146720568,
+    "ipc": 0.7783745659722222,
+    "cold_cycles_per_call": 36891.5,
+    "us_per_call_at_app_cpu_freq": 18.432,
+    "us_per_call_at_rt_freq": 30.72,
+    "runs": [
+     {
+      "kernel": "axpy_scalar_4096",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 73783,
+      "instret": 57399,
+      "check": 5.095,
+      "wall_s": 1.1290652751922607,
+      "whole_run_sim_insts": 67421,
+      "whole_run_num_cycles": 106865,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_scalar_4096_o3_2 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/axpy --args 2 s"
+     },
+     {
+      "kernel": "axpy_scalar_4096",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 147511,
+      "instret": 114787,
+      "check": 9.19,
+      "wall_s": 1.461989164352417,
+      "whole_run_sim_insts": 124806,
+      "whole_run_num_cycles": 180413,
+      "gem5_cmd": "--outdir=data/calib/gem5/axpy_scalar_4096_o3_4 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/axpy --args 4 s"
+     }
+    ]
+   }
+  },
+  "gemm_rvv_64": {
+   "timing": {
+    "cycles_per_call": 235753.0,
+    "instr_per_call": 50967.0,
+    "cpi": 4.625600879000137,
+    "ipc": 0.21618812910122034,
+    "cold_cycles_per_call": 266486.0,
+    "us_per_call_at_app_cpu_freq": 117.87650000000001,
+    "us_per_call_at_rt_freq": 196.46083333333334,
+    "runs": [
+     {
+      "kernel": "gemm_rvv_64",
+      "cpu": "timing",
+      "iters": 1,
+      "cycles": 266486,
+      "instret": 50972,
+      "check": 47.0,
+      "wall_s": 0.7131531238555908,
+      "whole_run_sim_insts": 64199,
+      "whole_run_num_cycles": 395504,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_rvv_64_timing_1 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/gemm --args 1"
+     },
+     {
+      "kernel": "gemm_rvv_64",
+      "cpu": "timing",
+      "iters": 2,
+      "cycles": 502239,
+      "instret": 101939,
+      "check": 94.0,
+      "wall_s": 0.8676872253417969,
+      "whole_run_sim_insts": 115183,
+      "whole_run_num_cycles": 631428,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_rvv_64_timing_2 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/gemm --args 2"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 160070.0,
+    "instr_per_call": 50967.0,
+    "cpi": 3.1406596425137834,
+    "ipc": 0.3184044480539764,
+    "cold_cycles_per_call": 199191.0,
+    "us_per_call_at_app_cpu_freq": 80.035,
+    "us_per_call_at_rt_freq": 133.39166666666668,
+    "runs": [
+     {
+      "kernel": "gemm_rvv_64",
+      "cpu": "minor",
+      "iters": 1,
+      "cycles": 199191,
+      "instret": 50972,
+      "check": 47.0,
+      "wall_s": 1.365049123764038,
+      "whole_run_sim_insts": 64199,
+      "whole_run_num_cycles": 258659,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_rvv_64_minor_1 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/gemm --args 1"
+     },
+     {
+      "kernel": "gemm_rvv_64",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 359261,
+      "instret": 101939,
+      "check": 94.0,
+      "wall_s": 1.80507493019104,
+      "whole_run_sim_insts": 115183,
+      "whole_run_num_cycles": 418754,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_rvv_64_minor_2 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/gemm --args 2"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 18150.0,
+    "instr_per_call": 50967.0,
+    "cpi": 0.3561127788569074,
+    "ipc": 2.808099173553719,
+    "cold_cycles_per_call": 35844.0,
+    "us_per_call_at_app_cpu_freq": 9.075000000000001,
+    "us_per_call_at_rt_freq": 15.125,
+    "runs": [
+     {
+      "kernel": "gemm_rvv_64",
+      "cpu": "o3",
+      "iters": 1,
+      "cycles": 35844,
+      "instret": 50972,
+      "check": 47.0,
+      "wall_s": 1.4899320602416992,
+      "whole_run_sim_insts": 64182,
+      "whole_run_num_cycles": 60875,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_rvv_64_o3_1 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/gemm --args 1"
+     },
+     {
+      "kernel": "gemm_rvv_64",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 53994,
+      "instret": 101939,
+      "check": 94.0,
+      "wall_s": 2.041783094406128,
+      "whole_run_sim_insts": 115166,
+      "whole_run_num_cycles": 79801,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_rvv_64_o3_2 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/gemm --args 2"
+     }
+    ]
+   }
+  },
+  "gemm_scalar_64": {
+   "timing": {
+    "cycles_per_call": 7947710.0,
+    "instr_per_call": 1868375.0,
+    "cpi": 4.2538087910617515,
+    "ipc": 0.23508343912900698,
+    "cold_cycles_per_call": 7981127.0,
+    "us_per_call_at_app_cpu_freq": 3973.855,
+    "us_per_call_at_rt_freq": 6623.091666666666,
+    "runs": [
+     {
+      "kernel": "gemm_scalar_64",
+      "cpu": "timing",
+      "iters": 1,
+      "cycles": 7981127,
+      "instret": 1868380,
+      "check": 47.0,
+      "wall_s": 3.0916550159454346,
+      "whole_run_sim_insts": 1881692,
+      "whole_run_num_cycles": 8110535,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_scalar_64_timing_1 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/gemm --args 1 s"
+     },
+     {
+      "kernel": "gemm_scalar_64",
+      "cpu": "timing",
+      "iters": 2,
+      "cycles": 15928837,
+      "instret": 3736755,
+      "check": 94.0,
+      "wall_s": 5.242533922195435,
+      "whole_run_sim_insts": 3750084,
+      "whole_run_num_cycles": 16058000,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_scalar_64_timing_2 calib/gem5/se_run.py --cpu timing --binary calib/riscv/build/gemm --args 2 s"
+     }
+    ]
+   },
+   "minor": {
+    "cycles_per_call": 2962492.0,
+    "instr_per_call": 1868375.0,
+    "cpi": 1.5855981802368369,
+    "ipc": 0.6306768085787235,
+    "cold_cycles_per_call": 2994463.0,
+    "us_per_call_at_app_cpu_freq": 1481.246,
+    "us_per_call_at_rt_freq": 2468.7433333333333,
+    "runs": [
+     {
+      "kernel": "gemm_scalar_64",
+      "cpu": "minor",
+      "iters": 1,
+      "cycles": 2994463,
+      "instret": 1868380,
+      "check": 47.0,
+      "wall_s": 6.875520944595337,
+      "whole_run_sim_insts": 1881692,
+      "whole_run_num_cycles": 3053352,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_scalar_64_minor_1 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/gemm --args 1 s"
+     },
+     {
+      "kernel": "gemm_scalar_64",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 5956955,
+      "instret": 3736755,
+      "check": 94.0,
+      "wall_s": 13.154268026351929,
+      "whole_run_sim_insts": 3750067,
+      "whole_run_num_cycles": 6016507,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_scalar_64_minor_2 calib/gem5/se_run.py --cpu minor --binary calib/riscv/build/gemm --args 2 s"
+     }
+    ]
+   },
+   "o3": {
+    "cycles_per_call": 2359296.0,
+    "instr_per_call": 1868375.0,
+    "cpi": 1.2627529270087643,
+    "ipc": 0.7919205559624566,
+    "cold_cycles_per_call": 2391877.0,
+    "us_per_call_at_app_cpu_freq": 1179.648,
+    "us_per_call_at_rt_freq": 1966.08,
+    "runs": [
+     {
+      "kernel": "gemm_scalar_64",
+      "cpu": "o3",
+      "iters": 1,
+      "cycles": 2391877,
+      "instret": 1868380,
+      "check": 47.0,
+      "wall_s": 9.545175075531006,
+      "whole_run_sim_insts": 1881692,
+      "whole_run_num_cycles": 2417206,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_scalar_64_o3_1 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/gemm --args 1 s"
+     },
+     {
+      "kernel": "gemm_scalar_64",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 4751173,
+      "instret": 3736755,
+      "check": 94.0,
+      "wall_s": 16.33686590194702,
+      "whole_run_sim_insts": 3750067,
+      "whole_run_num_cycles": 4775598,
+      "gem5_cmd": "--outdir=data/calib/gem5/gemm_scalar_64_o3_2 calib/gem5/se_run.py --cpu o3 --binary calib/riscv/build/gemm --args 2 s"
+     }
+    ]
+   }
+  }
+ },
+ "csr_vs_stats_check": [
+  {
+   "kernel": "axpy_scalar_4096",
+   "cpu": "timing",
+   "iters": 2,
+   "csr_cycles": 246050,
+   "stats_numCycles_whole_run": 376560,
+   "csr_fraction_of_run": 0.6534151264074782
+  },
+  {
+   "kernel": "axpy_scalar_4096",
+   "cpu": "timing",
+   "iters": 4,
+   "csr_cycles": 491918,
+   "stats_numCycles_whole_run": 620920,
+   "csr_fraction_of_run": 0.792240546286156
+  },
+  {
+   "kernel": "axpy_scalar_4096",
+   "cpu": "minor",
+   "iters": 2,
+   "csr_cycles": 90374,
+   "stats_numCycles_whole_run": 200397,
+   "csr_fraction_of_run": 0.4509748149922404
+  },
+  {
+   "kernel": "axpy_scalar_4096",
+   "cpu": "minor",
+   "iters": 4,
+   "csr_cycles": 180680,
+   "stats_numCycles_whole_run": 290057,
+   "csr_fraction_of_run": 0.6229120483215368
+  },
+  {
+   "kernel": "axpy_scalar_4096",
+   "cpu": "o3",
+   "iters": 2,
+   "csr_cycles": 73783,
+   "stats_numCycles_whole_run": 106865,
+   "csr_fraction_of_run": 0.6904318532728209
+  },
+  {
+   "kernel": "axpy_scalar_4096",
+   "cpu": "o3",
+   "iters": 4,
+   "csr_cycles": 147511,
+   "stats_numCycles_whole_run": 180413,
+   "csr_fraction_of_run": 0.8176295499769972
+  },
+  {
+   "kernel": "gemm_scalar_64",
+   "cpu": "timing",
+   "iters": 1,
+   "csr_cycles": 7981127,
+   "stats_numCycles_whole_run": 8110535,
+   "csr_fraction_of_run": 0.9840444557603166
+  },
+  {
+   "kernel": "gemm_scalar_64",
+   "cpu": "timing",
+   "iters": 2,
+   "csr_cycles": 15928837,
+   "stats_numCycles_whole_run": 16058000,
+   "csr_fraction_of_run": 0.99195647029518
+  },
+  {
+   "kernel": "gemm_scalar_64",
+   "cpu": "minor",
+   "iters": 1,
+   "csr_cycles": 2994463,
+   "stats_numCycles_whole_run": 3053352,
+   "csr_fraction_of_run": 0.980713327516775
+  },
+  {
+   "kernel": "gemm_scalar_64",
+   "cpu": "minor",
+   "iters": 2,
+   "csr_cycles": 5956955,
+   "stats_numCycles_whole_run": 6016507,
+   "csr_fraction_of_run": 0.9901018979949662
+  },
+  {
+   "kernel": "gemm_scalar_64",
+   "cpu": "o3",
+   "iters": 1,
+   "csr_cycles": 2391877,
+   "stats_numCycles_whole_run": 2417206,
+   "csr_fraction_of_run": 0.9895213730232343
+  },
+  {
+   "kernel": "gemm_scalar_64",
+   "cpu": "o3",
+   "iters": 2,
+   "csr_cycles": 4751173,
+   "stats_numCycles_whole_run": 4775598,
+   "csr_fraction_of_run": 0.994885457276764
+  }
+ ]
+}

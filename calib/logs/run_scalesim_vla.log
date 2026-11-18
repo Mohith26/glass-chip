@@ -1,0 +1,36 @@
+/Users/mohithgajjela/glass-chip/calib/tables/npu_scalesim_standard.json
+Traceback (most recent call last):
+  File "/Users/mohithgajjela/glass-chip/calib/run_scalesim.py", line 340, in <module>
+    main()
+  File "/Users/mohithgajjela/glass-chip/calib/run_scalesim.py", line 336, in main
+    print(run_task(t, cfgs, npu, tile_bw, a.jobs), flush=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mohithgajjela/glass-chip/calib/run_scalesim.py", line 243, in run_task
+    results = {u: fu.result() for u, fu in futs.items()}
+                  ^^^^^^^^^^^
+  File "/Users/mohithgajjela/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mohithgajjela/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/mohithgajjela/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mohithgajjela/glass-chip/calib/run_scalesim.py", line 149, in run_layer
+    raise RuntimeError(f"SCALE-Sim failed for {df} {key}: {r.stderr[-1500:]}")
+RuntimeError: SCALE-Sim failed for os (64, 1, 1, 1, 12288, 960, 1): Traceback (most recent call last):
+  File "/Users/mohithgajjela/glass-chip/calib/scalesim/run_layer.py", line 66, in <module>
+    main()
+  File "/Users/mohithgajjela/glass-chip/calib/scalesim/run_layer.py", line 49, in main
+    sim.run_scale(top_path=str(wd))
+  File "/Users/mohithgajjela/glass-chip/third_party/scale-sim-v2/scalesim/scale_sim.py", line 126, in run_scale
+    self.run_once()
+  File "/Users/mohithgajjela/glass-chip/third_party/scale-sim-v2/scalesim/scale_sim.py", line 149, in run_once
+    self.runner.run()
+  File "/Users/mohithgajjela/glass-chip/third_party/scale-sim-v2/scalesim/simulator.py", line 161, in run
+    self.generate_reports()
+  File "/Users/mohithgajjela/glass-chip/third_party/scale-sim-v2/scalesim/simulator.py", line 174, in generate_reports
+    compute_report = open(compute_report_name, 'w')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/mohithgajjela/glass-chip/data/calib/scalesim_cache/work/os_1dd5c546d98c0c2a/vx1_tile_os/COMPUTE_REPORT.csv'
+

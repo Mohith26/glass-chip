@@ -1,0 +1,54 @@
+{
+ "lpddr5x_8533_derived": {
+  "seq_read": {
+   "max_achieved_gbps": 102.6145958520134,
+   "max_efficiency": 0.7516011063812068,
+   "low_load_read_lat_mean_ns": 33.5489549,
+   "low_load_lat_p99_ns": 246.3603099999998
+  },
+  "random_read": {
+   "max_achieved_gbps": 46.150413716825966,
+   "max_efficiency": 0.3380289297201011,
+   "low_load_read_lat_mean_ns": 81.6460071,
+   "low_load_lat_p99_ns": 310.57307999999995
+  },
+  "mixed_rw": {
+   "max_achieved_gbps": 37.653102146423905,
+   "max_efficiency": 0.2757903297962609,
+   "low_load_read_lat_mean_ns": 83.3874503068403,
+   "low_load_lat_p99_ns": 585.7508499999963
+  },
+  "row_hit_heavy": {
+   "max_achieved_gbps": 78.73837017356091,
+   "max_efficiency": 0.5767195752780448,
+   "low_load_read_lat_mean_ns": 70.232011,
+   "low_load_lat_p99_ns": 307.6283399999999
+  }
+ },
+ "lpddr5_6400": {
+  "seq_read": {
+   "max_achieved_gbps": 79.49473148667072,
+   "max_efficiency": 0.7763157371745186,
+   "low_load_read_lat_mean_ns": 40.67213485,
+   "low_load_lat_p99_ns": 312.9723399999999
+  },
+  "random_read": {
+   "max_achieved_gbps": 42.587434164983854,
+   "max_efficiency": 0.41589291176742044,
+   "low_load_read_lat_mean_ns": 85.43512185,
+   "low_load_lat_p99_ns": 366.4010399999998
+  },
+  "mixed_rw": {
+   "max_achieved_gbps": 34.92197013167547,
+   "max_efficiency": 0.34103486456714327,
+   "low_load_read_lat_mean_ns": 87.07545389911691,
+   "low_load_lat_p99_ns": 495.50686999999925
+  },
+  "row_hit_heavy": {
+   "max_achieved_gbps": 68.0899994462368,
+   "max_efficiency": 0.6649414008421562,
+   "low_load_read_lat_mean_ns": 73.8442992,
+   "low_load_lat_p99_ns": 364.4766999999999
+  }
+ }
+}

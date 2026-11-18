@@ -1,0 +1,51 @@
+{
+ "uniform/2flit": {
+  "zero_load_plat_cycles": 13.4247,
+  "zero_load_plat_ns": 8.9498,
+  "saturation_offered_flit_rate_3x_zero_load": 0.75,
+  "max_stable_accepted_flit_rate": 0.749077,
+  "max_stable_accepted_gbps_total": 575.291136,
+  "first_unstable_offered_rate": 0.8
+ },
+ "uniform/8flit": {
+  "zero_load_plat_cycles": 19.4914,
+  "zero_load_plat_ns": 12.994266666666665,
+  "saturation_offered_flit_rate_3x_zero_load": 0.6315301880839038,
+  "max_stable_accepted_flit_rate": 0.719369,
+  "max_stable_accepted_gbps_total": 552.475392,
+  "first_unstable_offered_rate": 0.75
+ },
+ "transpose/2flit": {
+  "zero_load_plat_cycles": 13.4508,
+  "zero_load_plat_ns": 8.967199999999998,
+  "saturation_offered_flit_rate_3x_zero_load": 0.3208136125422012,
+  "max_stable_accepted_flit_rate": 0.337946,
+  "max_stable_accepted_gbps_total": 259.542528,
+  "first_unstable_offered_rate": 0.36
+ },
+ "transpose/8flit": {
+  "zero_load_plat_cycles": 19.3541,
+  "zero_load_plat_ns": 12.902733333333332,
+  "saturation_offered_flit_rate_3x_zero_load": 0.3176158128688482,
+  "max_stable_accepted_flit_rate": 0.320314,
+  "max_stable_accepted_gbps_total": 246.001152,
+  "first_unstable_offered_rate": 0.34
+ },
+ "hotspot_dram/2flit": {
+  "zero_load_plat_cycles": 14.4198,
+  "zero_load_plat_ns": 9.613199999999999,
+  "saturation_offered_flit_rate_3x_zero_load": 0.12007189401781562,
+  "max_stable_accepted_flit_rate": 0.124378,
+  "max_stable_accepted_gbps_total": 95.522304,
+  "first_unstable_offered_rate": 0.13
+ },
+ "hotspot_dram/8flit": {
+  "zero_load_plat_cycles": 20.6599,
+  "zero_load_plat_ns": 13.773266666666666,
+  "saturation_offered_flit_rate_3x_zero_load": 0.11219170204888654,
+  "max_stable_accepted_flit_rate": 0.11901,
+  "max_stable_accepted_gbps_total": 91.39968,
+  "first_unstable_offered_rate": 0.125
+ }
+}
+trace vs native mean rel err: {'below_70pct_of_saturation': {'n': 99, 'mean': 0.008053921619564666, 'max': 0.051202669587027336}, 'all_stable_points': {'n': 129, 'mean': 0.02770429637791829, 'max': 0.7930888354827199}, 'note': "near saturation the finite 20k-cycle trace and BookSim's converged latency run diverge, as expected"}

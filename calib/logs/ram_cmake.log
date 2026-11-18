@@ -1,0 +1,19 @@
+-- The CXX compiler identification is AppleClang 21.0.0.21000401
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+Configuring Ramulator ...
+-- Build type: Release
+Configuring yaml-cpp...
+Done configuring yaml-cpp.
+Configuring fmt...
+-- Version: 10.2.1
+-- Build type: Release
+-- Performing Test HAS_NULLPTR_WARNING
+-- Performing Test HAS_NULLPTR_WARNING - Success
+Done configuring fmt.
+-- Configuring done (6.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/mohithgajjela/glass-chip/third_party/ramulator2/build_gc
