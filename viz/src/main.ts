@@ -28,6 +28,7 @@ const SCENARIOS: { prefix: string; label: string; live: string }[] = [
   { prefix: 'S6_', label: 'Fifteen at once', live: 'fifteen' },
   { prefix: 'S7_', label: '4K recording', live: 'record_4k' },
   { prefix: 'S8_', label: 'Low voltage', live: 'lower_voltage' },
+  { prefix: 'S9_', label: 'Person + 4K', live: 'human_4k' },
 ];
 const LIVE_POLICIES = ['P0_nominal', 'P1_fixed_priority', 'P2_edf', 'P3_race_to_idle', 'P4_pace_to_deadline', 'P6_surrogate_guided'];
 const POLICIES = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6'];

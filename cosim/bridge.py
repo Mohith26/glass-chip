@@ -159,6 +159,10 @@ class CoSim:
         self.stop_records: list[dict[str, Any]] = []
         self._in_zone = False
         self._zone_entry: float | None = None
+        self.zone_visits: list[dict[str, Any]] = []     # one record per protective-zone entry
+        self.min_sep_moving = float("inf")
+        self._visit: dict[str, Any] | None = None
+        self._tcp_prev = np.zeros(3)
         self._prev_grip = 255.0
         self.attempts: dict[int, dict[str, Any]] = {}
         self._uid_attempt: dict[int, int] = {}
@@ -435,21 +439,44 @@ class CoSim:
             self.min_sep = min(self.min_sep, s)
             zone = s <= self.cfg.safety.stop_m
             speed = float(np.max(np.abs(d.qvel[sc.arm_dof])))
+            if speed >= self.cfg.stop_speed_threshold:
+                # closest approach while the arm is still moving (a person leaning onto a stopped
+                # arm is not a separation failure)
+                self.min_sep_moving = min(self.min_sep_moving, s)
+            tcp = d.site_xpos[sc.tcp_site]
             if zone and not self._in_zone:
                 self._in_zone = True
                 self._zone_entry = t
                 self._zone_entry_speed = speed
+                self._visit = {"t_entry": t, "t_exit": None, "speed_at_entry": speed, "stop_latency_s": None,
+                               "sep_at_entry_m": s, "sep_at_stop_m": None,
+                               "min_sep_m": s, "tcp_travel_after_entry_m": 0.0, "moving_in_zone_s": 0.0}
+                self.zone_visits.append(self._visit)
+                self._tcp_prev = tcp.copy()
                 self._event(t, "protective_zone_entry", separation=round(s, 4), joint_speed=round(speed, 4))
+            if self._in_zone and self._visit is not None:
+                v = self._visit
+                v["min_sep_m"] = min(v["min_sep_m"], s)
+                if speed >= self.cfg.stop_speed_threshold:
+                    v["moving_in_zone_s"] += 1e-3
+                    v["tcp_travel_after_entry_m"] += float(np.linalg.norm(tcp - self._tcp_prev))
+                self._tcp_prev = tcp.copy()
             if self._in_zone and self._zone_entry is not None and speed < self.cfg.stop_speed_threshold:
                 lat = t - self._zone_entry
                 self.stop_records.append({"t_entry": self._zone_entry, "latency_s": lat,
                                           "speed_at_entry": self._zone_entry_speed,
                                           "already_stopped": self._zone_entry_speed < self.cfg.stop_speed_threshold})
+                if self._visit is not None:
+                    self._visit["stop_latency_s"] = lat
+                    self._visit["sep_at_stop_m"] = s
                 self._event(t, "safety_stop", latency_s=round(lat, 4))
                 self._zone_entry = None
             if not zone and self._in_zone and s > self.cfg.safety.stop_m + 0.05:
                 self._in_zone = False
                 self._zone_entry = None
+                if self._visit is not None:
+                    self._visit["t_exit"] = t
+                self._visit = None
 
     def _object_events(self) -> None:
         for e in self.conv.events:
@@ -595,8 +622,10 @@ class CoSim:
             "oscillation_severity_peak": max((e["peak_vel_err"] for e in self.osc.episodes), default=0.0),
             "oscillation_time_s": float(sum(e["duration_s"] for e in self.osc.episodes)),
             "safety_stop_latency_ms": quantiles([s["latency_s"] * 1e3 for s in stops]),
-            "safety_zone_entries": len(self.stop_records),
+            "safety_zone_entries": len(self.zone_visits),
+            "zone_visits": self.zone_visits,
             "min_human_separation_m": None if not np.isfinite(self.min_sep) else self.min_sep,
+            "min_human_separation_moving_m": None if not np.isfinite(self.min_sep_moving) else self.min_sep_moving,
             "chain_latency_ms": chains,
             "tasks": per_task,
         }

@@ -84,7 +84,8 @@ PS_PER_S = 1_000_000_000_000
 PS_PER_MS = 1_000_000_000
 ATTR_KEYS = ("compute", "runqueue", "engine_queue", "noc", "dram", "cache", "dma", "preemption", "dvfs", "middleware")
 SCENARIO_LABELS = {"S1": "Nominal pick", "S2": "Second camera", "S3": "Human enters", "S4": "Conveyor ramp",
-                   "S5": "Hot day", "S6": "Fifteen at once", "S7": "Bandwidth hog", "S8": "Low-voltage sweep"}
+                   "S5": "Hot day", "S6": "Fifteen at once", "S7": "Bandwidth hog", "S8": "Low-voltage sweep",
+                   "S9": "Person enters during recording"}
 POLICY_LABELS = {"P0": "P0 Nominal", "P1": "P1 Fixed priority", "P2": "P2 EDF", "P3": "P3 Race to idle",
                  "P4": "P4 Pace to deadline", "P5": "P5 Offline optimal", "P6": "P6 Surrogate guided"}
 
@@ -134,7 +135,7 @@ def core_build_id() -> dict[str, Any]:
             "mtime": _dt.datetime.fromtimestamp(so[0].stat().st_mtime).isoformat(timespec="seconds")}
 
 
-def _coalescing_sink(writer: Any, gap_us: int):
+def _coalescing_sink(writer: Any, gap_us: int, xfer_bin_ms: int = 1):
     """Trace sink: the writer's encoder (exact per-ms LOD from every packet), then thinner records.
 
     Stored records are reduced for a static site: NoC transfers become one record per
@@ -151,11 +152,11 @@ def _coalescing_sink(writer: Any, gap_us: int):
         if enc["freq"] is not None:
             writer._freq.append(enc["freq"])
             writer._freq_blocks = list(names["blocks"])
-        writer._events.append(thin_records(enc["records"], gap_us * 1_000_000))
+        writer._events.append(thin_records(enc["records"], gap_us * 1_000_000, xfer_bin_ms))
     return sink
 
 
-def thin_records(rec: np.ndarray, op_gap_ps: int) -> np.ndarray:
+def thin_records(rec: np.ndarray, op_gap_ps: int, xfer_bin_ms: int = 1) -> np.ndarray:
     """Merge replay event records (tools/replay_writer.EVENT_DTYPE) to cut their count."""
     if len(rec) == 0:
         return rec
@@ -163,7 +164,7 @@ def thin_records(rec: np.ndarray, op_gap_ps: int) -> np.ndarray:
     parts = [rec[(kind != 4) & (kind != 5)]]
     x = rec[kind == 5]
     if len(x):
-        key = np.stack([x["t_ps"] // PS_PER_MS, x["src"].astype(np.int64), x["dst"].astype(np.int64),
+        key = np.stack([x["t_ps"] // (PS_PER_MS * max(1, xfer_bin_ms)), x["src"].astype(np.int64), x["dst"].astype(np.int64),
                         x["task"].astype(np.int64)], axis=1)
         order = np.lexsort(key.T[::-1])
         x, key = x[order], key[order]
@@ -494,7 +495,8 @@ def run(scenario_yaml: str | os.PathLike, policy_yaml: str | os.PathLike | Mappi
         writer = _make_writer(Path(record_replay_dir), sc, scen_path, pol_path, policy, soc, ov, task_ids,
                               chip_core)
     chip = InstrumentedChip(chip_core, pm, keep_completions=keep, trace=bool(trace and writer is not None),
-                            trace_sink=(_coalescing_sink(writer, int(ov.get("replay_coalesce_us", 50)))
+                            trace_sink=(_coalescing_sink(writer, int(ov.get("replay_coalesce_us", 50)),
+                                                         int(ov.get("replay_xfer_bin_ms", 1)))
                                         if writer is not None else None))
     pm.apply_scheduler(chip)
 
@@ -582,6 +584,9 @@ def run(scenario_yaml: str | os.PathLike, policy_yaml: str | os.PathLike | Mappi
                                       ov, res)
     if ov.get("keep_jobs"):
         res["jobs"] = chip.completions
+    if ov.get("keep_chains") and sim is not None:
+        res["chains_raw"] = {"human_to_slowdown": [c for c in sim.chains["human_to_slowdown"] if c.get("state") != "ok"],
+                             "camera_to_grasp": sim.chains["camera_to_grasp"]}
     if return_objects:
         res["_objects"] = {"pm": pm, "sim": sim, "chip": chip}
     return res
@@ -681,7 +686,10 @@ def _write_replay(w, sim, chip, pm, sc, scen_path: Path, pol_path: Path, policy:
                  label="Robot speed scale (safety)")
     w.set_extra("scenario_events", [{"t_s": e.t_s, "action": e.action,
                                      "label": _event_label(e.action, e.args)} for e in sc.events])
-    w.set_extra("robot_metrics", json.loads(json.dumps(res["robot"], default=_json_default)))
+    rm = {k: v for k, v in res["robot"].items() if k != "zone_visits"}
+    rm["chain_latency_ms"] = res["chains"]
+    rm["zone_visits"] = res["robot"].get("zone_visits", [])
+    w.set_extra("robot_metrics", json.loads(json.dumps(rm, default=_json_default)))
     w.set_extra("power_summary", json.loads(json.dumps(res["power"], default=_json_default)))
     w.set_extra("behavior_source", res["provenance"]["behavior_source"])
     w.set_extra("conveyor_speed_mps", sc.conveyor_speed_mps)

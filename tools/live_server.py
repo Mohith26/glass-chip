@@ -10,7 +10,7 @@ files (viz/REPLAY_FORMAT.md), produced by `ReplayWriter.encode_trace` / `jobs_to
 the browser decodes live and recorded data with one code path. Commands arrive as JSON text:
 
     {"cmd": "scenario", "id": "second_camera" | "human" | "conveyor_fast" | "hot_day" |
-                               "fifteen" | "record_4k" | "lower_voltage" | "nominal"}
+                               "fifteen" | "record_4k" | "lower_voltage" | "human_4k" | "nominal"}
     {"cmd": "policy", "id": "P4_pace_to_deadline"}
     {"cmd": "vmin", "domain": "npu", "v": 0.55}
     {"cmd": "qos", "on": true}
@@ -217,7 +217,7 @@ class LiveEngine:
         self.strings_sent = len(self.encoder.strings)
         return {"type": "hello", "manifest": m, "applied": self.applied,
                 "commands": ["second_camera", "human", "conveyor_fast", "hot_day", "fifteen", "record_4k",
-                             "lower_voltage", "nominal"]}
+                             "lower_voltage", "human_4k", "nominal"]}
 
     # ------------------------------------------------------------------ commands
     def _apply(self, c: dict[str, Any]) -> None:
@@ -230,6 +230,10 @@ class LiveEngine:
             if sid == "second_camera":
                 ev += [ScenarioEvent(t_s, "enable_task", {"task": "T1_ingest_overhead"}),
                        ScenarioEvent(t_s, "enable_task", {"task": "T2_detect_overhead"})]
+            elif sid == "human_4k":
+                self._apply({"cmd": "scenario", "id": "record_4k"})
+                self._apply({"cmd": "scenario", "id": "human"})
+                self.applied = self.applied[:-2]
             elif sid == "human":
                 ev.append(ScenarioEvent(t_s, "human_enter", {
                     "from": "left", "speed_mps": 1.6, "closest_approach_m": 0.45,

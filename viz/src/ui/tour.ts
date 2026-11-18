@@ -29,7 +29,14 @@ interface Step {
 }
 
 type PS = { energy_per_robot_hour_wh?: number; avg_power_w?: number };
-type RM = { oscillation_episodes?: number; objects_missed?: number; placed?: number };
+type Q = { p50?: number | null; p99?: number | null; mean?: number | null; max?: number | null };
+type RM = {
+  oscillation_episodes?: number; objects_missed?: number; placed?: number; objects_missed_per_min?: number | null;
+  place_success_rate?: number | null; min_human_separation_m?: number | null; min_human_separation_moving_m?: number | null;
+  safety_stop_latency_ms?: Q;
+  chain_latency_ms?: Record<string, Q>;
+};
+const rmOf = (m: Manifest | null): RM | undefined => (m as unknown as { robot_metrics?: RM } | null)?.robot_metrics;
 
 const fmt = (v: number | null | undefined, d = 1): string => (v == null || !Number.isFinite(v) ? 'n/a' : v.toFixed(d));
 
@@ -77,7 +84,7 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 25, title: 'Deadlines',
+    at: 20, title: 'Deadlines',
     run: async (h) => {
       h.highlight('#rings');
       const m = await h.manifestOf(h.replayId());
@@ -87,7 +94,7 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 40, title: 'Add a second camera',
+    at: 32, title: 'Add a second camera',
     run: async (h) => {
       h.highlight('#scenarios');
       const e2 = find(h, 'S2', 'P0');
@@ -106,9 +113,19 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 60, title: 'Why did this miss?',
+    at: 46, title: 'Why did this miss?',
     run: async (h) => {
       h.highlight(null);
+      // preferred story: a safety-monitor miss while a person walks into the cell under heavy recording
+      const s9 = find(h, 'S9', 'P0');
+      const m9 = s9 ? await h.manifestOf(s9.id) : null;
+      if (s9 && m9 && (m9.results?.tasks?.T8_safety?.misses ?? 0) > 0) {
+        await h.loadReplay(s9.id, false);
+        h.setPlaying(false);
+        const entry = m9.robot?.events.find((e) => e.kind === 'protective_zone_entry' || e.kind === 'safety_stop');
+        const ok = await h.selectMiss('T8_safety', entry ? Math.max(0, entry.t_ps / 1e12 - 0.3) : 0, true);
+        if (ok) return `"${s9.scenario_label}": the safety monitor misses its ${fmt(deadlineMs(m9, 'T8_safety'), 0)} ms deadline while a person walks in. The card shows where this job's time went and the die animates its critical path.`;
+      }
       let best: { e: ReplayIndexEntry; m: Manifest; n: number } | null = null;
       for (const e of real(h)) {
         const m = await h.manifestOf(e.id);
@@ -129,7 +146,7 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 80, title: 'Arbitration and partitioning',
+    at: 64, title: 'Arbitration and partitioning',
     run: async (h) => {
       h.clearSelection();
       for (const sc of ['S7', 'S2']) {
@@ -156,7 +173,52 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 100, title: 'No points for finishing early',
+    at: 80, title: 'Safety under load',
+    run: async (h) => {
+      h.highlight(null);
+      const e0 = find(h, 'S9', 'P0');
+      if (!e0) return 'The person-enters-during-recording replay (S9) has not been generated yet, so this step is skipped.';
+      const others = real(h).filter((r) => r.scenario.startsWith('S9') && !r.policy.startsWith('P0'));
+      const m0 = await h.manifestOf(e0.id);
+      const e1 = others[0];
+      const m1 = e1 ? await h.manifestOf(e1.id) : null;
+      if (!m0) return '';
+      const miss = (m: Manifest): string => fmt((m.results?.tasks?.T8_safety?.miss_rate ?? NaN) * 100, 0);
+      const r0 = rmOf(m0), r1 = rmOf(m1);
+      const hs = (r?: RM): string => fmt(r?.chain_latency_ms?.human_to_slowdown?.p99 ?? null, 0);
+      const st = (r?: RM): string => fmt(r?.safety_stop_latency_ms?.mean ?? null, 0);
+      // closest approach while the arm is still moving; the whole-run minimum includes a person leaning on a stopped arm
+      const sep = (r?: RM): string => fmt(r?.min_human_separation_moving_m != null ? r.min_human_separation_moving_m * 100 : null, 0);
+      await h.loadReplay(e0.id, false);
+      const entry = m0.robot?.events.find((e) => e.kind === 'protective_zone_entry');
+      h.seekSeconds(entry ? Math.max(0, entry.t_ps / 1e12 - 1) : 5); h.setSpeed(0.5); h.setPlaying(true);
+      return `A person walks in while four 4K streams are recorded. With "${e0.policy_label}" the safety monitor misses ${miss(m0)}% of its deadlines and human-to-slowdown p99 is ${hs(r0)} ms` +
+        (m1 && e1 ? `; with "${e1.policy_label}" it misses ${miss(m1)}% and p99 is ${hs(r1)} ms. Protective stops average ${st(r0)} ms against ${st(r1)} ms.` : '.') +
+        (r0?.min_human_separation_moving_m != null
+          ? ` The arm had already slowed, so its closest approach while moving is still about ${sep(r0)} cm${m1 ? ` (${sep(r1)} cm)` : ''}: the timing gets worse, the consequence here is small.`
+          : ' The arm had already slowed, so the consequence here is small.');
+    },
+  },
+  {
+    at: 98, title: 'Heat',
+    run: async (h) => {
+      const e = find(h, 'S5', 'P0');
+      if (!e) return 'The hot-day replay (S5) has not been generated yet, so this step is skipped.';
+      const m = await h.manifestOf(e.id);
+      await h.loadReplay(e.id, false);
+      h.seekSeconds(8); h.setSpeed(1); h.setPlaying(true); h.openDrawer(true, 'power');
+      if (!m) return '';
+      const r = rmOf(m);
+      const ps = (m as unknown as { power_summary?: { time_throttled_s?: number; peak_temp_c?: number } }).power_summary;
+      const spd = (m as unknown as { conveyor_speed_mps?: number }).conveyor_speed_mps;
+      return `A hot module${ps?.peak_temp_c != null ? ` (peaking at ${fmt(ps.peak_temp_c, 0)} °C)` : ''} throttles` +
+        (ps?.time_throttled_s != null ? ` for ${fmt(ps.time_throttled_s, 1)} s of this run` : '') +
+        `. VLA p99 is ${fmt(p99(m, 'T4_vla'))} ms${spd ? ` with the belt at ${spd} m/s` : ''}, and ${fmt(r?.objects_missed_per_min ?? null, 1)} objects per minute reach the end of the belt unpicked. ` +
+        'No scheduling policy fixes this within a run: the slowdown comes from the thermal state.';
+    },
+  },
+  {
+    at: 114, title: 'No points for finishing early',
     run: async (h) => {
       for (const s of ['S2', 'S1']) {
         const e0 = find(h, s, 'P0'), e4 = find(h, s, 'P4');
@@ -174,7 +236,7 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 130, title: 'The voltage cliff',
+    at: 132, title: 'The voltage cliff',
     run: async (h) => {
       h.highlight(null); h.openDrawer(false);
       const e = find(h, 'S8', 'P0');
@@ -203,14 +265,14 @@ const STEPS: Step[] = [
     },
   },
   {
-    at: 170, title: 'Open it up',
+    at: 166, title: 'Open it up',
     run: async (h) => {
       h.highlight('#btn-engineer'); h.openDrawer(false);
       return 'Engineer mode exports the visible window as a Perfetto trace, exports results JSON, and shows the exact configs behind this run.';
     },
   },
 ];
-const TOUR_LEN = 184;
+const TOUR_LEN = 180;
 
 export class Tour {
   active = false;
