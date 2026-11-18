@@ -1,0 +1,58 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T94_ctl",
+ "name": "T94_ctl",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 1000,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 1000,
+ "criticality": "safety",
+ "qos_class": "safety",
+ "ops": [
+  {
+   "op_id": "ctl.read",
+   "type": "control_law",
+   "dtype": "fp32",
+   "bytes_in": 512,
+   "bytes_out": 512,
+   "instr": {
+    "scalar": 800
+   },
+   "eligible": [
+    "rt"
+   ]
+  },
+  {
+   "op_id": "ctl.law",
+   "type": "control_law",
+   "dtype": "fp32",
+   "bytes_in": 512,
+   "bytes_out": 128,
+   "instr": {
+    "scalar": 1500
+   },
+   "eligible": [
+    "rt"
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/joint_states",
+   "bytes": 512,
+   "consumer": "T95_est"
+  }
+ ],
+ "affinity": [
+  "rt"
+ ]
+}

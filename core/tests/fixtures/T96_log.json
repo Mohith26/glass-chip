@@ -1,0 +1,45 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T96_log",
+ "name": "T96_log",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 33333,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 33333,
+ "criticality": "low",
+ "qos_class": "best_effort",
+ "ops": [
+  {
+   "op_id": "log.copy",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 4000000.0,
+   "bytes_out": 4000000.0,
+   "eligible": [
+    "dma"
+   ]
+  },
+  {
+   "op_id": "log.encode",
+   "type": "cpu_kernel",
+   "dtype": "int8",
+   "bytes_in": 4000000.0,
+   "bytes_out": 1000000.0,
+   "instr": {
+    "scalar": 500000
+   },
+   "eligible": [
+    "cpu"
+   ]
+  }
+ ]
+}

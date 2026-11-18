@@ -1,0 +1,50 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T93_esdf",
+ "name": "T93_esdf",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 66667,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 66000,
+ "criticality": "medium",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "esdf.integrate",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 400000000.0,
+   "bytes_in": 8000000.0,
+   "bytes_out": 8000000.0,
+   "shape": {
+    "threads": 262144
+   },
+   "eligible": [
+    "simt",
+    "cpu"
+   ]
+  },
+  {
+   "op_id": "esdf.publish",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "bytes_in": 65536,
+   "bytes_out": 128,
+   "instr": {
+    "scalar": 7000
+   },
+   "eligible": [
+    "cpu"
+   ]
+  }
+ ]
+}

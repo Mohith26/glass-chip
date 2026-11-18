@@ -1,0 +1,195 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T92_policy",
+ "name": "T92_policy",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 125000,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 100000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "pol.l0.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": false
+  },
+  {
+   "op_id": "pol.l1.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true
+  },
+  {
+   "op_id": "pol.l2.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": false
+  },
+  {
+   "op_id": "pol.l3.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true
+  },
+  {
+   "op_id": "pol.l4.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": false
+  },
+  {
+   "op_id": "pol.l5.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true
+  },
+  {
+   "op_id": "pol.l6.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": false
+  },
+  {
+   "op_id": "pol.l7.mm",
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 268435456,
+   "bytes_in": 524288,
+   "bytes_w": 2097152,
+   "bytes_out": 524288,
+   "shape": {
+    "M": 256,
+    "K": 1024,
+    "N": 1024
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true
+  },
+  {
+   "op_id": "pol.head",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "bytes_in": 4096,
+   "bytes_out": 1664,
+   "instr": {
+    "scalar": 20000
+   },
+   "eligible": [
+    "cpu"
+   ]
+  }
+ ]
+}

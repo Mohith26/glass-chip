@@ -1,0 +1,377 @@
+{
+ "provenance": {
+  "script": "core/bench/bench_speed.py",
+  "date": "2026-11-17",
+  "machine": "Darwin arm64, Python 3.12.13",
+  "configs": [
+   "configs/soc/vx1.yaml",
+   "configs/fidelity/interactive.yaml",
+   "configs/fidelity/study.yaml",
+   "configs/fidelity/analytic.yaml",
+   "configs/fidelity/memory_focus.yaml",
+   "configs/scenarios/S1_nominal.yaml"
+  ],
+  "seed": 1,
+  "note": "single-threaded; simulator stepped in 1 ms increments with counters() read each step"
+ },
+ "results": [
+  {
+   "mix": "interactive",
+   "scenario": "S1_nominal",
+   "sim_seconds": 2.0,
+   "wall_seconds": 2.4277858330169693,
+   "setup_seconds": 0.01698145898990333,
+   "cpu_seconds": 2.345783,
+   "speed_x_realtime": 0.8237958936907681,
+   "speed_x_realtime_cpu": 0.8525937821188064,
+   "events_by_kind": {
+    "job_release": 2893,
+    "op_ready": 812,
+    "setup_done": 4444,
+    "compute_end": 91426,
+    "data_ready": 51966,
+    "mem_done": 803,
+    "dram_arrive": 0,
+    "dram_decide": 12278069
+   },
+   "events": 12430413,
+   "events_per_wall_s": 5120061.593140171,
+   "releases": 2894,
+   "skipped": 0,
+   "completed": 2892,
+   "warnings": [],
+   "trace_hash": "928defde198ae9c1dcbd478da62d7c02",
+   "tasks": {
+    "T10_record": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 0.593997728,
+     "p99_ms": 2.4168204473399997
+    },
+    "T1_ingest_overhead": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 1.360452204,
+     "p99_ms": 6.469221232009998
+    },
+    "T1_ingest_wrist": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 1.621057309,
+     "p99_ms": 6.018853832689999
+    },
+    "T2_detect": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 3.470953441,
+     "p99_ms": 9.660329333999982
+    },
+    "T3_esdf": {
+     "jobs": 30,
+     "missed": 0,
+     "p50_ms": 1.2902082145,
+     "p99_ms": 4.73487857784
+    },
+    "T4_vla": {
+     "jobs": 16,
+     "missed": 0,
+     "p50_ms": 75.43284297150001,
+     "p99_ms": 78.93452546955
+    },
+    "T5_plan": {
+     "jobs": 6,
+     "missed": 0,
+     "p50_ms": 7.709898527,
+     "p99_ms": 20.6638275206
+    },
+    "T6_estimate": {
+     "jobs": 400,
+     "missed": 0,
+     "p50_ms": 0.815137252,
+     "p99_ms": 1.8431947985399773
+    },
+    "T7_control": {
+     "jobs": 2000,
+     "missed": 0,
+     "p50_ms": 0.00197,
+     "p99_ms": 0.00197
+    },
+    "T8_safety": {
+     "jobs": 200,
+     "missed": 0,
+     "p50_ms": 1.4528890655,
+     "p99_ms": 5.409482542659996
+    }
+   }
+  },
+  {
+   "mix": "study",
+   "scenario": "S1_nominal",
+   "sim_seconds": 2.0,
+   "wall_seconds": 7.6070528750133235,
+   "setup_seconds": 0.0071395839913748205,
+   "cpu_seconds": 7.2910379999999995,
+   "speed_x_realtime": 0.2629139080351794,
+   "speed_x_realtime_cpu": 0.2743093644553766,
+   "events_by_kind": {
+    "job_release": 2888,
+    "op_ready": 812,
+    "setup_done": 4434,
+    "compute_end": 1268190,
+    "data_ready": 89418,
+    "mem_done": 0,
+    "dram_arrive": 0,
+    "dram_decide": 28806911
+   },
+   "events": 30172653,
+   "events_per_wall_s": 3966405.05800969,
+   "releases": 2894,
+   "skipped": 5,
+   "completed": 2887,
+   "warnings": [
+    "npu: L2 requested but 67116 op executions had no SCALE-Sim cycle table; used L1"
+   ],
+   "trace_hash": "45dbfee63682e8a700a9dd39c5b2b254",
+   "tasks": {
+    "T10_record": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 0.6792242815,
+     "p99_ms": 2.93361153619
+    },
+    "T1_ingest_overhead": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 1.8481960415,
+     "p99_ms": 5.2612627127299945
+    },
+    "T1_ingest_wrist": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 2.187784405,
+     "p99_ms": 8.100619477139997
+    },
+    "T2_detect": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 3.9954741119999997,
+     "p99_ms": 11.885632430879998
+    },
+    "T3_esdf": {
+     "jobs": 30,
+     "missed": 0,
+     "p50_ms": 3.1036318720000002,
+     "p99_ms": 7.55028828562
+    },
+    "T4_vla": {
+     "jobs": 16,
+     "missed": 0,
+     "p50_ms": 76.756723561,
+     "p99_ms": 80.90946780624999
+    },
+    "T5_plan": {
+     "jobs": 6,
+     "missed": 0,
+     "p50_ms": 18.0837857925,
+     "p99_ms": 19.949659442450002
+    },
+    "T6_estimate": {
+     "jobs": 395,
+     "missed": 5,
+     "p50_ms": 0.852662057,
+     "p99_ms": 5.85081052412
+    },
+    "T7_control": {
+     "jobs": 2000,
+     "missed": 0,
+     "p50_ms": 0.00197,
+     "p99_ms": 0.00197
+    },
+    "T8_safety": {
+     "jobs": 200,
+     "missed": 0,
+     "p50_ms": 1.900952503,
+     "p99_ms": 7.300991869559993
+    }
+   }
+  },
+  {
+   "mix": "analytic",
+   "scenario": "S1_nominal",
+   "sim_seconds": 2.0,
+   "wall_seconds": 0.09892808299628086,
+   "setup_seconds": 0.008075042016571388,
+   "cpu_seconds": 0.09592400000000012,
+   "speed_x_realtime": 20.21670631255625,
+   "speed_x_realtime_cpu": 20.84983945623616,
+   "events_by_kind": {
+    "job_release": 2891,
+    "op_ready": 812,
+    "setup_done": 3532,
+    "compute_end": 77462,
+    "data_ready": 0,
+    "mem_done": 17800,
+    "dram_arrive": 0,
+    "dram_decide": 0
+   },
+   "events": 102497,
+   "events_per_wall_s": 1036075.873459039,
+   "releases": 2894,
+   "skipped": 2,
+   "completed": 2890,
+   "warnings": [],
+   "trace_hash": "ffe24c05c0510644615bc0073eac257f",
+   "tasks": {
+    "T10_record": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 0.614108822,
+     "p99_ms": 2.0119826448799993
+    },
+    "T1_ingest_overhead": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 1.818186548,
+     "p99_ms": 6.455530877729999
+    },
+    "T1_ingest_wrist": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 2.024972547,
+     "p99_ms": 6.795795695899999
+    },
+    "T2_detect": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 3.191838204,
+     "p99_ms": 6.637996767769999
+    },
+    "T3_esdf": {
+     "jobs": 30,
+     "missed": 0,
+     "p50_ms": 2.2883649005,
+     "p99_ms": 5.71419927398
+    },
+    "T4_vla": {
+     "jobs": 16,
+     "missed": 0,
+     "p50_ms": 53.4044184735,
+     "p99_ms": 61.5160298975
+    },
+    "T5_plan": {
+     "jobs": 6,
+     "missed": 0,
+     "p50_ms": 7.24655953,
+     "p99_ms": 8.898208205249999
+    },
+    "T6_estimate": {
+     "jobs": 398,
+     "missed": 2,
+     "p50_ms": 0.824377899,
+     "p99_ms": 4.764703491309997
+    },
+    "T7_control": {
+     "jobs": 2000,
+     "missed": 0,
+     "p50_ms": 0.00197,
+     "p99_ms": 0.04234767660999999
+    },
+    "T8_safety": {
+     "jobs": 200,
+     "missed": 0,
+     "p50_ms": 1.182432773,
+     "p99_ms": 6.102536715229994
+    }
+   }
+  },
+  {
+   "mix": "memory_focus",
+   "scenario": "S1_nominal",
+   "sim_seconds": 2.0,
+   "wall_seconds": 11.910470791975968,
+   "setup_seconds": 0.008008041011635214,
+   "cpu_seconds": 11.579047,
+   "speed_x_realtime": 0.16791947479921543,
+   "speed_x_realtime_cpu": 0.17272578650039164,
+   "events_by_kind": {
+    "job_release": 2892,
+    "op_ready": 812,
+    "setup_done": 4517,
+    "compute_end": 122722,
+    "data_ready": 80198,
+    "mem_done": 26,
+    "dram_arrive": 0,
+    "dram_decide": 53969381
+   },
+   "events": 54180548,
+   "events_per_wall_s": 4548984.582246841,
+   "releases": 2894,
+   "skipped": 1,
+   "completed": 2891,
+   "warnings": [],
+   "trace_hash": "99229883892318899ef835d6625da7e4",
+   "tasks": {
+    "T10_record": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 0.6220540405,
+     "p99_ms": 2.484132810419999
+    },
+    "T1_ingest_overhead": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 1.721526181,
+     "p99_ms": 5.23483449291999
+    },
+    "T1_ingest_wrist": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 1.8365046425,
+     "p99_ms": 3.771360548279995
+    },
+    "T2_detect": {
+     "jobs": 60,
+     "missed": 0,
+     "p50_ms": 3.582073245,
+     "p99_ms": 8.434956142519997
+    },
+    "T3_esdf": {
+     "jobs": 30,
+     "missed": 0,
+     "p50_ms": 2.3714892809999997,
+     "p99_ms": 4.17411254403
+    },
+    "T4_vla": {
+     "jobs": 16,
+     "missed": 0,
+     "p50_ms": 83.96282002000001,
+     "p99_ms": 93.79484926725
+    },
+    "T5_plan": {
+     "jobs": 6,
+     "missed": 0,
+     "p50_ms": 18.026516745,
+     "p99_ms": 19.6318373274
+    },
+    "T6_estimate": {
+     "jobs": 399,
+     "missed": 1,
+     "p50_ms": 0.814188991,
+     "p99_ms": 1.579282653779998
+    },
+    "T7_control": {
+     "jobs": 2000,
+     "missed": 0,
+     "p50_ms": 0.00197,
+     "p99_ms": 0.00197
+    },
+    "T8_safety": {
+     "jobs": 200,
+     "missed": 0,
+     "p50_ms": 1.6213476055,
+     "p99_ms": 5.618375295049997
+    }
+   }
+  }
+ ]
+}

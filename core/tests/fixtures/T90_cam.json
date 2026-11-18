@@ -1,0 +1,51 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T90_cam",
+ "name": "T90_cam",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 33333,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 15000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "isp.resize",
+   "type": "resize",
+   "dtype": "int8",
+   "flops": 5000000.0,
+   "bytes_in": 2764800,
+   "bytes_out": 1228800,
+   "eligible": [
+    "dsp",
+    "cpu"
+   ]
+  },
+  {
+   "op_id": "isp.copy",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 1228800,
+   "bytes_out": 1228800,
+   "eligible": [
+    "dma"
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/cam/image",
+   "bytes": 1228800,
+   "consumer": "T91_det"
+  }
+ ]
+}

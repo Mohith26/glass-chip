@@ -1,0 +1,114 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T91_det",
+ "name": "T91_det",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 33333,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 33000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "det.conv0",
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 44236800,
+   "bytes_in": 1228800,
+   "bytes_w": 496,
+   "bytes_out": 1638400,
+   "shape": {
+    "N": 1,
+    "C": 3,
+    "H": 640,
+    "W": 640,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "Ho": 320,
+    "Wo": 320
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ]
+  },
+  {
+   "op_id": "det.conv1",
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 117964800,
+   "bytes_in": 1638400,
+   "bytes_w": 4736,
+   "bytes_out": 819200,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 320,
+    "W": 320,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "Ho": 160,
+    "Wo": 160
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ]
+  },
+  {
+   "op_id": "det.head",
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 26214400,
+   "bytes_in": 819200,
+   "bytes_w": 1048576,
+   "bytes_out": 102400,
+   "shape": {
+    "M": 400,
+    "K": 2048,
+    "N": 32
+   },
+   "eligible": [
+    "npu",
+    "cpu"
+   ]
+  },
+  {
+   "op_id": "det.nms",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "bytes_in": 102400,
+   "bytes_out": 2048,
+   "instr": {
+    "scalar": 400000,
+    "vector": 20000,
+    "mem": 50000
+   },
+   "eligible": [
+    "cpu"
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/det",
+   "bytes": 1664,
+   "consumer": "T92_policy"
+  }
+ ]
+}

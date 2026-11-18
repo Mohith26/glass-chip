@@ -1,0 +1,28 @@
+{
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "copy": {
+  "serialize_ns_per_kb": 56.51,
+  "deserialize_ns_per_kb": 62.13,
+  "fixed_ns_per_msg": 4168.3,
+  "copies": 2,
+  "copy_ns_per_kb": 55.92
+ },
+ "zero_copy": {
+  "serialize_ns_per_kb": 0,
+  "deserialize_ns_per_kb": 0,
+  "fixed_ns_per_msg": 510.8,
+  "copies": 0,
+  "copy_ns_per_kb": 0
+ },
+ "executor": {
+  "single_threaded_dispatch_ns": 20000,
+  "multi_threaded_dispatch_ns": 40000,
+  "events_dispatch_ns": 10000
+ }
+}

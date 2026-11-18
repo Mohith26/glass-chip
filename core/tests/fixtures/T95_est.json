@@ -1,0 +1,38 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T95_est",
+ "name": "T95_est",
+ "provenance": {
+  "source": "synthetic test fixture",
+  "captured_by": "core/tests/fixtures (hand-written)",
+  "date": "2026-11-17",
+  "method": "analytic_count",
+  "notes": "Small synthetic graphs for glasschip-core unit tests. Not a real workload."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 5000,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 5000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "ops": [
+  {
+   "op_id": "est.kf",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "bytes_in": 4096,
+   "bytes_out": 560,
+   "instr": {
+    "scalar": 12436
+   },
+   "eligible": [
+    "cpu"
+   ]
+  }
+ ],
+ "affinity": [
+  "cpu_a"
+ ]
+}
