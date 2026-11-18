@@ -1,0 +1,6909 @@
+{
+ "headline": {
+  "s1_misses_total": 0,
+  "s1_safety_misses": 0,
+  "vla_alone_p99_ms": 54.354908737,
+  "vla_s1_p99_ms": 56.91225563656,
+  "s1_avg_power_w": 4.514018298654732,
+  "s1_dram_gbps": 12.708220172226836,
+  "s1_npu_utilization": 0.4480071419312999,
+  "s1_camera_to_grasp_p50_ms": 96.5
+ },
+ "alone": {
+  "T1_ingest_wrist": {
+   "response_ms": {
+    "mean": 1.1998822363333337,
+    "p50": 1.199910681,
+    "p95": 1.199910681,
+    "p99": 1.199910681,
+    "max": 1.199910681
+   },
+   "deadline_ms": 15.0,
+   "completed": 90,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.00590379357,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.007754134749666667,
+    "noc_cache": 9.1414941e-05,
+    "dram_io": 2.251875e-06
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0059037936,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.007754134749666667,
+    "noc_cache": 9.14149630787037e-05,
+    "dram_io": 2.251875e-06
+   },
+   "avg_power_w": 3.0232342870528064,
+   "dram_gbps": 0.17778475915460587,
+   "attribution_mean_ms": {
+    "compute": 0.384,
+    "runqueue": 0.002,
+    "noc": 0.019793992744444443,
+    "dram": 2.472167777777778e-05,
+    "cache": 9.104191111111112e-05,
+    "dma": 0.0068,
+    "middleware": 0.78717248
+   }
+  },
+  "T1_ingest_overhead": {
+   "response_ms": {
+    "mean": 1.3182557303333338,
+    "p50": 1.318284175,
+    "p95": 1.318284175,
+    "p99": 1.318284175,
+    "max": 1.318284175
+   },
+   "deadline_ms": 15.0,
+   "completed": 90,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.00667153476,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.008366788539666667,
+    "noc_cache": 9.141464466666666e-05,
+    "dram_io": 2.251875e-06
+   },
+   "unit_utilization": {
+    "cpu_a": 0.006671534805,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.008366788539666667,
+    "noc_cache": 9.141466678240741e-05,
+    "dram_io": 2.251875e-06
+   },
+   "avg_power_w": 3.0278212579747463,
+   "dram_gbps": 0.22409991340690613,
+   "attribution_mean_ms": {
+    "compute": 0.3864,
+    "runqueue": 0.002,
+    "noc": 0.03340336221111111,
+    "dram": 2.33522e-05,
+    "cache": 9.104192222222221e-05,
+    "dma": 0.0068,
+    "middleware": 0.889537974
+   }
+  },
+  "T2_detect": {
+   "response_ms": {
+    "mean": 2.622080993622222,
+    "p50": 2.6217893465,
+    "p95": 2.621829471,
+    "p99": 2.62477936954,
+    "max": 2.647063825
+   },
+   "deadline_ms": 33.0,
+   "completed": 90,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.01467424149,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.018340209967333335,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 9.176294866666667e-05,
+    "dram_io": 2.1849386e-05
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0146742415125,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.018340209978083333,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 9.176297109259259e-05,
+    "dram_io": 2.1849393916666667e-05
+   },
+   "avg_power_w": 3.0389055276043493,
+   "dram_gbps": 0.005328451226305644,
+   "attribution_mean_ms": {
+    "compute": 2.0821149337333336,
+    "runqueue": 0.002,
+    "engine_queue": 0.10276364504444443,
+    "noc": 0.042569664788888885,
+    "dram": 0.0004889650555555555,
+    "cache": 0.00122,
+    "middleware": 0.390923785
+   }
+  },
+  "T2_detect_overhead": {
+   "response_ms": {
+    "mean": 2.6220802538888885,
+    "p50": 2.6217893465,
+    "p95": 2.621829471,
+    "p99": 2.62476981681,
+    "max": 2.646976982
+   },
+   "deadline_ms": 33.0,
+   "completed": 90,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.01467424149,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.018340141528666667,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 9.176294866666667e-05,
+    "dram_io": 2.1849386e-05
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0146742415125,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.018340141539083334,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 9.176297109259259e-05,
+    "dram_io": 2.1849393916666667e-05
+   },
+   "avg_power_w": 3.0389009846054287,
+   "dram_gbps": 0.005328451226305644,
+   "attribution_mean_ms": {
+    "compute": 2.0821149337333336,
+    "runqueue": 0.002,
+    "engine_queue": 0.10276315525555556,
+    "noc": 0.04256541147777778,
+    "dram": 0.0004929684222222222,
+    "cache": 0.00122,
+    "middleware": 0.390923785
+   }
+  },
+  "T3_esdf": {
+   "response_ms": {
+    "mean": 1.0498636079777777,
+    "p50": 1.049417159,
+    "p95": 1.050439688,
+    "p99": 1.050439688,
+    "max": 1.050439688
+   },
+   "deadline_ms": 66.0,
+   "completed": 45,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.00145611912,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.00916096494,
+    "dsp": 0.0,
+    "noc_cache": 7.684195233333333e-05,
+    "dram_io": 9.832010333333334e-06
+   },
+   "unit_utilization": {
+    "cpu_a": 0.00145611912375,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.00916096494,
+    "dsp": 0.0,
+    "noc_cache": 7.684195860185185e-05,
+    "dram_io": 9.832014083333334e-06
+   },
+   "avg_power_w": 3.0436165226294203,
+   "dram_gbps": 0.621231565111493,
+   "attribution_mean_ms": {
+    "compute": 0.12707773,
+    "runqueue": 0.002,
+    "engine_queue": 0.2249873568888889,
+    "noc": 0.15028598380000002,
+    "dram": 0.1440424822888889,
+    "cache": 0.000171607,
+    "dma": 0.013000015,
+    "middleware": 0.388298433
+   }
+  },
+  "T4_vla": {
+   "response_ms": {
+    "mean": 53.58801712208333,
+    "p50": 53.333581737,
+    "p95": 54.354741737,
+    "p99": 54.354908737,
+    "max": 54.354931737
+   },
+   "deadline_ms": 100.0,
+   "completed": 24,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.00077390324,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.40901202577266665,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.007757769358,
+    "dram_io": 0.07882963326933333
+   },
+   "unit_utilization": {
+    "cpu_a": 0.000773903246,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.4090120259059167,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.007757769556814815,
+    "dram_io": 0.07882963342433333
+   },
+   "avg_power_w": 4.21311553186128,
+   "dram_gbps": 10.762346103469461,
+   "attribution_mean_ms": {
+    "compute": 38.306009863,
+    "runqueue": 0.002,
+    "engine_queue": 1.4475353034583331,
+    "noc": 3.8684160824583333,
+    "dram": 9.552250692666666,
+    "cache": 0.0252615575,
+    "middleware": 0.386543623
+   }
+  },
+  "T5_plan": {
+   "response_ms": {
+    "mean": 9.052466282666666,
+    "p50": 9.052665394,
+    "p95": 9.052665394,
+    "p99": 9.052665394,
+    "max": 9.052665394
+   },
+   "deadline_ms": 50.0,
+   "completed": 3,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.000103774421,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.008259558103,
+    "dsp": 0.0,
+    "noc_cache": 1.9969566666666667e-07,
+    "dram_io": 2.0000666666666666e-08
+   },
+   "unit_utilization": {
+    "cpu_a": 0.00010377442125,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.008259558104,
+    "dsp": 0.0,
+    "noc_cache": 1.9969589351851852e-07,
+    "dram_io": 2.0001e-08
+   },
+   "avg_power_w": 3.0090288120056607,
+   "dram_gbps": 0.03658648933176948,
+   "attribution_mean_ms": {
+    "compute": 8.650902683,
+    "runqueue": 0.002,
+    "noc": 0.005356761333333333,
+    "dram": 0.0036928843333333336,
+    "cache": 2.1601e-05,
+    "dma": 0.001394668,
+    "middleware": 0.389097685
+   }
+  },
+  "T6_estimate": {
+   "response_ms": {
+    "mean": 0.39271778499999993,
+    "p50": 0.392717785,
+    "p95": 0.392717785,
+    "p99": 0.392717785,
+    "max": 0.392717785
+   },
+   "deadline_ms": 5.0,
+   "completed": 600,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.0196358892,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "unit_utilization": {
+    "cpu_a": 0.01963588925,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "avg_power_w": 3.028809926440958,
+   "dram_gbps": 0.00021776005191802977,
+   "attribution_mean_ms": {
+    "compute": 0.001983,
+    "runqueue": 0.002,
+    "middleware": 0.388734785
+   }
+  },
+  "T7_control": {
+   "response_ms": {
+    "mean": 0.001989167,
+    "p50": 0.001989167,
+    "p95": 0.001989167,
+    "p99": 0.001989167,
+    "max": 0.001989167
+   },
+   "deadline_ms": 1.0,
+   "completed": 3000,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.0,
+    "cpu_b": 0.0,
+    "rt": 0.0019885039443333333,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0,
+    "cpu_b": 0.0,
+    "rt": 0.0019885039443333333,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "avg_power_w": 3.0008926200229475,
+   "dram_gbps": 0.0,
+   "attribution_mean_ms": {
+    "compute": 0.001989167
+   }
+  },
+  "T8_safety": {
+   "response_ms": {
+    "mean": 0.7564676122499999,
+    "p50": 0.7564394755,
+    "p95": 0.756574257,
+    "p99": 0.756574257,
+    "max": 0.765887853
+   },
+   "deadline_ms": 10.0,
+   "completed": 300,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.0096570777,
+    "cpu_b": 0.0,
+    "rt": 0.00416425,
+    "npu": 0.018050637653,
+    "simt": 0.0,
+    "dsp": 0.0019687384463333334,
+    "noc_cache": 0.00035705916666666664,
+    "dram_io": 0.00014273957133333334
+   },
+   "unit_utilization": {
+    "cpu_a": 0.009657077725,
+    "cpu_b": 0.0,
+    "rt": 0.00416425,
+    "npu": 0.018050637703,
+    "simt": 0.0,
+    "dsp": 0.0019687384713333333,
+    "noc_cache": 0.0003570592108564815,
+    "dram_io": 0.00014273960875
+   },
+   "avg_power_w": 3.0329115206966173,
+   "dram_gbps": 0.03655829488022867,
+   "attribution_mean_ms": {
+    "compute": 0.284806044,
+    "runqueue": 0.002,
+    "engine_queue": 0.004225785803333334,
+    "noc": 0.07900929184333333,
+    "dram": 0.00011138160333333334,
+    "cache": 0.00128,
+    "dma": 0.000752,
+    "middleware": 0.384283109
+   }
+  },
+  "T10_record": {
+   "response_ms": {
+    "mean": 0.5789184033222222,
+    "p50": 0.57890172,
+    "p95": 0.57890172,
+    "p99": 0.57965222497,
+    "max": 0.579652783
+   },
+   "deadline_ms": 33.333,
+   "completed": 90,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.00403686,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 8.381872633333334e-05,
+    "dram_io": 1.833021e-06
+   },
+   "unit_utilization": {
+    "cpu_a": 0.00403686,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 8.381874931944444e-05,
+    "dram_io": 1.8330211666666666e-06
+   },
+   "avg_power_w": 3.0076209902912976,
+   "dram_gbps": 0.002752730571636533,
+   "attribution_mean_ms": {
+    "compute": 0.156248,
+    "runqueue": 0.002,
+    "noc": 0.018682497399999998,
+    "dram": 3.0719444444444445e-05,
+    "cache": 0.00019623247777777775,
+    "dma": 0.017760954,
+    "middleware": 0.384
+   }
+  },
+  "T10_record_4k": {
+   "response_ms": {
+    "mean": 6.1674142467,
+    "p50": 6.167378957,
+    "p95": 6.167538725,
+    "p99": 6.168744634,
+    "max": 6.168744634
+   },
+   "deadline_ms": 33.333,
+   "completed": 90,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.037856645609,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0033832916156666666,
+    "dram_io": 0.016403131868
+   },
+   "unit_utilization": {
+    "cpu_a": 0.037856645625,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0033832916692731483,
+    "dram_io": 0.016403131916166668
+   },
+   "avg_power_w": 3.2454654195871147,
+   "dram_gbps": 2.986017937684447,
+   "attribution_mean_ms": {
+    "compute": 4.66555275,
+    "runqueue": 0.002,
+    "noc": 0.5024522264666667,
+    "dram": 0.08931619404444444,
+    "cache": 0.005297836188888889,
+    "dma": 0.51879524,
+    "middleware": 0.384
+   }
+  },
+  "T11_speech": {
+   "response_ms": {
+    "mean": 21.87069668166667,
+    "p50": 21.870516234,
+    "p95": 21.871015652999997,
+    "p99": 21.871060045799997,
+    "max": 21.871071144
+   },
+   "deadline_ms": 500.0,
+   "completed": 3,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.000108204716,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.008410752585666667,
+    "simt": 0.0,
+    "dsp": 0.002377861516,
+    "noc_cache": 0.000276726889,
+    "dram_io": 0.002603784448666667
+   },
+   "unit_utilization": {
+    "cpu_a": 0.00010820471625,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.00841075259225,
+    "simt": 0.0,
+    "dsp": 0.002377861516,
+    "noc_cache": 0.0002767268977407407,
+    "dram_io": 0.00260378445475
+   },
+   "avg_power_w": 3.030166160037008,
+   "dram_gbps": 0.3556157618311017,
+   "attribution_mean_ms": {
+    "compute": 17.704177432,
+    "runqueue": 0.002,
+    "engine_queue": 0.197080611,
+    "noc": 1.7578335906666667,
+    "dram": 1.8164844756666667,
+    "cache": 0.006801707333333333,
+    "middleware": 0.386318865
+   }
+  },
+  "T12_arm2_control": {
+   "response_ms": {
+    "mean": 0.0019891670000000005,
+    "p50": 0.001989167,
+    "p95": 0.001989167,
+    "p99": 0.001989167,
+    "max": 0.001989167
+   },
+   "deadline_ms": 1.0,
+   "completed": 2999,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.0,
+    "cpu_b": 0.0,
+    "rt": 0.0019878408886666666,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0,
+    "cpu_b": 0.0,
+    "rt": 0.0019878408886666666,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "avg_power_w": 3.0008925894341716,
+   "dram_gbps": 0.0,
+   "attribution_mean_ms": {
+    "compute": 0.001989167
+   }
+  },
+  "T13_map_save": {
+   "response_ms": {
+    "mean": 5.807105072,
+    "p50": 5.807105072,
+    "p95": 5.807105072,
+    "p99": 5.807105072,
+    "max": 5.807105072
+   },
+   "deadline_ms": 5000.0,
+   "completed": 1,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.0004584999996666667,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 9.696884e-06,
+    "dram_io": 7.000373633333334e-05
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0004585,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 9.696884416666667e-06,
+    "dram_io": 7.000373666666666e-05
+   },
+   "avg_power_w": 3.0016807672351495,
+   "dram_gbps": 0.014336,
+   "attribution_mean_ms": {
+    "compute": 5.12,
+    "runqueue": 0.002,
+    "noc": 0.097895866,
+    "dram": 0.05198801,
+    "cache": 0.001487767,
+    "dma": 0.149733429,
+    "middleware": 0.384
+   }
+  },
+  "T14_ota": {
+   "response_ms": {
+    "mean": 2.874965150700001,
+    "p50": 2.874911792,
+    "p95": 2.8753259656499996,
+    "p99": 2.87573205425,
+    "max": 2.87575951
+   },
+   "deadline_ms": 100.0,
+   "completed": 30,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.00710734374,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 2.2810848e-05,
+    "dram_io": 1.2759486666666667e-06
+   },
+   "unit_utilization": {
+    "cpu_a": 0.00710734375,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 2.2810860935185187e-05,
+    "dram_io": 1.2759491666666666e-06
+   },
+   "avg_power_w": 3.011305867415704,
+   "dram_gbps": 0.0020492324470424653,
+   "attribution_mean_ms": {
+    "compute": 2.4609375,
+    "runqueue": 0.002,
+    "noc": 0.014377258066666666,
+    "dram": 7.308193333333334e-05,
+    "cache": 0.00015647070000000002,
+    "dma": 0.01342084,
+    "middleware": 0.384
+   }
+  },
+  "T15_diag": {
+   "response_ms": {
+    "mean": 0.44892967999999983,
+    "p50": 0.44892968,
+    "p95": 0.44892968,
+    "p99": 0.44892968,
+    "max": 0.44892968
+   },
+   "deadline_ms": 100.0,
+   "completed": 30,
+   "missed": 0,
+   "utilization": {
+    "cpu_a": 0.0011223242,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "unit_utilization": {
+    "cpu_a": 0.0011223242,
+    "cpu_b": 0.0,
+    "rt": 0.0,
+    "npu": 0.0,
+    "simt": 0.0,
+    "dsp": 0.0,
+    "noc_cache": 0.0,
+    "dram_io": 0.0
+   },
+   "avg_power_w": 3.0023336313800297,
+   "dram_gbps": 6.016001434326172e-05,
+   "attribution_mean_ms": {
+    "compute": 0.061344,
+    "runqueue": 0.002,
+    "middleware": 0.38558568
+   }
+  }
+ },
+ "s1_tasks": {
+  "T1_ingest_wrist": {
+   "completed": 900,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 15.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 1.3483008028333334,
+    "lo": 1.3476991297281289,
+    "hi": 1.348902475938538
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 2.9053858143033207,
+    "lo": 0.019579296298036564,
+    "hi": 5.791192332308604
+   },
+   "max_ms": 4.246045832
+  },
+  "T1_ingest_overhead": {
+   "completed": 900,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 15.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 1.321613858,
+    "lo": 1.3184384269362146,
+    "hi": 1.3247892890637856
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 3.0599943556999905,
+    "lo": -1.659831031770524,
+    "hi": 7.7798197431705045
+   },
+   "max_ms": 5.233996105
+  },
+  "T2_detect": {
+   "completed": 900,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 33.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 3.0922178625,
+    "lo": 3.0633280047460296,
+    "hi": 3.1211077202539705
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 4.13387449252,
+    "lo": 4.056200096602826,
+    "hi": 4.211548888437175
+   },
+   "max_ms": 4.163136681
+  },
+  "T3_esdf": {
+   "completed": 450,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 66.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 1.294376764,
+    "lo": 1.294376764,
+    "hi": 1.294376764
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 4.193206631913333,
+    "lo": -1.8297731209849442,
+    "hi": 10.21618638481161
+   },
+   "max_ms": 9.121453986
+  },
+  "T4_vla": {
+   "completed": 240,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 100.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 56.66299126616667,
+    "lo": 56.63662845383876,
+    "hi": 56.68935407849458
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 56.91225563656,
+    "lo": 56.82923502986483,
+    "hi": 56.99527624325516
+   },
+   "max_ms": 56.950470174
+  },
+  "T5_plan": {
+   "completed": 52,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 50.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 10.218004190833334,
+    "lo": 8.525164746552647,
+    "hi": 11.91084363511402
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 11.377825310666665,
+    "lo": 10.712369499801811,
+    "hi": 12.04328112153152
+   },
+   "max_ms": 11.532487063
+  },
+  "T6_estimate": {
+   "completed": 6000,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 5.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 0.824265747,
+    "lo": 0.824265747,
+    "hi": 0.824265747
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 1.5882657470000001,
+    "lo": 1.5882657469999995,
+    "hi": 1.5882657470000008
+   },
+   "max_ms": 2.98444014
+  },
+  "T7_control": {
+   "completed": 29997,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 1.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 0.001989167,
+    "lo": 0.001989167,
+    "hi": 0.001989167
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 0.001989167,
+    "lo": 0.001989167,
+    "hi": 0.001989167
+   },
+   "max_ms": 0.02868506
+  },
+  "T8_safety": {
+   "completed": 3000,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 10.0,
+   "p50_ms": {
+    "n": 3,
+    "mean": 1.539492282,
+    "lo": 1.5031140294536325,
+    "hi": 1.5758705345463677
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 2.4847977678633337,
+    "lo": 2.4819814525575676,
+    "hi": 2.4876140831691
+   },
+   "max_ms": 2.997021682
+  },
+  "T10_record": {
+   "completed": 900,
+   "missed": 0,
+   "miss_rate": 0.0,
+   "deadline_ms": 33.333,
+   "p50_ms": {
+    "n": 3,
+    "mean": 0.9716113601666666,
+    "lo": 0.9707777811442828,
+    "hi": 0.9724449391890504
+   },
+   "p99_ms": {
+    "n": 3,
+    "mean": 1.9817531003533333,
+    "lo": 1.9814786962127802,
+    "hi": 1.9820275044938864
+   },
+   "max_ms": 1.981930991
+  }
+ },
+ "s1": {
+  "utilization": {
+   "cpu_a": {
+    "n": 3,
+    "mean": 0.0666159905805,
+    "lo": 0.06631625459388665,
+    "hi": 0.06691572656711334
+   },
+   "cpu_b": {
+    "n": 3,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   },
+   "rt": {
+    "n": 3,
+    "mean": 0.0061532180833,
+    "lo": 0.0061532180833,
+    "hi": 0.0061532180833
+   },
+   "npu": {
+    "n": 3,
+    "mean": 0.4480071419312999,
+    "lo": 0.44753142040118654,
+    "hi": 0.4484828634614133
+   },
+   "simt": {
+    "n": 3,
+    "mean": 0.024557669406999997,
+    "lo": 0.02152478026487268,
+    "hi": 0.027590558549127314
+   },
+   "dsp": {
+    "n": 3,
+    "mean": 0.018808227774766668,
+    "lo": 0.018662712173770007,
+    "hi": 0.01895374337576333
+   },
+   "noc_cache": {
+    "n": 3,
+    "mean": 0.0088327832296,
+    "lo": 0.0088286814389624,
+    "hi": 0.0088368850202376
+   },
+   "dram_io": {
+    "n": 3,
+    "mean": 0.08605190685326668,
+    "lo": 0.08601605852745503,
+    "hi": 0.08608775517907832
+   }
+  },
+  "unit_utilization": {
+   "cpu_a": {
+    "n": 3,
+    "mean": 0.066615990782275,
+    "lo": 0.06631625479683323,
+    "hi": 0.06691572676771676
+   },
+   "cpu_b": {
+    "n": 3,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   },
+   "rt": {
+    "n": 3,
+    "mean": 0.0061532180833,
+    "lo": 0.0061532180833,
+    "hi": 0.0061532180833
+   },
+   "npu": {
+    "n": 3,
+    "mean": 0.44800714213635,
+    "lo": 0.4475314205969947,
+    "hi": 0.44848286367570533
+   },
+   "simt": {
+    "n": 3,
+    "mean": 0.024557669408375,
+    "lo": 0.021524780265906852,
+    "hi": 0.02759055855084315
+   },
+   "dsp": {
+    "n": 3,
+    "mean": 0.018808227805283333,
+    "lo": 0.018662712204204544,
+    "hi": 0.018953743406362123
+   },
+   "noc_cache": {
+    "n": 3,
+    "mean": 0.008832783519746295,
+    "lo": 0.00882868172615394,
+    "hi": 0.00883688531333865
+   },
+   "dram_io": {
+    "n": 3,
+    "mean": 0.08605190707492501,
+    "lo": 0.08601605875398649,
+    "hi": 0.08608775539586352
+   }
+  },
+  "avg_power_w": {
+   "n": 3,
+   "mean": 4.514018298654732,
+   "lo": 4.509804209353757,
+   "hi": 4.518232387955707
+  },
+  "energy_per_robot_hour_wh": {
+   "n": 3,
+   "mean": 4.514018298654732,
+   "lo": 4.509804209353757,
+   "hi": 4.518232387955707
+  },
+  "peak_power_w": {
+   "n": 3,
+   "mean": 7.45492955394423,
+   "lo": 7.3887207520178935,
+   "hi": 7.5211383558705664
+  },
+  "peak_temp_c": {
+   "n": 3,
+   "mean": 59.25093414003654,
+   "lo": 59.2263093315109,
+   "hi": 59.275558948562185
+  },
+  "power_w_by_domain": {
+   "cpu_a": {
+    "n": 3,
+    "mean": 0.30535944704442647,
+    "lo": 0.30531149339161157,
+    "hi": 0.30540740069724137
+   },
+   "cpu_b": {
+    "n": 3,
+    "mean": 0.24103113366118803,
+    "lo": 0.24101119754752529,
+    "hi": 0.24105106977485077
+   },
+   "rt": {
+    "n": 3,
+    "mean": 0.012154241430441215,
+    "lo": 0.01215328151450784,
+    "hi": 0.012155201346374591
+   },
+   "npu": {
+    "n": 3,
+    "mean": 0.8506966194014364,
+    "lo": 0.8506525449182128,
+    "hi": 0.8507406938846599
+   },
+   "simt": {
+    "n": 3,
+    "mean": 0.46126574193082986,
+    "lo": 0.4587041768726813,
+    "hi": 0.46382730698897845
+   },
+   "dsp": {
+    "n": 3,
+    "mean": 0.03465278011382781,
+    "lo": 0.034649992208286066,
+    "hi": 0.03465556801936955
+   },
+   "noc_cache": {
+    "n": 3,
+    "mean": 0.9233227478032172,
+    "lo": 0.9227002293051483,
+    "hi": 0.9239452663012861
+   },
+   "dram_io": {
+    "n": 3,
+    "mean": 1.2336823555740255,
+    "lo": 1.2330970659184046,
+    "hi": 1.2342676452296464
+   }
+  },
+  "dram_gbps": {
+   "n": 3,
+   "mean": 12.708220172226836,
+   "lo": 12.6938061609392,
+   "hi": 12.722634183514472
+  },
+  "misses_total": 0,
+  "safety_misses": 0,
+  "chains_ms": {
+   "camera_to_grasp": {
+    "p50": {
+     "n": 3,
+     "mean": 96.5,
+     "lo": 95.25793114412484,
+     "hi": 97.74206885587516
+    },
+    "p99": {
+     "n": 3,
+     "mean": 847.1633333333333,
+     "lo": 640.7930904462163,
+     "hi": 1053.5335762204502
+    }
+   },
+   "human_to_slowdown": {
+    "p50": {
+     "n": 3,
+     "mean": 23.0,
+     "lo": 23.0,
+     "hi": 23.0
+    },
+    "p99": {
+     "n": 3,
+     "mean": 37.34333333333333,
+     "lo": 35.93013768611317,
+     "hi": 38.75652898055348
+    }
+   },
+   "camera_to_detection": {
+    "p50": {
+     "n": 3,
+     "mean": 6.0,
+     "lo": 6.0,
+     "hi": 6.0
+    },
+    "p99": {
+     "n": 3,
+     "mean": 7.339999999999994,
+     "lo": 5.9201245991826585,
+     "hi": 8.759875400817329
+    }
+   }
+  },
+  "robot": {
+   "grasp_success_rate": {
+    "n": 3,
+    "mean": 1.0,
+    "lo": 1.0,
+    "hi": 1.0
+   },
+   "grasp_attempts": {
+    "n": 3,
+    "mean": 2.6666666666666665,
+    "lo": 1.2324490900835123,
+    "hi": 4.100884243249821
+   },
+   "placed": {
+    "n": 3,
+    "mean": 2.0,
+    "lo": 2.0,
+    "hi": 2.0
+   },
+   "joint_tracking_rms_rad": {
+    "n": 3,
+    "mean": 0.0025018903585149396,
+    "lo": 0.0017623961759622572,
+    "hi": 0.003241384541067622
+   },
+   "oscillation_episodes": {
+    "n": 3,
+    "mean": 0.0,
+    "lo": 0.0,
+    "hi": 0.0
+   }
+  }
+ },
+ "figures": [
+  "results/figures/s01_baseline.svg",
+  "results/figures/s01_baseline.png"
+ ],
+ "provenance": {
+  "script": "studies/s01_baseline.py",
+  "git_sha": "a7a1da1",
+  "date": "2026-11-18",
+  "config_files": [
+   "configs/scenarios/S1_nominal.yaml",
+   "configs/policies/P0_nominal.yaml",
+   "workloads/graphs/*.json"
+  ],
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "core_build": {
+   "file": "glasschip_core.cpython-312-darwin.so",
+   "sha256_12": "4b0e98de5c2a",
+   "mtime": "2026-11-18T02:21:04",
+   "build_id": "3e9cf32325432d0f",
+   "version": "0.2.0"
+  },
+  "fidelity": "configs/fidelity/interactive.yaml",
+  "soc": "configs/soc/vx1.yaml",
+  "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph",
+  "compute": {
+   "runs": 20,
+   "failed": 0,
+   "wall_s_total": 54.803714041248895,
+   "sim_s_total": 81.0
+  },
+  "duration_alone_s": 3.0,
+  "duration_s1_s": 10.0,
+  "quick": false
+ },
+ "runs": [
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T1_ingest_wrist": {
+     "completed": 90,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.1998822363333337,
+      "p50": 1.199910681,
+      "p95": 1.199910681,
+      "p99": 1.199910681,
+      "max": 1.199910681
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.384,
+      "runqueue": 0.002,
+      "noc": 0.019793992744444443,
+      "dram": 2.472167777777778e-05,
+      "cache": 9.104191111111112e-05,
+      "dma": 0.0068,
+      "middleware": 0.78717248
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T1_ingest_wrist": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.04344533981856,
+    "energy_soc_j": 5.1315211706197905,
+    "regulator_loss_j": 0.9119241691987694,
+    "avg_power_w": 3.0232342870528064,
+    "peak_power_w": 3.3816468962501283,
+    "energy_per_robot_hour_wh": 3.0232342870528064,
+    "peak_temp_c": 45.45469216534059,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.49412318182822373,
+     "cpu_b": 0.480962837942747,
+     "rt": 0.02368966201628492,
+     "npu": 0.9145338529842313,
+     "simt": 0.9001896490435906,
+     "dsp": 0.06902929934225473,
+     "noc_cache": 1.683122164699215,
+     "dram_io": 1.4777946919620064
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.032118687451167506,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5753283315786164,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9119241691987694
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.01216577647169101,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18329804869648514,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07649609386004824
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18312180611815043,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07567776902459655
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008995301268801909,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034523845474830283
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.34977302416725464,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13290006721697736
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34628193089101733,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1305150403925728
+     },
+     "dsp": {
+      "dynamic": 0.00020006830080000017,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02613176201405066,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010041805027404037
+     },
+     "noc_cache": {
+      "dynamic": 0.006905131247999985,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6503304402820482,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.2425584531691669
+     },
+     "dram_io": {
+      "dynamic": 0.012847711430676418,
+      "clock": 0.3972684064299967,
+      "leakage": 0.827396018140808,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24028255596052092
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 90,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.421055139760135,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2787591115879908
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 533354277.4638176,
+    "dma_bytes": 276480000.0,
+    "flit_hops": 143336022.0,
+    "utilization": {
+     "cpu_a": 0.00590379357,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.007754134749666667,
+     "noc_cache": 9.1414941e-05,
+     "dram_io": 2.251875e-06
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0059037936,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.007754134749666667,
+     "noc_cache": 9.14149630787037e-05,
+     "dram_io": 2.251875e-06
+    },
+    "dram_gbps": 0.17778475915460587
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.26435087504796684,
+   "wall_per_sim_s": 0.08811695834932227,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T1_ingest_wrist"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T1_ingest_wrist"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T1_ingest_overhead": {
+     "completed": 90,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.3182557303333338,
+      "p50": 1.318284175,
+      "p95": 1.318284175,
+      "p99": 1.318284175,
+      "max": 1.318284175
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.3864,
+      "runqueue": 0.002,
+      "noc": 0.03340336221111111,
+      "dram": 2.33522e-05,
+      "cache": 9.104192222222221e-05,
+      "dma": 0.0068,
+      "middleware": 0.889537974
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T1_ingest_overhead": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.052614694691518,
+    "energy_soc_j": 5.140125950877643,
+    "regulator_loss_j": 0.9124887438138753,
+    "avg_power_w": 3.0278212579747463,
+    "peak_power_w": 3.3837022378316264,
+    "energy_per_robot_hour_wh": 3.0278212579747463,
+    "peak_temp_c": 45.485769073366214,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4959822599059518,
+     "cpu_b": 0.4811072894059111,
+     "rt": 0.023696667184020845,
+     "npu": 0.9148077402128505,
+     "simt": 0.9004620239192876,
+     "dsp": 0.06906695819986332,
+     "noc_cache": 1.6853615686114949,
+     "dram_io": 1.4821301872521402
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.03866355125755973,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5773882480300765,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9124887438138753
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.013751868370788017,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18345590930168176,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07661121943348206
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1832574632935805,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07568656331233038
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.00900187539654912,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.003452815587471691
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.35003005135699594,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13291692725585286
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34653753292474854,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1305318132345399
+     },
+     "dsp": {
+      "dynamic": 0.00021628846079999986,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026150873142352916,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010044132596710388
+     },
+     "noc_cache": {
+      "dynamic": 0.008494900032000005,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6508414509817642,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24269707759772685
+     },
+     "dram_io": {
+      "dynamic": 0.01620049439397184,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8281130916324054,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24054819479576095
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 90,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.45583726808935,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.282031543491187
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 672299740.2207184,
+    "dma_bytes": 276480000.0,
+    "flit_hops": 177790857.0,
+    "utilization": {
+     "cpu_a": 0.00667153476,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.008366788539666667,
+     "noc_cache": 9.141464466666666e-05,
+     "dram_io": 2.251875e-06
+    },
+    "unit_utilization": {
+     "cpu_a": 0.006671534805,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.008366788539666667,
+     "noc_cache": 9.141466678240741e-05,
+     "dram_io": 2.251875e-06
+    },
+    "dram_gbps": 0.22409991340690613
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.26889208296779543,
+   "wall_per_sim_s": 0.08963069432259847,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T1_ingest_overhead"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T1_ingest_overhead"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T2_detect": {
+     "completed": 90,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 2.622080993622222,
+      "p50": 2.6217893465,
+      "p95": 2.621829471,
+      "p99": 2.62477936954,
+      "max": 2.647063825
+     },
+     "deadline_us": 33000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 2.0821149337333336,
+      "runqueue": 0.002,
+      "engine_queue": 0.10276364504444443,
+      "noc": 0.042569664788888885,
+      "dram": 0.0004889650555555555,
+      "cache": 0.00122,
+      "middleware": 0.390923785
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T2_detect": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.0747721496810945,
+    "energy_soc_j": 5.160827452370625,
+    "regulator_loss_j": 0.9139446973104699,
+    "avg_power_w": 3.0389055276043493,
+    "peak_power_w": 3.5638842501335444,
+    "energy_per_robot_hour_wh": 3.0389055276043493,
+    "peak_temp_c": 45.50786392783905,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.5112281131933912,
+     "cpu_b": 0.48146050405783053,
+     "rt": 0.0237137957306893,
+     "npu": 0.9426482907938138,
+     "simt": 0.9011280327168358,
+     "dsp": 0.06888598985814012,
+     "noc_cache": 1.6794040931819587,
+     "dram_io": 1.4663033301484376
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.054903144552036605,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5818501562285903,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9139446973104699
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.027503665413024018,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18398875253022293,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07757243245014492
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18358917316846055,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07570806808937056
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009017949947377122,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.00345386958331215
+     },
+     "npu": {
+      "dynamic": 0.025274730581999957,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3508175022428418,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1346952963689721
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3471625270219852,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13057282793485034
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02619739786918376,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010032927988956384
+     },
+     "noc_cache": {
+      "dynamic": 0.0018429642120000023,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6519051852230202,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.2423278037469377
+     },
+     "dram_io": {
+      "dynamic": 0.0002817843450126152,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8291716682254967,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23958147114792655
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 90,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.50726445807818,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2902827862120254
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 15985353.678916931,
+    "dma_bytes": 0.0,
+    "flit_hops": 37646340.0,
+    "utilization": {
+     "cpu_a": 0.01467424149,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.018340209967333335,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 9.176294866666667e-05,
+     "dram_io": 2.1849386e-05
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0146742415125,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.018340209978083333,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 9.176297109259259e-05,
+     "dram_io": 2.1849393916666667e-05
+    },
+    "dram_gbps": 0.005328451226305644
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.3422753330087289,
+   "wall_per_sim_s": 0.1140917776695763,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T2_detect"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T2_detect"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T2_detect_overhead": {
+     "completed": 90,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 2.6220802538888885,
+      "p50": 2.6217893465,
+      "p95": 2.621829471,
+      "p99": 2.62476981681,
+      "max": 2.646976982
+     },
+     "deadline_us": 33000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 2.0821149337333336,
+      "runqueue": 0.002,
+      "engine_queue": 0.10276315525555556,
+      "noc": 0.04256541147777778,
+      "dram": 0.0004929684222222222,
+      "cache": 0.00122,
+      "middleware": 0.390923785
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T2_detect_overhead": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.074763068226252,
+    "energy_soc_j": 5.160818927968631,
+    "regulator_loss_j": 0.9139441402576209,
+    "avg_power_w": 3.0389009846054287,
+    "peak_power_w": 3.5637863275719877,
+    "energy_per_robot_hour_wh": 3.0389009846054287,
+    "peak_temp_c": 45.507428389078235,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.5112253259985912,
+     "cpu_b": 0.48146010951366175,
+     "rt": 0.02371377659639834,
+     "npu": 0.9426466586418601,
+     "simt": 0.9011272887624131,
+     "dsp": 0.06888593427052458,
+     "noc_cache": 1.679402498909081,
+     "dram_io": 1.4663014755337307
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.054903144552036605,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5818416318266135,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9139441402576209
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.027503665413024018,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18398613644732328,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07757226133824435
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18358880264602062,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07570804406764048
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009017931990541624,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034538684058567264
+     },
+     "npu": {
+      "dynamic": 0.025274730581999954,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3508159709575892,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13469519550227413
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3471618288838681,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1305727821185453
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02619734570223974,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010032924568284824
+     },
+     "noc_cache": {
+      "dynamic": 0.0018429642120000023,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6519036891977771,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24232770549930055
+     },
+     "dram_io": {
+      "dynamic": 0.00028178434501261514,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8291699260012437,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23958135875747608
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 90,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.50726445807818,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2902827862120254
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 15985353.678916931,
+    "dma_bytes": 0.0,
+    "flit_hops": 37646340.0,
+    "utilization": {
+     "cpu_a": 0.01467424149,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.018340141528666667,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 9.176294866666667e-05,
+     "dram_io": 2.1849386e-05
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0146742415125,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.018340141539083334,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 9.176297109259259e-05,
+     "dram_io": 2.1849393916666667e-05
+    },
+    "dram_gbps": 0.005328451226305644
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.3320847090217285,
+   "wall_per_sim_s": 0.11069490300724283,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T2_detect_overhead"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T2_detect_overhead"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T3_esdf": {
+     "completed": 45,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.0498636079777777,
+      "p50": 1.049417159,
+      "p95": 1.050439688,
+      "p99": 1.050439688,
+      "max": 1.050439688
+     },
+     "deadline_us": 66000,
+     "criticality": "medium",
+     "attribution_mean_ms": {
+      "compute": 0.12707773,
+      "runqueue": 0.002,
+      "engine_queue": 0.2249873568888889,
+      "noc": 0.15028598380000002,
+      "dram": 0.1440424822888889,
+      "cache": 0.000171607,
+      "dma": 0.013000015,
+      "middleware": 0.388298433
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T3_esdf": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.084189428736211,
+    "energy_soc_j": 5.1695953150695,
+    "regulator_loss_j": 0.9145941136667106,
+    "avg_power_w": 3.0436165226294203,
+    "peak_power_w": 5.02310952914813,
+    "energy_per_robot_hour_wh": 3.0436165226294203,
+    "peak_temp_c": 45.823302569613624,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4848375424071957,
+     "cpu_b": 0.48160301094989977,
+     "rt": 0.023720706129147305,
+     "npu": 0.9157476287131476,
+     "simt": 0.9047523982985385,
+     "dsp": 0.06890606547460339,
+     "noc_cache": 1.688496353433445,
+     "dram_io": 1.5161257233302172
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.060813426837617104,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5847077366418727,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9145941136667106
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.0029907959402639996,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18376654101024026,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07591694265669142
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18372300346123802,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0757167446886622
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009024435099330826,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034542948298164574
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3509120785213946,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13297478859175424
+     },
+     "simt": {
+      "dynamic": 0.003113190911999999,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3474484959151722,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13079803371136636
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026216238085135388,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010034163389468068
+     },
+     "noc_cache": {
+      "dynamic": 0.009746471893714293,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6525237562736724,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24289798526606005
+     },
+     "dram_io": {
+      "dynamic": 0.04496296809163883,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8310931882756897,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.2428011605328925
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 45,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.598768097087536,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2930878808156157
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 1863694695.334479,
+    "dma_bytes": 221183999.99999997,
+    "flit_hops": 170844117.21428564,
+    "utilization": {
+     "cpu_a": 0.00145611912,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.00916096494,
+     "dsp": 0.0,
+     "noc_cache": 7.684195233333333e-05,
+     "dram_io": 9.832010333333334e-06
+    },
+    "unit_utilization": {
+     "cpu_a": 0.00145611912375,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.00916096494,
+     "dsp": 0.0,
+     "noc_cache": 7.684195860185185e-05,
+     "dram_io": 9.832014083333334e-06
+    },
+    "dram_gbps": 0.621231565111493
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.3042629170231521,
+   "wall_per_sim_s": 0.1014209723410507,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T3_esdf"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T3_esdf"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T4_vla": {
+     "completed": 24,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 53.58801712208333,
+      "p50": 53.333581737,
+      "p95": 54.354741737,
+      "p99": 54.354908737,
+      "max": 54.354931737
+     },
+     "deadline_us": 100000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 38.306009863,
+      "runqueue": 0.002,
+      "engine_queue": 1.4475353034583331,
+      "noc": 3.8684160824583333,
+      "dram": 9.552250692666666,
+      "cache": 0.0252615575,
+      "middleware": 0.386543623
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T4_vla": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 8.422017948190698,
+    "energy_soc_j": 7.353457292374079,
+    "regulator_loss_j": 1.0685606558166183,
+    "avg_power_w": 4.21311553186128,
+    "peak_power_w": 5.798890352841184,
+    "energy_per_robot_hour_wh": 4.21311553186128,
+    "peak_temp_c": 56.87613848153804,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.523962370535376,
+     "cpu_b": 0.5222377945482358,
+     "rt": 0.025685630998341792,
+     "npu": 1.8205394581864298,
+     "simt": 0.9779595179936088,
+     "dsp": 0.07461447234123822,
+     "noc_cache": 1.9547417881959746,
+     "dram_io": 2.5222769153915054
+    },
+    "energy_j_by_part": {
+     "dynamic": 1.6700928886903232,
+     "clock": 2.5240741515900185,
+     "leakage": 3.159290252093788,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 1.0685606558166183
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.001589123882790401,
+      "clock": 0.2221632627999999,
+      "leakage": 0.221903587689903,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07830639616268327
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.22187555089579034,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07819898085244528
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.010868003904267695,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.003575650894074103
+     },
+     "npu": {
+      "dynamic": 0.7642702726049287,
+      "clock": 0.4318607616000081,
+      "leakage": 0.42897564784862585,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.19543277613287185
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.41924455720539133,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13532228302821786
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.031572085903328495,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010386722437909689
+     },
+     "noc_cache": {
+      "dynamic": 0.12093014094080003,
+      "clock": 0.7833281400000266,
+      "leakage": 0.7909990078642078,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.25948449939096313
+     },
+     "dram_io": {
+      "dynamic": 0.7833033512618017,
+      "clock": 0.3972684064299967,
+      "leakage": 1.0338518107822472,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.3078533469174548
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 24,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 54.30112553392767,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 2.0977145696827675
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 32287038310.408386,
+    "dma_bytes": 0.0,
+    "flit_hops": 2549079754.0,
+    "utilization": {
+     "cpu_a": 0.00077390324,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.40901202577266665,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.007757769358,
+     "dram_io": 0.07882963326933333
+    },
+    "unit_utilization": {
+     "cpu_a": 0.000773903246,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.4090120259059167,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.007757769556814815,
+     "dram_io": 0.07882963342433333
+    },
+    "dram_gbps": 10.762346103469461
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 3.1813797909999266,
+   "wall_per_sim_s": 1.0604599303333089,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T4_vla"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T4_vla"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T5_plan": {
+     "completed": 3,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 9.052466282666666,
+      "p50": 9.052665394,
+      "p95": 9.052665394,
+      "p99": 9.052665394,
+      "max": 9.052665394
+     },
+     "deadline_us": 50000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 8.650902683,
+      "runqueue": 0.002,
+      "noc": 0.005356761333333333,
+      "dram": 0.0036928843333333336,
+      "cache": 2.1601e-05,
+      "dma": 0.001394668,
+      "middleware": 0.389097685
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T5_plan": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.015048595199316,
+    "energy_soc_j": 5.104876605689045,
+    "regulator_loss_j": 0.9101719895102712,
+    "avg_power_w": 3.0090288120056607,
+    "peak_power_w": 3.0096255680660917,
+    "energy_per_robot_hour_wh": 3.0090288120056607,
+    "peak_temp_c": 45.51561939706611,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4814263005177113,
+     "cpu_b": 0.48142622320367573,
+     "rt": 0.02371213312094451,
+     "npu": 0.915412437357505,
+     "simt": 0.901066789573814,
+     "dsp": 0.06888115976020548,
+     "noc_cache": 1.6772840002327634,
+     "dram_io": 1.4658395514326936
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.0,
+     "clock": 2.5240741515900185,
+     "leakage": 2.580802454099046,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9101719895102712
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18355705209615514,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07570598562155705
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18355697948936137,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07570598091431523
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009016389648289333,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034537672726551493
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.35059752278485173,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13295415297265253
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34710505551079335,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13056905630301996
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02619286499787543,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01003263076232997
+     },
+     "noc_cache": {
+      "dynamic": 0.0,
+      "clock": 0.7833281400000266,
+      "leakage": 0.651758808399376,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24219705183338863
+     },
+     "dram_io": {
+      "dynamic": 0.0,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8290177811723369,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23955336383035455
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 3,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.51561939706611,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.289970584267492
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 109759467.99530844,
+    "dma_bytes": 688128.0,
+    "flit_hops": 51510516.35714288,
+    "utilization": {
+     "cpu_a": 0.000103774421,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.008259558103,
+     "dsp": 0.0,
+     "noc_cache": 1.9969566666666667e-07,
+     "dram_io": 2.0000666666666666e-08
+    },
+    "unit_utilization": {
+     "cpu_a": 0.00010377442125,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.008259558104,
+     "dsp": 0.0,
+     "noc_cache": 1.9969589351851852e-07,
+     "dram_io": 2.0001e-08
+    },
+    "dram_gbps": 0.03658648933176948
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.2626742499996908,
+   "wall_per_sim_s": 0.08755808333323027,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T5_plan"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T5_plan"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T6_estimate": {
+     "completed": 600,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.39271778499999993,
+      "p50": 0.392717785,
+      "p95": 0.392717785,
+      "p99": 0.392717785,
+      "max": 0.392717785
+     },
+     "deadline_us": 5000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.001983,
+      "runqueue": 0.002,
+      "middleware": 0.388734785
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T6_estimate": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.054591042955475,
+    "energy_soc_j": 5.141967191828484,
+    "regulator_loss_j": 0.9126238511269907,
+    "avg_power_w": 3.028809926440958,
+    "peak_power_w": 3.1148126369312874,
+    "energy_per_robot_hour_wh": 3.028809926440958,
+    "peak_temp_c": 45.439348686976246,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.5247139487554604,
+     "cpu_b": 0.4811372871058204,
+     "rt": 0.023698121904575924,
+     "npu": 0.9148646169708508,
+     "simt": 0.9005185868319042,
+     "dsp": 0.06884045533540024,
+     "noc_cache": 1.676286457122082,
+     "dram_io": 1.464531568929377
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.04034302202185849,
+     "clock": 2.5240741515900185,
+     "leakage": 2.577550018216633,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9126238511269907
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.04029600967559999,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18386766206820004,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07838701421166125
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1832856346905458,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07568838961527438
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009003240604254226,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.003452905100321766
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3500834268214267,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13292042854942507
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3465906126376684,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13053529643423656
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026154665304048245,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01003012603135195
+     },
+     "noc_cache": {
+      "dynamic": 3.124855999999986e-05,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6507914814429767,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24213558711910804
+     },
+     "dram_io": {
+      "dynamic": 1.5763786258378742e-05,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8277732946475044,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23947410406561231
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 600,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.43933753124734,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2828399210109365
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 653280.1557540894,
+    "dma_bytes": 0.0,
+    "flit_hops": 714525.0,
+    "utilization": {
+     "cpu_a": 0.0196358892,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "unit_utilization": {
+     "cpu_a": 0.01963588925,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "dram_gbps": 0.00021776005191802977
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.27094445802504197,
+   "wall_per_sim_s": 0.09031481934168066,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T6_estimate"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T6_estimate"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T7_control": {
+     "completed": 3000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.001989167,
+      "p50": 0.001989167,
+      "p95": 0.001989167,
+      "p99": 0.001989167,
+      "max": 0.001989167
+     },
+     "deadline_us": 1000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.001989167
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T7_control": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 5.998784347425873,
+    "energy_soc_j": 5.089607050540924,
+    "regulator_loss_j": 0.9091772968849484,
+    "avg_power_w": 3.0008926200229475,
+    "peak_power_w": 3.0008926200917663,
+    "energy_per_robot_hour_wh": 3.0008926200229475,
+    "peak_temp_c": 45.25632446524765,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4802589694203641,
+     "cpu_b": 0.4802589694203643,
+     "rt": 0.0238745326887489,
+     "npu": 0.9131992364016576,
+     "simt": 0.8988624280038366,
+     "dsp": 0.06871670849805639,
+     "noc_cache": 1.6731212752595912,
+     "dram_io": 1.4604922277332568
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.000205370223520008,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5653275287274195,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9091772968849484
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18246078656935738,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07563492005100644
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18246078656935766,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07563492005100647
+     },
+     "rt": {
+      "dynamic": 0.000205370223520008,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008963422571319657,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034637636939092178
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.34852055799483345,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1328179168068242
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3450364337034407,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13043331654039572
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02603853238362483,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010022512114431566
+     },
+     "noc_cache": {
+      "dynamic": 0.0,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6478525528274114,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24194058243217864
+     },
+     "dram_io": {
+      "dynamic": 0.0,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8239944561080604,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23922936519519594
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 3000,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.256324451104916,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.262771146480007
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 0.0,
+    "dma_bytes": 0.0,
+    "flit_hops": 0.0,
+    "utilization": {
+     "cpu_a": 0.0,
+     "cpu_b": 0.0,
+     "rt": 0.0019885039443333333,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0,
+     "cpu_b": 0.0,
+     "rt": 0.0019885039443333333,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "dram_gbps": 0.0
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.3527394999982789,
+   "wall_per_sim_s": 0.11757983333275963,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T7_control"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T7_control"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T8_safety": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.7564676122499999,
+      "p50": 0.7564394755,
+      "p95": 0.756574257,
+      "p99": 0.756574257,
+      "max": 0.765887853
+     },
+     "deadline_us": 10000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.284806044,
+      "runqueue": 0.002,
+      "engine_queue": 0.004225785803333334,
+      "noc": 0.07900929184333333,
+      "dram": 0.00011138160333333334,
+      "cache": 0.00128,
+      "dma": 0.000752,
+      "middleware": 0.384283109
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T8_safety": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.062790129872538,
+    "energy_soc_j": 5.149663280052026,
+    "regulator_loss_j": 0.9131268498205114,
+    "avg_power_w": 3.0329115206966173,
+    "peak_power_w": 3.255155191945053,
+    "energy_per_robot_hour_wh": 3.0329115206966173,
+    "peak_temp_c": 45.47297317058335,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.5027341201427143,
+     "cpu_b": 0.48127087350782366,
+     "rt": 0.024163562264717286,
+     "npu": 0.9320397247200312,
+     "simt": 0.9007704732383461,
+     "dsp": 0.06893213702668065,
+     "noc_cache": 1.6849158991023594,
+     "dram_io": 1.4679633398698841
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.04625616128146219,
+     "clock": 2.5240741515900185,
+     "leakage": 2.579332967180581,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9131268498205114
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.019847453968439913,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18369807203315333,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07702533134112156
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18341108805325393,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07569652265456954
+     },
+     "rt": {
+      "dynamic": 0.00043015036800000077,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009009651381824895,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034817843148924102
+     },
+     "npu": {
+      "dynamic": 0.01577296926000004,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3504198890555443,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13398610480448644
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34682698739747136,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13055080808087524
+     },
+     "dsp": {
+      "dynamic": 6.832127999999996e-05,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026172382070506643,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01003576967617387
+     },
+     "noc_cache": {
+      "dynamic": 0.007547259879999965,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6513721444105793,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24266835481177912
+     },
+     "dram_io": {
+      "dynamic": 0.0025900065250223816,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8284227527782467,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.239682174136611
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 300,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.47103464289502,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2859146918823383
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 109674884.64068604,
+    "dma_bytes": 499200.0,
+    "flit_hops": 157709408.0,
+    "utilization": {
+     "cpu_a": 0.0096570777,
+     "cpu_b": 0.0,
+     "rt": 0.00416425,
+     "npu": 0.018050637653,
+     "simt": 0.0,
+     "dsp": 0.0019687384463333334,
+     "noc_cache": 0.00035705916666666664,
+     "dram_io": 0.00014273957133333334
+    },
+    "unit_utilization": {
+     "cpu_a": 0.009657077725,
+     "cpu_b": 0.0,
+     "rt": 0.00416425,
+     "npu": 0.018050637703,
+     "simt": 0.0,
+     "dsp": 0.0019687384713333333,
+     "noc_cache": 0.0003570592108564815,
+     "dram_io": 0.00014273960875
+    },
+    "dram_gbps": 0.03655829488022867
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.4243216250324622,
+   "wall_per_sim_s": 0.1414405416774874,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T8_safety"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T8_safety"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T10_record": {
+     "completed": 90,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.5789184033222222,
+      "p50": 0.57890172,
+      "p95": 0.57890172,
+      "p99": 0.57965222497,
+      "max": 0.579652783
+     },
+     "deadline_us": 33333,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 0.156248,
+      "runqueue": 0.002,
+      "noc": 0.018682497399999998,
+      "dram": 3.0719444444444445e-05,
+      "cache": 0.00019623247777777775,
+      "dma": 0.017760954,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T10_record": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.012234359592304,
+    "energy_soc_j": 5.102224401723774,
+    "regulator_loss_j": 0.91000995786853,
+    "avg_power_w": 3.0076209902912976,
+    "peak_power_w": 3.177583802099961,
+    "energy_per_robot_hour_wh": 3.0076209902912976,
+    "peak_temp_c": 45.30142772192423,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4890229349496244,
+     "cpu_b": 0.4804711411492761,
+     "rt": 0.023665816151921912,
+     "npu": 0.9136015467731666,
+     "simt": 0.899262504509475,
+     "dsp": 0.06874660289905242,
+     "noc_cache": 1.6758015917205933,
+     "dram_io": 1.4616622214391903
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.009860151407790507,
+     "clock": 2.5240741515900185,
+     "leakage": 2.568290098725988,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.91000995786853
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.007905347467200006,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18277425214881401,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.076180072533611
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.182660042564193,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07564783578508438
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008972922597775282,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034509173541466156
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3488981058378124,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13284267933535487
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34541187655208677,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13045795019738873
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026066587546489446,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01002435135256293
+     },
+     "noc_cache": {
+      "dynamic": 0.0017736481699125015,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6485939026730035,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24210590087768255
+     },
+     "dram_io": {
+      "dynamic": 0.0001811557706780004,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8249124088058151,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.2393002504327003
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 90,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.30092542453597,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2676240871319024
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 8258191.714909598,
+    "dma_bytes": 299997000.0,
+    "flit_hops": 30502531.0117188,
+    "utilization": {
+     "cpu_a": 0.00403686,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 8.381872633333334e-05,
+     "dram_io": 1.833021e-06
+    },
+    "unit_utilization": {
+     "cpu_a": 0.00403686,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 8.381874931944444e-05,
+     "dram_io": 1.8330211666666666e-06
+    },
+    "dram_gbps": 0.002752730571636533
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.2864886660245247,
+   "wall_per_sim_s": 0.09549622200817491,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T10_record"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T10_record"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T10_record_4k": {
+     "completed": 90,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 6.1674142467,
+      "p50": 6.167378957,
+      "p95": 6.167538725,
+      "p99": 6.168744634,
+      "max": 6.168744634
+     },
+     "deadline_us": 33333,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 4.66555275,
+      "runqueue": 0.002,
+      "noc": 0.5024522264666667,
+      "dram": 0.08931619404444444,
+      "cache": 0.005297836188888889,
+      "dma": 0.51879524,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T10_record_4k": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.487685373754642,
+    "energy_soc_j": 5.547615977388448,
+    "regulator_loss_j": 0.9400693963661947,
+    "avg_power_w": 3.2454654195871147,
+    "peak_power_w": 5.581696083731186,
+    "energy_per_robot_hour_wh": 3.2454654195871147,
+    "peak_temp_c": 47.542893221590646,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.5597175805721648,
+     "cpu_b": 0.4880815334026186,
+     "rt": 0.024034717267964627,
+     "npu": 0.9280274035469036,
+     "simt": 0.9136108481674112,
+     "dsp": 0.06981831022032535,
+     "noc_cache": 1.7690608930517593,
+     "dram_io": 1.7353340875255114
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.34580281360188314,
+     "clock": 2.5240741515900185,
+     "leakage": 2.6777390121965707,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9400693963661947
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.06612949104480044,
+      "clock": 0.2221632627999999,
+      "leakage": 0.19080261071644555,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.08062221601091875
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1898068664928802,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07611140410973888
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.00931911142350947,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034736296444551245
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.36243540673598623,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13373123521091426
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3588761203226779,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1313420500847327
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.027072312422270366,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010090333798055037
+     },
+     "noc_cache": {
+      "dynamic": 0.06262085118599967,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6751835676205445,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24792833424521635
+     },
+     "dram_io": {
+      "dynamic": 0.21705247137108566,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8642430164622602,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.25677019326216327
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 90,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 47.16154247540123,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.4355719004057494
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 8958053813.05334,
+    "dma_bytes": 8957862360.000015,
+    "flit_hops": 1194832534.937496,
+    "utilization": {
+     "cpu_a": 0.037856645609,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0033832916156666666,
+     "dram_io": 0.016403131868
+    },
+    "unit_utilization": {
+     "cpu_a": 0.037856645625,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0033832916692731483,
+     "dram_io": 0.016403131916166668
+    },
+    "dram_gbps": 2.986017937684447
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 1.1137580830254592,
+   "wall_per_sim_s": 0.37125269434181973,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T10_record_4k"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T10_record_4k"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T11_speech": {
+     "completed": 3,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 21.87069668166667,
+      "p50": 21.870516234,
+      "p95": 21.871015652999997,
+      "p99": 21.871060045799997,
+      "max": 21.871071144
+     },
+     "deadline_us": 500000,
+     "criticality": "medium",
+     "attribution_mean_ms": {
+      "compute": 17.704177432,
+      "runqueue": 0.002,
+      "engine_queue": 0.197080611,
+      "noc": 1.7578335906666667,
+      "dram": 1.8164844756666667,
+      "cache": 0.006801707333333333,
+      "middleware": 0.386318865
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T11_speech": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.057302153913979,
+    "energy_soc_j": 5.144365427468822,
+    "regulator_loss_j": 0.9129367264451578,
+    "avg_power_w": 3.030166160037008,
+    "peak_power_w": 5.086097073042464,
+    "energy_per_robot_hour_wh": 3.030166160037008,
+    "peak_temp_c": 46.975410970883935,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4814203865282454,
+     "cpu_b": 0.4811843663582019,
+     "rt": 0.02370040496796698,
+     "npu": 0.9272885684747958,
+     "simt": 0.9006073581209213,
+     "dsp": 0.06889904348858965,
+     "noc_cache": 1.6810176319653072,
+     "dram_io": 1.493184394009946
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.04178528341612428,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5785059924626865,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9129367264451578
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.00021826055939520004,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1833330199049469,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0757058432639036
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1833298476725351,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07569125588566665
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.009005383183664084,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034530455843029195
+     },
+     "npu": {
+      "dynamic": 0.011397632379034496,
+      "clock": 0.4318607616000081,
+      "leakage": 0.35023916975786157,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1337910047379005
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3466739172642545,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13054076309666565
+     },
+     "dsp": {
+      "dynamic": 4.869860384e-05,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02616092923094403,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010033751653805465
+     },
+     "noc_cache": {
+      "dynamic": 0.004235798089049999,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6510243414605393,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24242935241571612
+     },
+     "dram_io": {
+      "dynamic": 0.025884893784804592,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8287393839879421,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24129170980719813
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 3,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.483374900609995,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2835589244440693
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 1066847285.4933051,
+    "dma_bytes": 0.0,
+    "flit_hops": 91163670.40625,
+    "utilization": {
+     "cpu_a": 0.000108204716,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.008410752585666667,
+     "simt": 0.0,
+     "dsp": 0.002377861516,
+     "noc_cache": 0.000276726889,
+     "dram_io": 0.002603784448666667
+    },
+    "unit_utilization": {
+     "cpu_a": 0.00010820471625,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.00841075259225,
+     "simt": 0.0,
+     "dsp": 0.002377861516,
+     "noc_cache": 0.0002767268977407407,
+     "dram_io": 0.00260378445475
+    },
+    "dram_gbps": 0.3556157618311017
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.3831656670081429,
+   "wall_per_sim_s": 0.1277218890027143,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T11_speech"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T11_speech"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T12_arm2_control": {
+     "completed": 2999,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.0019891670000000005,
+      "p50": 0.001989167,
+      "p95": 0.001989167,
+      "p99": 0.001989167,
+      "max": 0.001989167
+     },
+     "deadline_us": 1000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.001989167
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T12_arm2_control": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 5.99878428627891,
+    "energy_soc_j": 5.089606993133497,
+    "regulator_loss_j": 0.9091772931454121,
+    "avg_power_w": 3.0008925894341716,
+    "peak_power_w": 3.0008925901330414,
+    "energy_per_robot_hour_wh": 3.0008925894341716,
+    "peak_temp_c": 45.25632357930769,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.48025896508847943,
+     "cpu_b": 0.4802589650884793,
+     "rt": 0.023874532477322227,
+     "npu": 0.9131992281876854,
+     "simt": 0.8988624198355004,
+     "dsp": 0.06871670788769996,
+     "noc_cache": 1.6731212598162177,
+     "dram_io": 1.4604922078975346
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.000205370223520008,
+     "clock": 2.5240741515900185,
+     "leakage": 2.565327471319983,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9091772931454121
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1824607825011672,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07563491978731199
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18246078250116715,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07563491978731199
+     },
+     "rt": {
+      "dynamic": 0.000205370223520008,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008963422372911185,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034637636808910583
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3485205502864277,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13281791630125725
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.3450364260380399,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13043331603746172
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.0260385318108194,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010022512076880409
+     },
+     "noc_cache": {
+      "dynamic": 0.0,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6478525383354133,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24194058148080305
+     },
+     "dram_io": {
+      "dynamic": 0.0,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8239944374740378,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23922936399349526
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 2999,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.256323527366774,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.262771043743527
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 0.0,
+    "dma_bytes": 0.0,
+    "flit_hops": 0.0,
+    "utilization": {
+     "cpu_a": 0.0,
+     "cpu_b": 0.0,
+     "rt": 0.0019878408886666666,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0,
+     "cpu_b": 0.0,
+     "rt": 0.0019878408886666666,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "dram_gbps": 0.0
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.3311022080015391,
+   "wall_per_sim_s": 0.1103674026671797,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T12_arm2_control"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T12_arm2_control"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T13_map_save": {
+     "completed": 1,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 5.807105072,
+      "p50": 5.807105072,
+      "p95": 5.807105072,
+      "p99": 5.807105072,
+      "max": 5.807105072
+     },
+     "deadline_us": 5000000,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 5.12,
+      "runqueue": 0.002,
+      "noc": 0.097895866,
+      "dram": 0.05198801,
+      "cache": 0.001487767,
+      "dma": 0.149733429,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T13_map_save": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.000359853703064,
+    "energy_soc_j": 5.091086289501118,
+    "regulator_loss_j": 0.9092735642019463,
+    "avg_power_w": 3.0016807672351495,
+    "peak_power_w": 3.0017718116371976,
+    "energy_per_robot_hour_wh": 3.0016807672351495,
+    "peak_temp_c": 45.28779614909967,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.4803863014931318,
+     "cpu_b": 0.4803860200731927,
+     "rt": 0.023661687835194102,
+     "npu": 0.9134401442414187,
+     "simt": 0.8991019980741485,
+     "dsp": 0.06873460960089496,
+     "noc_cache": 1.673574318723523,
+     "dram_io": 1.4610747736615546
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.0,
+     "clock": 2.5240741515900185,
+     "leakage": 2.567012137911114,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9092735642019463
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18258036748741066,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0756426712057217
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18258010319871,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07564265407448338
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008969048275858073,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034506633593359842
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3487466378773418,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.132832744764076
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34526125299371546,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13044806732043307
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.02605533213842521,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010023613462469633
+     },
+     "noc_cache": {
+      "dynamic": 0.0,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6482776865983257,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24196849212519556
+     },
+     "dram_io": {
+      "dynamic": 0.0,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8245417093413205,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.2392646578902315
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 1,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.28779614909967,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2657218123040073
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 43008000.0,
+    "dma_bytes": 28672000.000000015,
+    "flit_hops": 4275720.0,
+    "utilization": {
+     "cpu_a": 0.0004584999996666667,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 9.696884e-06,
+     "dram_io": 7.000373633333334e-05
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0004585,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 9.696884416666667e-06,
+     "dram_io": 7.000373666666666e-05
+    },
+    "dram_gbps": 0.014336
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.2568920000339858,
+   "wall_per_sim_s": 0.08563066667799528,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T13_map_save"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T13_map_save"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T14_ota": {
+     "completed": 30,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 2.874965150700001,
+      "p50": 2.874911792,
+      "p95": 2.8753259656499996,
+      "p99": 2.87573205425,
+      "max": 2.87575951
+     },
+     "deadline_us": 100000,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 2.4609375,
+      "runqueue": 0.002,
+      "noc": 0.014377258066666666,
+      "dram": 7.308193333333334e-05,
+      "cache": 0.00015647070000000002,
+      "dma": 0.01342084,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T14_ota": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.019600428963992,
+    "energy_soc_j": 5.109115573797059,
+    "regulator_loss_j": 0.9104848551669336,
+    "avg_power_w": 3.011305867415704,
+    "peak_power_w": 3.2873278746357855,
+    "energy_per_robot_hour_wh": 3.011305867415704,
+    "peak_temp_c": 45.32587272087952,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.49615153574865534,
+     "cpu_b": 0.48058653870469004,
+     "rt": 0.023671412743533862,
+     "npu": 0.9138203554517194,
+     "simt": 0.899480099863041,
+     "dsp": 0.06876286172798218,
+     "noc_cache": 1.6749867214481813,
+     "dram_io": 1.4621409032761816
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.015149136246736727,
+     "clock": 2.5240741515900185,
+     "leakage": 2.569892285960307,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9104848551669336
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.014370249000000017,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18297693246962482,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07664109147902956
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18276841522660334,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0756548606780864
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008978174852733842,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034512616908000423
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.3491034462633082,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13285614758840963
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34561607363940827,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1304713484636319
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026081846029708703,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010025351698273665
+     },
+     "noc_cache": {
+      "dynamic": 0.0006431524760000001,
+      "clock": 0.7833281400000266,
+      "leakage": 0.648959887469401,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24205554150278538
+     },
+     "dram_io": {
+      "dynamic": 0.00013573477073668344,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8254075100095277,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.23932925206591737
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 30,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.32484650894899,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2702608013233756
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 6147697.341127396,
+    "dma_bytes": 75000000.0,
+    "flit_hops": 12308678.750000019,
+    "utilization": {
+     "cpu_a": 0.00710734374,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 2.2810848e-05,
+     "dram_io": 1.2759486666666667e-06
+    },
+    "unit_utilization": {
+     "cpu_a": 0.00710734375,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 2.2810860935185187e-05,
+     "dram_io": 1.2759491666666666e-06
+    },
+    "dram_gbps": 0.0020492324470424653
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.274086499994155,
+   "wall_per_sim_s": 0.09136216666471834,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T14_ota"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T14_ota"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 3.0,
+   "chip_only": true,
+   "robot": null,
+   "tasks": {
+    "T15_diag": {
+     "completed": 30,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.44892967999999983,
+      "p50": 0.44892968,
+      "p95": 0.44892968,
+      "p99": 0.44892968,
+      "max": 0.44892968
+     },
+     "deadline_us": 100000,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 0.061344,
+      "runqueue": 0.002,
+      "middleware": 0.38558568
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {},
+   "attribution": {
+    "T15_diag": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 1.999,
+    "energy_j": 6.00166492912868,
+    "energy_soc_j": 5.092309382728832,
+    "regulator_loss_j": 0.9093555463998475,
+    "avg_power_w": 3.0023336313800297,
+    "peak_power_w": 3.1224011655386787,
+    "energy_per_robot_hour_wh": 3.0023336313800297,
+    "peak_temp_c": 45.26580743150426,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 0.48275086805638445,
+     "cpu_b": 0.48030422635519104,
+     "rt": 0.023657720903318056,
+     "npu": 0.9132850511314027,
+     "simt": 0.8989477659086167,
+     "dsp": 0.06872308514669147,
+     "noc_cache": 1.6732919819008534,
+     "dram_io": 1.4607042297262363
+    },
+    "energy_j_by_part": {
+     "dynamic": 0.002275106750702317,
+     "clock": 2.5240741515900185,
+     "leakage": 2.5659601243881434,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 0.9093555463998475
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.002262118769664001,
+      "clock": 0.2221632627999999,
+      "leakage": 0.18253601604544017,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07578947044128137
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 0.2221632627999999,
+      "leakage": 0.1825032885724413,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.07563767498274877
+     },
+     "rt": {
+      "dynamic": 0.0,
+      "clock": 0.011241976200000022,
+      "leakage": 0.008965325405936541,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.0034504192973815045
+     },
+     "npu": {
+      "dynamic": 0.0,
+      "clock": 0.4318607616000081,
+      "leakage": 0.34860109083894963,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.1328231986924538
+     },
+     "simt": {
+      "dynamic": 0.0,
+      "clock": 0.42339267776000555,
+      "leakage": 0.34511651723256226,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.13043857091605493
+     },
+     "dsp": {
+      "dynamic": 0.0,
+      "clock": 0.03265566399999883,
+      "leakage": 0.026044516717996187,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.010022904428695406
+     },
+     "noc_cache": {
+      "dynamic": 8.63296e-06,
+      "clock": 0.7833281400000266,
+      "leakage": 0.6480041102096864,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.24195109873116838
+     },
+     "dram_io": {
+      "dynamic": 4.35502103831768e-06,
+      "clock": 0.3972684064299967,
+      "leakage": 0.8241892593651358,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.2392422089100621
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 30,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 45.265769226881794,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 1.2638059633753582
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 180480.04302978516,
+    "dma_bytes": 0.0,
+    "flit_hops": 197400.0,
+    "utilization": {
+     "cpu_a": 0.0011223242,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "unit_utilization": {
+     "cpu_a": 0.0011223242,
+     "cpu_b": 0.0,
+     "rt": 0.0,
+     "npu": 0.0,
+     "simt": 0.0,
+     "dsp": 0.0,
+     "noc_cache": 0.0,
+     "dram_io": 0.0
+    },
+    "dram_gbps": 6.016001434326172e-05
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 0.341137167008128,
+   "wall_per_sim_s": 0.11371238900270934,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {
+     "chip_only": true,
+     "tasks_only": [
+      "T15_diag"
+     ]
+    },
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "alone",
+    "task": "T15_diag"
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 1,
+   "duration_s": 10.0,
+   "chip_only": false,
+   "robot": {
+    "duration_s": 10.0,
+    "objects_offered": 11,
+    "grasp_attempts": 3,
+    "grasp_success": 3,
+    "placed": 2,
+    "grasp_success_rate": 1.0,
+    "place_success_rate": 0.6666666666666666,
+    "objects_missed": 2,
+    "objects_missed_per_min": 12.0,
+    "picks_per_min": 12.0,
+    "mean_placement_error_m": 0.007899083247929178,
+    "grasp_align_err_m": {
+     "n": 3,
+     "mean": 0.005204545738724136,
+     "p50": 0.0064963761594538615,
+     "p95": 0.007796484640829286,
+     "p99": 0.007912049839173768,
+     "max": 0.007940941138759889
+    },
+    "joint_tracking_rms_rad": 0.002777137278481955,
+    "oscillation_episodes": 0,
+    "oscillation_severity_peak": 0.0,
+    "oscillation_time_s": 0.0,
+    "safety_stop_latency_ms": {
+     "n": 0,
+     "mean": null,
+     "p50": null,
+     "p95": null,
+     "p99": null,
+     "max": null
+    },
+    "safety_zone_entries": 0,
+    "zone_visits": [],
+    "min_human_separation_m": null,
+    "min_human_separation_moving_m": null
+   },
+   "tasks": {
+    "T10_record": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.26502868925,
+      "p50": 0.9714064455,
+      "p95": 1.9813119009,
+      "p99": 1.98169638356,
+      "max": 1.981778991
+     },
+     "deadline_us": 33333,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 0.156248,
+      "runqueue": 0.6559969873333333,
+      "noc": 0.04628143992666667,
+      "dram": 0.00452768174,
+      "cache": 0.00021362625,
+      "dma": 0.017760954,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T1_ingest_overhead": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.5070665337333333,
+      "p50": 1.3204920885,
+      "p95": 1.715803721,
+      "p99": 5.233691544,
+      "max": 5.233996105
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.381392,
+      "runqueue": 0.13436627042,
+      "noc": 0.08657007079333334,
+      "dram": 0.0057069254633333325,
+      "cache": 9.421812333333333e-05,
+      "dma": 0.006842666666666667,
+      "middleware": 0.889537974,
+      "engine_queue": 0.0025564082666666666
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T1_ingest_wrist": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.6033294546733332,
+      "p50": 1.348081804,
+      "p95": 2.150089709,
+      "p99": 2.191139955729981,
+      "max": 4.246045832
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.384,
+      "runqueue": 0.3604018620833333,
+      "noc": 0.054181905376666666,
+      "dram": 0.010680146126666666,
+      "cache": 9.306108666666666e-05,
+      "dma": 0.0068,
+      "middleware": 0.78717248
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T2_detect": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 3.1600405203966666,
+      "p50": 3.0989147910000003,
+      "p95": 3.9597412272500003,
+      "p99": 4.1399087015000005,
+      "max": 4.16178359
+     },
+     "deadline_us": 33000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 2.1872529930100004,
+      "runqueue": 0.17085353321666666,
+      "engine_queue": 0.16403898465666666,
+      "noc": 0.07777601448666667,
+      "dram": 0.053183223833333335,
+      "cache": 0.0012148,
+      "middleware": 0.450142077,
+      "preemption": 0.05557889419333333
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T3_esdf": {
+     "completed": 150,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.7385294954066668,
+      "p50": 1.294376764,
+      "p95": 2.6114692865499998,
+      "p99": 6.983988537559999,
+      "max": 9.121453986
+     },
+     "deadline_us": 66000,
+     "criticality": "medium",
+     "attribution_mean_ms": {
+      "compute": 0.1310423935,
+      "runqueue": 0.40794771666,
+      "engine_queue": 0.26286296826,
+      "noc": 0.28609640998,
+      "dram": 0.16729680036000003,
+      "cache": 0.00017217464666666668,
+      "dma": 0.013000015,
+      "middleware": 0.470111017
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T4_vla": {
+     "completed": 80,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 56.435282046537495,
+      "p50": 56.65848947,
+      "p95": 56.876419256,
+      "p99": 56.94770819,
+      "max": 56.94778719
+     },
+     "deadline_us": 100000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 39.893289731574995,
+      "runqueue": 0.39259966676249997,
+      "engine_queue": 1.416529044425,
+      "noc": 3.9992804524875,
+      "dram": 9.610389071262501,
+      "cache": 0.025261482625,
+      "preemption": 0.5842638193999999,
+      "middleware": 0.513668778
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T5_plan": {
+     "completed": 17,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 10.372285399823527,
+      "p50": 10.979598455,
+      "p95": 11.532487063,
+      "p99": 11.532487063,
+      "max": 11.532487063
+     },
+     "deadline_us": 50000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 8.886409450352941,
+      "runqueue": 1.0228665511176471,
+      "noc": 0.007428467882352941,
+      "dram": 0.0038380093529411766,
+      "cache": 2e-05,
+      "dma": 0.001394668,
+      "middleware": 0.402071887,
+      "engine_queue": 0.04825636611764706
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T6_estimate": {
+     "completed": 2000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.7244661795904999,
+      "p50": 0.824265747,
+      "p95": 1.588265747,
+      "p99": 1.588265747,
+      "max": 2.98444014
+     },
+     "deadline_us": 5000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.001983,
+      "runqueue": 0.325100425271,
+      "middleware": 0.397359455,
+      "noc": 2.3299319500000002e-05
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T7_control": {
+     "completed": 9999,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.001996249694169417,
+      "p50": 0.001989167,
+      "p95": 0.001989167,
+      "p99": 0.001989167,
+      "max": 0.020564712
+     },
+     "deadline_us": 1000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.001989167,
+      "runqueue": 7.082694169416942e-06
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T8_safety": {
+     "completed": 1000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.5445148150569998,
+      "p50": 1.522841868,
+      "p95": 2.3011751335499997,
+      "p99": 2.484277283,
+      "max": 2.997021682
+     },
+     "deadline_us": 10000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.32663948443699997,
+      "runqueue": 0.558081346671,
+      "engine_queue": 0.041533319389,
+      "noc": 0.10598536002,
+      "dram": 0.044575067314999994,
+      "cache": 0.00128,
+      "dma": 0.000752,
+      "middleware": 0.425189401,
+      "preemption": 0.040478836225
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {
+    "camera_to_grasp": {
+     "n": 17,
+     "mean": 174.88235294117646,
+     "p50": 96.0,
+     "p95": 768.8,
+     "p99": 812.96,
+     "max": 824.0
+    },
+    "human_to_slowdown": {
+     "n": 998,
+     "mean": 21.95991983967936,
+     "p50": 23.0,
+     "p95": 37.0,
+     "p99": 37.0,
+     "max": 41.0
+    },
+    "camera_to_detection": {
+     "n": 300,
+     "mean": 5.65,
+     "p50": 6.0,
+     "p95": 7.0,
+     "p99": 7.009999999999991,
+     "max": 9.0
+    }
+   },
+   "attribution": {
+    "T10_record": {
+     "dominant_missed": null
+    },
+    "T1_ingest_overhead": {
+     "dominant_missed": null
+    },
+    "T1_ingest_wrist": {
+     "dominant_missed": null
+    },
+    "T2_detect": {
+     "dominant_missed": null
+    },
+    "T3_esdf": {
+     "dominant_missed": null
+    },
+    "T4_vla": {
+     "dominant_missed": null
+    },
+    "T5_plan": {
+     "dominant_missed": null
+    },
+    "T6_estimate": {
+     "dominant_missed": null
+    },
+    "T7_control": {
+     "dominant_missed": null
+    },
+    "T8_safety": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 8.999,
+    "energy_j": 40.62029648468892,
+    "energy_soc_j": 35.637251007820055,
+    "regulator_loss_j": 4.983045476868865,
+    "avg_power_w": 4.513867816945096,
+    "peak_power_w": 7.447340380194246,
+    "energy_per_robot_hour_wh": 4.513867816945096,
+    "peak_temp_c": 59.25726902090458,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 3.053644991241396,
+     "cpu_b": 2.410402808951435,
+     "rt": 0.12154681910472062,
+     "npu": 8.507167255771051,
+     "simt": 4.6105754802293255,
+     "dsp": 0.3465405927617898,
+     "noc_cache": 9.233676879095366,
+     "dram_io": 12.336741657533757
+    },
+    "energy_j_by_part": {
+     "dynamic": 9.212311583131223,
+     "clock": 11.362753021589766,
+     "leakage": 15.062186403099156,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 4.983045476868865
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.5913896754458348,
+      "clock": 1.0001236627999996,
+      "leakage": 1.065606332027786,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.39652532096778426
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 1.0001236627999996,
+      "leakage": 1.054601397218176,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.35567774893325305
+     },
+     "rt": {
+      "dynamic": 0.0028602022395195245,
+      "clock": 0.0506085762000001,
+      "leakage": 0.0516127751903841,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01646526547481616
+     },
+     "npu": {
+      "dynamic": 3.6239308760111957,
+      "clock": 1.9441295616001717,
+      "leakage": 2.0391802358862208,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.8999265822736829
+     },
+     "simt": {
+      "dynamic": 0.08859112915660802,
+      "clock": 1.9060083577596583,
+      "leakage": 1.9934652699201083,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.6225107233926014
+     },
+     "dsp": {
+      "dynamic": 0.002181051187199999,
+      "clock": 0.1470076640000259,
+      "leakage": 0.14993210326157114,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.04741977431301744
+     },
+     "noc_cache": {
+      "dynamic": 0.7468131184861522,
+      "clock": 3.5263481400003274,
+      "leakage": 3.7651430417843317,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 1.195372578824856
+     },
+     "dram_io": {
+      "dynamic": 4.156545530604351,
+      "clock": 1.7884033964299837,
+      "leakage": 4.942645247810603,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 1.449147482688815
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 14446,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 56.75420185076144,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 2.3200228883105187
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 127068898966.97998,
+    "dma_bytes": 3586033392.0,
+    "flit_hops": 11621495364.789083,
+    "utilization": {
+     "cpu_a": 0.0666635975087,
+     "cpu_b": 0.0,
+     "rt": 0.0061532180833,
+     "npu": 0.4478106222567,
+     "simt": 0.0245391608547,
+     "dsp": 0.0188758075073,
+     "noc_cache": 0.0088339171258,
+     "dram_io": 0.0860357967466
+    },
+    "unit_utilization": {
+     "cpu_a": 0.066663597711025,
+     "cpu_b": 0.0,
+     "rt": 0.0061532180833,
+     "npu": 0.44781062245845,
+     "simt": 0.0245391608561,
+     "dsp": 0.01887580753785,
+     "noc_cache": 0.008833917417752777,
+     "dram_io": 0.086035796970525
+    },
+    "dram_gbps": 12.706889896697998
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 15.181830584013369,
+   "wall_per_sim_s": 1.518183058401337,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {},
+    "seed": 1,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "S1",
+    "seed": 1
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 2,
+   "duration_s": 10.0,
+   "chip_only": false,
+   "robot": {
+    "duration_s": 10.0,
+    "objects_offered": 11,
+    "grasp_attempts": 3,
+    "grasp_success": 3,
+    "placed": 2,
+    "grasp_success_rate": 1.0,
+    "place_success_rate": 0.6666666666666666,
+    "objects_missed": 2,
+    "objects_missed_per_min": 12.0,
+    "picks_per_min": 12.0,
+    "mean_placement_error_m": 0.008767795899562182,
+    "grasp_align_err_m": {
+     "n": 3,
+     "mean": 0.003359011546007011,
+     "p50": 0.0021866849601254196,
+     "p95": 0.005890319647839296,
+     "p99": 0.006219531620080529,
+     "max": 0.006301834613140838
+    },
+    "joint_tracking_rms_rad": 0.002185950933782563,
+    "oscillation_episodes": 0,
+    "oscillation_severity_peak": 0.0,
+    "oscillation_time_s": 0.0,
+    "safety_stop_latency_ms": {
+     "n": 0,
+     "mean": null,
+     "p50": null,
+     "p95": null,
+     "p99": null,
+     "max": null
+    },
+    "safety_zone_entries": 0,
+    "zone_visits": [],
+    "min_human_separation_m": null,
+    "min_human_separation_moving_m": null
+   },
+   "tasks": {
+    "T10_record": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.26349757043,
+      "p50": 0.9714290219999999,
+      "p95": 1.9813040461,
+      "p99": 1.98188040002,
+      "max": 1.981930991
+     },
+     "deadline_us": 33333,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 0.156248,
+      "runqueue": 0.6560303206666667,
+      "noc": 0.04500491186333334,
+      "dram": 0.004239261226666667,
+      "cache": 0.00021412267333333334,
+      "dma": 0.017760954,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T1_ingest_overhead": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.48151823401,
+      "p50": 1.323005545,
+      "p95": 1.715803721,
+      "p99": 1.715803721,
+      "max": 5.233654769
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.383896,
+      "runqueue": 0.13411495512000002,
+      "noc": 0.060989290296666665,
+      "dram": 0.004786636163333333,
+      "cache": 9.384096333333333e-05,
+      "dma": 0.006821333333333333,
+      "middleware": 0.889537974,
+      "engine_queue": 0.0012782041333333333
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T1_ingest_wrist": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.6041712234233332,
+      "p50": 1.348259659,
+      "p95": 2.153373087,
+      "p99": 2.279187168179982,
+      "max": 4.245880809
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.384,
+      "runqueue": 0.35933817979666666,
+      "noc": 0.05491631001,
+      "dram": 0.011850854289999999,
+      "cache": 9.339932666666666e-05,
+      "dma": 0.0068,
+      "middleware": 0.78717248
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T2_detect": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 3.1414397192433334,
+      "p50": 3.0787890190000002,
+      "p95": 3.9536364382,
+      "p99": 4.10002901506,
+      "max": 4.163136681
+     },
+     "deadline_us": 33000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 2.189365947863333,
+      "runqueue": 0.14419013135,
+      "engine_queue": 0.17165685433333333,
+      "noc": 0.08036254963333334,
+      "dram": 0.05019386823666666,
+      "cache": 0.0012138,
+      "middleware": 0.450142077,
+      "preemption": 0.054314490826666666
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T3_esdf": {
+     "completed": 150,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.5478376203466666,
+      "p50": 1.294376764,
+      "p95": 2.4614842297,
+      "p99": 2.6048927851799997,
+      "max": 2.620672649
+     },
+     "deadline_us": 66000,
+     "criticality": "medium",
+     "attribution_mean_ms": {
+      "compute": 0.12707773,
+      "runqueue": 0.35089982676666664,
+      "engine_queue": 0.26710067528,
+      "noc": 0.1493476717666667,
+      "dram": 0.17012852772,
+      "cache": 0.00017215681333333332,
+      "dma": 0.013000015,
+      "middleware": 0.470111017
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T4_vla": {
+     "completed": 80,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 56.473566037825,
+      "p50": 56.65537177,
+      "p95": 56.83080937,
+      "p99": 56.90772986102,
+      "max": 56.950470174
+     },
+     "deadline_us": 100000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 39.8681382734875,
+      "runqueue": 0.392498654725,
+      "engine_queue": 1.4057460193,
+      "noc": 4.041947101525,
+      "dram": 9.6428818238625,
+      "cache": 0.025261840225000002,
+      "preemption": 0.5834235467000001,
+      "middleware": 0.513668778
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T5_plan": {
+     "completed": 16,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 10.000595959750001,
+      "p50": 9.6658367195,
+      "p95": 11.068471206,
+      "p99": 11.068501805999999,
+      "max": 11.068509456
+     },
+     "deadline_us": 50000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 8.650902683,
+      "runqueue": 0.899504625375,
+      "noc": 0.0061128223125,
+      "dram": 0.003802349875,
+      "cache": 2e-05,
+      "dma": 0.001394668,
+      "middleware": 0.402071887,
+      "engine_queue": 0.0367869241875
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T6_estimate": {
+     "completed": 2000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.7204470450225,
+      "p50": 0.824265747,
+      "p95": 1.588265747,
+      "p99": 1.588265747,
+      "max": 2.079244241
+     },
+     "deadline_us": 5000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.001983,
+      "runqueue": 0.32108097157450005,
+      "middleware": 0.397359455,
+      "noc": 2.3618448e-05
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T7_control": {
+     "completed": 9999,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.0019922286287628764,
+      "p50": 0.001989167,
+      "p95": 0.001989167,
+      "p99": 0.001989167,
+      "max": 0.012271529
+     },
+     "deadline_us": 1000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.001989167,
+      "runqueue": 3.0616287628762873e-06
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T8_safety": {
+     "completed": 1000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.551766271327,
+      "p50": 1.5452629075000002,
+      "p95": 2.447501401,
+      "p99": 2.48401775,
+      "max": 2.554386992
+     },
+     "deadline_us": 10000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.327998592803,
+      "runqueue": 0.5620924573589999,
+      "engine_queue": 0.039823673766,
+      "noc": 0.104328104106,
+      "dram": 0.045897526491,
+      "cache": 0.00128,
+      "dma": 0.000752,
+      "middleware": 0.425189401,
+      "preemption": 0.044404515802
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {
+    "camera_to_grasp": {
+     "n": 16,
+     "mean": 180.9375,
+     "p50": 97.0,
+     "p95": 781.25,
+     "p99": 786.65,
+     "max": 788.0
+    },
+    "human_to_slowdown": {
+     "n": 998,
+     "mean": 21.909819639278556,
+     "p50": 23.0,
+     "p95": 37.0,
+     "p99": 38.0,
+     "max": 41.0
+    },
+    "camera_to_detection": {
+     "n": 300,
+     "mean": 5.636666666666667,
+     "p50": 6.0,
+     "p95": 7.0,
+     "p99": 7.009999999999991,
+     "max": 8.0
+    }
+   },
+   "attribution": {
+    "T10_record": {
+     "dominant_missed": null
+    },
+    "T1_ingest_overhead": {
+     "dominant_missed": null
+    },
+    "T1_ingest_wrist": {
+     "dominant_missed": null
+    },
+    "T2_detect": {
+     "dominant_missed": null
+    },
+    "T3_esdf": {
+     "dominant_missed": null
+    },
+    "T4_vla": {
+     "dominant_missed": null
+    },
+    "T5_plan": {
+     "dominant_missed": null
+    },
+    "T6_estimate": {
+     "dominant_missed": null
+    },
+    "T7_control": {
+     "dominant_missed": null
+    },
+    "T8_safety": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 8.999,
+    "energy_j": 40.60710697893437,
+    "energy_soc_j": 35.62498686224396,
+    "regulator_loss_j": 4.9821201166904086,
+    "avg_power_w": 4.512402153454202,
+    "peak_power_w": 7.484553697295821,
+    "energy_per_robot_hour_wh": 4.512402153454202,
+    "peak_temp_c": 59.2395104321685,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 3.0533811941996545,
+     "cpu_b": 2.4102527451772757,
+     "rt": 0.12153959530031799,
+     "npu": 8.50683160749698,
+     "simt": 4.603545554942236,
+     "dsp": 0.3465196073580005,
+     "noc_cache": 9.230527209760568,
+     "dram_io": 12.334509464699494
+    },
+    "energy_j_by_part": {
+     "dynamic": 9.202265074711212,
+     "clock": 11.362753021589766,
+     "leakage": 15.059968765943236,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 4.9821201166904086
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.5912810628979307,
+      "clock": 1.0001236627999996,
+      "leakage": 1.0654619578968396,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.3965145106049057
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 1.0001236627999996,
+      "leakage": 1.0544605498509696,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.3556685325263077
+     },
+     "rt": {
+      "dynamic": 0.002860202239519525,
+      "clock": 0.0506085762000001,
+      "leakage": 0.05160600057059697,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01646481629020104
+     },
+     "npu": {
+      "dynamic": 3.623930876011187,
+      "clock": 1.9441295616001717,
+      "leakage": 2.0389104895792465,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.8998606803065777
+     },
+     "simt": {
+      "dynamic": 0.08237598165222403,
+      "clock": 1.9060083577596583,
+      "leakage": 1.9931141037455655,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.6220471117844406
+     },
+     "dsp": {
+      "dynamic": 0.002181051187199999,
+      "clock": 0.1470076640000259,
+      "leakage": 0.1499124225006955,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.047418469670105136
+     },
+     "noc_cache": {
+      "dynamic": 0.7444240877528363,
+      "clock": 3.5263481400003274,
+      "leakage": 3.7645829249120073,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 1.1951720570956872
+     },
+     "dram_io": {
+      "dynamic": 4.155211812969911,
+      "clock": 1.7884033964299837,
+      "leakage": 4.941920316887328,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 1.4489739384122309
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 14445,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 56.74987391271188,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 2.319599682585262
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 127031984077.11472,
+    "dma_bytes": 3585804016.0,
+    "flit_hops": 11577891891.324791,
+    "utilization": {
+     "cpu_a": 0.0664787895233,
+     "cpu_b": 0.0,
+     "rt": 0.0061532180833,
+     "npu": 0.4481932008298,
+     "simt": 0.0233461267292,
+     "dsp": 0.0187769090664,
+     "noc_cache": 0.0088335437406,
+     "dram_io": 0.086063649592
+    },
+    "unit_utilization": {
+     "cpu_a": 0.066478789725475,
+     "cpu_b": 0.0,
+     "rt": 0.0061532180833,
+     "npu": 0.448193201039075,
+     "simt": 0.023346126730425,
+     "dsp": 0.018776909097,
+     "noc_cache": 0.008833544030165277,
+     "dram_io": 0.086063649812275
+    },
+    "dram_gbps": 12.703198407711472
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 15.379887707997113,
+   "wall_per_sim_s": 1.5379887707997113,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {},
+    "seed": 2,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "S1",
+    "seed": 2
+   },
+   "_ok": true
+  },
+  {
+   "scenario": "S1 Nominal pick",
+   "scenario_file": "configs/scenarios/S1_nominal.yaml",
+   "policy": "P0_nominal",
+   "seed": 3,
+   "duration_s": 10.0,
+   "chip_only": false,
+   "robot": {
+    "duration_s": 10.0,
+    "objects_offered": 11,
+    "grasp_attempts": 2,
+    "grasp_success": 2,
+    "placed": 2,
+    "grasp_success_rate": 1.0,
+    "place_success_rate": 1.0,
+    "objects_missed": 1,
+    "objects_missed_per_min": 6.0,
+    "picks_per_min": 12.0,
+    "mean_placement_error_m": 0.007766084852392519,
+    "grasp_align_err_m": {
+     "n": 2,
+     "mean": 0.0048131795183999826,
+     "p50": 0.0048131795183999826,
+     "p95": 0.007813027430690383,
+     "p99": 0.00807968057844953,
+     "max": 0.008146343865389316
+    },
+    "joint_tracking_rms_rad": 0.0025425828632803012,
+    "oscillation_episodes": 0,
+    "oscillation_severity_peak": 0.0,
+    "oscillation_time_s": 0.0,
+    "safety_stop_latency_ms": {
+     "n": 0,
+     "mean": null,
+     "p50": null,
+     "p95": null,
+     "p99": null,
+     "max": null
+    },
+    "safety_zone_entries": 0,
+    "zone_visits": [],
+    "min_human_separation_m": null,
+    "min_human_separation_moving_m": null
+   },
+   "tasks": {
+    "T10_record": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.2643538980166666,
+      "p50": 0.971998613,
+      "p95": 1.9814298890000002,
+      "p99": 1.9816825174800001,
+      "max": 1.981909543
+     },
+     "deadline_us": 33333,
+     "criticality": "low",
+     "attribution_mean_ms": {
+      "compute": 0.156248,
+      "runqueue": 0.6560303206666667,
+      "noc": 0.04551720988666666,
+      "dram": 0.004583593273333334,
+      "cache": 0.00021382019,
+      "dma": 0.017760954,
+      "middleware": 0.384
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T1_ingest_overhead": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.4944829999933333,
+      "p50": 1.3213439405,
+      "p95": 1.715803721,
+      "p99": 2.2304878020999723,
+      "max": 5.233573765
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.382644,
+      "runqueue": 0.13468598939666668,
+      "noc": 0.07302580882,
+      "dram": 0.005746165173333333,
+      "cache": 9.375640333333334e-05,
+      "dma": 0.006832,
+      "middleware": 0.889537974,
+      "engine_queue": 0.0019173062
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T1_ingest_wrist": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.6166663723966663,
+      "p50": 1.3485609455,
+      "p95": 2.150089709,
+      "p99": 4.2458303189999995,
+      "max": 4.246045832
+     },
+     "deadline_us": 15000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.384,
+      "runqueue": 0.3574611986766667,
+      "noc": 0.06437482264333333,
+      "dram": 0.016764690316666667,
+      "cache": 9.318076e-05,
+      "dma": 0.0068,
+      "middleware": 0.78717248
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T2_detect": {
+     "completed": 300,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 3.1712824931766668,
+      "p50": 3.0989497774999997,
+      "p95": 4.09285169775,
+      "p99": 4.161685761,
+      "max": 4.162705696
+     },
+     "deadline_us": 33000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 2.192297415946667,
+      "runqueue": 0.17255797456333333,
+      "engine_queue": 0.17015319195666667,
+      "noc": 0.07923293090000001,
+      "dram": 0.05086342941666666,
+      "cache": 0.0012144,
+      "middleware": 0.450142077,
+      "preemption": 0.05482107339333333
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T3_esdf": {
+     "completed": 150,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.603519267046667,
+      "p50": 1.294376764,
+      "p95": 2.5107134318499997,
+      "p99": 2.990738573,
+      "max": 4.929250072
+     },
+     "deadline_us": 66000,
+     "criticality": "medium",
+     "attribution_mean_ms": {
+      "compute": 0.1283992845,
+      "runqueue": 0.38185399523333335,
+      "engine_queue": 0.26751263061333336,
+      "noc": 0.17751246157333334,
+      "dram": 0.16495784561333335,
+      "cache": 0.00017201751333333334,
+      "dma": 0.013000015,
+      "middleware": 0.470111017
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T4_vla": {
+     "completed": 80,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 56.47865743387499,
+      "p50": 56.675112558500004,
+      "p95": 56.875350306799994,
+      "p99": 56.88132885866,
+      "max": 56.884829622
+     },
+     "deadline_us": 100000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 39.8750111483125,
+      "runqueue": 0.412164562725,
+      "engine_queue": 1.4232797694125,
+      "noc": 4.0273099488,
+      "dram": 9.6248023538625,
+      "cache": 0.025261447725,
+      "preemption": 0.5771594250375001,
+      "middleware": 0.513668778
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T5_plan": {
+     "completed": 19,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 10.232702337157894,
+      "p50": 10.008577398,
+      "p95": 11.532487063,
+      "p99": 11.532487063,
+      "max": 11.532487063
+     },
+     "deadline_us": 50000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 8.691276885,
+      "runqueue": 1.0191081908421054,
+      "noc": 0.005931811263157895,
+      "dram": 0.003818092789473684,
+      "cache": 2e-05,
+      "dma": 0.001394668,
+      "middleware": 0.402071887,
+      "engine_queue": 0.10908080226315789
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T6_estimate": {
+     "completed": 2000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.7257556308124999,
+      "p50": 0.824265747,
+      "p95": 1.588265747,
+      "p99": 1.588265747,
+      "max": 2.98444014
+     },
+     "deadline_us": 5000,
+     "criticality": "high",
+     "attribution_mean_ms": {
+      "compute": 0.001983,
+      "runqueue": 0.3263856175175,
+      "middleware": 0.397359455,
+      "noc": 2.7558295e-05
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T7_control": {
+     "completed": 9999,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 0.002017524893889389,
+      "p50": 0.001989167,
+      "p95": 0.001989167,
+      "p99": 0.001989167,
+      "max": 0.02868506
+     },
+     "deadline_us": 1000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.001989167,
+      "runqueue": 2.8357893889388937e-05
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    },
+    "T8_safety": {
+     "completed": 1000,
+     "missed": 0,
+     "skipped": 0,
+     "miss_rate": 0.0,
+     "response_ms": {
+      "mean": 1.558036216945,
+      "p50": 1.5503720705,
+      "p95": 2.4410156617,
+      "p99": 2.48609827059,
+      "max": 2.997021682
+     },
+     "deadline_us": 10000,
+     "criticality": "safety",
+     "attribution_mean_ms": {
+      "compute": 0.327902089455,
+      "runqueue": 0.5677612387250001,
+      "engine_queue": 0.041063312090000005,
+      "noc": 0.10567422743799999,
+      "dram": 0.045161569457,
+      "cache": 0.00128,
+      "dma": 0.000752,
+      "middleware": 0.425189401,
+      "preemption": 0.04325237878
+     },
+     "attribution_missed_mean_ms": {},
+     "critical_path_wait_missed_ms": {}
+    }
+   },
+   "chains": {
+    "camera_to_grasp": {
+     "n": 18,
+     "mean": 187.61111111111111,
+     "p50": 96.5,
+     "p95": 917.4,
+     "p99": 941.8799999999999,
+     "max": 948.0
+    },
+    "human_to_slowdown": {
+     "n": 998,
+     "mean": 21.942885771543086,
+     "p50": 23.0,
+     "p95": 37.0,
+     "p99": 37.02999999999997,
+     "max": 41.0
+    },
+    "camera_to_detection": {
+     "n": 300,
+     "mean": 5.703333333333333,
+     "p50": 6.0,
+     "p95": 7.0,
+     "p99": 8.0,
+     "max": 9.0
+    }
+   },
+   "attribution": {
+    "T10_record": {
+     "dominant_missed": null
+    },
+    "T1_ingest_overhead": {
+     "dominant_missed": null
+    },
+    "T1_ingest_wrist": {
+     "dominant_missed": null
+    },
+    "T2_detect": {
+     "dominant_missed": null
+    },
+    "T3_esdf": {
+     "dominant_missed": null
+    },
+    "T4_vla": {
+     "dominant_missed": null
+    },
+    "T5_plan": {
+     "dominant_missed": null
+    },
+    "T6_estimate": {
+     "dominant_missed": null
+    },
+    "T7_control": {
+     "dominant_missed": null
+    },
+    "T8_safety": {
+     "dominant_missed": null
+    }
+   },
+   "power": {
+    "policy": "P0_nominal",
+    "power_mode": "nominal",
+    "scheduler": "fifo",
+    "duration_s": 8.999,
+    "energy_j": 40.637548545158516,
+    "energy_soc_j": 35.653399404766745,
+    "regulator_loss_j": 4.984149140391771,
+    "avg_power_w": 4.515784925564898,
+    "peak_power_w": 7.4328945843426215,
+    "energy_per_robot_hour_wh": 4.515784925564898,
+    "peak_temp_c": 59.256022967036536,
+    "time_throttled_s": 0.0,
+    "time_throttled_s_by_domain": {},
+    "first_throttle_s": null,
+    "first_throttle_binding_s": null,
+    "time_throttle_binding_s": 0.0,
+    "time_throttle_binding_s_by_domain": {},
+    "energy_j_by_domain": {
+     "cpu_a": 3.0537572258917423,
+     "cpu_b": 2.410278455706931,
+     "rt": 0.12154082850819782,
+     "npu": 8.506899718775058,
+     "simt": 4.623851222753336,
+     "dsp": 0.34652320329504416,
+     "noc_cache": 9.23547834524058,
+     "dram_io": 12.339219544987516
+    },
+    "energy_j_by_part": {
+     "dynamic": 9.229809067096358,
+     "clock": 11.362753021589766,
+     "leakage": 15.0608373160808,
+     "wake": 0.0,
+     "dvfs": 0.0,
+     "regulator": 4.984149140391771
+    },
+    "energy_j_by_domain_part": {
+     "cpu_a": {
+      "dynamic": 0.5916069005416461,
+      "clock": 1.0001236627999996,
+      "leakage": 1.0654923964286764,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.3965342661214397
+     },
+     "cpu_b": {
+      "dynamic": 0.0,
+      "clock": 1.0001236627999996,
+      "leakage": 1.0544846813125024,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.35567011159442535
+     },
+     "rt": {
+      "dynamic": 0.0028602022395195254,
+      "clock": 0.0506085762000001,
+      "leakage": 0.05160716142993079,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.01646488863874652
+     },
+     "npu": {
+      "dynamic": 3.6239308760111926,
+      "clock": 1.9441295616001717,
+      "leakage": 2.0389566878277976,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.8998825933360578
+     },
+     "simt": {
+      "dynamic": 0.10102142416537606,
+      "clock": 1.9060083577596583,
+      "leakage": 1.993415677104431,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.6234057637235504
+     },
+     "dsp": {
+      "dynamic": 0.002181051187199999,
+      "clock": 0.1470076640000259,
+      "leakage": 0.1499157948799058,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 0.04741869322793656
+     },
+     "noc_cache": {
+      "dynamic": 0.748873612581808,
+      "clock": 3.5263481400003274,
+      "leakage": 3.7647707661709533,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 1.1954858264878532
+     },
+     "dram_io": {
+      "dynamic": 4.159335000369235,
+      "clock": 1.7884033964299837,
+      "leakage": 4.942194150926523,
+      "wake": 0.0,
+      "dvfs": 0.0,
+      "regulator": 1.4492869972617775
+     }
+    },
+    "dvfs_transitions": 0,
+    "wakeups": 0,
+    "jobs_completed": 14448,
+    "misses_by_task": {},
+    "misses_total": 0,
+    "safety_misses": 0,
+    "hypothetical": false,
+    "labels": [],
+    "low_voltage_arith": {
+     "enabled": false,
+     "domain": "npu",
+     "mac_vmin_v": 0.4,
+     "reduction_x": 1.0,
+     "opp_step_v": 0.05
+    },
+    "surrogate": null,
+    "surrogate_stats": null,
+    "thermal_init": "settle",
+    "accounted_from_s": 1.0,
+    "settle": {
+     "t_s": 1.0,
+     "steady_t_max_c": 56.74980028488164,
+     "runaway": false,
+     "capped_at_c": null,
+     "nonleak_w": 2.319593964754861
+    },
+    "ambient_c_end": 25.0
+   },
+   "activity": {
+    "dram_bytes": 127145722122.71034,
+    "dma_bytes": 3586492144.0,
+    "flit_hops": 11630979190.289078,
+    "utilization": {
+     "cpu_a": 0.0667055847095,
+     "cpu_b": 0.0,
+     "rt": 0.0061532180833,
+     "npu": 0.4480176027074,
+     "simt": 0.0257877206371,
+     "dsp": 0.0187719667506,
+     "noc_cache": 0.0088308888224,
+     "dram_io": 0.0860562742212
+    },
+    "unit_utilization": {
+     "cpu_a": 0.066705584910325,
+     "cpu_b": 0.0,
+     "rt": 0.0061532180833,
+     "npu": 0.448017602911525,
+     "simt": 0.0257877206386,
+     "dsp": 0.018771966781,
+     "noc_cache": 0.008830889111320833,
+     "dram_io": 0.086056274441975
+    },
+    "dram_gbps": 12.714572212271035
+   },
+   "misses": {
+    "total": 0,
+    "safety": 0,
+    "by_task": {}
+   },
+   "wall_s": 15.251439917017706,
+   "wall_per_sim_s": 1.5251439917017706,
+   "provenance": {
+    "script": "studies/runner.py",
+    "git_sha": "a7a1da1",
+    "date": "2026-11-18",
+    "core_build": {
+     "file": "glasschip_core.cpython-312-darwin.so",
+     "sha256_12": "4b0e98de5c2a",
+     "mtime": "2026-11-18T02:21:04",
+     "build_id": "3e9cf32325432d0f",
+     "version": "0.2.0"
+    },
+    "scenario": "configs/scenarios/S1_nominal.yaml",
+    "policy": "configs/policies/P0_nominal.yaml",
+    "fidelity": "configs/fidelity/interactive.yaml",
+    "soc": "configs/soc/vx1.yaml",
+    "overrides": {},
+    "seed": 3,
+    "transport": "copy",
+    "executor": "single_threaded",
+    "ambient_c": 25.0,
+    "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph"
+   },
+   "_job": {
+    "part": "S1",
+    "seed": 3
+   },
+   "_ok": true
+  }
+ ]
+}

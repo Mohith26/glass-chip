@@ -1,0 +1,22 @@
+# Reference mix for calibration: every component at its highest available
+# level. NPU and CPU L2 use the SCALE-Sim and gem5 tables in calib/tables/
+# (loaded automatically); DRAM L2 runs Ramulator 2 and NoC L2 runs BookSim 2
+# in-process (plugins core/build/libgc_ramulator.dylib, libgc_booksim.dylib),
+# synchronized every quantum_ns. Thousands of times slower than real time:
+# use for short calibration runs. Not checkpointable.
+name: reference
+cpu: L2
+npu: L2
+simt: L1
+dsp: L1
+noc: L2
+dram: L2
+cache: L1
+quantum_ns: 100     # error measured in core/bench/quantum.json
+params:
+  bulk_chunk_bytes: 4096
+  cpu_miss_bytes: 64
+  cache_block_bytes: 256
+  noc_model_requests: true
+  # dram_backend_plugin / ramulator_config / noc_backend_plugin / booksim_config
+  # default to the files next to core/build and calib/ (see configs/fidelity/README.md)

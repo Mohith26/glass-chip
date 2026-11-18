@@ -1,0 +1,667 @@
+{
+ "headline": {
+  "missed_jobs_by_case": {
+   "S7_P0": 943,
+   "S8_P0": 75,
+   "S6_P0": 0,
+   "S2_P0": 0
+  },
+  "dominant_wait_overall": {
+   "noc": 244,
+   "runqueue": 770,
+   "dma": 1,
+   "preemption": 3
+  },
+  "dominant_wait_by_case_task": {
+   "S7_P0": {
+    "T10_record_4k": "noc",
+    "T1_ingest_overhead": "runqueue",
+    "T1_ingest_wrist": "runqueue",
+    "T2_detect": "runqueue",
+    "T3_esdf": "runqueue",
+    "T4_vla": "runqueue",
+    "T5_plan": "runqueue",
+    "T6_estimate": "runqueue",
+    "T8_safety": "runqueue"
+   },
+   "S8_P0": {
+    "T4_vla": "noc",
+    "T6_estimate": "runqueue"
+   },
+   "S6_P0": {},
+   "S2_P0": {}
+  }
+ },
+ "cases": {
+  "S7_P0": {
+   "scenario": "S7",
+   "policy": "P0",
+   "missed_jobs": 943,
+   "safety_missed": 184,
+   "tasks": {
+    "T10_record_4k": {
+     "missed": 241,
+     "mean_response_ms": 134.6194770112199,
+     "deadline_ms": 33.332999999999984,
+     "attribution_mean_ms": {
+      "compute": 53.759829139004154,
+      "runqueue": 23.524421981381742,
+      "engine_queue": 1.1731352915975102,
+      "noc": 47.32188569659751,
+      "dram": 2.424980362099585,
+      "cache": 0.05750626804149378,
+      "dma": 5.9737182724979245,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.38400000000000006
+     },
+     "attribution_share": {
+      "compute": 0.3993465903490586,
+      "runqueue": 0.17474753656501793,
+      "engine_queue": 0.008714454383890785,
+      "noc": 0.35152332149272464,
+      "dram": 0.018013592207741784,
+      "cache": 0.00042717643329353373,
+      "dma": 0.044374843857104294,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.0028524847111684693
+     },
+     "dominant_attribution_counts": {
+      "noc": 65,
+      "compute": 159,
+      "runqueue": 17
+     },
+     "dominant_wait_counts": {
+      "noc": 165,
+      "runqueue": 75,
+      "dma": 1
+     },
+     "dominant_wait": "noc",
+     "critical_path_wait_ms_total": {
+      "runqueue": 5668.421697512997,
+      "engine_queue": 282.7256052749999
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 18.26028415961068,
+      "runqueue": 6.457341379993441,
+      "noc": 12.623399840275068,
+      "dram": 0.7682067930786264,
+      "cache": 0.019911776027439456,
+      "dma": 2.0293218186954576,
+      "middleware": 0.384,
+      "engine_queue": 0.29715501607455325
+     }
+    },
+    "T1_ingest_overhead": {
+     "missed": 86,
+     "mean_response_ms": 56.198639817302336,
+     "deadline_ms": 15.0,
+     "attribution_mean_ms": {
+      "compute": 0.33931199999999995,
+      "runqueue": 50.08168130076744,
+      "engine_queue": 1.7141401516162789,
+      "noc": 3.1597225363023256,
+      "dram": 0.006932989151162792,
+      "cache": 0.00010356313953488373,
+      "dma": 0.007209302325581397,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.8895379740000002
+     },
+     "attribution_share": {
+      "compute": 0.006037726199478821,
+      "runqueue": 0.8911546874369083,
+      "engine_queue": 0.030501452654171403,
+      "noc": 0.05622418169860254,
+      "dram": 0.00012336578204919963,
+      "cache": 1.8428050905068152e-06,
+      "dma": 0.00012828250557341445,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.015828460918125835
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 83,
+      "noc": 3
+     },
+     "dominant_wait_counts": {
+      "runqueue": 83,
+      "noc": 3
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 4306.680591866001,
+      "engine_queue": 147.41605303900002
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 0.3734421078360891,
+      "runqueue": 5.676889500173662,
+      "noc": 0.5506961202216523,
+      "dram": 0.0061197282172515965,
+      "cache": 9.598562964566586e-05,
+      "dma": 0.006912027536326602,
+      "middleware": 0.889537974,
+      "engine_queue": 0.20263139732192342
+     }
+    },
+    "T1_ingest_wrist": {
+     "missed": 78,
+     "mean_response_ms": 54.48385053852564,
+     "deadline_ms": 15.0,
+     "attribution_mean_ms": {
+      "compute": 0.16581907692307693,
+      "runqueue": 47.72645914689743,
+      "engine_queue": 1.9586815514230773,
+      "noc": 3.8293547668589745,
+      "dram": 0.0073848437051282035,
+      "cache": 0.00012739066666666668,
+      "dma": 0.008851282051282054,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.7871724800000001
+     },
+     "attribution_share": {
+      "compute": 0.003043453707550019,
+      "runqueue": 0.8759744158161135,
+      "engine_queue": 0.0359497636834256,
+      "noc": 0.07028421686443087,
+      "dram": 0.00013554188318438262,
+      "cache": 2.3381362625350514e-06,
+      "dma": 0.00016245698429525083,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.014447812924737926
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 77,
+      "noc": 1
+     },
+     "dominant_wait_counts": {
+      "runqueue": 77,
+      "noc": 1
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 3722.3518134579986,
+      "engine_queue": 152.77716101100006
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 0.3541165068187454,
+      "runqueue": 4.699305593886065,
+      "noc": 0.5390643986672763,
+      "dram": 0.006350080849718985,
+      "cache": 9.814679553062237e-05,
+      "dma": 0.007079990081824944,
+      "middleware": 0.78717248,
+      "engine_queue": 0.19714099751981567
+     }
+    },
+    "T2_detect": {
+     "missed": 24,
+     "mean_response_ms": 54.51028974608332,
+     "deadline_ms": 33.0,
+     "attribution_mean_ms": {
+      "compute": 2.3628116530833334,
+      "runqueue": 49.55632092725,
+      "engine_queue": 0.3578653700416667,
+      "noc": 1.5301567507083336,
+      "dram": 0.10230343158333334,
+      "cache": 0.0012197364583333332,
+      "dma": 0.0,
+      "preemption": 0.14946979995833332,
+      "dvfs": 0.0,
+      "middleware": 0.450142077
+     },
+     "attribution_share": {
+      "compute": 0.04334615838751996,
+      "runqueue": 0.9091186482055109,
+      "engine_queue": 0.006565097556968682,
+      "noc": 0.028070970780673173,
+      "dram": 0.0018767728452715488,
+      "cache": 2.2376260775993648e-05,
+      "dma": 0.0,
+      "preemption": 0.002742047430945329,
+      "dvfs": 0.0,
+      "middleware": 0.008257928532334457
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 24
+     },
+     "dominant_wait_counts": {
+      "runqueue": 24
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "engine_queue": 8.588768881,
+      "preemption": 2.197275199,
+      "runqueue": 1189.201702254
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 2.2095668413293366,
+      "runqueue": 4.132594726466652,
+      "engine_queue": 0.21264416979634881,
+      "noc": 0.20402565759452215,
+      "dram": 0.06511836457636529,
+      "cache": 0.0012155303463050233,
+      "middleware": 0.450142077,
+      "preemption": 0.1008828130936047
+     }
+    },
+    "T3_esdf": {
+     "missed": 25,
+     "mean_response_ms": 122.58089915928,
+     "deadline_ms": 66.0,
+     "attribution_mean_ms": {
+      "compute": 0.12780492023999998,
+      "runqueue": 106.07690096280001,
+      "engine_queue": 4.1922114185999995,
+      "noc": 11.321961561759998,
+      "dram": 0.37871523824000003,
+      "cache": 0.00019402564,
+      "dma": 0.013000014999999998,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.470111017
+     },
+     "attribution_share": {
+      "compute": 0.0010426169257735003,
+      "runqueue": 0.8653623989571579,
+      "engine_queue": 0.034199548603022524,
+      "noc": 0.09236317925069541,
+      "dram": 0.0030895126470552514,
+      "cache": 1.5828374675885322e-06,
+      "dma": 0.00010605253419709339,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.0038351082446307066
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 25
+     },
+     "dominant_wait_counts": {
+      "runqueue": 25
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 2651.822524070001,
+      "engine_queue": 104.805285465
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 0.12719719035593618,
+      "runqueue": 11.97396226369565,
+      "engine_queue": 0.6323342951449791,
+      "noc": 0.930948684202894,
+      "dram": 0.2427894739632235,
+      "cache": 0.00017917846628312414,
+      "dma": 0.013000015,
+      "middleware": 0.470111017
+     }
+    },
+    "T4_vla": {
+     "missed": 22,
+     "mean_response_ms": 162.93904491454546,
+     "deadline_ms": 100.0,
+     "attribution_mean_ms": {
+      "compute": 48.65177876213636,
+      "runqueue": 89.2049900245,
+      "engine_queue": 2.0469526344999998,
+      "noc": 11.41268312290909,
+      "dram": 10.620210299136362,
+      "cache": 0.025270619272727265,
+      "dma": 0.0,
+      "preemption": 0.4634906740909091,
+      "dvfs": 0.0,
+      "middleware": 0.5136687779999999
+     },
+     "attribution_share": {
+      "compute": 0.2985888298759338,
+      "runqueue": 0.5474746097307996,
+      "engine_queue": 0.012562689535669849,
+      "noc": 0.07004265385803969,
+      "dram": 0.06517903860738969,
+      "cache": 0.0001550924720712621,
+      "dma": 0.0,
+      "preemption": 0.0028445648146151223,
+      "dvfs": 0.0,
+      "middleware": 0.0031525211054808694
+     },
+     "dominant_attribution_counts": {
+      "compute": 6,
+      "runqueue": 16
+     },
+     "dominant_wait_counts": {
+      "runqueue": 22
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 1962.3797805390002,
+      "engine_queue": 45.03295795899999,
+      "preemption": 5.0067948300000005
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 41.093912264748596,
+      "runqueue": 11.340607965061695,
+      "engine_queue": 1.50266771778715,
+      "noc": 4.905478481622129,
+      "dram": 9.83241318628918,
+      "cache": 0.025262841101680672,
+      "preemption": 0.5693089912552871,
+      "middleware": 0.513668778
+     }
+    },
+    "T5_plan": {
+     "missed": 7,
+     "mean_response_ms": 116.83535278614286,
+     "deadline_ms": 50.0,
+     "attribution_mean_ms": {
+      "compute": 8.730240110571428,
+      "runqueue": 83.47738513128571,
+      "engine_queue": 11.340275851,
+      "noc": 12.862758236285712,
+      "dram": 0.021206900857142857,
+      "cache": 2.0001142857142857e-05,
+      "dma": 0.001394668,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.402071887
+     },
+     "attribution_share": {
+      "compute": 0.07472258954489047,
+      "runqueue": 0.714487380237418,
+      "engine_queue": 0.09706202429805136,
+      "noc": 0.11009303202798466,
+      "dram": 0.0001815109926184781,
+      "cache": 1.711908457515701e-07,
+      "dma": 1.193703760669787e-05,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.0034413546705846674
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 7
+     },
+     "dominant_wait_counts": {
+      "runqueue": 7
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 584.299695919,
+      "engine_queue": 79.381930957
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 8.660379556540406,
+      "runqueue": 12.328141906577441,
+      "engine_queue": 1.3109319086902358,
+      "noc": 1.8843866560050504,
+      "dram": 0.013142216437710439,
+      "cache": 2.0329383838383835e-05,
+      "dma": 0.001394668,
+      "middleware": 0.402071887
+     }
+    },
+    "T6_estimate": {
+     "missed": 276,
+     "mean_response_ms": 27.3407177767029,
+     "deadline_ms": 5.0,
+     "attribution_mean_ms": {
+      "compute": 0.001983,
+      "runqueue": 26.94110126502536,
+      "engine_queue": 0.0,
+      "noc": 0.0002740566775362319,
+      "dram": 0.0,
+      "cache": 0.0,
+      "dma": 0.0,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.39735945500000003
+     },
+     "attribution_share": {
+      "compute": 7.252918581712292e-05,
+      "runqueue": 0.9853838324603881,
+      "engine_queue": 0.0,
+      "noc": 1.0023755768758798e-05,
+      "dram": 0.0,
+      "cache": 0.0,
+      "dma": 0.0,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.014533614598026068
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 276
+     },
+     "dominant_wait_counts": {
+      "runqueue": 276
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 7434.089949147002
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 0.001983,
+      "runqueue": 1.8640631481200582,
+      "middleware": 0.397359455,
+      "noc": 4.520036480464507e-05
+     }
+    },
+    "T8_safety": {
+     "missed": 184,
+     "mean_response_ms": 37.92584784153261,
+     "deadline_ms": 10.0,
+     "attribution_mean_ms": {
+      "compute": 0.32653584832608695,
+      "runqueue": 35.44487956014131,
+      "engine_queue": 0.19050457381521738,
+      "noc": 1.2887270102065218,
+      "dram": 0.06664583048369566,
+      "cache": 0.00128,
+      "dma": 0.000752,
+      "preemption": 0.1813336175597826,
+      "dvfs": 0.0,
+      "middleware": 0.425189401
+     },
+     "attribution_share": {
+      "compute": 0.008609849664810851,
+      "runqueue": 0.9345837094596368,
+      "engine_queue": 0.005023080159241575,
+      "noc": 0.03398017667505474,
+      "dram": 0.0017572667264332525,
+      "cache": 3.375006948686514e-05,
+      "dma": 1.9828165823533267e-05,
+      "preemption": 0.004781267338240072,
+      "dvfs": 0.0,
+      "middleware": 0.011211071741272317
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 178,
+      "preemption": 3,
+      "noc": 3
+     },
+     "dominant_wait_counts": {
+      "runqueue": 178,
+      "preemption": 3,
+      "noc": 3
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 6521.121839065999,
+      "engine_queue": 35.052841582000006,
+      "preemption": 27.45538563100001
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 0.33312963634041837,
+      "runqueue": 3.3628494537390696,
+      "engine_queue": 0.05437009662855459,
+      "noc": 0.2369769356555322,
+      "dram": 0.050186325892957344,
+      "cache": 0.00128,
+      "dma": 0.000752,
+      "middleware": 0.425189401,
+      "preemption": 0.0645073581454357
+     }
+    }
+   }
+  },
+  "S8_P0": {
+   "scenario": "S8",
+   "policy": "P0",
+   "missed_jobs": 75,
+   "safety_missed": 0,
+   "tasks": {
+    "T4_vla": {
+     "missed": 72,
+     "mean_response_ms": 116.23212224118055,
+     "deadline_ms": 100.0,
+     "attribution_mean_ms": {
+      "compute": 90.13483460988888,
+      "runqueue": 0.5429115357916667,
+      "engine_queue": 2.9091924925138892,
+      "noc": 10.636772782055553,
+      "dram": 9.432388837152779,
+      "cache": 0.025260078736111115,
+      "dma": 0.0,
+      "preemption": 1.6853666970416665,
+      "dvfs": 0.0,
+      "middleware": 0.8653952079999999
+     },
+     "attribution_share": {
+      "compute": 0.775472673749,
+      "runqueue": 0.004670925087861086,
+      "engine_queue": 0.025029160927452932,
+      "noc": 0.09151319426125895,
+      "dram": 0.08115130873701731,
+      "cache": 0.0002173244215888676,
+      "dma": 0.0,
+      "preemption": 0.014500007954294654,
+      "dvfs": 0.0,
+      "middleware": 0.0074454048615262575
+     },
+     "dominant_attribution_counts": {
+      "compute": 72
+     },
+     "dominant_wait_counts": {
+      "noc": 72
+     },
+     "dominant_wait": "noc",
+     "critical_path_wait_ms_total": {
+      "runqueue": 38.757630577,
+      "engine_queue": 209.46185946100002,
+      "preemption": 70.95640218700001
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 60.602217892385134,
+      "runqueue": 0.3888673164121622,
+      "engine_queue": 2.0079418086182432,
+      "noc": 7.287203237989865,
+      "dram": 9.522917544347973,
+      "cache": 0.02526066054054054,
+      "preemption": 1.0296449793817568,
+      "middleware": 0.6527023050810811
+     }
+    },
+    "T6_estimate": {
+     "missed": 3,
+     "mean_response_ms": 5.997987020666667,
+     "deadline_ms": 5.0,
+     "attribution_mean_ms": {
+      "compute": 0.0035699433333333335,
+      "runqueue": 5.279061354666666,
+      "engine_queue": 0.0,
+      "noc": 0.0,
+      "dram": 0.0,
+      "cache": 0.0,
+      "dma": 0.0,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.7153557226666667
+     },
+     "attribution_share": {
+      "compute": 0.0005951902398309192,
+      "runqueue": 0.8801388426612347,
+      "engine_queue": 0.0,
+      "noc": 0.0,
+      "dram": 0.0,
+      "cache": 0.0,
+      "dma": 0.0,
+      "preemption": 0.0,
+      "dvfs": 0.0,
+      "middleware": 0.11926596709893449
+     },
+     "dominant_attribution_counts": {
+      "runqueue": 3
+     },
+     "dominant_wait_counts": {
+      "runqueue": 3
+     },
+     "dominant_wait": "runqueue",
+     "critical_path_wait_ms_total": {
+      "runqueue": 15.819184064
+     },
+     "all_jobs_attribution_mean_ms": {
+      "compute": 0.002616868562884664,
+      "runqueue": 0.515813121984038,
+      "middleware": 0.5243758710890418,
+      "noc": 9.575783792563173e-06
+     }
+    }
+   }
+  },
+  "S6_P0": {
+   "scenario": "S6",
+   "policy": "P0",
+   "missed_jobs": 0,
+   "safety_missed": 0,
+   "tasks": {}
+  },
+  "S2_P0": {
+   "scenario": "S2",
+   "policy": "P0",
+   "missed_jobs": 0,
+   "safety_missed": 0,
+   "tasks": {}
+  }
+ },
+ "figures": [
+  "results/figures/s03_root_cause.svg",
+  "results/figures/s03_root_cause.png"
+ ],
+ "definitions": {
+  "dominant_wait": "largest non-compute attribution component of a missed job",
+  "attribution": "core's exact split of response time; components sum to the response"
+ },
+ "provenance": {
+  "script": "studies/s03_root_cause.py",
+  "git_sha": "a7a1da1",
+  "date": "2026-11-18",
+  "config_files": [
+   "configs/scenarios/S7",
+   "configs/scenarios/S8",
+   "configs/scenarios/S6",
+   "configs/scenarios/S2",
+   "configs/policies/P0_nominal.yaml"
+  ],
+  "seeds": [
+   1,
+   2
+  ],
+  "core_build": {
+   "file": "glasschip_core.cpython-312-darwin.so",
+   "sha256_12": "4b0e98de5c2a",
+   "mtime": "2026-11-18T02:21:04",
+   "build_id": "3e9cf32325432d0f",
+   "version": "0.2.0"
+  },
+  "fidelity": "configs/fidelity/interactive.yaml",
+  "soc": "configs/soc/vx1.yaml",
+  "behavior_source": "scripted expert in hybrid mode; VLA compute modeled from its operator graph",
+  "compute": {
+   "runs": 8,
+   "failed": 0,
+   "wall_s_total": 197.12124237400712,
+   "sim_s_total": 116.0
+  },
+  "mode": "chip_only",
+  "quick": false
+ }
+}
