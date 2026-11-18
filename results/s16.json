@@ -36,21 +36,21 @@
    "nominal": 0.9541284403669725,
    "NPU Vmin 0.55 V": 0.9636363636363636,
    "NPU Vmin 0.50 V": 0.8627450980392157,
-   "hot module (45 C)": 0.8666666666666667,
+   "hot module (45 C)": 0.845360824742268,
    "recording 24 Gbit/s (FIFO)": 0.9181818181818182
   },
   "pick_rate": {
    "nominal": 0.7890625,
    "NPU Vmin 0.55 V": 0.8046875,
    "NPU Vmin 0.50 V": 0.6484375,
-   "hot module (45 C)": 0.6953125,
+   "hot module (45 C)": 0.609375,
    "recording 24 Gbit/s (FIFO)": 0.7578125
   },
   "camera_to_grasp_p50_ms": {
    "nominal": 93.875,
    "NPU Vmin 0.55 V": 123.9375,
    "NPU Vmin 0.50 V": 170.9375,
-   "hot module (45 C)": 139.6875,
+   "hot module (45 C)": 193.5625,
    "recording 24 Gbit/s (FIFO)": 125.3125
   }
  },
@@ -733,62 +733,62 @@
   },
   "hot module (45 C)": {
    "runs": 8,
-   "grasp_attempts": 105,
-   "grasp_success": 91,
-   "grasp_success_rate": 0.8666666666666667,
+   "grasp_attempts": 97,
+   "grasp_success": 82,
+   "grasp_success_rate": 0.845360824742268,
    "grasp_success_ci95": [
-    0.7885632722139584,
-    0.9188868203976901
+    0.7604187140830996,
+    0.9039896253323798
    ],
-   "placed": 89,
+   "placed": 78,
    "offered": 128,
-   "pick_rate": 0.6953125,
+   "pick_rate": 0.609375,
    "pick_rate_ci95": [
-    0.6108473759049617,
-    0.7683955944473397
+    0.522844879109364,
+    0.6895311842879249
    ],
    "objects_missed_per_min": {
     "n": 8,
-    "mean": 3.75,
-    "lo": 2.7760651002010586,
-    "hi": 4.723934899798942
+    "mean": 4.875,
+    "lo": 3.3637069774723987,
+    "hi": 6.386293022527601
    },
    "camera_to_grasp_p50_ms": {
     "n": 8,
-    "mean": 139.6875,
-    "lo": 138.22339742226134,
-    "hi": 141.15160257773866
+    "mean": 193.5625,
+    "lo": 177.85280867044764,
+    "hi": 209.27219132955236
    },
    "camera_to_grasp_p99_ms": {
     "n": 8,
-    "mean": 238.87999999999994,
-    "lo": 235.52315848658367,
-    "hi": 242.2368415134162
+    "mean": 243.13625000000008,
+    "lo": 225.2616881344717,
+    "hi": 261.01081186552847
    },
    "vla_p99_ms": {
     "n": 8,
-    "mean": 153.11311663865126,
-    "lo": 133.66509769627666,
-    "hi": 172.56113558102587
+    "mean": 164.21808740951252,
+    "lo": 147.30306083121064,
+    "hi": 181.1331139878144
    },
-   "vla_miss_rate": 0.3487577639751553,
-   "vla_skipped": 620,
+   "vla_miss_rate": 0.9631147540983607,
+   "vla_skipped": 1880,
    "align_err_p50_mm": {
     "n": 8,
-    "mean": 12.011682578325011,
-    "lo": 9.152695317856736,
-    "hi": 14.870669838793287
+    "mean": 14.202836719513094,
+    "lo": 11.437585191407672,
+    "hi": 16.968088247618518
    },
    "time_throttled_s": {
     "n": 8,
-    "mean": 59.999,
-    "lo": 59.999,
-    "hi": 59.999
+    "mean": 58.999,
+    "lo": 58.999,
+    "hi": 58.999
    },
    "chip_misses_by_cause": {
-    "T4_vla: noc": 576,
-    "T6_estimate: runqueue": 19,
-    "T4_vla: dram": 547
+    "T4_vla: dram": 1410,
+    "T6_estimate: runqueue": 304,
+    "T4_vla: noc": 470
    }
   },
   "recording 24 Gbit/s (FIFO)": {
@@ -2336,21 +2336,21 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 144,
-     "why": "noc",
-     "mean_response_ms": 139.59
+     "missed": 235,
+     "why": "dram",
+     "mean_response_ms": 149.41
     },
     {
      "task": "T6_estimate",
-     "missed": 1,
+     "missed": 54,
      "why": "runqueue",
-     "mean_response_ms": 8.51
+     "mean_response_ms": 6.06
     }
    ],
    "robot": {
-    "grasp_attempts": 14,
-    "grasp_success": 11,
-    "placed": 11,
+    "grasp_attempts": 11,
+    "grasp_success": 9,
+    "placed": 9,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2365,23 +2365,23 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 126,
+     "missed": 235,
      "why": "dram",
-     "mean_response_ms": 119.67
+     "mean_response_ms": 134.91
     },
     {
      "task": "T6_estimate",
-     "missed": 3,
+     "missed": 16,
      "why": "runqueue",
-     "mean_response_ms": 7.35
+     "mean_response_ms": 6.05
     }
    ],
    "robot": {
     "grasp_attempts": 12,
-    "grasp_success": 12,
-    "placed": 12,
+    "grasp_success": 11,
+    "placed": 11,
     "objects_offered": 16,
-    "oscillation_episodes": 0,
+    "oscillation_episodes": 1,
     "safety_zone_entries": 0
    },
    "stop_latency_ms": []
@@ -2394,21 +2394,21 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 144,
-     "why": "noc",
-     "mean_response_ms": 137.25
+     "missed": 235,
+     "why": "dram",
+     "mean_response_ms": 129.55
     },
     {
      "task": "T6_estimate",
-     "missed": 3,
+     "missed": 2,
      "why": "runqueue",
-     "mean_response_ms": 8.56
+     "mean_response_ms": 6.07
     }
    ],
    "robot": {
-    "grasp_attempts": 14,
-    "grasp_success": 12,
-    "placed": 11,
+    "grasp_attempts": 12,
+    "grasp_success": 10,
+    "placed": 10,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2423,21 +2423,21 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 135,
-     "why": "dram",
-     "mean_response_ms": 120.11
+     "missed": 235,
+     "why": "noc",
+     "mean_response_ms": 174.07
     },
     {
      "task": "T6_estimate",
-     "missed": 2,
+     "missed": 116,
      "why": "runqueue",
-     "mean_response_ms": 7.18
+     "mean_response_ms": 6.05
     }
    ],
    "robot": {
-    "grasp_attempts": 12,
-    "grasp_success": 12,
-    "placed": 12,
+    "grasp_attempts": 11,
+    "grasp_success": 10,
+    "placed": 9,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2452,21 +2452,21 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 144,
+     "missed": 235,
      "why": "noc",
-     "mean_response_ms": 146.0
+     "mean_response_ms": 157.49
     },
     {
      "task": "T6_estimate",
-     "missed": 2,
+     "missed": 73,
      "why": "runqueue",
-     "mean_response_ms": 8.55
+     "mean_response_ms": 6.03
     }
    ],
    "robot": {
     "grasp_attempts": 13,
-    "grasp_success": 10,
-    "placed": 10,
+    "grasp_success": 8,
+    "placed": 7,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2481,21 +2481,21 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 144,
-     "why": "noc",
-     "mean_response_ms": 144.54
+     "missed": 235,
+     "why": "dram",
+     "mean_response_ms": 131.5
     },
     {
      "task": "T6_estimate",
-     "missed": 1,
+     "missed": 7,
      "why": "runqueue",
-     "mean_response_ms": 8.58
+     "mean_response_ms": 6.09
     }
    ],
    "robot": {
     "grasp_attempts": 13,
     "grasp_success": 11,
-    "placed": 10,
+    "placed": 11,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2510,21 +2510,15 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 145,
+     "missed": 235,
      "why": "dram",
-     "mean_response_ms": 119.8
-    },
-    {
-     "task": "T6_estimate",
-     "missed": 4,
-     "why": "runqueue",
-     "mean_response_ms": 7.66
+     "mean_response_ms": 129.48
     }
    ],
    "robot": {
-    "grasp_attempts": 15,
-    "grasp_success": 13,
-    "placed": 13,
+    "grasp_attempts": 13,
+    "grasp_success": 12,
+    "placed": 12,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2539,21 +2533,21 @@
    "chip": [
     {
      "task": "T4_vla",
-     "missed": 141,
+     "missed": 235,
      "why": "dram",
-     "mean_response_ms": 119.84
+     "mean_response_ms": 142.48
     },
     {
      "task": "T6_estimate",
-     "missed": 3,
+     "missed": 36,
      "why": "runqueue",
-     "mean_response_ms": 6.7
+     "mean_response_ms": 6.05
     }
    ],
    "robot": {
     "grasp_attempts": 12,
-    "grasp_success": 10,
-    "placed": 10,
+    "grasp_success": 11,
+    "placed": 9,
     "objects_offered": 16,
     "oscillation_episodes": 0,
     "safety_zone_entries": 0
@@ -2859,7 +2853,7 @@
  },
  "provenance": {
   "script": "studies/s16_closed_loop.py",
-  "git_sha": "73bd198",
+  "git_sha": "a7a1da1",
   "date": "2026-11-18",
   "config_files": [
    "configs/scenarios/S9_human_during_recording.yaml",
@@ -2891,7 +2885,7 @@
   "compute": {
    "runs": 80,
    "failed": 0,
-   "wall_s_total": 14229.679298879113,
+   "wall_s_total": 7372.347005249292,
    "sim_s_total": 4000.0
   },
   "duration_part_a_s": 40.0,

@@ -184,3 +184,16 @@ def test_cpc_anchor_keeps_nominal_samples():
     for k in range(1, 6):
         comp(k, 0.5e9)                 # low-clock samples: 0.5e6 cycles each, evict the window
     assert pr.cpc_cycles("T", "npu") == pytest.approx(1e6)
+
+
+def test_steady_thermal_init_requires_explicit_power():
+    with pytest.raises(ValueError, match="explicit warm_start_w"):
+        _pm("P0", thermal_init="steady")
+    with pytest.raises(ValueError, match="thermal_init must be"):
+        _pm("P0", thermal_init="hot")
+    pm = _pm("P0", thermal_init="steady", warm_start_w=4.0)
+    assert pm.thermal.temp("enclosure") > 25.0
+    pm2 = _pm("P0", thermal_init="steady", warm_start_w={"npu": 2.0})
+    assert pm2.thermal.temp("npu") > pm2.thermal.temp("cpu_a")
+    pm3 = _pm("P0")                                   # manager default stays a cold (ambient) start
+    assert max(pm3.thermal.T) == pytest.approx(25.0)

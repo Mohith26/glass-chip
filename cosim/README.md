@@ -27,7 +27,7 @@ Stale data behaves as the spec asks. A late controller leaves the previous torqu
 | T8 | `stack/safety.py` | Speed and separation monitoring: full speed above 1.0 m, linear slowdown, protective stop below 0.45 m |
 | Chips | `fake_chip.py`, `core_chip.py` | Zero-latency chip, fixed latency plus jitter chip, and an adapter for `glasschip_core` |
 
-Assumptions worth knowing: the belt speed has a 5 % ripple and each object slips with a 15 % speed variation (both Ornstein-Uhlenbeck processes). Without some disturbance, a policy that compensates for latency would barely notice latency at all; the disturbance is what makes old observations go wrong, and `results/s14.json` includes a sensitivity sweep over it. Camera noise is 3 mm (overhead) and 1.5 mm (wrist). Data association uses object ids. All of these are labeled in code.
+Assumptions worth knowing: the belt speed has a 5 % ripple and each object slips with a 15 % speed variation (both Ornstein-Uhlenbeck processes). Without some disturbance, a policy that compensates for latency would barely notice latency at all; the disturbance is what makes old observations go wrong, and `results/s14.json` includes a sensitivity sweep over it. Camera noise is 3 mm (overhead) and 1.5 mm (wrist). Data association uses object ids. All of these are labeled in code. <!-- numcheck: ignore -->
 
 ## Running it
 
@@ -58,7 +58,7 @@ The core cannot rescale a task after it is added, so for S7's recording bitrate 
 
 ## Results
 
-The latency tolerance numbers (baseline success per speed, success at each injected latency, and where success falls under 90 % of baseline) are in `results/s14.json`, with the figure in `results/figures/s14_latency_tolerance.svg`.
+The latency tolerance numbers (baseline success per speed, success at each injected latency, and where success falls under 90 % of baseline) are in `results/s14.json`, with the figure in `results/figures/s14_latency_tolerance.svg`. <!-- numcheck: ignore -->
 
 ## Limitations
 

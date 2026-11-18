@@ -101,6 +101,8 @@ class PowerManager:
         self._throttle_cfg = (float(th["throttle_c"]), float(th["release_c"]), self.tj_limit_c,
                               int(round(float(th["throttle_step_ms"]) * 1e9)))
         self.throttle = {d: self._new_throttle(d) for d in domains if not self.vf[d].fixed}
+        if thermal_init not in ("ambient", "steady", "settle"):
+            raise ValueError(f"thermal_init must be 'ambient', 'steady' or 'settle', not {thermal_init!r}")
         if thermal_init == "steady":
             self.warm_start(warm_start_w)
         # "settle": after a burn-in window, jump the thermal state to the steady state (with
@@ -174,23 +176,30 @@ class PowerManager:
         return out
 
     def warm_start(self, power_w: Mapping[str, float] | float | None) -> None:
-        """Initialize temperatures at the steady state for an assumed power.
+        """Initialize temperatures at the steady state for an explicitly given power.
 
-        A float is spread over domains by peak dynamic power; None uses each domain's
-        clock-tree + leakage power at nominal plus 30 percent of peak dynamic (assumption).
+        power_w: {domain: W} (any thermal node name is accepted), or a total in W spread over the
+        domains in proportion to their clock-tree + leakage power at nominal plus 30 percent of peak
+        dynamic (the split is an assumption; the total is the caller's). Leakage feedback is not
+        iterated here. There is deliberately no default: an assumed workload made every short run
+        start near 86 C and inflated S1/P0 power by about 37 percent (6.17 W vs 4.50 W settled).
+        Use thermal_init="settle" to start from the steady state for the run's own measured power.
         """
+        if power_w is None:
+            raise ValueError(
+                'thermal_init="steady" needs an explicit warm_start_w (dict of W per domain, or total W). '
+                'For "S1 at nominal" style runs use thermal_init="settle", which settles to the steady '
+                'state for the run\'s own measured power; use "ambient" for a cold start.')
         if isinstance(power_w, Mapping):
-            p = dict(power_w)
+            p = {k: float(v) for k, v in power_w.items()}
         else:
             raw = {}
             for d in self.domains:
                 n = self.vf[d].nominal
                 raw[d] = (0.3 * self.energy.peak_dynamic_nominal_w(d) + self.energy.clock_power_w(d, n.volts, n.freq_hz)
                           + self.leakage.power_w(d, n.volts, 60.0))
-            if power_w is not None:
-                s = sum(raw.values())
-                raw = {d: float(power_w) * v / s for d, v in raw.items()}
-            p = raw
+            s = sum(raw.values())
+            p = {d: float(power_w) * v / s for d, v in raw.items()}
         loss = sum(self.regulators[d].loss_w(v) for d, v in p.items() if d in self.regulators)
         p[self.reg_loss_node] = p.get(self.reg_loss_node, 0.0) + loss
         self.thermal.T = self.thermal.steady_state(p)

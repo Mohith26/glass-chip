@@ -25,8 +25,10 @@ from studies.runner import REPLAY_ROOT, run  # noqa: E402
 SEED = 1
 PART = {"safety": 2, "realtime": 10, "best_effort": 4}
 # S5 is a 60 s ambient ramp in its YAML, but the enclosure's thermal time constant is about
-# 3 minutes, so a short replay of the ramp never heats up. The replay instead starts the module
-# at thermal steady state for a 45 C ambient (labeled); studies/s08 (power stream) covers the ramp.
+# 3 minutes, so a short replay of the ramp never heats up. The replay instead runs at a 45 C ambient
+# with the runner's "settle" thermal start: under P0 there is no thermal steady state at 45 C (the
+# leakage feedback runs away), so after the 1 s burn-in the power manager starts the die at the
+# 100 C throttle threshold and throttling takes over from there (labeled); studies/s08 covers the ramp.
 # It runs the conveyor at 0.4 m/s with one object every 4 s, the condition where s16 measured a
 # robot consequence of throttling (objects missed per minute roughly doubled).
 S5_HOT = {"ambient_c": 45.0, "events": [], "conveyor_speed_mps": 0.4, "object_spacing_m": 1.6}
@@ -47,7 +49,7 @@ REPLAYS = {
     "S2_P4": ("S2", "P4", {}),
     "S3_P0": ("S3", "P0", {}),
     "S4_P0": ("S4", "P0", {}),
-    "S5_P0": ("S5", "P0", {"scenario": S5_HOT, "scenario_label": "Hot module (45 C ambient), conveyor 0.4 m/s"}),
+    "S5_P0": ("S5", "P0", {"scenario": S5_HOT, "scenario_label": "Hot module: 45 C ambient, no steady state, starts at the 100 C throttle threshold; conveyor 0.4 m/s"}),
     "S6_P0": ("S6", "P0", {}),
     "S7_P0": ("S7", "P0", {}),
     "S7_P2": ("S7", "P2", {}),

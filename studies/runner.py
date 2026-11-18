@@ -19,7 +19,10 @@ Arguments
         soc: {...}            deep-merged into the SoC dict
         fidelity: {...}       deep-merged into the fidelity dict (e.g. {"npu": "L2", "params": {...}})
         policy: {...}         deep-merged into the policy dict (e.g. {"scheduler": "edf_mc"})
-        power: {params: {...}, low_voltage_arith: {...}, vmin: {domain: v}, thermal_init: "steady"|"ambient"}
+        power: {params: {...}, low_voltage_arith: {...}, vmin: {domain: v},
+                thermal_init: "settle" (default: after a 1 s burn-in the thermal state jumps to the steady
+                state for the run's own measured power; energy is counted from there) | "ambient" |
+                "steady" (needs power.warm_start_w)}
         scenario: {transport, executor, ambient_c, conveyor_speed_mps, object_spacing_m, events: [...]}
         qos: bool             NoC + DRAM priority arbitration by qos_class
         cache_partition: {safety: ways, realtime: ways, best_effort: ways}
@@ -501,7 +504,8 @@ def run(scenario_yaml: str | os.PathLike, policy_yaml: str | os.PathLike | Mappi
     params = load_params(overrides=pov.get("params")) if pov.get("params") else None
     task_info = task_info_from_graphs(graphs.values())
     pm = PowerManager(policy, soc, ambient_c=ambient, params=params, task_info=task_info,
-                      thermal_init=pov.get("thermal_init", "steady"), low_voltage_arith=pov.get("low_voltage_arith"),
+                      thermal_init=pov.get("thermal_init", "settle"), warm_start_w=pov.get("warm_start_w"),
+                      low_voltage_arith=pov.get("low_voltage_arith"),
                       record_series=record_replay_dir is not None or bool(pov.get("record_series", False)))
     for d, v in (pov.get("vmin") or {}).items():
         pm.set_vmin(d, float(v))

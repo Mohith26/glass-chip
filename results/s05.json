@@ -2241,7 +2241,7 @@
  ],
  "provenance": {
   "script": "studies/s05_scheduling.py",
-  "git_sha": "73bd198",
+  "git_sha": "a7a1da1",
   "date": "2026-11-18",
   "config_files": [
    "configs/scenarios/S1",
@@ -2270,7 +2270,7 @@
   "compute": {
    "runs": 48,
    "failed": 0,
-   "wall_s_total": 1444.7138737478235,
+   "wall_s_total": 971.5812776259845,
    "sim_s_total": 528.0
   },
   "mode": "chip_only",

@@ -14,7 +14,8 @@ misses and their attribution, and the human-to-slowdown chain latency.
 
 Part B, fast conveyor under chip stress. 0.4 m/s with one object every 4 s, wrist-camera detection
 (as in S1): nominal; NPU voltage floor 0.55 and 0.50 V (S8's lower steps); a hot module (45 C
-ambient at thermal steady state, as in the S5 replay); 24 Gbit/s recording under FIFO. Robot
+ambient; under the runner's "settle" thermal start P0 has no steady state there, so the die starts at
+the 100 C throttle threshold, as in the S5 replay); 24 Gbit/s recording under FIFO. Robot
 outcome: grasp success and pick rate (Wilson 95 % intervals over pooled attempts), plus the
 measured camera-to-grasp latency and VLA tail latency that cause them.
 

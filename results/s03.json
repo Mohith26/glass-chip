@@ -632,7 +632,7 @@
  },
  "provenance": {
   "script": "studies/s03_root_cause.py",
-  "git_sha": "73bd198",
+  "git_sha": "a7a1da1",
   "date": "2026-11-18",
   "config_files": [
    "configs/scenarios/S7",
@@ -658,7 +658,7 @@
   "compute": {
    "runs": 8,
    "failed": 0,
-   "wall_s_total": 347.56773700000485,
+   "wall_s_total": 197.12124237400712,
    "sim_s_total": 116.0
   },
   "mode": "chip_only",

@@ -63,7 +63,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.538161,
    "T8_safety.p99_ms": 2.485463,
-   "avg_power_w": 6.204457,
+   "avg_power_w": 4.522557,
    "dram_gbps": 12.753248,
    "misses_total": 0
   },
@@ -108,7 +108,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.53164,
    "T8_safety.p99_ms": 2.488498,
-   "avg_power_w": 6.204658,
+   "avg_power_w": 4.522828,
    "dram_gbps": 12.752359,
    "misses_total": 0
   },
@@ -153,7 +153,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.538161,
    "T8_safety.p99_ms": 2.485463,
-   "avg_power_w": 6.204457,
+   "avg_power_w": 4.522557,
    "dram_gbps": 12.753248,
    "misses_total": 0
   },
@@ -198,7 +198,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.538161,
    "T8_safety.p99_ms": 2.485463,
-   "avg_power_w": 6.204457,
+   "avg_power_w": 4.522557,
    "dram_gbps": 12.753248,
    "misses_total": 0
   },
@@ -243,7 +243,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.538161,
    "T8_safety.p99_ms": 2.485463,
-   "avg_power_w": 6.204457,
+   "avg_power_w": 4.522557,
    "dram_gbps": 12.753248,
    "misses_total": 0
   },
@@ -292,7 +292,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.555506,
    "T8_safety.p99_ms": 2.495913,
-   "avg_power_w": 6.218172,
+   "avg_power_w": 4.542607,
    "dram_gbps": 12.817836,
    "misses_total": 0
   },
@@ -337,7 +337,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.554094,
    "T8_safety.p99_ms": 5.711956,
-   "avg_power_w": 6.334364,
+   "avg_power_w": 4.690915,
    "dram_gbps": 14.692824,
    "misses_total": 2
   },
@@ -382,7 +382,7 @@
    "T8_safety.missed": 0,
    "T8_safety.p50_ms": 1.538161,
    "T8_safety.p99_ms": 2.485463,
-   "avg_power_w": 6.204457,
+   "avg_power_w": 4.522557,
    "dram_gbps": 12.753248,
    "misses_total": 0
   }
