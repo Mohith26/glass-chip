@@ -1,0 +1,26 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    # macOS runner: the core Makefile links the Python module the macOS way.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Python deps
+        run: pip install -r requirements.txt
+      - name: Build core module and C++ tests
+        run: make -C core module cpptest PY=$(which python)
+      - name: Python tests
+        run: python -m pytest -q
+      - name: Task graph schema
+        run: python workloads/validate.py
+      - name: Determinism and golden metrics
+        run: python tools/regress.py --check
+      - name: Numeric cross-check
+        run: python tools/numcheck.py
+      - name: Web app build and smoke test
+        run: cd viz && npm ci && npm run build && npm run smoke
