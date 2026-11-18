@@ -4,7 +4,7 @@ Glass Chip is a see-through, closed-loop performance and power model of a physic
 
 ![Glass Chip demo](docs/demo.gif)
 
-TEMPLATE: live demo URL goes here once the site is public (static replay plus in-browser surrogate).
+**Live demo:** [mohith26.github.io/glass-chip](https://mohith26.github.io/glass-chip/) (static replays plus the in-browser surrogate; best on a recent laptop in Chrome). The 3-minute demo video is attached to the [latest release](https://github.com/Mohith26/glass-chip/releases).
 
 The full technical report is [report/glass-chip-report.pdf](report/glass-chip-report.pdf) (source: [report/report.md](report/report.md)).
 

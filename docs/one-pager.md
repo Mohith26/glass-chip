@@ -19,4 +19,4 @@
 
 <figure><img src="../results/figures/s06_energy_per_robot_hour.png" alt="energy per robot-hour by power policy"><figcaption>Energy per robot-hour by power policy in three scenarios (s06). Dashed line: offline lower bound. Hatched bar: safety misses.</figcaption></figure>
 
-**Links.** Repo: TEMPLATE (github.com/Mohith26/glass-chip, not yet public) &nbsp;|&nbsp; Live demo: TEMPLATE (not yet public) &nbsp;|&nbsp; Technical report: report/glass-chip-report.pdf in the repo
+**Links.** Repo: [github.com/Mohith26/glass-chip](https://github.com/Mohith26/glass-chip) &nbsp;|&nbsp; Live demo: [mohith26.github.io/glass-chip](https://mohith26.github.io/glass-chip/) &nbsp;|&nbsp; Technical report: report/glass-chip-report.pdf in the repo
