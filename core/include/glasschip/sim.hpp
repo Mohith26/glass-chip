@@ -362,6 +362,8 @@ class Sim {
   bool noc_backend_attached() const { return noc_backend_ != nullptr; }
   // gem5 kernel whose CPI an op uses at CPU L2 ("" if none applies).
   std::string cpu_kernel_for(const TaskDef& td, const OpDef& d) const;
+  // CPU L2 cycles for op d using gem5 kernel k (model 0 = O3, 1 = Minor).
+  double cpu_l2_cycles(const TaskDef& td, const OpDef& d, const std::string& k, int model) const;
 
   // ---- running
   // Schedules a job of `task_id` released at t_ps. Returns the job id, or -1
@@ -548,7 +550,7 @@ class Sim {
   uint64_t ready_seq_ = 0;
   std::map<std::string, double> npu_l2_;  // "task/op" or "op" -> cycles
   std::map<std::string, double> cpu_cpi_; // op_id or type name -> CPI
-  std::map<std::string, std::array<double, 2>> cpu_kernel_cpi_;  // gem5 kernel -> {O3 cpi, Minor cpi}
+  std::map<std::string, std::array<double, 5>> cpu_kernel_cpi_;  // gem5 kernel -> {O3 cpi, Minor cpi, instr/call, O3 cycles/call, Minor cycles/call}
   std::vector<std::string> l2_sources_;
   uint64_t l2_fallbacks_npu_ = 0, l2_fallbacks_cpu_ = 0, l2_hits_npu_ = 0, l2_hits_cpu_ = 0;
   uint64_t events_ = 0;

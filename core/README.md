@@ -42,8 +42,8 @@ The full API is in `notes/CONTRACTS.md`. Additions beyond it are listed at the e
 
 | Component | L0 (analytic) | L1 (transaction level) | L2 |
 |---|---|---|---|
-| CPU | instruction-mix cycles, roofline memory time | misses at `cpu_miss_bytes` through cache and DRAM, `cpu_mlp` outstanding | gem5 O3 CPI per kernel (`calib/tables/cpu_gem5.json`) or `set_l2_tables({"cpu_cpi": ...})` |
-| RT CPU | instruction cycles from TCM, no DRAM traffic | same | gem5 Minor CPI (in-order proxy) when `cpu: L2` |
+| CPU | instruction-mix cycles, roofline memory time | misses at `cpu_miss_bytes` through cache and DRAM, `cpu_mlp` outstanding | gem5 O3 cycles per call for the real kernels, CPI for other kernel classes (`calib/tables/cpu_gem5.json`), or `set_l2_tables({"cpu_cpi": ...})` |
+| RT CPU | instruction cycles from TCM, no DRAM traffic | same | gem5 Minor cycles per call or CPI (in-order proxy) when `cpu: L2` |
 | NPU | MACs / (peak x utilization), roofline memory | closed-form systolic tiles (weight or output stationary), SRAM tiling with double buffering, weight and activation streaming over the NoC, INT8/FP8/BF16 rates, per-layer utilization, compiler fusion (below) | SCALE-Sim `vx1_cycles` per op (`calib/tables/npu_scalesim_<task>.json`), op field `l2_cycles`, or `set_l2_tables({"npu_cycles": ...})`; memory traffic still comes from the simulator |
 | SIMT | flops / (peak x efficiency) + launch overhead | occupancy from threads (lanes covered, warps to hide latency), launch overhead, coalescing inflates traffic | none |
 | DSP | ops / SIMD throughput | SIMD efficiency, pipeline fill, line-buffer sized steps | none |
@@ -131,7 +131,7 @@ Rows are written in time order once they are 1 ms older than the simulation cloc
 - L1 NoC arbitration is reservation based: a packet train reserves each link in order rather than flit by flit, and QoS is modeled with priority timelines. On a light detector load it reports more NoC delay than BookSim.
 - Bank groups only affect address mapping; tCCD_L/tCCD_S are not in the config.
 - The L0 cache model assumes a stream shares its class's capacity with about one other stream of equal size. CPU L1 uses the graph's `reuse` field as its private-cache hit rate instead of a stack-distance model.
-- CPU L2 maps the real kernels by task (T7/T12 control step, T6 estimator, T8 SSM) and other ops to an axpy or GEMM kernel class by instruction mix; it uses the graph's instruction counts with gem5's CPI.
+- CPU L2 maps the real kernels by task (T7/T12 control step, T6 estimator, T8 SSM): the task's ops mapped to that kernel cost gem5's measured `cycles_per_call` in total (O3 for app cores, Minor for the RT core), split by instruction count, because the graphs' static instruction counts overstate dynamic counts (T6 12,436 static vs 5,461 dynamic). Other ops map to an axpy or GEMM kernel class by instruction mix and use the graph's instruction count times that kernel's CPI.
 - Executor dispatch and serialization costs come from `workloads/graphs/middleware.json`, measured on a Mac and scaled; they are not measurements of a robot SoC.
 - VX-1 is fictional. Every model parameter is an assumption with a config key; see `configs/fidelity/README.md`.
 

@@ -357,7 +357,7 @@ def test_real_calib_l2_tables(soc):
     done2, info2 = res["L2"]
     assert info2["l2"]["npu_table_hits"] >= 60 and info2["l2"]["cpu_table_hits"] >= 2
     assert any(s.startswith("npu_scalesim_T2_detect") for s in info2["l2"]["tables"])
-    # T7 on the in-order RT core uses gem5 Minor CPI (~1.76) instead of IPC 1.0: slower compute.
+    # T7 on the in-order RT core costs gem5 Minor cycles per call (~4064) instead of instr / IPC 1.0 (~2364).
     assert done2["T7_control"]["cycles_by_domain"]["rt"] > 1.5 * res["L1"][0]["T7_control"]["cycles_by_domain"]["rt"]
     assert done2["T2_detect"]["cycles_by_domain"]["npu"] != res["L1"][0]["T2_detect"]["cycles_by_domain"]["npu"]
 
@@ -440,3 +440,20 @@ def test_power_gating_idle_hysteresis(make_sim):
     assert res[3_000_000_000][2][0] == 0 and res[3_000_000_000][2][1:] == [30_000_000] * 3
     # 10 ms hysteresis: never gates.
     assert res[10_000_000_000][0] == 0 and res[10_000_000_000][1] == 0 and res[10_000_000_000][2] == [0, 0, 0, 0]
+
+
+def test_cpu_l2_matches_gem5_cycles_per_call(soc):
+    tables = ROOT / "calib" / "tables" / "cpu_gem5.json"
+    gdir = ROOT / "workloads" / "graphs"
+    if not tables.exists() or not (gdir / "T6_estimate.json").exists():
+        pytest.skip("calib tables or graphs missing")
+    k = json.loads(tables.read_text())["kernels"]
+    sim = gc.Sim(soc, dict(load_fidelity("study"), cpu="L2"), 1)
+    for t in ("T6_estimate", "T7_control"):
+        sim.add_task(json.loads((gdir / f"{t}.json").read_text()))
+        sim.release_job(t, 0, 0)
+    done = {d["task_id"]: d for d in sim.run_until(20 * PS_MS)}
+    # Matched kernels cost exactly gem5's per-call cycles (O3 for app cores, Minor for RT).
+    assert sum(done["T6_estimate"]["cycles_by_domain"].get(d, 0) for d in ("cpu_a", "cpu_b")) == pytest.approx(
+        k["T6_estimate_step"]["o3"]["cycles_per_call"], rel=1e-6)
+    assert done["T7_control"]["cycles_by_domain"]["rt"] == pytest.approx(k["T7_control_step"]["minor"]["cycles_per_call"], rel=1e-6)

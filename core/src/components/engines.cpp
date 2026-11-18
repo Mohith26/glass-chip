@@ -211,7 +211,7 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
           c.l2 = true;
           done = true;
         } else if (std::string k = cpu_kernel_for(td, d); !k.empty()) {
-          c.cycles = instr * cpu_kernel_cpi_.at(k)[0];  // gem5 O3 CPI (app core proxy), calib/tables/cpu_gem5.json
+          c.cycles = cpu_l2_cycles(td, d, k, 0);  // gem5 O3 (app core proxy), calib/tables/cpu_gem5.json
           c.l2 = true;
           done = true;
         } else {
@@ -245,7 +245,7 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
       double instr = d.i_scalar + d.i_vector * 4 + d.i_mem;  // no vector unit: 4 scalar ops per vector op (assumption)
       std::string k = fid_.cpu >= 2 ? cpu_kernel_for(td, d) : std::string();
       if (!k.empty()) {
-        c.cycles = (d.i_scalar + d.i_vector + d.i_mem) * cpu_kernel_cpi_.at(k)[1];  // gem5 Minor CPI (in-order RT proxy)
+        c.cycles = cpu_l2_cycles(td, d, k, 1);  // gem5 Minor (in-order RT proxy)
         c.l2 = true;
       } else if (instr > 0) {
         if (fid_.cpu >= 2) c.l2_fallback = true;

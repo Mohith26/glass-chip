@@ -265,15 +265,38 @@ int Sim::load_l2_tables(const std::string& dir) {
       if (!ks || !ks->is_obj()) continue;
       int k = 0;
       for (const auto& kv : ks->o) {
-        double o3 = kv.second.get("o3") ? kv.second.get("o3")->num("cpi", -1) : -1;
-        double mi = kv.second.get("minor") ? kv.second.get("minor")->num("cpi", -1) : -1;
-        if (o3 > 0 && mi > 0) { cpu_kernel_cpi_[kv.first] = {o3, mi}; ++k; }
+        const Json* jo = kv.second.get("o3");
+        const Json* jm = kv.second.get("minor");
+        double o3 = jo ? jo->num("cpi", -1) : -1;
+        double mi = jm ? jm->num("cpi", -1) : -1;
+        double ipc = jo ? jo->num("instr_per_call", -1) : -1;
+        if (o3 > 0 && mi > 0)
+          cpu_kernel_cpi_[kv.first] = {o3, mi, ipc, jo->num("cycles_per_call", -1), jm->num("cycles_per_call", -1)}, ++k;
       }
       n += k;
       l2_sources_.push_back(name + " (" + std::to_string(k) + " kernels)");
     }
   }
   return n;
+}
+
+double Sim::cpu_l2_cycles(const TaskDef& td, const OpDef& d, const std::string& k, int model) const {
+  const auto& t = cpu_kernel_cpi_.at(k);
+  double instr = d.i_scalar + d.i_vector + d.i_mem;
+  double cyc = instr * t[model];
+  // Task-matched real kernels: the graph's instruction counts are static
+  // (both sides of branches), so instead make the task's ops mapped to this
+  // kernel cost exactly gem5's measured cycles_per_call in total, split in
+  // proportion to their instruction counts. Generic kernel classes keep CPI.
+  bool real = k == "T7_control_step" || k == "T6_estimate_step" || k == "T8_ssm_step";
+  double per_call = t[3 + model];
+  if (real && per_call > 0) {
+    double sum = 0;
+    for (const OpDef& o : td.ops)
+      if (cpu_kernel_for(td, o) == k) sum += o.i_scalar + o.i_vector + o.i_mem;
+    if (sum > 0) cyc = per_call * instr / sum;
+  }
+  return cyc;
 }
 
 std::string Sim::cpu_kernel_for(const TaskDef& td, const OpDef& d) const {
@@ -741,7 +764,7 @@ std::vector<std::string> Sim::op_names(int task) const {
 // queue, component state, RNGs, counters, trace hash) is written with the
 // GC_IO field lists. Trace buffers and open files are not part of the state.
 static const uint32_t kCkptMagic = 0x4B434347;  // "GCCK"
-static const uint32_t kCkptVersion = 2;
+static const uint32_t kCkptVersion = 3;
 
 #define GC_SIM_STATE                                                                                                           \
   soc_, fid_, seed_, now_, q_, rng_, tasks_, plans_, task_index_, jobs_, free_jobs_, job_slot_, active_count_, job_seq_,       \
