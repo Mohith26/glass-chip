@@ -1,0 +1,94 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T15_diag",
+ "name": "Diagnostics (10 Hz)",
+ "provenance": {
+  "source": "system diagnostics aggregator",
+  "captured_by": "workloads/capture/extras.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "a0831a91c52196719a205c88e48281f19d6e36a01ff46f564b3faae2abec5058",
+  "notes": "About 173840 instructions per 10 Hz job; estimate."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "low",
+ "qos_class": "best_effort",
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 65536
+ },
+ "ops": [
+  {
+   "op_id": "diag.collect",
+   "type": "cpu_kernel",
+   "dtype": "int32",
+   "bytes_in": 12800,
+   "bytes_out": 3200,
+   "instr": {
+    "scalar": 10000,
+    "vector": 0,
+    "mem": 3000
+   },
+   "notes": "read 50 health sources (counters, temperatures, rates), estimate",
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "diag.aggregate_publish",
+   "type": "cpu_kernel",
+   "dtype": "int32",
+   "bytes_in": 3200,
+   "bytes_out": 8192,
+   "instr": {
+    "scalar": 163840,
+    "vector": 0,
+    "mem": 32768
+   },
+   "notes": "window statistics + format a 8192 B DiagnosticArray, estimate",
+   "preempt_boundary": true,
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "diag.collect"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/diagnostics",
+   "bytes": 8192,
+   "consumer": "T10_record"
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 0,
+  "bytes_in": 16000,
+  "bytes_w": 0,
+  "bytes_out": 11392,
+  "instr": {
+   "scalar": 173840,
+   "vector": 0,
+   "mem": 35768
+  },
+  "num_ops": 2,
+  "num_layers": 2,
+  "arith_intensity": 0.0
+ }
+}

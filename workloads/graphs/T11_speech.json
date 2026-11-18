@@ -1,0 +1,4053 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T11_speech",
+ "name": "Speech command recognition (Whisper-tiny)",
+ "provenance": {
+  "source": "openai/whisper-tiny",
+  "captured_by": "workloads/capture/extras.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "mixed",
+  "script_sha256": "a0831a91c52196719a205c88e48281f19d6e36a01ff46f564b3faae2abec5058",
+  "model_name": "whisper-tiny",
+  "model_version": "hub sha 169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+  "model_hash": "hub:openai/whisper-tiny@169d4a4341b33bc18d8881c4b69c2e104e1cc0af; encoder onnx sha256:6814f1e40a03630c57268c2dbac6fa21cbe9d069d4c1d009947a0fb7a49911e1",
+  "notes": "Encoder: onnx_graph_walk of WhisperEncoder built from the real config with random init (226 nodes -> 111 ops, 18.47 GMAC for the 30 s window). Mel front end and 12-token greedy decoder: config_derived. int8 weights are a deployment assumption. Period/deadline are reasonable defaults, not measured."
+ },
+ "release": {
+  "kind": "sporadic",
+  "period_us": 1000000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 500000,
+ "criticality": "medium",
+ "qos_class": "realtime",
+ "footprint": {
+  "weights_bytes": 36384384,
+  "kv_cache_bytes": 9314304,
+  "working_set_bytes": 27000000
+ },
+ "ops": [
+  {
+   "op_id": "asr.mel",
+   "type": "dsp_kernel",
+   "dtype": "fp32",
+   "flops": 152183137,
+   "bytes_in": 960000,
+   "bytes_out": 240000,
+   "notes": "log-mel front end: 3000 frames, n_fft 400, hop 160, 80 mel bins (30 s padded window)",
+   "depends_on": [],
+   "eligible": [
+    "dsp",
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 126.8193
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 276480000,
+   "flops": 552960000,
+   "bytes_w": 93696,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 3000,
+    "W": 1,
+    "K": 384,
+    "R": 3,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 3000,
+    "Wo": 1,
+    "out": [
+     1,
+     384,
+     3000
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 240000,
+   "bytes_out": 1152000,
+   "op_id": "asr.enc.frontend.001.conv",
+   "layer": "asr.enc.frontend",
+   "depends_on": [
+    "asr.mel"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 372.1892
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1152000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     3000
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 1152000,
+   "op_id": "asr.enc.out.002.div",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.frontend.001.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     3000
+    ],
+    "onnx_op": "Erf"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 1152000,
+   "op_id": "asr.enc.out.003.erf",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.002.div"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1152000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     3000
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 1152000,
+   "op_id": "asr.enc.out.004.add",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.003.erf"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1152000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     3000
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 1152000,
+   "op_id": "asr.enc.out.005.mul",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.frontend.001.conv",
+    "asr.enc.out.004.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1152000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     3000
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 1152000,
+   "op_id": "asr.enc.out.006.mul",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.005.mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 663552000,
+   "flops": 1327104000,
+   "bytes_w": 443904,
+   "shape": {
+    "N": 1,
+    "C": 384,
+    "H": 3000,
+    "W": 1,
+    "K": 384,
+    "R": 3,
+    "S": 1,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 1500,
+    "Wo": 1,
+    "out": [
+     1,
+     384,
+     1500
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.frontend.007.conv",
+   "layer": "asr.enc.frontend",
+   "depends_on": [
+    "asr.enc.out.006.mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 611.0325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     1500
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.008.div",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.frontend.007.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     1500
+    ],
+    "onnx_op": "Erf"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.009.erf",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.008.div"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     1500
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.010.add",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.009.erf"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     1500
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.011.mul",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.frontend.007.conv",
+    "asr.enc.out.010.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     1500
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.012.mul",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.011.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.013.transpose",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.012.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 576000,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.014.add",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.out.013.transpose"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.015.layernormalization",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.out.014.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.016.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.015.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.017.mul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.016.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.018.transpose",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.017.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147456,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.019.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.015.layernormalization"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.4255
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.020.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.015.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.021.transpose",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.020.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     64,
+     1500
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.022.transpose",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.019.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 64,
+    "N": 1500,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.0.023.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.018.transpose",
+    "asr.enc.layers.0.022.transpose"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 13500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.0.024.mul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.023.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "softmax",
+   "dtype": "bf16",
+   "macs": 0,
+   "flops": 67500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Softmax"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.0.025.softmax",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.024.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 1500,
+    "N": 64,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 14076000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.026.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.021.transpose",
+    "asr.enc.layers.0.025.softmax"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     6,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.027.transpose",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.026.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.028.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.027.transpose"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.029.add",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.028.matmul",
+    "asr.enc.out.014.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.030.layernormalization",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.029.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 591360,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 1536,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.0.031.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.030.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.7345
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.0.032.div",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.031.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 9216000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Erf"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.0.033.erf",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.032.div"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.0.034.add",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.033.erf"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 4608000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.0.035.mul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.031.matmul",
+    "asr.enc.layers.0.034.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.0.036.mul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.035.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 590208,
+   "shape": {
+    "M": 1500,
+    "K": 1536,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.037.matmul",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.036.mul"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.9037
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.0.038.add",
+   "layer": "asr.enc.layers.0",
+   "depends_on": [
+    "asr.enc.layers.0.029.add",
+    "asr.enc.layers.0.037.matmul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.039.layernormalization",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.0.038.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.040.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.039.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.041.mul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.040.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.042.transpose",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.041.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147456,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.043.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.039.layernormalization"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.4255
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.044.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.039.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.045.transpose",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.044.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     64,
+     1500
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.046.transpose",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.043.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 64,
+    "N": 1500,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.1.047.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.042.transpose",
+    "asr.enc.layers.1.046.transpose"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 13500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.1.048.mul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.047.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "softmax",
+   "dtype": "bf16",
+   "macs": 0,
+   "flops": 67500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Softmax"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.1.049.softmax",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.048.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 1500,
+    "N": 64,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 14076000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.050.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.045.transpose",
+    "asr.enc.layers.1.049.softmax"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     6,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.051.transpose",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.050.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.052.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.051.transpose"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.053.add",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.0.038.add",
+    "asr.enc.layers.1.052.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.054.layernormalization",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.053.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 591360,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 1536,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.1.055.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.054.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.7345
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.1.056.div",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.055.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 9216000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Erf"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.1.057.erf",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.056.div"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.1.058.add",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.057.erf"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 4608000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.1.059.mul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.055.matmul",
+    "asr.enc.layers.1.058.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.1.060.mul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.059.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 590208,
+   "shape": {
+    "M": 1500,
+    "K": 1536,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.061.matmul",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.060.mul"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.9037
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.1.062.add",
+   "layer": "asr.enc.layers.1",
+   "depends_on": [
+    "asr.enc.layers.1.053.add",
+    "asr.enc.layers.1.061.matmul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.063.layernormalization",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.1.062.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.064.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.063.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.065.mul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.064.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.066.transpose",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.065.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147456,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.067.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.063.layernormalization"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.4255
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.068.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.063.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.069.transpose",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.068.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     64,
+     1500
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.070.transpose",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.067.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 64,
+    "N": 1500,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.2.071.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.066.transpose",
+    "asr.enc.layers.2.070.transpose"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 13500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.2.072.mul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.071.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "softmax",
+   "dtype": "bf16",
+   "macs": 0,
+   "flops": 67500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Softmax"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.2.073.softmax",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.072.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 1500,
+    "N": 64,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 14076000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.074.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.069.transpose",
+    "asr.enc.layers.2.073.softmax"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     6,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.075.transpose",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.074.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.076.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.075.transpose"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.077.add",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.1.062.add",
+    "asr.enc.layers.2.076.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.078.layernormalization",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.077.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 591360,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 1536,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.2.079.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.078.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.7345
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.2.080.div",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.079.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 9216000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Erf"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.2.081.erf",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.080.div"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.2.082.add",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.081.erf"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 4608000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.2.083.mul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.079.matmul",
+    "asr.enc.layers.2.082.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.2.084.mul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.083.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 590208,
+   "shape": {
+    "M": 1500,
+    "K": 1536,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.085.matmul",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.084.mul"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.9037
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.2.086.add",
+   "layer": "asr.enc.layers.2",
+   "depends_on": [
+    "asr.enc.layers.2.077.add",
+    "asr.enc.layers.2.085.matmul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.087.layernormalization",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.2.086.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.088.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.087.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.089.mul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.088.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.090.transpose",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.089.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147456,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.091.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.087.layernormalization"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.4255
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.092.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.087.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.093.transpose",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.092.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     64,
+     1500
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.094.transpose",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.091.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 64,
+    "N": 1500,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.3.095.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.090.transpose",
+    "asr.enc.layers.3.094.transpose"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 13500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.3.096.mul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.095.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "softmax",
+   "dtype": "bf16",
+   "macs": 0,
+   "flops": 67500000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     6,
+     1500,
+     1500
+    ],
+    "onnx_op": "Softmax"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 13500000,
+   "bytes_out": 13500000,
+   "op_id": "asr.enc.layers.3.097.softmax",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.096.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "bf16",
+   "macs": 864000000,
+   "flops": 1728000000,
+   "bytes_w": 0,
+   "shape": {
+    "M": 1500,
+    "K": 1500,
+    "N": 64,
+    "batch": 6,
+    "act_x_act": true,
+    "out": [
+     1,
+     6,
+     1500,
+     64
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 14076000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.098.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.093.transpose",
+    "asr.enc.layers.3.097.softmax"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 117.9361
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     6,
+     64
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.099.transpose",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.098.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 221184000,
+   "flops": 442368000,
+   "bytes_w": 147840,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.100.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.099.transpose"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 340.325
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.101.add",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.2.086.add",
+    "asr.enc.layers.3.100.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.102.layernormalization",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.101.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.9973
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 591360,
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 1536,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.3.103.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.102.layernormalization"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.7345
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.3.104.div",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.103.matmul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 9216000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Erf"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.3.105.erf",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.104.div"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.3.106.add",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.105.erf"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 4608000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.3.107.mul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.103.matmul",
+    "asr.enc.layers.3.106.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2304000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     1536
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 2304000,
+   "op_id": "asr.enc.layers.3.108.mul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.107.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "matmul",
+   "dtype": "int8",
+   "macs": 884736000,
+   "flops": 1769472000,
+   "bytes_w": 590208,
+   "shape": {
+    "M": 1500,
+    "K": 1536,
+    "N": 384,
+    "batch": 1,
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "MatMul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 2304000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.109.matmul",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.108.mul"
+   ],
+   "onnx_ops": [
+    "MatMul",
+    "Add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 509.9037
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 576000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 1152000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.layers.3.110.add",
+   "layer": "asr.enc.layers.3",
+   "depends_on": [
+    "asr.enc.layers.3.101.add",
+    "asr.enc.layers.3.109.matmul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "norm",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 4608000,
+   "bytes_w": 768,
+   "shape": {
+    "out": [
+     1,
+     1500,
+     384
+    ],
+    "onnx_op": "LayerNormalization"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 576000,
+   "bytes_out": 576000,
+   "op_id": "asr.enc.out.111.layernormalization",
+   "layer": "asr.enc.out",
+   "depends_on": [
+    "asr.enc.layers.3.110.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 3.9973
+  },
+  {
+   "op_id": "asr.dec.cross_kv",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.cross_kv",
+   "shape": {
+    "M": 1500,
+    "K": 384,
+    "N": 768,
+    "layers": 4
+   },
+   "macs": 1769472000,
+   "bytes_in": 576000,
+   "bytes_w": 1179648,
+   "bytes_out": 9216000,
+   "depends_on": [
+    "asr.enc.out.111.layernormalization"
+   ],
+   "preempt_boundary": true,
+   "notes": "per decoder layer K,V projections of the 1500 encoder states (bf16 cache)",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "flops": 3538944000,
+   "arith_intensity": 322.5535
+  },
+  {
+   "op_id": "asr.dec.t0",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t0",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 4,
+    "cross_kv_len": 1500
+   },
+   "macs": 32793984,
+   "flops": 65789643,
+   "bytes_in": 9240960,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.cross_kv"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7535
+  },
+  {
+   "op_id": "asr.dec.t1",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t1",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 5,
+    "cross_kv_len": 1500
+   },
+   "macs": 32797056,
+   "flops": 65795787,
+   "bytes_in": 9247104,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t0"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7534
+  },
+  {
+   "op_id": "asr.dec.t2",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t2",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 6,
+    "cross_kv_len": 1500
+   },
+   "macs": 32800128,
+   "flops": 65801931,
+   "bytes_in": 9253248,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t1"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7532
+  },
+  {
+   "op_id": "asr.dec.t3",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t3",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 7,
+    "cross_kv_len": 1500
+   },
+   "macs": 32803200,
+   "flops": 65808075,
+   "bytes_in": 9259392,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t2"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7531
+  },
+  {
+   "op_id": "asr.dec.t4",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t4",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 8,
+    "cross_kv_len": 1500
+   },
+   "macs": 32806272,
+   "flops": 65814219,
+   "bytes_in": 9265536,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t3"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.753
+  },
+  {
+   "op_id": "asr.dec.t5",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t5",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 9,
+    "cross_kv_len": 1500
+   },
+   "macs": 32809344,
+   "flops": 65820363,
+   "bytes_in": 9271680,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t4"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7529
+  },
+  {
+   "op_id": "asr.dec.t6",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t6",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 10,
+    "cross_kv_len": 1500
+   },
+   "macs": 32812416,
+   "flops": 65826507,
+   "bytes_in": 9277824,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t5"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7528
+  },
+  {
+   "op_id": "asr.dec.t7",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t7",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 11,
+    "cross_kv_len": 1500
+   },
+   "macs": 32815488,
+   "flops": 65832651,
+   "bytes_in": 9283968,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t6"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7526
+  },
+  {
+   "op_id": "asr.dec.t8",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t8",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 12,
+    "cross_kv_len": 1500
+   },
+   "macs": 32818560,
+   "flops": 65838795,
+   "bytes_in": 9290112,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t7"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7525
+  },
+  {
+   "op_id": "asr.dec.t9",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t9",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 13,
+    "cross_kv_len": 1500
+   },
+   "macs": 32821632,
+   "flops": 65844939,
+   "bytes_in": 9296256,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t8"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7524
+  },
+  {
+   "op_id": "asr.dec.t10",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t10",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 14,
+    "cross_kv_len": 1500
+   },
+   "macs": 32824704,
+   "flops": 65851083,
+   "bytes_in": 9302400,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t9"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7523
+  },
+  {
+   "op_id": "asr.dec.t11",
+   "type": "matmul",
+   "dtype": "int8",
+   "layer": "asr.dec.t11",
+   "shape": {
+    "M": 1,
+    "K": 384,
+    "N": 384,
+    "layers": 4,
+    "self_kv_len": 15,
+    "cross_kv_len": 1500
+   },
+   "macs": 32827776,
+   "flops": 65857227,
+   "bytes_in": 9308544,
+   "bytes_w": 28173696,
+   "bytes_out": 104498,
+   "depends_on": [
+    "asr.dec.t10"
+   ],
+   "preempt_boundary": true,
+   "notes": "one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 encoder states, MLP) + tied 51865-way logits; weight-streaming bound",
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "arith_intensity": 1.7521
+  },
+  {
+   "op_id": "asr.post.tokens_to_cmd",
+   "type": "cpu_kernel",
+   "dtype": "int32",
+   "flops": 10000,
+   "bytes_in": 103730,
+   "bytes_out": 256,
+   "instr": {
+    "scalar": 120000,
+    "vector": 3000,
+    "mem": 30000
+   },
+   "depends_on": [
+    "asr.dec.t11"
+   ],
+   "notes": "argmax already on NPU; detokenize and match the command grammar (estimate)",
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0962
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/speech/command",
+   "bytes": 256,
+   "consumer": "T4_vla"
+  }
+ ],
+ "summary": {
+  "macs": 20632066560,
+  "flops": 41879258357,
+  "bytes_in": 396712754,
+  "bytes_w": 347474688,
+  "bytes_out": 274662232,
+  "instr": {
+   "scalar": 120000,
+   "vector": 3000,
+   "mem": 30000
+  },
+  "num_ops": 126,
+  "num_layers": 21,
+  "arith_intensity": 41.1045
+ }
+}

@@ -1,0 +1,65 @@
+{
+ "messages": [
+  {
+   "name": "JointState",
+   "bytes": 380,
+   "serialize_ns": 99.4,
+   "deserialize_ns": 234.4,
+   "memcpy_ns": 4.8,
+   "reps": 301
+  },
+  {
+   "name": "Float32MultiArray_action_chunk",
+   "bytes": 1656,
+   "serialize_ns": 49.0,
+   "deserialize_ns": 82.2,
+   "memcpy_ns": 19.0,
+   "reps": 301
+  },
+  {
+   "name": "Detection3DArray_8",
+   "bytes": 4077,
+   "serialize_ns": 1125.0,
+   "deserialize_ns": 421.9,
+   "memcpy_ns": 132.4,
+   "reps": 301
+  },
+  {
+   "name": "JointTrajectory_100pts",
+   "bytes": 20192,
+   "serialize_ns": 2807.4,
+   "deserialize_ns": 5000.0,
+   "memcpy_ns": 307.6,
+   "reps": 301
+  },
+  {
+   "name": "Image_16UC1_640x480",
+   "bytes": 614472,
+   "serialize_ns": 8666.5,
+   "deserialize_ns": 8250.0,
+   "memcpy_ns": 7520.8,
+   "reps": 301
+  },
+  {
+   "name": "Image_rgb8_640x480",
+   "bytes": 921672,
+   "serialize_ns": 12458.5,
+   "deserialize_ns": 12917.0,
+   "memcpy_ns": 12312.5,
+   "reps": 301
+  },
+  {
+   "name": "PointCloud2_640x480_xyzrgb",
+   "bytes": 4915353,
+   "serialize_ns": 86959.0,
+   "deserialize_ns": 94542.0,
+   "memcpy_ns": 85459.0,
+   "reps": 101
+  }
+ ],
+ "zero_copy_handoff_ns": 3.6,
+ "thread_wakeup_ns": 3125.0,
+ "sink": 1,
+ "compiler": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+ "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13"
+}

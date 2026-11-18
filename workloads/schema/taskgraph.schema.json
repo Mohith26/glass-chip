@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "glasschip/taskgraph/1.0",
+  "title": "Glass Chip task graph",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "name",
+    "provenance",
+    "release",
+    "deadline_us",
+    "criticality",
+    "qos_class",
+    "ops"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^T[0-9]+[A-Za-z0-9_]*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "source",
+        "captured_by",
+        "date",
+        "method"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "model_hash": {
+          "type": "string"
+        },
+        "captured_by": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "machine": {
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "onnx_graph_walk",
+            "config_derived",
+            "measured_profile",
+            "analytic_count",
+            "published_numbers",
+            "mixed"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "script_sha256": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "release": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "periodic",
+            "sporadic",
+            "event"
+          ]
+        },
+        "period_us": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "jitter_us": {
+          "type": "number",
+          "minimum": 0
+        },
+        "offset_us": {
+          "type": "number",
+          "minimum": 0
+        },
+        "on_overrun": {
+          "enum": [
+            "skip",
+            "queue"
+          ]
+        }
+      }
+    },
+    "deadline_us": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "criticality": {
+      "enum": [
+        "safety",
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "qos_class": {
+      "enum": [
+        "safety",
+        "realtime",
+        "best_effort"
+      ]
+    },
+    "affinity": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "footprint": {
+      "type": "object",
+      "properties": {
+        "weights_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "working_set_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kv_cache_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ops": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "op_id",
+          "type",
+          "eligible"
+        ],
+        "properties": {
+          "op_id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "conv2d",
+              "dwconv2d",
+              "matmul",
+              "attention",
+              "elementwise",
+              "softmax",
+              "norm",
+              "pool",
+              "resize",
+              "reduce",
+              "memcopy",
+              "cpu_kernel",
+              "simt_kernel",
+              "dsp_kernel",
+              "control_law",
+              "serialize",
+              "other"
+            ]
+          },
+          "layer": {
+            "type": "string"
+          },
+          "shape": {
+            "type": "object"
+          },
+          "dtype": {
+            "enum": [
+              "int8",
+              "fp8",
+              "bf16",
+              "fp16",
+              "fp32",
+              "int32",
+              "mixed"
+            ]
+          },
+          "macs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "flops": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bytes_in": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bytes_w": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bytes_out": {
+            "type": "number",
+            "minimum": 0
+          },
+          "instr": {
+            "type": "object",
+            "properties": {
+              "scalar": {
+                "type": "number",
+                "minimum": 0
+              },
+              "vector": {
+                "type": "number",
+                "minimum": 0
+              },
+              "mem": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "reuse": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "fraction of bytes_in expected to hit on-chip caches/SRAM"
+          },
+          "eligible": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": [
+                "npu",
+                "simt",
+                "cpu",
+                "rt",
+                "dsp",
+                "dma"
+              ]
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "preempt_boundary": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "arith_intensity": {
+            "type": "number",
+            "minimum": 0,
+            "description": "flops / (bytes_in + bytes_w + bytes_out)"
+          },
+          "onnx_ops": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "ONNX node types fused into this op"
+          },
+          "bytes_scale_param": {
+            "type": "string",
+            "description": "bytes scale linearly with params[<this key>] relative to the graph default"
+          }
+        }
+      }
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "topic",
+          "bytes"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "consumer": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "params": {
+      "type": "object",
+      "description": "optional task-specific parameters and cross-checks recorded by the capture script"
+    },
+    "summary": {
+      "type": "object",
+      "description": "optional per-graph totals written by the capture scripts (macs, flops, bytes, instr, num_ops)"
+    }
+  }
+}

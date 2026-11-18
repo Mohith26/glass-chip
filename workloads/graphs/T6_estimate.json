@@ -1,0 +1,82 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T6_estimate",
+ "name": "State estimation: joint KF + object tracking",
+ "provenance": {
+  "source": "Glass Chip C++ state estimator (estimate.cpp)",
+  "captured_by": "workloads/capture/estimate_control.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "71cf181673abb0bca2db7b7835d0298b3ebe07bf970a11524762937beea6a791",
+  "model_name": "joint_kf_plus_object_tracker",
+  "model_version": "estimate.cpp sha256 bf10fec544d6fe22",
+  "model_hash": "sha256:bf10fec544d6fe220c175c1d3a47afebfaef52a417f3075d29dd54d002231f7d",
+  "notes": "Instruction counts: Homebrew clang version 22.1.7, -march=rv64gcv, --target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 5000,
+  "jitter_us": 50,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 5000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "affinity": [
+  "cpu_a"
+ ],
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 16384
+ },
+ "ops": [
+  {
+   "op_id": "est.step",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "instr": {
+    "scalar": 6810,
+    "vector": 662,
+    "mem": 4964
+   },
+   "flops": 6039,
+   "bytes_in": 3440,
+   "bytes_out": 2968,
+   "notes": "joint KF (7 joints x 5 samples) + 8-track 6-state object KF with Mahalanobis gating and greedy association (estimate.cpp); worst-case tick with detections; 12436 RV64GCV instr (static count, both sides of branches counted, so an upper bound)",
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.9424
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/state_estimate",
+   "bytes": 560,
+   "consumer": "T5_plan"
+  },
+  {
+   "topic": "/state_estimate",
+   "bytes": 560,
+   "consumer": "T4_vla"
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 6039,
+  "bytes_in": 3440,
+  "bytes_w": 0,
+  "bytes_out": 2968,
+  "instr": {
+   "scalar": 6810,
+   "vector": 662,
+   "mem": 4964
+  },
+  "num_ops": 1,
+  "num_layers": 1,
+  "arith_intensity": 0.9424
+ }
+}

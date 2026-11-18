@@ -1,0 +1,4497 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T2_detect_overhead",
+ "name": "Object detection + pose on the overhead camera (second instance of T2_detect)",
+ "provenance": {
+  "source": "ultralytics YOLOv8n (COCO-pretrained) exported to ONNX",
+  "captured_by": "workloads/capture/detect.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "mixed",
+  "script_sha256": "3900c2727ebdaeb00ed7b1133b58cf067a09be83c8cda56ecfc719a34a21bcca",
+  "model_name": "yolov8n",
+  "model_version": "ultralytics 8.4.215, onnx opset 17",
+  "model_hash": "sha256:e18ca38a75be89639a1b0da3aad5ce3d882e2abf3d827a110336899c2fbbba67 (onnx); pt sha256:f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+  "notes": "NPU part: onnx_graph_walk of the real exported graph (263 ONNX nodes, 30 metadata nodes dropped, 114 activations fused, 111 ops kept). dtype int8 is a deployment assumption (W8A8, int32 bias); the export itself is fp32. Layers follow ultralytics module index (model.N), Detect head split per branch. CPU post-processing is analytic_count with assumptions: 200 pre-NMS candidates, 8 objects, 3600 depth px per crop, 5 ICP iterations. Output [1, 84, 8400]. This file is a renamed copy of T2_detect for the overhead camera (scenario S2)."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 33333,
+  "jitter_us": 500,
+  "offset_us": 18000,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 33000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "footprint": {
+  "weights_bytes": 3211112,
+  "working_set_bytes": 2867200
+ },
+ "ops": [
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 44236800,
+   "flops": 88473600,
+   "bytes_w": 496,
+   "shape": {
+    "N": 1,
+    "C": 3,
+    "H": 640,
+    "W": 640,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 320,
+    "Wo": 320,
+    "out": [
+     1,
+     16,
+     320,
+     320
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1228800,
+   "bytes_out": 1638400,
+   "op_id": "ovh.yolo.model.0.001.conv",
+   "layer": "yolo.model.0",
+   "depends_on": [],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 30.8518
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 117964800,
+   "flops": 235929600,
+   "bytes_w": 4736,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 320,
+    "W": 320,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 160,
+    "Wo": 160,
+    "out": [
+     1,
+     32,
+     160,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1638400,
+   "bytes_out": 819200,
+   "op_id": "ovh.yolo.model.1.002.conv",
+   "layer": "yolo.model.1",
+   "depends_on": [
+    "ovh.yolo.model.0.001.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 95.8154
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 26214400,
+   "flops": 52428800,
+   "bytes_w": 1152,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 160,
+    "W": 160,
+    "K": 32,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 160,
+    "Wo": 160,
+    "out": [
+     1,
+     32,
+     160,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 819200,
+   "bytes_out": 819200,
+   "op_id": "ovh.yolo.model.2.003.conv",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.1.002.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 31.9775
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     16,
+     160,
+     160
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 819200,
+   "bytes_out": 819200,
+   "op_id": "ovh.yolo.model.2.004.split",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.2.003.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 2368,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 160,
+    "W": 160,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 160,
+    "Wo": 160,
+    "out": [
+     1,
+     16,
+     160,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.2.005.conv",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.2.004.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 143.5849
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 2368,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 160,
+    "W": 160,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 160,
+    "Wo": 160,
+    "out": [
+     1,
+     16,
+     160,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.2.006.conv",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.2.005.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 143.5849
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 409600,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     16,
+     160,
+     160
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 819200,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.2.007.add",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.2.004.split",
+    "ovh.yolo.model.2.006.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     48,
+     160,
+     160
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 1228800,
+   "bytes_out": 1228800,
+   "op_id": "ovh.yolo.model.2.008.concat",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.2.004.split",
+    "ovh.yolo.model.2.007.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 1664,
+   "shape": {
+    "N": 1,
+    "C": 48,
+    "H": 160,
+    "W": 160,
+    "K": 32,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 160,
+    "Wo": 160,
+    "out": [
+     1,
+     32,
+     160,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1228800,
+   "bytes_out": 819200,
+   "op_id": "ovh.yolo.model.2.009.conv",
+   "layer": "yolo.model.2",
+   "depends_on": [
+    "ovh.yolo.model.2.008.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 38.3688
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 117964800,
+   "flops": 235929600,
+   "bytes_w": 18688,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 160,
+    "W": 160,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 819200,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.3.010.conv",
+   "layer": "yolo.model.3",
+   "depends_on": [
+    "ovh.yolo.model.2.009.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 189.1237
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 26214400,
+   "flops": 52428800,
+   "bytes_w": 4352,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.4.011.conv",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.3.010.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 63.6618
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.4.012.split",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.011.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 9344,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 80,
+    "W": 80,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.4.013.conv",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.012.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 281.5765
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 9344,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 80,
+    "W": 80,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.4.014.conv",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.013.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 281.5765
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 204800,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.4.015.add",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.012.split",
+    "ovh.yolo.model.4.014.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 9344,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 80,
+    "W": 80,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.4.016.conv",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.015.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 281.5765
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 9344,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 80,
+    "W": 80,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.4.017.conv",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.016.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 281.5765
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 204800,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.4.018.add",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.015.add",
+    "ovh.yolo.model.4.017.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     80,
+     80
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 819200,
+   "bytes_out": 819200,
+   "op_id": "ovh.yolo.model.4.019.concat",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.012.split",
+    "ovh.yolo.model.4.015.add",
+    "ovh.yolo.model.4.018.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 52428800,
+   "flops": 104857600,
+   "bytes_w": 8448,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 819200,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.4.020.conv",
+   "layer": "yolo.model.4",
+   "depends_on": [
+    "ovh.yolo.model.4.019.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 84.7507
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 117964800,
+   "flops": 235929600,
+   "bytes_w": 74240,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.5.021.conv",
+   "layer": "yolo.model.5",
+   "depends_on": [
+    "ovh.yolo.model.4.020.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 342.6022
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 26214400,
+   "flops": 52428800,
+   "bytes_w": 16896,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.6.022.conv",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.5.021.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 122.9292
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.6.023.split",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.022.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.6.024.conv",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.023.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.6.025.conv",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.024.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 102400,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.6.026.add",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.023.split",
+    "ovh.yolo.model.6.025.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.6.027.conv",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.026.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.6.028.conv",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.027.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 102400,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.6.029.add",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.026.add",
+    "ovh.yolo.model.6.028.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     256,
+     40,
+     40
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.6.030.concat",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.023.split",
+    "ovh.yolo.model.6.026.add",
+    "ovh.yolo.model.6.029.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 52428800,
+   "flops": 104857600,
+   "bytes_w": 33280,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.6.031.conv",
+   "layer": "yolo.model.6",
+   "depends_on": [
+    "ovh.yolo.model.6.030.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 161.8972
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 117964800,
+   "flops": 235929600,
+   "bytes_w": 295936,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 40,
+    "W": 40,
+    "K": 256,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     256,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.7.032.conv",
+   "layer": "yolo.model.7",
+   "depends_on": [
+    "ovh.yolo.model.6.031.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 391.1715
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 26214400,
+   "flops": 52428800,
+   "bytes_w": 66560,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 20,
+    "W": 20,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     256,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.8.033.conv",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.7.032.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 193.2075
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.8.034.split",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.8.033.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 147968,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 20,
+    "W": 20,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.8.035.conv",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.8.034.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 471.1656
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 147968,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 20,
+    "W": 20,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.8.036.conv",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.8.035.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 471.1656
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 51200,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.8.037.add",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.8.034.split",
+    "ovh.yolo.model.8.036.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     20,
+     20
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 153600,
+   "op_id": "ovh.yolo.model.8.038.concat",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.8.034.split",
+    "ovh.yolo.model.8.037.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 99328,
+   "shape": {
+    "N": 1,
+    "C": 384,
+    "H": 20,
+    "W": 20,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     256,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.8.039.conv",
+   "layer": "yolo.model.8",
+   "depends_on": [
+    "ovh.yolo.model.8.038.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 221.3256
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 13107200,
+   "flops": 26214400,
+   "bytes_w": 33280,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 20,
+    "W": 20,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.9.040.conv",
+   "layer": "yolo.model.9",
+   "depends_on": [
+    "ovh.yolo.model.8.039.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 140.274
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "kernel": [
+     5,
+     5
+    ],
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "MaxPool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.9.041.maxpool",
+   "layer": "yolo.model.9",
+   "depends_on": [
+    "ovh.yolo.model.9.040.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 12.5
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "kernel": [
+     5,
+     5
+    ],
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "MaxPool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.9.042.maxpool",
+   "layer": "yolo.model.9",
+   "depends_on": [
+    "ovh.yolo.model.9.041.maxpool"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 12.5
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 1280000,
+   "bytes_w": 0,
+   "shape": {
+    "kernel": [
+     5,
+     5
+    ],
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "MaxPool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.9.043.maxpool",
+   "layer": "yolo.model.9",
+   "depends_on": [
+    "ovh.yolo.model.9.042.maxpool"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 12.5
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     512,
+     20,
+     20
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.9.044.concat",
+   "layer": "yolo.model.9",
+   "depends_on": [
+    "ovh.yolo.model.9.040.conv",
+    "ovh.yolo.model.9.041.maxpool",
+    "ovh.yolo.model.9.042.maxpool",
+    "ovh.yolo.model.9.043.maxpool"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 52428800,
+   "flops": 104857600,
+   "bytes_w": 132096,
+   "shape": {
+    "N": 1,
+    "C": 512,
+    "H": 20,
+    "W": 20,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     256,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.9.045.conv",
+   "layer": "yolo.model.9",
+   "depends_on": [
+    "ovh.yolo.model.9.044.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 238.6946
+  },
+  {
+   "type": "resize",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 409600,
+   "bytes_w": 4,
+   "shape": {
+    "mode": "nearest",
+    "out": [
+     1,
+     256,
+     40,
+     40
+    ],
+    "onnx_op": "Resize"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.10.046.resize",
+   "layer": "yolo.model.10",
+   "depends_on": [
+    "ovh.yolo.model.9.045.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.8
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     40,
+     40
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 614400,
+   "bytes_out": 614400,
+   "op_id": "ovh.yolo.model.11.047.concat",
+   "layer": "yolo.model.11",
+   "depends_on": [
+    "ovh.yolo.model.10.046.resize",
+    "ovh.yolo.model.6.031.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 78643200,
+   "flops": 157286400,
+   "bytes_w": 49664,
+   "shape": {
+    "N": 1,
+    "C": 384,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 614400,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.12.048.conv",
+   "layer": "yolo.model.12",
+   "depends_on": [
+    "ovh.yolo.model.11.047.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 181.0253
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.12.049.split",
+   "layer": "yolo.model.12",
+   "depends_on": [
+    "ovh.yolo.model.12.048.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.12.050.conv",
+   "layer": "yolo.model.12",
+   "depends_on": [
+    "ovh.yolo.model.12.049.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.12.051.conv",
+   "layer": "yolo.model.12",
+   "depends_on": [
+    "ovh.yolo.model.12.050.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     192,
+     40,
+     40
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 307200,
+   "op_id": "ovh.yolo.model.12.052.concat",
+   "layer": "yolo.model.12",
+   "depends_on": [
+    "ovh.yolo.model.12.049.split",
+    "ovh.yolo.model.12.051.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 25088,
+   "shape": {
+    "N": 1,
+    "C": 192,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.12.053.conv",
+   "layer": "yolo.model.12",
+   "depends_on": [
+    "ovh.yolo.model.12.052.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 146.4252
+  },
+  {
+   "type": "resize",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 819200,
+   "bytes_w": 4,
+   "shape": {
+    "mode": "nearest",
+    "out": [
+     1,
+     128,
+     80,
+     80
+    ],
+    "onnx_op": "Resize"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 819200,
+   "op_id": "ovh.yolo.model.13.054.resize",
+   "layer": "yolo.model.13",
+   "depends_on": [
+    "ovh.yolo.model.12.053.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.8
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     192,
+     80,
+     80
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 1228800,
+   "bytes_out": 1228800,
+   "op_id": "ovh.yolo.model.14.055.concat",
+   "layer": "yolo.model.14",
+   "depends_on": [
+    "ovh.yolo.model.13.054.resize",
+    "ovh.yolo.model.4.020.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 78643200,
+   "flops": 157286400,
+   "bytes_w": 12544,
+   "shape": {
+    "N": 1,
+    "C": 192,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1228800,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.15.056.conv",
+   "layer": "yolo.model.15",
+   "depends_on": [
+    "ovh.yolo.model.14.055.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 95.2706
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.15.057.split",
+   "layer": "yolo.model.15",
+   "depends_on": [
+    "ovh.yolo.model.15.056.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 9344,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 80,
+    "W": 80,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.15.058.conv",
+   "layer": "yolo.model.15",
+   "depends_on": [
+    "ovh.yolo.model.15.057.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 281.5765
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 9344,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 80,
+    "W": 80,
+    "K": 32,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     32,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.15.059.conv",
+   "layer": "yolo.model.15",
+   "depends_on": [
+    "ovh.yolo.model.15.058.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 281.5765
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     96,
+     80,
+     80
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 614400,
+   "bytes_out": 614400,
+   "op_id": "ovh.yolo.model.15.060.concat",
+   "layer": "yolo.model.15",
+   "depends_on": [
+    "ovh.yolo.model.15.057.split",
+    "ovh.yolo.model.15.059.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 6400,
+   "shape": {
+    "N": 1,
+    "C": 96,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 614400,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.15.061.conv",
+   "layer": "yolo.model.15",
+   "depends_on": [
+    "ovh.yolo.model.15.060.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 76.323
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.16.062.conv",
+   "layer": "yolo.model.16",
+   "depends_on": [
+    "ovh.yolo.model.15.061.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 214.8252
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     192,
+     40,
+     40
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 307200,
+   "op_id": "ovh.yolo.model.17.063.concat",
+   "layer": "yolo.model.17",
+   "depends_on": [
+    "ovh.yolo.model.12.053.conv",
+    "ovh.yolo.model.16.062.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 25088,
+   "shape": {
+    "N": 1,
+    "C": 192,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.18.064.conv",
+   "layer": "yolo.model.18",
+   "depends_on": [
+    "ovh.yolo.model.17.063.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 146.4252
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.18.065.split",
+   "layer": "yolo.model.18",
+   "depends_on": [
+    "ovh.yolo.model.18.064.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.18.066.conv",
+   "layer": "yolo.model.18",
+   "depends_on": [
+    "ovh.yolo.model.18.065.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.18.067.conv",
+   "layer": "yolo.model.18",
+   "depends_on": [
+    "ovh.yolo.model.18.066.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     192,
+     40,
+     40
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 307200,
+   "op_id": "ovh.yolo.model.18.068.concat",
+   "layer": "yolo.model.18",
+   "depends_on": [
+    "ovh.yolo.model.18.065.split",
+    "ovh.yolo.model.18.067.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 25088,
+   "shape": {
+    "N": 1,
+    "C": 192,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     128,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 204800,
+   "op_id": "ovh.yolo.model.18.069.conv",
+   "layer": "yolo.model.18",
+   "depends_on": [
+    "ovh.yolo.model.18.068.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 146.4252
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 147968,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 40,
+    "W": 40,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.19.070.conv",
+   "layer": "yolo.model.19",
+   "depends_on": [
+    "ovh.yolo.model.18.069.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 292.0152
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     20,
+     20
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 153600,
+   "op_id": "ovh.yolo.model.20.071.concat",
+   "layer": "yolo.model.20",
+   "depends_on": [
+    "ovh.yolo.model.19.070.conv",
+    "ovh.yolo.model.9.045.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 99328,
+   "shape": {
+    "N": 1,
+    "C": 384,
+    "H": 20,
+    "W": 20,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     256,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.21.072.conv",
+   "layer": "yolo.model.21",
+   "depends_on": [
+    "ovh.yolo.model.20.071.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 221.3256
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 2,
+   "shape": {
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Split"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.21.073.split",
+   "layer": "yolo.model.21",
+   "depends_on": [
+    "ovh.yolo.model.21.072.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 147968,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 20,
+    "W": 20,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.21.074.conv",
+   "layer": "yolo.model.21",
+   "depends_on": [
+    "ovh.yolo.model.21.073.split"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 471.1656
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 147968,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 20,
+    "W": 20,
+    "K": 128,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 51200,
+   "bytes_out": 51200,
+   "op_id": "ovh.yolo.model.21.075.conv",
+   "layer": "yolo.model.21",
+   "depends_on": [
+    "ovh.yolo.model.21.074.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 471.1656
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     384,
+     20,
+     20
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 153600,
+   "op_id": "ovh.yolo.model.21.076.concat",
+   "layer": "yolo.model.21",
+   "depends_on": [
+    "ovh.yolo.model.21.073.split",
+    "ovh.yolo.model.21.075.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 39321600,
+   "flops": 78643200,
+   "bytes_w": 99328,
+   "shape": {
+    "N": 1,
+    "C": 384,
+    "H": 20,
+    "W": 20,
+    "K": 256,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     256,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.21.077.conv",
+   "layer": "yolo.model.21",
+   "depends_on": [
+    "ovh.yolo.model.21.076.concat"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 221.3256
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 235929600,
+   "flops": 471859200,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.22.cv2.0.078.conv",
+   "layer": "yolo.model.22.cv2.0",
+   "depends_on": [
+    "ovh.yolo.model.15.061.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 551.0314
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 235929600,
+   "flops": 471859200,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.22.cv2.0.079.conv",
+   "layer": "yolo.model.22.cv2.0",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.0.078.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 551.0314
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 26214400,
+   "flops": 52428800,
+   "bytes_w": 4352,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 409600,
+   "op_id": "ovh.yolo.model.22.cv2.0.080.conv",
+   "layer": "yolo.model.22.cv2.0",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.0.079.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 63.6618
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 117964800,
+   "flops": 235929600,
+   "bytes_w": 73984,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.22.cv2.1.081.conv",
+   "layer": "yolo.model.22.cv2.1",
+   "depends_on": [
+    "ovh.yolo.model.18.069.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 618.9389
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.22.cv2.1.082.conv",
+   "layer": "yolo.model.22.cv2.1",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.1.081.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 487.619
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 6553600,
+   "flops": 13107200,
+   "bytes_w": 4352,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 40,
+    "W": 40,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     64,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 102400,
+   "op_id": "ovh.yolo.model.22.cv2.1.083.conv",
+   "layer": "yolo.model.22.cv2.1",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.1.082.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 62.6683
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 58982400,
+   "flops": 117964800,
+   "bytes_w": 147712,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 20,
+    "W": 20,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     64,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 25600,
+   "op_id": "ovh.yolo.model.22.cv2.2.084.conv",
+   "layer": "yolo.model.22.cv2.2",
+   "depends_on": [
+    "ovh.yolo.model.21.077.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 427.8552
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 14745600,
+   "flops": 29491200,
+   "bytes_w": 37120,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 20,
+    "W": 20,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     64,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 25600,
+   "bytes_out": 25600,
+   "op_id": "ovh.yolo.model.22.cv2.2.085.conv",
+   "layer": "yolo.model.22.cv2.2",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.2.084.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 333.913
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1638400,
+   "flops": 3276800,
+   "bytes_w": 4352,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 20,
+    "W": 20,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     64,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 25600,
+   "bytes_out": 25600,
+   "op_id": "ovh.yolo.model.22.cv2.2.086.conv",
+   "layer": "yolo.model.22.cv2.2",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.2.085.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 58.9862
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     64,
+     8400
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 537600,
+   "bytes_out": 537600,
+   "op_id": "ovh.yolo.model.22.decode.087.concat",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.cv2.0.080.conv",
+    "ovh.yolo.model.22.cv2.1.083.conv",
+    "ovh.yolo.model.22.cv2.2.086.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 294912000,
+   "flops": 589824000,
+   "bytes_w": 46400,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 80,
+    "W": 80,
+    "K": 80,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     80,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 409600,
+   "bytes_out": 512000,
+   "op_id": "ovh.yolo.model.22.cv3.0.088.conv",
+   "layer": "yolo.model.22.cv3.0",
+   "depends_on": [
+    "ovh.yolo.model.15.061.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 609.3223
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 368640000,
+   "flops": 737280000,
+   "bytes_w": 57920,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 80,
+    "W": 80,
+    "K": 80,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     80,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 512000,
+   "bytes_out": 512000,
+   "op_id": "ovh.yolo.model.22.cv3.0.089.conv",
+   "layer": "yolo.model.22.cv3.0",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.0.088.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 681.4552
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 40960000,
+   "flops": 81920000,
+   "bytes_w": 6720,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 80,
+    "W": 80,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 80,
+    "Wo": 80,
+    "out": [
+     1,
+     80,
+     80,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 512000,
+   "bytes_out": 512000,
+   "op_id": "ovh.yolo.model.22.cv3.0.090.conv",
+   "layer": "yolo.model.22.cv3.0",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.0.089.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 79.4784
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 147456000,
+   "flops": 294912000,
+   "bytes_w": 92480,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 40,
+    "W": 40,
+    "K": 80,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     80,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 204800,
+   "bytes_out": 128000,
+   "op_id": "ovh.yolo.model.22.cv3.1.091.conv",
+   "layer": "yolo.model.22.cv3.1",
+   "depends_on": [
+    "ovh.yolo.model.18.069.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 693.4537
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 92160000,
+   "flops": 184320000,
+   "bytes_w": 57920,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 40,
+    "W": 40,
+    "K": 80,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     80,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 128000,
+   "bytes_out": 128000,
+   "op_id": "ovh.yolo.model.22.cv3.1.092.conv",
+   "layer": "yolo.model.22.cv3.1",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.1.091.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 587.156
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 10240000,
+   "flops": 20480000,
+   "bytes_w": 6720,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 40,
+    "W": 40,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 40,
+    "Wo": 40,
+    "out": [
+     1,
+     80,
+     40,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 128000,
+   "bytes_out": 128000,
+   "op_id": "ovh.yolo.model.22.cv3.1.093.conv",
+   "layer": "yolo.model.22.cv3.1",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.1.092.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 77.9537
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 73728000,
+   "flops": 147456000,
+   "bytes_w": 184640,
+   "shape": {
+    "N": 1,
+    "C": 256,
+    "H": 20,
+    "W": 20,
+    "K": 80,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 102400,
+   "bytes_out": 32000,
+   "op_id": "ovh.yolo.model.22.cv3.2.094.conv",
+   "layer": "yolo.model.22.cv3.2",
+   "depends_on": [
+    "ovh.yolo.model.21.077.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 462.1866
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 23040000,
+   "flops": 46080000,
+   "bytes_w": 57920,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 20,
+    "W": 20,
+    "K": 80,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 32000,
+   "bytes_out": 32000,
+   "op_id": "ovh.yolo.model.22.cv3.2.095.conv",
+   "layer": "yolo.model.22.cv3.2",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.2.094.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid",
+    "Mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 377.9528
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 2560000,
+   "flops": 5120000,
+   "bytes_w": 6720,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 20,
+    "W": 20,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 20,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     20,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 32000,
+   "bytes_out": 32000,
+   "op_id": "ovh.yolo.model.22.cv3.2.096.conv",
+   "layer": "yolo.model.22.cv3.2",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.2.095.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 72.3982
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     80,
+     8400
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 672000,
+   "bytes_out": 672000,
+   "op_id": "ovh.yolo.model.22.decode.097.concat",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.cv3.0.090.conv",
+    "ovh.yolo.model.22.cv3.1.093.conv",
+    "ovh.yolo.model.22.cv3.2.096.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     16,
+     4,
+     8400
+    ],
+    "onnx_op": "Transpose"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 537600,
+   "bytes_out": 537600,
+   "op_id": "ovh.yolo.model.22.dfl.098.transpose",
+   "layer": "yolo.model.22.dfl",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.087.concat"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "softmax",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2688000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     16,
+     4,
+     8400
+    ],
+    "onnx_op": "Softmax"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 537600,
+   "bytes_out": 537600,
+   "op_id": "ovh.yolo.model.22.dfl.099.softmax",
+   "layer": "yolo.model.22.dfl",
+   "depends_on": [
+    "ovh.yolo.model.22.dfl.098.transpose"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.5
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 537600,
+   "flops": 1075200,
+   "bytes_w": 16,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 4,
+    "W": 8400,
+    "K": 1,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 4,
+    "Wo": 8400,
+    "out": [
+     1,
+     1,
+     4,
+     8400
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 537600,
+   "bytes_out": 33600,
+   "op_id": "ovh.yolo.model.22.dfl.100.conv",
+   "layer": "yolo.model.22.dfl",
+   "depends_on": [
+    "ovh.yolo.model.22.dfl.099.softmax"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 1.8823
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Slice"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.101.slice",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.dfl.100.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Slice"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.102.slice",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.dfl.100.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 16800,
+   "bytes_w": 16800,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Sub"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 16800,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.103.sub",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.101.slice"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 16800,
+   "bytes_w": 16800,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 16800,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.104.add",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.102.slice"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 16800,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.105.add",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.103.sub",
+    "ovh.yolo.model.22.decode.104.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 16800,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Div"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 16800,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.106.div",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.105.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.5
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 16800,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     2,
+     8400
+    ],
+    "onnx_op": "Sub"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 16800,
+   "op_id": "ovh.yolo.model.22.decode.107.sub",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.103.sub",
+    "ovh.yolo.model.22.decode.104.add"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     4,
+     8400
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 33600,
+   "op_id": "ovh.yolo.model.22.decode.108.concat",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.106.div",
+    "ovh.yolo.model.22.decode.107.sub"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.0
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 33600,
+   "bytes_w": 8400,
+   "shape": {
+    "out": [
+     1,
+     4,
+     8400
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 33600,
+   "op_id": "ovh.yolo.model.22.decode.109.mul",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.108.concat"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4444
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 2688000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     80,
+     8400
+    ],
+    "onnx_op": "Sigmoid"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 672000,
+   "bytes_out": 672000,
+   "op_id": "ovh.yolo.model.22.decode.110.sigmoid",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.097.concat"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 2.0
+  },
+  {
+   "type": "memcopy",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     84,
+     8400
+    ],
+    "onnx_op": "Concat"
+   },
+   "eligible": [
+    "npu",
+    "dma",
+    "cpu"
+   ],
+   "bytes_in": 705600,
+   "bytes_out": 705600,
+   "op_id": "ovh.yolo.model.22.decode.111.concat",
+   "layer": "yolo.model.22.decode",
+   "depends_on": [
+    "ovh.yolo.model.22.decode.109.mul",
+    "ovh.yolo.model.22.decode.110.sigmoid"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "ovh.post.decode",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "flops": 714000,
+   "bytes_in": 705600,
+   "bytes_out": 4800,
+   "instr": {
+    "scalar": 216431,
+    "vector": 44625,
+    "mem": 35520
+   },
+   "depends_on": [
+    "ovh.yolo.model.22.decode.111.concat"
+   ],
+   "notes": "dequantize int8 head output, per-anchor class max over 80 classes, confidence threshold; 8400 anchors",
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 1.0051
+  },
+  {
+   "op_id": "ovh.post.nms",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "flops": 306115,
+   "bytes_in": 4800,
+   "bytes_out": 192,
+   "instr": {
+    "scalar": 321779,
+    "vector": 7174,
+    "mem": 11625
+   },
+   "notes": "sort 200 candidates then greedy NMS, worst case K^2/2 IoU tests at ~15 flops each",
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "ovh.post.decode"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 61.3211
+  },
+  {
+   "op_id": "ovh.post.pose_refine",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "flops": 9393600,
+   "bytes_in": 57600,
+   "bytes_out": 224,
+   "instr": {
+    "scalar": 4252805,
+    "vector": 513712,
+    "mem": 123120
+   },
+   "notes": "per object: deproject 3600 depth px, centroid+PCA (3x3 covariance, Jacobi eigen), 5 ICP iterations at ~60 flops/point; 8 objects",
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "ovh.post.nms"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 162.4516
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/perception/detections",
+   "bytes": 1664,
+   "consumer": "T4_vla"
+  },
+  {
+   "topic": "/perception/object_poses",
+   "bytes": 640,
+   "consumer": "T6_estimate"
+  }
+ ],
+ "summary": {
+  "macs": 4371993600,
+  "flops": 8766038515,
+  "bytes_in": 36772000,
+  "bytes_w": 3211112,
+  "bytes_out": 30401216,
+  "instr": {
+   "scalar": 4791015,
+   "vector": 565511,
+   "mem": 170265
+  },
+  "num_ops": 114,
+  "num_layers": 33,
+  "arith_intensity": 124.5453
+ }
+}

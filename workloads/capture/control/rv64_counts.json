@@ -1,0 +1,84 @@
+{
+ "_meta": {
+  "compiler": "Homebrew clang version 22.1.7",
+  "flags": "--target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20",
+  "method": "static count of compiled RV64 assembly, loops weighted by known trip counts; both sides of forward branches counted (upper bound when 'exact' is false)"
+ },
+ "rnea_gravity_coriolis": {
+  "instr": {
+   "scalar": 1162,
+   "vector": 0,
+   "mem": 560
+  },
+  "instr_total": 1722,
+  "fp_ops": 1136,
+  "flops_est": 1649,
+  "static_instructions": 1722,
+  "code_bytes_upper": 6888,
+  "loops": [],
+  "external_calls": {},
+  "exact": true,
+  "source": "workloads/capture/control/control.cpp",
+  "march": "rv64gc",
+  "source_sha256": "9411ba50e3fd9e45a6b03546be5af13c03bfea85916ec20a9c9bea7ce5a5b511"
+ },
+ "control_step": {
+  "instr": {
+   "scalar": 1463,
+   "vector": 0,
+   "mem": 817
+  },
+  "instr_total": 2280,
+  "fp_ops": 239,
+  "flops_est": 1951,
+  "static_instructions": 558,
+  "code_bytes_upper": 2232,
+  "loops": [],
+  "external_calls": {},
+  "exact": false,
+  "source": "workloads/capture/control/control.cpp",
+  "march": "rv64gc",
+  "source_sha256": "9411ba50e3fd9e45a6b03546be5af13c03bfea85916ec20a9c9bea7ce5a5b511"
+ },
+ "estimate_step": {
+  "instr": {
+   "scalar": 6810,
+   "vector": 662,
+   "mem": 4964
+  },
+  "instr_total": 12436,
+  "fp_ops": 4383,
+  "flops_est": 6039,
+  "static_instructions": 12436,
+  "code_bytes_upper": 49744,
+  "loops": [],
+  "external_calls": {},
+  "exact": false,
+  "source": "workloads/capture/control/estimate.cpp",
+  "march": "rv64gcv",
+  "source_sha256": "bf10fec544d6fe220c175c1d3a47afebfaef52a417f3075d29dd54d002231f7d"
+ },
+ "ssm_step": {
+  "instr": {
+   "scalar": 39909,
+   "vector": 0,
+   "mem": 37073
+  },
+  "instr_total": 76982,
+  "fp_ops": 31380,
+  "flops_est": 39189,
+  "static_instructions": 1256,
+  "code_bytes_upper": 5024,
+  "loops": [
+   {
+    "trip_count": 64,
+    "body_instructions": 1202
+   }
+  ],
+  "external_calls": {},
+  "exact": false,
+  "source": "workloads/capture/control/ssm.cpp",
+  "march": "rv64gc",
+  "source_sha256": "b375dd6dd6bc8bf025b8fb73c03aa1196c3fab08775a4f395000ec4508c92a9a"
+ }
+}

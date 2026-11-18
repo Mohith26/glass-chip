@@ -1,0 +1,126 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T14_ota",
+ "name": "OTA download + flash (background)",
+ "provenance": {
+  "source": "background OTA update (download, decrypt, verify, flash)",
+  "captured_by": "workloads/capture/extras.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "a0831a91c52196719a205c88e48281f19d6e36a01ff46f564b3faae2abec5058",
+  "notes": "100 ms chunks at 50 Mbit/s; per-byte costs are estimates."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 100000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 100000,
+ "criticality": "low",
+ "qos_class": "best_effort",
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 1250000
+ },
+ "params": {
+  "download_bps": 50000000.0
+ },
+ "ops": [
+  {
+   "op_id": "ota.net_rx",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 625000,
+   "bytes_out": 625000,
+   "notes": "NIC -> DRAM, 50 Mbit/s download (assumption)",
+   "eligible": [
+    "dma"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "ota.tls_decrypt",
+   "type": "cpu_kernel",
+   "dtype": "int8",
+   "bytes_in": 625000,
+   "bytes_out": 625000,
+   "instr": {
+    "scalar": 1875000,
+    "vector": 0,
+    "mem": 156250
+   },
+   "notes": "AES-GCM without crypto extensions, about 3 instr/byte (estimate)",
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "ota.net_rx"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "ota.sha256",
+   "type": "cpu_kernel",
+   "dtype": "int32",
+   "bytes_in": 625000,
+   "bytes_out": 32,
+   "instr": {
+    "scalar": 7500000,
+    "vector": 0,
+    "mem": 78125
+   },
+   "notes": "SHA-256 of the image chunk, about 12 scalar instr/byte (estimate)",
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "ota.tls_decrypt"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "ota.flash_write",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 625000,
+   "bytes_out": 625000,
+   "notes": "chunk -> flash (inactive slot)",
+   "preempt_boundary": true,
+   "eligible": [
+    "dma"
+   ],
+   "depends_on": [
+    "ota.sha256"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 0,
+  "bytes_in": 2500000,
+  "bytes_w": 0,
+  "bytes_out": 1875032,
+  "instr": {
+   "scalar": 9375000,
+   "vector": 0,
+   "mem": 234375
+  },
+  "num_ops": 4,
+  "num_layers": 4,
+  "arith_intensity": 0.0
+ }
+}

@@ -1,0 +1,3982 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T8_safety",
+ "name": "Safety monitor: person segmentation + SSM",
+ "provenance": {
+  "source": "torchvision lraspp_mobilenet_v3_large (COCO_WITH_VOC_LABELS_V1) + SSM in C++",
+  "captured_by": "workloads/capture/safety.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "mixed",
+  "script_sha256": "48aeca572759c20b8dfc6b32954241b4398053a157b9f10b3ff6f5ed19861544",
+  "model_name": "lraspp_mobilenet_v3_large",
+  "model_version": "torchvision 0.29.2, onnx opset 17, input 1x3x240x320",
+  "model_hash": "sha256:21f76e848ac2b3e98ed236a1f1739901cee0ce7f0d5a50e6bd22dc08750375b8",
+  "notes": "NPU part: onnx_graph_walk (160 ONNX nodes, 49 activations fused, 97 ops). int8 is a deployment assumption. DSP mask/depth fusion: analytic_count. RT SSM: compiled RV64 static instruction count of workloads/capture/control/ssm.cpp.",
+  "references": [
+   "ISO/TS 15066:2016 speed and separation monitoring formula"
+  ]
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 10000,
+  "jitter_us": 100,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 10000,
+ "criticality": "safety",
+ "qos_class": "safety",
+ "footprint": {
+  "weights_bytes": 3261560,
+  "working_set_bytes": 1767168
+ },
+ "ops": [
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 8294400,
+   "flops": 16588800,
+   "bytes_w": 496,
+   "shape": {
+    "N": 1,
+    "C": 3,
+    "H": 240,
+    "W": 320,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 1,
+    "Ho": 120,
+    "Wo": 160,
+    "out": [
+     1,
+     16,
+     120,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 230400,
+   "bytes_out": 307200,
+   "op_id": "seg.backbone.0.001.conv",
+   "layer": "seg.backbone.0",
+   "depends_on": [],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 30.8287
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 2764800,
+   "flops": 5529600,
+   "bytes_w": 208,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 120,
+    "W": 160,
+    "K": 16,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 16,
+    "Ho": 120,
+    "Wo": 160,
+    "out": [
+     1,
+     16,
+     120,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 307200,
+   "op_id": "seg.backbone.1.002.conv",
+   "layer": "seg.backbone.1",
+   "depends_on": [
+    "seg.backbone.0.001.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.997
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4915200,
+   "flops": 9830400,
+   "bytes_w": 320,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 120,
+    "W": 160,
+    "K": 16,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 120,
+    "Wo": 160,
+    "out": [
+     1,
+     16,
+     120,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 307200,
+   "op_id": "seg.backbone.1.003.conv",
+   "layer": "seg.backbone.1",
+   "depends_on": [
+    "seg.backbone.1.002.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 15.9917
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 307200,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     16,
+     120,
+     160
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 614400,
+   "bytes_out": 307200,
+   "op_id": "seg.backbone.1.004.add",
+   "layer": "seg.backbone.1",
+   "depends_on": [
+    "seg.backbone.0.001.conv",
+    "seg.backbone.1.003.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 19660800,
+   "flops": 39321600,
+   "bytes_w": 1280,
+   "shape": {
+    "N": 1,
+    "C": 16,
+    "H": 120,
+    "W": 160,
+    "K": 64,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 120,
+    "Wo": 160,
+    "out": [
+     1,
+     64,
+     120,
+     160
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 1228800,
+   "op_id": "seg.backbone.2.005.conv",
+   "layer": "seg.backbone.2",
+   "depends_on": [
+    "seg.backbone.1.004.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 25.5787
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 2764800,
+   "flops": 5529600,
+   "bytes_w": 832,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 120,
+    "W": 160,
+    "K": 64,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 64,
+    "Ho": 60,
+    "Wo": 80,
+    "out": [
+     1,
+     64,
+     60,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 1228800,
+   "bytes_out": 307200,
+   "op_id": "seg.backbone.2.006.conv",
+   "layer": "seg.backbone.2",
+   "depends_on": [
+    "seg.backbone.2.005.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.5981
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 7372800,
+   "flops": 14745600,
+   "bytes_w": 1632,
+   "shape": {
+    "N": 1,
+    "C": 64,
+    "H": 60,
+    "W": 80,
+    "K": 24,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 60,
+    "Wo": 80,
+    "out": [
+     1,
+     24,
+     60,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 307200,
+   "bytes_out": 115200,
+   "op_id": "seg.backbone.2.007.conv",
+   "layer": "seg.backbone.2",
+   "depends_on": [
+    "seg.backbone.2.006.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 34.7747
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 8294400,
+   "flops": 16588800,
+   "bytes_w": 2016,
+   "shape": {
+    "N": 1,
+    "C": 24,
+    "H": 60,
+    "W": 80,
+    "K": 72,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 60,
+    "Wo": 80,
+    "out": [
+     1,
+     72,
+     60,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 115200,
+   "bytes_out": 345600,
+   "op_id": "seg.backbone.3.008.conv",
+   "layer": "seg.backbone.3",
+   "depends_on": [
+    "seg.backbone.2.007.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.8432
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 3110400,
+   "flops": 6220800,
+   "bytes_w": 936,
+   "shape": {
+    "N": 1,
+    "C": 72,
+    "H": 60,
+    "W": 80,
+    "K": 72,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 72,
+    "Ho": 60,
+    "Wo": 80,
+    "out": [
+     1,
+     72,
+     60,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 345600,
+   "bytes_out": 345600,
+   "op_id": "seg.backbone.3.009.conv",
+   "layer": "seg.backbone.3",
+   "depends_on": [
+    "seg.backbone.3.008.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.9878
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 8294400,
+   "flops": 16588800,
+   "bytes_w": 1824,
+   "shape": {
+    "N": 1,
+    "C": 72,
+    "H": 60,
+    "W": 80,
+    "K": 24,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 60,
+    "Wo": 80,
+    "out": [
+     1,
+     24,
+     60,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 345600,
+   "bytes_out": 115200,
+   "op_id": "seg.backbone.3.010.conv",
+   "layer": "seg.backbone.3",
+   "depends_on": [
+    "seg.backbone.3.009.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.8581
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 115200,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     24,
+     60,
+     80
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 230400,
+   "bytes_out": 115200,
+   "op_id": "seg.backbone.3.011.add",
+   "layer": "seg.backbone.3",
+   "depends_on": [
+    "seg.backbone.2.007.conv",
+    "seg.backbone.3.010.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 8294400,
+   "flops": 16588800,
+   "bytes_w": 2016,
+   "shape": {
+    "N": 1,
+    "C": 24,
+    "H": 60,
+    "W": 80,
+    "K": 72,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 60,
+    "Wo": 80,
+    "out": [
+     1,
+     72,
+     60,
+     80
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 115200,
+   "bytes_out": 345600,
+   "op_id": "seg.backbone.4.012.conv",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.3.011.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.8432
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 2160000,
+   "flops": 4320000,
+   "bytes_w": 2088,
+   "shape": {
+    "N": 1,
+    "C": 72,
+    "H": 60,
+    "W": 80,
+    "K": 72,
+    "R": 5,
+    "S": 5,
+    "stride": 2,
+    "groups": 72,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     72,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 345600,
+   "bytes_out": 86400,
+   "op_id": "seg.backbone.4.013.conv",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.4.012.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 9.9519
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 86400,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     72,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 86400,
+   "bytes_out": 72,
+   "op_id": "seg.backbone.4.014.globalaveragepool",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.4.013.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1728,
+   "flops": 3456,
+   "bytes_w": 1824,
+   "shape": {
+    "N": 1,
+    "C": 72,
+    "H": 1,
+    "W": 1,
+    "K": 24,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     24,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 72,
+   "bytes_out": 24,
+   "op_id": "seg.backbone.4.015.conv",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.4.014.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.8
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1728,
+   "flops": 3456,
+   "bytes_w": 2016,
+   "shape": {
+    "N": 1,
+    "C": 24,
+    "H": 1,
+    "W": 1,
+    "K": 72,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     72,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 24,
+   "bytes_out": 72,
+   "op_id": "seg.backbone.4.016.conv",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.4.015.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.6364
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 86400,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     72,
+     30,
+     40
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 86472,
+   "bytes_out": 86400,
+   "op_id": "seg.backbone.4.017.mul",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.4.013.conv",
+    "seg.backbone.4.016.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4998
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3456000,
+   "flops": 6912000,
+   "bytes_w": 3040,
+   "shape": {
+    "N": 1,
+    "C": 72,
+    "H": 30,
+    "W": 40,
+    "K": 40,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     40,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 86400,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.4.018.conv",
+   "layer": "seg.backbone.4",
+   "depends_on": [
+    "seg.backbone.4.017.mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 50.291
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5760000,
+   "flops": 11520000,
+   "bytes_w": 5280,
+   "shape": {
+    "N": 1,
+    "C": 40,
+    "H": 30,
+    "W": 40,
+    "K": 120,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     120,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.5.019.conv",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.4.018.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 58.3942
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 3600000,
+   "flops": 7200000,
+   "bytes_w": 3480,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 30,
+    "W": 40,
+    "K": 120,
+    "R": 5,
+    "S": 5,
+    "stride": 1,
+    "groups": 120,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     120,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.5.020.conv",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.5.019.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 24.7015
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 144000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     120,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 120,
+   "op_id": "seg.backbone.5.021.globalaveragepool",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.5.020.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3840,
+   "flops": 7680,
+   "bytes_w": 3968,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 1,
+    "W": 1,
+    "K": 32,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     32,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 120,
+   "bytes_out": 32,
+   "op_id": "seg.backbone.5.022.conv",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.5.021.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.8641
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3840,
+   "flops": 7680,
+   "bytes_w": 4320,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 1,
+    "W": 1,
+    "K": 120,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     120,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 32,
+   "bytes_out": 120,
+   "op_id": "seg.backbone.5.023.conv",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.5.022.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.7174
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 144000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     120,
+     30,
+     40
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 144120,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.5.024.mul",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.5.020.conv",
+    "seg.backbone.5.023.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4998
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5760000,
+   "flops": 11520000,
+   "bytes_w": 4960,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 30,
+    "W": 40,
+    "K": 40,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     40,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.5.025.conv",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.5.024.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 58.489
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 48000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     40,
+     30,
+     40
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 96000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.5.026.add",
+   "layer": "seg.backbone.5",
+   "depends_on": [
+    "seg.backbone.4.018.conv",
+    "seg.backbone.5.025.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5760000,
+   "flops": 11520000,
+   "bytes_w": 5280,
+   "shape": {
+    "N": 1,
+    "C": 40,
+    "H": 30,
+    "W": 40,
+    "K": 120,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     120,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.6.027.conv",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.5.026.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 58.3942
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 3600000,
+   "flops": 7200000,
+   "bytes_w": 3480,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 30,
+    "W": 40,
+    "K": 120,
+    "R": 5,
+    "S": 5,
+    "stride": 1,
+    "groups": 120,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     120,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.6.028.conv",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.6.027.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 24.7015
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 144000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     120,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 120,
+   "op_id": "seg.backbone.6.029.globalaveragepool",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.6.028.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3840,
+   "flops": 7680,
+   "bytes_w": 3968,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 1,
+    "W": 1,
+    "K": 32,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     32,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 120,
+   "bytes_out": 32,
+   "op_id": "seg.backbone.6.030.conv",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.6.029.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.8641
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3840,
+   "flops": 7680,
+   "bytes_w": 4320,
+   "shape": {
+    "N": 1,
+    "C": 32,
+    "H": 1,
+    "W": 1,
+    "K": 120,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     120,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 32,
+   "bytes_out": 120,
+   "op_id": "seg.backbone.6.031.conv",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.6.030.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.7174
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 144000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     120,
+     30,
+     40
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 144120,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.6.032.mul",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.6.028.conv",
+    "seg.backbone.6.031.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4998
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5760000,
+   "flops": 11520000,
+   "bytes_w": 4960,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 30,
+    "W": 40,
+    "K": 40,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     40,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.6.033.conv",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.6.032.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 58.489
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 48000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     40,
+     30,
+     40
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 96000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.6.034.add",
+   "layer": "seg.backbone.6",
+   "depends_on": [
+    "seg.backbone.5.026.add",
+    "seg.backbone.6.033.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 11520000,
+   "flops": 23040000,
+   "bytes_w": 10560,
+   "shape": {
+    "N": 1,
+    "C": 40,
+    "H": 30,
+    "W": 40,
+    "K": 240,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     240,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.7.035.conv",
+   "layer": "seg.backbone.7",
+   "depends_on": [
+    "seg.backbone.6.034.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 66.482
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 648000,
+   "flops": 1296000,
+   "bytes_w": 3120,
+   "shape": {
+    "N": 1,
+    "C": 240,
+    "H": 30,
+    "W": 40,
+    "K": 240,
+    "R": 3,
+    "S": 3,
+    "stride": 2,
+    "groups": 240,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     240,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 72000,
+   "op_id": "seg.backbone.7.036.conv",
+   "layer": "seg.backbone.7",
+   "depends_on": [
+    "seg.backbone.7.035.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.5691
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 5760000,
+   "flops": 11520000,
+   "bytes_w": 19520,
+   "shape": {
+    "N": 1,
+    "C": 240,
+    "H": 15,
+    "W": 20,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 72000,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.7.037.conv",
+   "layer": "seg.backbone.7",
+   "depends_on": [
+    "seg.backbone.7.036.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 99.723
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4800000,
+   "flops": 9600000,
+   "bytes_w": 16800,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 15,
+    "W": 20,
+    "K": 200,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     200,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 24000,
+   "bytes_out": 60000,
+   "op_id": "seg.backbone.8.038.conv",
+   "layer": "seg.backbone.8",
+   "depends_on": [
+    "seg.backbone.7.037.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 95.2381
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 540000,
+   "flops": 1080000,
+   "bytes_w": 2600,
+   "shape": {
+    "N": 1,
+    "C": 200,
+    "H": 15,
+    "W": 20,
+    "K": 200,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 200,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     200,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 60000,
+   "bytes_out": 60000,
+   "op_id": "seg.backbone.8.039.conv",
+   "layer": "seg.backbone.8",
+   "depends_on": [
+    "seg.backbone.8.038.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.8091
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4800000,
+   "flops": 9600000,
+   "bytes_w": 16320,
+   "shape": {
+    "N": 1,
+    "C": 200,
+    "H": 15,
+    "W": 20,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 60000,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.8.040.conv",
+   "layer": "seg.backbone.8",
+   "depends_on": [
+    "seg.backbone.8.039.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 95.6938
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 24000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.8.041.add",
+   "layer": "seg.backbone.8",
+   "depends_on": [
+    "seg.backbone.7.037.conv",
+    "seg.backbone.8.040.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4416000,
+   "flops": 8832000,
+   "bytes_w": 15456,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 15,
+    "W": 20,
+    "K": 184,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     184,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 24000,
+   "bytes_out": 55200,
+   "op_id": "seg.backbone.9.042.conv",
+   "layer": "seg.backbone.9",
+   "depends_on": [
+    "seg.backbone.8.041.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.3063
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 496800,
+   "flops": 993600,
+   "bytes_w": 2392,
+   "shape": {
+    "N": 1,
+    "C": 184,
+    "H": 15,
+    "W": 20,
+    "K": 184,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 184,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     184,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 55200,
+   "bytes_out": 55200,
+   "op_id": "seg.backbone.9.043.conv",
+   "layer": "seg.backbone.9",
+   "depends_on": [
+    "seg.backbone.9.042.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.8091
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4416000,
+   "flops": 8832000,
+   "bytes_w": 15040,
+   "shape": {
+    "N": 1,
+    "C": 184,
+    "H": 15,
+    "W": 20,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 55200,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.9.044.conv",
+   "layer": "seg.backbone.9",
+   "depends_on": [
+    "seg.backbone.9.043.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.7182
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 24000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.9.045.add",
+   "layer": "seg.backbone.9",
+   "depends_on": [
+    "seg.backbone.8.041.add",
+    "seg.backbone.9.044.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4416000,
+   "flops": 8832000,
+   "bytes_w": 15456,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 15,
+    "W": 20,
+    "K": 184,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     184,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 24000,
+   "bytes_out": 55200,
+   "op_id": "seg.backbone.10.046.conv",
+   "layer": "seg.backbone.10",
+   "depends_on": [
+    "seg.backbone.9.045.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.3063
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 496800,
+   "flops": 993600,
+   "bytes_w": 2392,
+   "shape": {
+    "N": 1,
+    "C": 184,
+    "H": 15,
+    "W": 20,
+    "K": 184,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 184,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     184,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 55200,
+   "bytes_out": 55200,
+   "op_id": "seg.backbone.10.047.conv",
+   "layer": "seg.backbone.10",
+   "depends_on": [
+    "seg.backbone.10.046.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.8091
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 4416000,
+   "flops": 8832000,
+   "bytes_w": 15040,
+   "shape": {
+    "N": 1,
+    "C": 184,
+    "H": 15,
+    "W": 20,
+    "K": 80,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 55200,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.10.048.conv",
+   "layer": "seg.backbone.10",
+   "depends_on": [
+    "seg.backbone.10.047.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 93.7182
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 24000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     80,
+     15,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 24000,
+   "op_id": "seg.backbone.10.049.add",
+   "layer": "seg.backbone.10",
+   "depends_on": [
+    "seg.backbone.10.048.conv",
+    "seg.backbone.9.045.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 11520000,
+   "flops": 23040000,
+   "bytes_w": 40320,
+   "shape": {
+    "N": 1,
+    "C": 80,
+    "H": 15,
+    "W": 20,
+    "K": 480,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     480,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 24000,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.11.050.conv",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.10.049.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 110.5991
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 1296000,
+   "flops": 2592000,
+   "bytes_w": 6240,
+   "shape": {
+    "N": 1,
+    "C": 480,
+    "H": 15,
+    "W": 20,
+    "K": 480,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 480,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     480,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.11.051.conv",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.11.050.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.8091
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 144000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     480,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 480,
+   "op_id": "seg.backbone.11.052.globalaveragepool",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.11.051.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9967
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 57600,
+   "flops": 115200,
+   "bytes_w": 58080,
+   "shape": {
+    "N": 1,
+    "C": 480,
+    "H": 1,
+    "W": 1,
+    "K": 120,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     120,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 480,
+   "bytes_out": 120,
+   "op_id": "seg.backbone.11.053.conv",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.11.052.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9632
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 57600,
+   "flops": 115200,
+   "bytes_w": 59520,
+   "shape": {
+    "N": 1,
+    "C": 120,
+    "H": 1,
+    "W": 1,
+    "K": 480,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     480,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 120,
+   "bytes_out": 480,
+   "op_id": "seg.backbone.11.054.conv",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.11.053.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9162
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 144000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     480,
+     15,
+     20
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 144480,
+   "bytes_out": 144000,
+   "op_id": "seg.backbone.11.055.mul",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.11.051.conv",
+    "seg.backbone.11.054.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 16128000,
+   "flops": 32256000,
+   "bytes_w": 54208,
+   "shape": {
+    "N": 1,
+    "C": 480,
+    "H": 15,
+    "W": 20,
+    "K": 112,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     112,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 144000,
+   "bytes_out": 33600,
+   "op_id": "seg.backbone.11.056.conv",
+   "layer": "seg.backbone.11",
+   "depends_on": [
+    "seg.backbone.11.055.mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 139.1496
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 22579200,
+   "flops": 45158400,
+   "bytes_w": 77952,
+   "shape": {
+    "N": 1,
+    "C": 112,
+    "H": 15,
+    "W": 20,
+    "K": 672,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     672,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 201600,
+   "op_id": "seg.backbone.12.057.conv",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.11.056.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 144.206
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 1814400,
+   "flops": 3628800,
+   "bytes_w": 8736,
+   "shape": {
+    "N": 1,
+    "C": 672,
+    "H": 15,
+    "W": 20,
+    "K": 672,
+    "R": 3,
+    "S": 3,
+    "stride": 1,
+    "groups": 672,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     672,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 201600,
+   "bytes_out": 201600,
+   "op_id": "seg.backbone.12.058.conv",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.12.057.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 8.8091
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 201600,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     672,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 201600,
+   "bytes_out": 672,
+   "op_id": "seg.backbone.12.059.globalaveragepool",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.12.058.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9967
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 112896,
+   "flops": 225792,
+   "bytes_w": 113568,
+   "shape": {
+    "N": 1,
+    "C": 672,
+    "H": 1,
+    "W": 1,
+    "K": 168,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     168,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 672,
+   "bytes_out": 168,
+   "op_id": "seg.backbone.12.060.conv",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.12.059.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9736
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 112896,
+   "flops": 225792,
+   "bytes_w": 115584,
+   "shape": {
+    "N": 1,
+    "C": 168,
+    "H": 1,
+    "W": 1,
+    "K": 672,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     672,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 168,
+   "bytes_out": 672,
+   "op_id": "seg.backbone.12.061.conv",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.12.060.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9394
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 201600,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     672,
+     15,
+     20
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 202272,
+   "bytes_out": 201600,
+   "op_id": "seg.backbone.12.062.mul",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.12.058.conv",
+    "seg.backbone.12.061.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 22579200,
+   "flops": 45158400,
+   "bytes_w": 75712,
+   "shape": {
+    "N": 1,
+    "C": 672,
+    "H": 15,
+    "W": 20,
+    "K": 112,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     112,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 201600,
+   "bytes_out": 33600,
+   "op_id": "seg.backbone.12.063.conv",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.12.062.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 145.245
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 33600,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     112,
+     15,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 67200,
+   "bytes_out": 33600,
+   "op_id": "seg.backbone.12.064.add",
+   "layer": "seg.backbone.12",
+   "depends_on": [
+    "seg.backbone.11.056.conv",
+    "seg.backbone.12.063.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 22579200,
+   "flops": 45158400,
+   "bytes_w": 77952,
+   "shape": {
+    "N": 1,
+    "C": 112,
+    "H": 15,
+    "W": 20,
+    "K": 672,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     672,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 33600,
+   "bytes_out": 201600,
+   "op_id": "seg.backbone.13.065.conv",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.12.064.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 144.206
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 5040000,
+   "flops": 10080000,
+   "bytes_w": 19488,
+   "shape": {
+    "N": 1,
+    "C": 672,
+    "H": 15,
+    "W": 20,
+    "K": 672,
+    "R": 5,
+    "S": 5,
+    "stride": 1,
+    "groups": 672,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     672,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 201600,
+   "bytes_out": 201600,
+   "op_id": "seg.backbone.13.066.conv",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.13.065.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 23.8474
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 201600,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     672,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 201600,
+   "bytes_out": 672,
+   "op_id": "seg.backbone.13.067.globalaveragepool",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.13.066.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9967
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 112896,
+   "flops": 225792,
+   "bytes_w": 113568,
+   "shape": {
+    "N": 1,
+    "C": 672,
+    "H": 1,
+    "W": 1,
+    "K": 168,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     168,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 672,
+   "bytes_out": 168,
+   "op_id": "seg.backbone.13.068.conv",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.13.067.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9736
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 112896,
+   "flops": 225792,
+   "bytes_w": 115584,
+   "shape": {
+    "N": 1,
+    "C": 168,
+    "H": 1,
+    "W": 1,
+    "K": 672,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     672,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 168,
+   "bytes_out": 672,
+   "op_id": "seg.backbone.13.069.conv",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.13.068.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9394
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 201600,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     672,
+     15,
+     20
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 202272,
+   "bytes_out": 201600,
+   "op_id": "seg.backbone.13.070.mul",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.13.066.conv",
+    "seg.backbone.13.069.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 32256000,
+   "flops": 64512000,
+   "bytes_w": 108160,
+   "shape": {
+    "N": 1,
+    "C": 672,
+    "H": 15,
+    "W": 20,
+    "K": 160,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     160,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 201600,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.13.071.conv",
+   "layer": "seg.backbone.13",
+   "depends_on": [
+    "seg.backbone.13.070.mul"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 180.322
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 46080000,
+   "flops": 92160000,
+   "bytes_w": 157440,
+   "shape": {
+    "N": 1,
+    "C": 160,
+    "H": 15,
+    "W": 20,
+    "K": 960,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.14.072.conv",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.13.071.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 186.7704
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 7200000,
+   "flops": 14400000,
+   "bytes_w": 27840,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 15,
+    "W": 20,
+    "K": 960,
+    "R": 5,
+    "S": 5,
+    "stride": 1,
+    "groups": 960,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.14.073.conv",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.14.072.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 23.8474
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 288000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     960,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 960,
+   "op_id": "seg.backbone.14.074.globalaveragepool",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.14.073.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9967
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 230400,
+   "flops": 460800,
+   "bytes_w": 231360,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 1,
+    "W": 1,
+    "K": 240,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     240,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 960,
+   "bytes_out": 240,
+   "op_id": "seg.backbone.14.075.conv",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.14.074.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9814
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 230400,
+   "flops": 460800,
+   "bytes_w": 234240,
+   "shape": {
+    "N": 1,
+    "C": 240,
+    "H": 1,
+    "W": 1,
+    "K": 960,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     960,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 240,
+   "bytes_out": 960,
+   "op_id": "seg.backbone.14.076.conv",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.14.075.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9572
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 288000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 288960,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.14.077.mul",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.14.073.conv",
+    "seg.backbone.14.076.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 46080000,
+   "flops": 92160000,
+   "bytes_w": 154240,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 15,
+    "W": 20,
+    "K": 160,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     160,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.14.078.conv",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.14.077.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 187.9896
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 48000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     160,
+     15,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 96000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.14.079.add",
+   "layer": "seg.backbone.14",
+   "depends_on": [
+    "seg.backbone.13.071.conv",
+    "seg.backbone.14.078.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 46080000,
+   "flops": 92160000,
+   "bytes_w": 157440,
+   "shape": {
+    "N": 1,
+    "C": 160,
+    "H": 15,
+    "W": 20,
+    "K": 960,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.15.080.conv",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.14.079.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 186.7704
+  },
+  {
+   "type": "dwconv2d",
+   "dtype": "int8",
+   "macs": 7200000,
+   "flops": 14400000,
+   "bytes_w": 27840,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 15,
+    "W": 20,
+    "K": 960,
+    "R": 5,
+    "S": 5,
+    "stride": 1,
+    "groups": 960,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.15.081.conv",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.15.080.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 23.8474
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 288000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     960,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 960,
+   "op_id": "seg.backbone.15.082.globalaveragepool",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.15.081.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9967
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 230400,
+   "flops": 460800,
+   "bytes_w": 231360,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 1,
+    "W": 1,
+    "K": 240,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     240,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 960,
+   "bytes_out": 240,
+   "op_id": "seg.backbone.15.083.conv",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.15.082.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9814
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 230400,
+   "flops": 460800,
+   "bytes_w": 234240,
+   "shape": {
+    "N": 1,
+    "C": 240,
+    "H": 1,
+    "W": 1,
+    "K": 960,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     960,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 240,
+   "bytes_out": 960,
+   "op_id": "seg.backbone.15.084.conv",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.15.083.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9572
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 288000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 288960,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.15.085.mul",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.15.081.conv",
+    "seg.backbone.15.084.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4992
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 46080000,
+   "flops": 92160000,
+   "bytes_w": 154240,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 15,
+    "W": 20,
+    "K": 160,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     160,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.15.086.conv",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.15.085.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 187.9896
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 48000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     160,
+     15,
+     20
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 96000,
+   "bytes_out": 48000,
+   "op_id": "seg.backbone.15.087.add",
+   "layer": "seg.backbone.15",
+   "depends_on": [
+    "seg.backbone.14.079.add",
+    "seg.backbone.15.086.conv"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 46080000,
+   "flops": 92160000,
+   "bytes_w": 157440,
+   "shape": {
+    "N": 1,
+    "C": 160,
+    "H": 15,
+    "W": 20,
+    "K": 960,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     960,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 288000,
+   "op_id": "seg.backbone.16.088.conv",
+   "layer": "seg.backbone.16",
+   "depends_on": [
+    "seg.backbone.15.087.add"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "HardSwish"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 186.7704
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 36864000,
+   "flops": 73728000,
+   "bytes_w": 123392,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 15,
+    "W": 20,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 15,
+    "Wo": 20,
+    "out": [
+     1,
+     128,
+     15,
+     20
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 38400,
+   "op_id": "seg.head.089.conv",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.backbone.16.088.conv"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Relu"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 163.9158
+  },
+  {
+   "type": "pool",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 288000,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     960,
+     1,
+     1
+    ],
+    "onnx_op": "GlobalAveragePool"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 288000,
+   "bytes_out": 960,
+   "op_id": "seg.head.090.globalaveragepool",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.backbone.16.088.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.9967
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 122880,
+   "flops": 245760,
+   "bytes_w": 122880,
+   "shape": {
+    "N": 1,
+    "C": 960,
+    "H": 1,
+    "W": 1,
+    "K": 128,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 1,
+    "Wo": 1,
+    "out": [
+     1,
+     128,
+     1,
+     1
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 960,
+   "bytes_out": 128,
+   "op_id": "seg.head.091.conv",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.head.090.globalaveragepool"
+   ],
+   "onnx_ops": [
+    "Conv",
+    "Sigmoid"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 1.9824
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 38400,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     128,
+     15,
+     20
+    ],
+    "onnx_op": "Mul"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 38528,
+   "bytes_out": 38400,
+   "op_id": "seg.head.092.mul",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.head.089.conv",
+    "seg.head.091.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.4992
+  },
+  {
+   "type": "resize",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 614400,
+   "bytes_w": 0,
+   "shape": {
+    "mode": "linear",
+    "out": [
+     1,
+     128,
+     30,
+     40
+    ],
+    "onnx_op": "Resize"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 38400,
+   "bytes_out": 153600,
+   "op_id": "seg.head.093.resize",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.head.092.mul"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 3.2
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 1008000,
+   "flops": 2016000,
+   "bytes_w": 924,
+   "shape": {
+    "N": 1,
+    "C": 40,
+    "H": 30,
+    "W": 40,
+    "K": 21,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     21,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 48000,
+   "bytes_out": 25200,
+   "op_id": "seg.head.094.conv",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.backbone.4.018.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 27.1977
+  },
+  {
+   "type": "conv2d",
+   "dtype": "int8",
+   "macs": 3225600,
+   "flops": 6451200,
+   "bytes_w": 2772,
+   "shape": {
+    "N": 1,
+    "C": 128,
+    "H": 30,
+    "W": 40,
+    "K": 21,
+    "R": 1,
+    "S": 1,
+    "stride": 1,
+    "groups": 1,
+    "Ho": 30,
+    "Wo": 40,
+    "out": [
+     1,
+     21,
+     30,
+     40
+    ],
+    "onnx_op": "Conv"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "cpu"
+   ],
+   "bytes_in": 153600,
+   "bytes_out": 25200,
+   "op_id": "seg.head.095.conv",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.head.093.resize"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 35.5297
+  },
+  {
+   "type": "elementwise",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 25200,
+   "bytes_w": 0,
+   "shape": {
+    "out": [
+     1,
+     21,
+     30,
+     40
+    ],
+    "onnx_op": "Add"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 50400,
+   "bytes_out": 25200,
+   "op_id": "seg.head.096.add",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.head.094.conv",
+    "seg.head.095.conv"
+   ],
+   "preempt_boundary": false,
+   "arith_intensity": 0.3333
+  },
+  {
+   "type": "resize",
+   "dtype": "int8",
+   "macs": 0,
+   "flops": 6451200,
+   "bytes_w": 0,
+   "shape": {
+    "mode": "linear",
+    "out": [
+     1,
+     21,
+     240,
+     320
+    ],
+    "onnx_op": "Resize"
+   },
+   "eligible": [
+    "npu",
+    "simt",
+    "dsp",
+    "cpu"
+   ],
+   "bytes_in": 25200,
+   "bytes_out": 1612800,
+   "op_id": "seg.head.097.resize",
+   "layer": "seg.head",
+   "depends_on": [
+    "seg.head.096.add"
+   ],
+   "preempt_boundary": true,
+   "arith_intensity": 3.9385
+  },
+  {
+   "op_id": "dsp.mask_depth_fuse",
+   "type": "dsp_kernel",
+   "dtype": "int8",
+   "flops": 2135040,
+   "bytes_in": 1766400,
+   "bytes_out": 768,
+   "depends_on": [
+    "seg.head.097.resize"
+   ],
+   "notes": "per pixel: argmax over 21 VOC classes, person test, depth lookup (aligned 16UC1 depth downsampled to 320x240), deprojection for person pixels (30% coverage assumed), grid clustering to 64 points. analytic_count",
+   "eligible": [
+    "dsp",
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 1.2082
+  },
+  {
+   "op_id": "rt.ssm",
+   "type": "control_law",
+   "dtype": "fp32",
+   "instr": {
+    "scalar": 39909,
+    "vector": 0,
+    "mem": 37073
+   },
+   "flops": 39189,
+   "bytes_in": 1744,
+   "bytes_out": 64,
+   "notes": "speed-and-separation monitoring (ISO/TS 15066 protective distance), 64 human points x 61 robot spheres; instruction counts from clang RV64 static count of ssm.cpp (76982 instr per call, straight-line, no loops)",
+   "eligible": [
+    "rt"
+   ],
+   "depends_on": [
+    "dsp.mask_depth_fuse"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 21.6753
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/safety/speed_scale",
+   "bytes": 32,
+   "consumer": "T7_control"
+  }
+ ],
+ "summary": {
+  "macs": 579667680,
+  "flops": 1172641989,
+  "bytes_in": 15159568,
+  "bytes_w": 3261560,
+  "bytes_out": 12221056,
+  "instr": {
+   "scalar": 39909,
+   "vector": 0,
+   "mem": 37073
+  },
+  "num_ops": 99,
+  "num_layers": 20,
+  "arith_intensity": 38.2689
+ }
+}

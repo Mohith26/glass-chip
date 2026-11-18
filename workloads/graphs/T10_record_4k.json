@@ -1,0 +1,110 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T10_record_4k",
+ "name": "Recording at raw 4K30 (5.97 Gbit/s)",
+ "provenance": {
+  "source": "recording/logging stream at raw 4K30 (5.97 Gbit/s)",
+  "captured_by": "workloads/capture/record.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "f9ef98f5742238fc6d5cde0002f70d56b04e11bf56e5b267926298aa7c434e83",
+  "notes": "Best-effort DMA/DRAM stream. Bytes per job = bitrate x period; DRAM traffic about 3x the bitrate. Default bitrate is an assumption; scale with params.bitrate_bps."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 33333,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 33333,
+ "criticality": "low",
+ "qos_class": "best_effort",
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 99531804
+ },
+ "params": {
+  "bitrate_bps": 5971968000,
+  "bytes_scale_param": "bitrate_bps",
+  "dram_passes": 3,
+  "dram_bytes_per_s": 2239488000.0
+ },
+ "ops": [
+  {
+   "op_id": "rec.gather",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 24882951,
+   "bytes_out": 24882951,
+   "bytes_scale_param": "bitrate_bps",
+   "notes": "collect this period's records from producer buffers into the record ring (DRAM read + write)",
+   "depends_on": [],
+   "eligible": [
+    "dma"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "rec.index_crc",
+   "type": "cpu_kernel",
+   "dtype": "int32",
+   "bytes_in": 24882951,
+   "bytes_out": 24883,
+   "instr": {
+    "scalar": 12441475,
+    "vector": 0,
+    "mem": 3110368
+   },
+   "bytes_scale_param": "bitrate_bps",
+   "notes": "mcap chunk index + CRC32 (slice-by-8: about 4 scalar instr and 1 load per 8 bytes), estimate",
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "rec.gather"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "rec.flush",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 24882951,
+   "bytes_out": 24882951,
+   "bytes_scale_param": "bitrate_bps",
+   "notes": "record ring -> storage controller (DRAM read)",
+   "preempt_boundary": true,
+   "eligible": [
+    "dma"
+   ],
+   "depends_on": [
+    "rec.index_crc"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 0,
+  "bytes_in": 74648853,
+  "bytes_w": 0,
+  "bytes_out": 49790785,
+  "instr": {
+   "scalar": 12441475,
+   "vector": 0,
+   "mem": 3110368
+  },
+  "num_ops": 3,
+  "num_layers": 3,
+  "arith_intensity": 0.0
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T13_map_save",
+ "name": "Map save (TSDF snapshot, compress, write)",
+ "provenance": {
+  "source": "map persistence (TSDF snapshot + LZ4 + storage write)",
+  "captured_by": "workloads/capture/extras.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "a0831a91c52196719a205c88e48281f19d6e36a01ff46f564b3faae2abec5058",
+  "notes": "All sizes and per-byte costs are labeled estimates."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 5000000,
+  "on_overrun": "queue"
+ },
+ "deadline_us": 5000000,
+ "criticality": "low",
+ "qos_class": "best_effort",
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 14336000
+ },
+ "ops": [
+  {
+   "op_id": "map.snapshot",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 10240000,
+   "bytes_out": 10240000,
+   "notes": "copy-on-write snapshot of the TSDF block pool (5000 blocks x 512 voxels x 4 B, assumption)",
+   "eligible": [
+    "dma"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "map.lz4",
+   "type": "cpu_kernel",
+   "dtype": "int8",
+   "bytes_in": 10240000,
+   "bytes_out": 4096000,
+   "instr": {
+    "scalar": 12288000,
+    "vector": 0,
+    "mem": 4096000
+   },
+   "notes": "LZ4 compression, about 1.2 scalar instr and 0.4 memory ops per input byte (estimate), ratio 0.4",
+   "eligible": [
+    "cpu"
+   ],
+   "depends_on": [
+    "map.snapshot"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "map.write",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 4096000,
+   "bytes_out": 4096000,
+   "notes": "compressed map -> storage",
+   "preempt_boundary": true,
+   "eligible": [
+    "dma"
+   ],
+   "depends_on": [
+    "map.lz4"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 0,
+  "bytes_in": 24576000,
+  "bytes_w": 0,
+  "bytes_out": 18432000,
+  "instr": {
+   "scalar": 12288000,
+   "vector": 0,
+   "mem": 4096000
+  },
+  "num_ops": 3,
+  "num_layers": 3,
+  "arith_intensity": 0.0
+ }
+}

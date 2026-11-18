@@ -1,0 +1,913 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T5_plan",
+ "name": "Motion planning: IK + collision + TrajOpt + TimeOpt (cuRoboV2-style)",
+ "provenance": {
+  "source": "cuRoboV2 (NVlabs/curobo main) motion planning: IK -> TrajOpt -> TimeOpt",
+  "captured_by": "workloads/capture/curobo.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "mixed",
+  "script_sha256": "c95e8d4c352f161d1735fdda8155c3f330f8e1cfb4b4686ee303445f5fc18b82",
+  "model_name": "curobo_v2_plan_pose",
+  "model_version": "NVlabs/curobo main as fetched (cuRoboV2 / cuRoboV2-Fast C++ runtime defaults)",
+  "notes": "FALLBACK (spec V3): no GPU profile. analytic_count of kernel FLOPs/bytes from cuRobo's algorithms and default parameters read from the repo; published_numbers (repo benchmarks, paper Table 4) used only for the sanity check in params.sanity_check. Event-triggered (sporadic).",
+  "references": [
+   "https://github.com/NVlabs/curobo",
+   "https://nvlabs.github.io/curobo/latest/technical_reports.html",
+   "arXiv 2603.05493 (cuRoboV2)",
+   "arXiv 2611.06913 (cuRoboV2-Fast)"
+  ]
+ },
+ "release": {
+  "kind": "sporadic",
+  "period_us": 40000,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 50000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "footprint": {
+  "weights_bytes": 65536,
+  "working_set_bytes": 4194304
+ },
+ "params": {
+  "cuRobo_defaults": {
+   "ik_lm_seeds": 32,
+   "ik_lm_iterations": 16,
+   "ik_lbfgs_seeds": 8,
+   "ik_lbfgs_iterations": 80,
+   "ik_lbfgs_history": 8,
+   "trajopt_seeds": 4,
+   "trajopt_max_iterations": 100,
+   "trajopt_refinement_iterations": 25,
+   "trajopt_history": 26,
+   "line_search_points": 3,
+   "num_knots": 16,
+   "native_horizon": 77,
+   "collision_spheres": 61,
+   "self_collision_pairs": 694
+  },
+  "assumptions": {
+   "sweep_subsamples": 4,
+   "esdf_lookup_flops": 60,
+   "timeopt_newton_iterations": 20,
+   "dense_samples": 1024,
+   "attempts": 1,
+   "scene": "ESDF from T3 (not OBB primitives as in the benchmark)"
+  },
+  "sanity_check": {
+   "total_flops": 4597022592.0,
+   "flop_share_pct": {
+    "kinematics": 19.4,
+    "rnea": 12.4,
+    "collision": 63.7,
+    "lbfgs_linesearch": 0.1,
+    "seed_ik_lm": 0.1,
+    "timeopt": 3.1
+   },
+   "implied_effective_tflops": {
+    "jetson_agx_orin": 0.179,
+    "rtx5090": 1.211
+   },
+   "implied_fp32_utilization_pct": {
+    "jetson_agx_orin": 3.37,
+    "rtx5090": 1.16
+   },
+   "published": {
+    "motion_plan_mean_ms": {
+     "rtx5090": 3.797,
+     "jetson_agx_orin": 25.662,
+     "source": "cuRobo repo docs/reference/benchmarks.rst, Franka, with inverse dynamics"
+    },
+    "ik_franka_100_batch_ms_rtx5090": {
+     "pose": 0.556,
+     "collision_free": 0.563,
+     "source": "cuRobo repo docs/reference/benchmarks.rst"
+    },
+    "paper_table4_rtx4090": {
+     "trajopt_iterations": 162,
+     "per_iter_us": 132.8,
+     "kernel_total_ms": 30.83,
+     "end_to_end_ms": 42,
+     "share_pct": {
+      "rnea": 28.6,
+      "swept_collision": 11.1,
+      "lbfgs_linesearch": 10.7,
+      "kinematics": 13.1,
+      "costs": 6.7,
+      "self_collision": 2.7,
+      "bspline": 1.9,
+      "elementwise_reduce": 16.4,
+      "other": 6.4,
+      "seed_ik_lm": 2.4
+     },
+     "source": "Sundaralingam, Murali, Birchfield, cuRoboV2, arXiv 2603.05493v2, Table 4 (RTX 4090)"
+    },
+    "paper_esdf_rtx4090": {
+     "tsdf_integration_ms": [
+      0.5,
+      0.55
+     ],
+     "esdf_total_ms_20mm": 1.52,
+     "esdf_pba_ms_10mm": 1.15,
+     "source": "arXiv 2603.05493v2 Sec. 7.6 (Redwood bedroom, RTX 4090)"
+    },
+    "gpu_fp32_peak_tflops": {
+     "rtx4090": 82.6,
+     "rtx5090": 104.8,
+     "jetson_agx_orin_64gb": 5.32,
+     "source": "NVIDIA public specifications"
+    }
+   },
+   "reading": "Low implied utilization is expected: these kernels are latency-bound (small batches, many dependent iterations, launch and synchronization overhead), which is why the core's SIMT model must charge launch overhead per kernel_launches and not only FLOPs."
+  }
+ },
+ "ops": [
+  {
+   "op_id": "plan.host_setup",
+   "type": "cpu_kernel",
+   "dtype": "fp32",
+   "flops": 20000,
+   "bytes_in": 8192,
+   "bytes_out": 8192,
+   "instr": {
+    "scalar": 60000,
+    "vector": 2000,
+    "mem": 20000
+   },
+   "notes": "host orchestration: goal/scene update, seed buffers, CUDA-graph-style launch (estimate)",
+   "eligible": [
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 1.2207
+  },
+  {
+   "op_id": "plan.ik_lm",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 2370048,
+   "bytes_in": 960,
+   "bytes_w": 4096,
+   "bytes_out": 896,
+   "shape": {
+    "kernel_launches": 16,
+    "threads": 32
+   },
+   "notes": "seed IK: Levenberg-Marquardt, 32 seeds x 16 iterations (pose only)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.host_setup"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 398.1935
+  },
+  {
+   "op_id": "plan.ik_lbfgs.rollout",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 48332160,
+   "bytes_in": 2088960,
+   "bytes_w": 9168,
+   "bytes_out": 30720,
+   "shape": {
+    "kernel_launches": 80,
+    "threads": 24
+   },
+   "notes": "collision-free IK L-BFGS: 8 seeds x 80 iters x 3 line-search points; kinematics fwd+bwd, ESDF sphere distance (61 spheres), self-collision (694 pairs)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.ik_lm"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 22.7034
+  },
+  {
+   "op_id": "plan.ik_lbfgs.update",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 143360,
+   "bytes_in": 3584,
+   "bytes_w": 0,
+   "bytes_out": 224,
+   "shape": {
+    "kernel_launches": 80,
+    "threads": 8
+   },
+   "notes": "L-BFGS two-loop recursion, history 8",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.ik_lbfgs.rollout"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 37.6471
+  },
+  {
+   "op_id": "plan.trajopt.b0.bspline_kinematics",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 175352100,
+   "bytes_in": 2587200,
+   "bytes_w": 5072,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "B-spline eval (16 knots -> 77 states) + kinematics fwd/bwd; 4 seeds x 3 line-search",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.ik_lbfgs.update"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 6.9756
+  },
+  {
+   "op_id": "plan.trajopt.b0.rnea",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 114275700,
+   "bytes_in": 2587200,
+   "bytes_w": 1120,
+   "bytes_out": 646800,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 924
+   },
+   "notes": "differentiable RNEA (fwd+bwd) for torque limits, 1649 flops per forward pass (from compiled RV64 RNEA)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b0.bspline_kinematics"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 35.3235
+  },
+  {
+   "op_id": "plan.trajopt.b0.collision",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 578655000,
+   "bytes_in": 90182400,
+   "bytes_w": 0,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 56364
+   },
+   "notes": "swept-sphere ESDF collision (61 spheres x 4 sub-samples) + self-collision (694 pairs)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b0.rnea"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 5.1332
+  },
+  {
+   "op_id": "plan.trajopt.b0.costs_reduce",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 7854000,
+   "bytes_in": 1478400,
+   "bytes_w": 0,
+   "bytes_out": 19.200000000000003,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "cspace, pose, speed costs and per-trajectory reductions",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b0.collision"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 5.3124
+  },
+  {
+   "op_id": "plan.trajopt.b0.lbfgs_linesearch",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 1299200,
+   "bytes_in": 465920,
+   "bytes_w": 0,
+   "bytes_out": 8960,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 4
+   },
+   "notes": "L-BFGS two-loop (history 26, 16x7 variables) + approx-Wolfe selection over 3 steps",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true,
+   "depends_on": [
+    "plan.trajopt.b0.costs_reduce"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 2.7358
+  },
+  {
+   "op_id": "plan.trajopt.b1.bspline_kinematics",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 175352100,
+   "bytes_in": 2587200,
+   "bytes_w": 5072,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "B-spline eval (16 knots -> 77 states) + kinematics fwd/bwd; 4 seeds x 3 line-search",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b0.lbfgs_linesearch"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 6.9756
+  },
+  {
+   "op_id": "plan.trajopt.b1.rnea",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 114275700,
+   "bytes_in": 2587200,
+   "bytes_w": 1120,
+   "bytes_out": 646800,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 924
+   },
+   "notes": "differentiable RNEA (fwd+bwd) for torque limits, 1649 flops per forward pass (from compiled RV64 RNEA)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b1.bspline_kinematics"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 35.3235
+  },
+  {
+   "op_id": "plan.trajopt.b1.collision",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 578655000,
+   "bytes_in": 90182400,
+   "bytes_w": 0,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 56364
+   },
+   "notes": "swept-sphere ESDF collision (61 spheres x 4 sub-samples) + self-collision (694 pairs)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b1.rnea"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 5.1332
+  },
+  {
+   "op_id": "plan.trajopt.b1.costs_reduce",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 7854000,
+   "bytes_in": 1478400,
+   "bytes_w": 0,
+   "bytes_out": 19.200000000000003,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "cspace, pose, speed costs and per-trajectory reductions",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b1.collision"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 5.3124
+  },
+  {
+   "op_id": "plan.trajopt.b1.lbfgs_linesearch",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 1299200,
+   "bytes_in": 465920,
+   "bytes_w": 0,
+   "bytes_out": 8960,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 4
+   },
+   "notes": "L-BFGS two-loop (history 26, 16x7 variables) + approx-Wolfe selection over 3 steps",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true,
+   "depends_on": [
+    "plan.trajopt.b1.costs_reduce"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 2.7358
+  },
+  {
+   "op_id": "plan.trajopt.b2.bspline_kinematics",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 175352100,
+   "bytes_in": 2587200,
+   "bytes_w": 5072,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "B-spline eval (16 knots -> 77 states) + kinematics fwd/bwd; 4 seeds x 3 line-search",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b1.lbfgs_linesearch"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 6.9756
+  },
+  {
+   "op_id": "plan.trajopt.b2.rnea",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 114275700,
+   "bytes_in": 2587200,
+   "bytes_w": 1120,
+   "bytes_out": 646800,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 924
+   },
+   "notes": "differentiable RNEA (fwd+bwd) for torque limits, 1649 flops per forward pass (from compiled RV64 RNEA)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b2.bspline_kinematics"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 35.3235
+  },
+  {
+   "op_id": "plan.trajopt.b2.collision",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 578655000,
+   "bytes_in": 90182400,
+   "bytes_w": 0,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 56364
+   },
+   "notes": "swept-sphere ESDF collision (61 spheres x 4 sub-samples) + self-collision (694 pairs)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b2.rnea"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 5.1332
+  },
+  {
+   "op_id": "plan.trajopt.b2.costs_reduce",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 7854000,
+   "bytes_in": 1478400,
+   "bytes_w": 0,
+   "bytes_out": 19.200000000000003,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "cspace, pose, speed costs and per-trajectory reductions",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b2.collision"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 5.3124
+  },
+  {
+   "op_id": "plan.trajopt.b2.lbfgs_linesearch",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 1299200,
+   "bytes_in": 465920,
+   "bytes_w": 0,
+   "bytes_out": 8960,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 4
+   },
+   "notes": "L-BFGS two-loop (history 26, 16x7 variables) + approx-Wolfe selection over 3 steps",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true,
+   "depends_on": [
+    "plan.trajopt.b2.costs_reduce"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 2.7358
+  },
+  {
+   "op_id": "plan.trajopt.b3.bspline_kinematics",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 175352100,
+   "bytes_in": 2587200,
+   "bytes_w": 5072,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "B-spline eval (16 knots -> 77 states) + kinematics fwd/bwd; 4 seeds x 3 line-search",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b2.lbfgs_linesearch"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 6.9756
+  },
+  {
+   "op_id": "plan.trajopt.b3.rnea",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 114275700,
+   "bytes_in": 2587200,
+   "bytes_w": 1120,
+   "bytes_out": 646800,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 924
+   },
+   "notes": "differentiable RNEA (fwd+bwd) for torque limits, 1649 flops per forward pass (from compiled RV64 RNEA)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b3.bspline_kinematics"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 35.3235
+  },
+  {
+   "op_id": "plan.trajopt.b3.collision",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 578655000,
+   "bytes_in": 90182400,
+   "bytes_w": 0,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 56364
+   },
+   "notes": "swept-sphere ESDF collision (61 spheres x 4 sub-samples) + self-collision (694 pairs)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b3.rnea"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 5.1332
+  },
+  {
+   "op_id": "plan.trajopt.b3.costs_reduce",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 7854000,
+   "bytes_in": 1478400,
+   "bytes_w": 0,
+   "bytes_out": 19.200000000000003,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "cspace, pose, speed costs and per-trajectory reductions",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b3.collision"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 5.3124
+  },
+  {
+   "op_id": "plan.trajopt.b3.lbfgs_linesearch",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 1299200,
+   "bytes_in": 465920,
+   "bytes_w": 0,
+   "bytes_out": 8960,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 4
+   },
+   "notes": "L-BFGS two-loop (history 26, 16x7 variables) + approx-Wolfe selection over 3 steps",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true,
+   "depends_on": [
+    "plan.trajopt.b3.costs_reduce"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 2.7358
+  },
+  {
+   "op_id": "plan.trajopt.b4.bspline_kinematics",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 175352100,
+   "bytes_in": 2587200,
+   "bytes_w": 5072,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "B-spline eval (16 knots -> 77 states) + kinematics fwd/bwd; 4 seeds x 3 line-search",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b3.lbfgs_linesearch"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 6.9756
+  },
+  {
+   "op_id": "plan.trajopt.b4.rnea",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 114275700,
+   "bytes_in": 2587200,
+   "bytes_w": 1120,
+   "bytes_out": 646800,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 924
+   },
+   "notes": "differentiable RNEA (fwd+bwd) for torque limits, 1649 flops per forward pass (from compiled RV64 RNEA)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b4.bspline_kinematics"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 35.3235
+  },
+  {
+   "op_id": "plan.trajopt.b4.collision",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 578655000,
+   "bytes_in": 90182400,
+   "bytes_w": 0,
+   "bytes_out": 22545600,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 56364
+   },
+   "notes": "swept-sphere ESDF collision (61 spheres x 4 sub-samples) + self-collision (694 pairs)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b4.rnea"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 5.1332
+  },
+  {
+   "op_id": "plan.trajopt.b4.costs_reduce",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 7854000,
+   "bytes_in": 1478400,
+   "bytes_w": 0,
+   "bytes_out": 19.200000000000003,
+   "shape": {
+    "kernel_launches": 50,
+    "threads": 924
+   },
+   "notes": "cspace, pose, speed costs and per-trajectory reductions",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b4.collision"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 5.3124
+  },
+  {
+   "op_id": "plan.trajopt.b4.lbfgs_linesearch",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 1299200,
+   "bytes_in": 465920,
+   "bytes_w": 0,
+   "bytes_out": 8960,
+   "shape": {
+    "kernel_launches": 25,
+    "threads": 4
+   },
+   "notes": "L-BFGS two-loop (history 26, 16x7 variables) + approx-Wolfe selection over 3 steps",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "preempt_boundary": true,
+   "depends_on": [
+    "plan.trajopt.b4.costs_reduce"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 2.7358
+  },
+  {
+   "op_id": "plan.timeopt",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 142131200,
+   "bytes_in": 458752,
+   "bytes_w": 0,
+   "bytes_out": 512,
+   "shape": {
+    "kernel_launches": 20,
+    "threads": 4096
+   },
+   "notes": "TimeOpt: banded Newton on 32 timing controls, 1024 dense samples with vel/acc/jerk/torque checks, 20 iterations (assumption) x 4 seeds",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.trajopt.b4.lbfgs_linesearch"
+   ],
+   "reuse": 0.9,
+   "macs": 0,
+   "arith_intensity": 309.476
+  },
+  {
+   "op_id": "plan.validate",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 16845824,
+   "bytes_in": 1114112,
+   "bytes_w": 0,
+   "bytes_out": 64,
+   "shape": {
+    "kernel_launches": 2,
+    "threads": 1024
+   },
+   "notes": "final dense validation of the selected trajectory (1024 samples)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "plan.timeopt"
+   ],
+   "reuse": 0.95,
+   "macs": 0,
+   "arith_intensity": 15.1195
+  },
+  {
+   "op_id": "plan.readback",
+   "type": "memcopy",
+   "dtype": "fp32",
+   "bytes_in": 114688,
+   "bytes_out": 114688,
+   "notes": "copy executable trajectory to host-visible buffer",
+   "eligible": [
+    "dma"
+   ],
+   "depends_on": [
+    "plan.validate"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/plan/trajectory",
+   "bytes": 17664,
+   "consumer": "T7_control"
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 4597022592,
+  "bytes_in": 490294848,
+  "bytes_w": 44224,
+  "bytes_out": 228890192.0,
+  "instr": {
+   "scalar": 60000,
+   "vector": 2000,
+   "mem": 20000
+  },
+  "num_ops": 32,
+  "num_layers": 32,
+  "arith_intensity": 6.3916
+ }
+}

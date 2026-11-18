@@ -1,0 +1,129 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T12_arm2_control",
+ "name": "Joint impedance control, arm 2 (1 kHz, S6)",
+ "provenance": {
+  "source": "Glass Chip C++ joint impedance controller for Franka Panda (control.cpp)",
+  "captured_by": "workloads/capture/estimate_control.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "71cf181673abb0bca2db7b7835d0298b3ebe07bf970a11524762937beea6a791",
+  "model_name": "panda_joint_impedance_rnea",
+  "model_version": "control.cpp sha256 9411ba50e3fd9e45",
+  "model_hash": "sha256:9411ba50e3fd9e45a6b03546be5af13c03bfea85916ec20a9c9bea7ce5a5b511",
+  "notes": "Instruction counts: Homebrew clang version 22.1.7, --target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20, -march=rv64gc (RT core has no vector unit). Static count of the compiled step function; flops_est counts FP arithmetic instructions with FMA as 2. Period/deadline are spec defaults.",
+  "references": [
+   "Franka Emika Panda modified DH parameters (Franka docs)",
+   "Gaz, Cognetti, Oliva, Robuffo Giordano, De Luca, Dynamic Identification of the Franka Emika Panda Robot, RA-L 2019"
+  ]
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 1000,
+  "jitter_us": 10,
+  "offset_us": 500,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 1000,
+ "criticality": "safety",
+ "qos_class": "safety",
+ "affinity": [
+  "rt"
+ ],
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 4096
+ },
+ "ops": [
+  {
+   "op_id": "arm2.read_sensors",
+   "type": "memcopy",
+   "dtype": "fp32",
+   "bytes_in": 144,
+   "bytes_out": 144,
+   "instr": {
+    "scalar": 20,
+    "vector": 0,
+    "mem": 40
+   },
+   "notes": "read 7 joint positions and velocities plus status words from memory-mapped encoder registers (estimate)",
+   "eligible": [
+    "rt"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "arm2.control_step",
+   "type": "control_law",
+   "dtype": "fp32",
+   "instr": {
+    "scalar": 1463,
+    "vector": 0,
+    "mem": 817
+   },
+   "flops": 1951,
+   "bytes_in": 640,
+   "bytes_out": 168,
+   "preempt_boundary": false,
+   "notes": "joint impedance + RNEA gravity/Coriolis (control.cpp), 2280 RV64GC instr per tick from static count of compiled code; 558 static instructions, exact=False (both sides of clamp branches counted)",
+   "eligible": [
+    "rt"
+   ],
+   "depends_on": [
+    "arm2.read_sensors"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 2.4146
+  },
+  {
+   "op_id": "arm2.write_torque",
+   "type": "memcopy",
+   "dtype": "fp32",
+   "bytes_in": 56,
+   "bytes_out": 56,
+   "instr": {
+    "scalar": 10,
+    "vector": 0,
+    "mem": 14
+   },
+   "notes": "write 7 torque commands to the motor drive registers (estimate)",
+   "eligible": [
+    "rt"
+   ],
+   "depends_on": [
+    "arm2.control_step"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/arm2/joint_states",
+   "bytes": 512,
+   "consumer": "T6_estimate"
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 1951,
+  "bytes_in": 840,
+  "bytes_w": 0,
+  "bytes_out": 368,
+  "instr": {
+   "scalar": 1493,
+   "vector": 0,
+   "mem": 871
+  },
+  "num_ops": 3,
+  "num_layers": 3,
+  "arith_intensity": 1.6151
+ }
+}

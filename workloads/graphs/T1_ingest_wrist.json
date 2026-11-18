@@ -1,0 +1,208 @@
+{
+ "schema_version": "1.0",
+ "task_id": "T1_ingest_wrist",
+ "name": "Camera ingest + preprocess (wrist)",
+ "provenance": {
+  "source": "ISP-like preprocessing for a 640x480 RGB-D camera",
+  "captured_by": "workloads/capture/ingest.py",
+  "date": "2026-11-17",
+  "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
+  "method": "analytic_count",
+  "script_sha256": "940fd8bb7f92e0841dc6e0a2a9c3c901f076f1a13d13f87480eba1db2525e612",
+  "notes": "Per-pixel op counts are analytic assumptions (align 40, bilinear 10, pad/normalize 2, 2x2 box 6 ops per value). Output sizes match the real model inputs (YOLOv8n 640, SmolVLA resize_with_pad 512, LR-ASPP 320x240)."
+ },
+ "release": {
+  "kind": "periodic",
+  "period_us": 33333,
+  "jitter_us": 500,
+  "on_overrun": "skip"
+ },
+ "deadline_us": 15000,
+ "criticality": "high",
+ "qos_class": "realtime",
+ "footprint": {
+  "weights_bytes": 0,
+  "working_set_bytes": 3072000
+ },
+ "ops": [
+  {
+   "op_id": "in.wrist.dma_rgb",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 921600,
+   "bytes_out": 921600,
+   "notes": "camera interface -> DRAM, 640x480 rgb8",
+   "depends_on": [],
+   "eligible": [
+    "dma"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "in.wrist.dma_depth",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 614400,
+   "bytes_out": 614400,
+   "notes": "camera interface -> DRAM, 640x480 16UC1",
+   "depends_on": [],
+   "eligible": [
+    "dma"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  },
+  {
+   "op_id": "in.wrist.depth_align",
+   "type": "dsp_kernel",
+   "dtype": "fp32",
+   "flops": 12288000,
+   "bytes_in": 614400,
+   "bytes_out": 614400,
+   "shape": {
+    "in": [
+     480,
+     640
+    ],
+    "out": [
+     480,
+     640
+    ],
+    "ops_per_px": 40
+   },
+   "notes": "register depth to the color camera (deproject, transform, project, z-buffer)",
+   "depends_on": [
+    "in.wrist.dma_depth"
+   ],
+   "eligible": [
+    "dsp",
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 10.0
+  },
+  {
+   "op_id": "in.wrist.prep_detect",
+   "type": "dsp_kernel",
+   "dtype": "int8",
+   "flops": 2457600,
+   "bytes_in": 921600,
+   "bytes_out": 1228800,
+   "shape": {
+    "in": [
+     480,
+     640,
+     3
+    ],
+    "out": [
+     640,
+     640,
+     3
+    ],
+    "ops_per_value": 2
+   },
+   "notes": "letterbox to 640x640 (scale 1.0, pad 80 rows each side), normalize + int8 quantize",
+   "depends_on": [
+    "in.wrist.dma_rgb"
+   ],
+   "eligible": [
+    "dsp",
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 1.1429
+  },
+  {
+   "op_id": "in.wrist.prep_vla",
+   "type": "dsp_kernel",
+   "dtype": "int8",
+   "flops": 6094848,
+   "bytes_in": 921600,
+   "bytes_out": 786432,
+   "shape": {
+    "in": [
+     480,
+     640,
+     3
+    ],
+    "out": [
+     512,
+     512,
+     3
+    ],
+    "ops_per_value": 10
+   },
+   "notes": "SmolVLA resize_with_pad: bilinear 640x480 -> 512x384, pad to 512x512, x*2-1, quantize",
+   "depends_on": [
+    "in.wrist.dma_rgb"
+   ],
+   "eligible": [
+    "dsp",
+    "cpu"
+   ],
+   "macs": 0,
+   "bytes_w": 0,
+   "arith_intensity": 3.5683
+  },
+  {
+   "op_id": "in.wrist.publish",
+   "type": "memcopy",
+   "dtype": "int8",
+   "bytes_in": 0,
+   "bytes_out": 0,
+   "notes": "completion: hand buffers to consumers (zero-byte join; transport cost is modeled by middleware.json)",
+   "depends_on": [
+    "in.wrist.depth_align",
+    "in.wrist.prep_detect",
+    "in.wrist.prep_vla"
+   ],
+   "preempt_boundary": true,
+   "eligible": [
+    "dma"
+   ],
+   "macs": 0,
+   "flops": 0,
+   "bytes_w": 0,
+   "arith_intensity": 0.0
+  }
+ ],
+ "messages": [
+  {
+   "topic": "/camera/wrist/image",
+   "bytes": 921672,
+   "consumer": "T4_vla"
+  },
+  {
+   "topic": "/camera/wrist/depth",
+   "bytes": 614472,
+   "consumer": "T3_esdf"
+  },
+  {
+   "topic": "/camera/wrist/image",
+   "bytes": 921672,
+   "consumer": "T2_detect"
+  }
+ ],
+ "summary": {
+  "macs": 0,
+  "flops": 20840448,
+  "bytes_in": 3993600,
+  "bytes_w": 0,
+  "bytes_out": 4165632,
+  "instr": {
+   "scalar": 0,
+   "vector": 0,
+   "mem": 0
+  },
+  "num_ops": 6,
+  "num_layers": 6,
+  "arith_intensity": 2.5542
+ }
+}
