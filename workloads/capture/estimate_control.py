@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 
-from common import CPU, RT, WORKLOADS, chain, make_graph, op, provenance, write_graph
+from common import CPU, RT, WORKLOADS, chain, dynamic_instr, make_graph, op, provenance, write_graph
 
 SCRIPT = "workloads/capture/estimate_control.py"
 COUNTS = WORKLOADS / "capture" / "control" / "rv64_counts.json"
@@ -22,23 +22,23 @@ def load_counts() -> dict:
 
 def control_graph(task_id: str, name: str, c: dict, meta: dict, arm: str) -> dict:
     cs = c["control_step"]
+    instr, total, inote = dynamic_instr(cs, "T7_control_step")
     ops = chain([
         op(f"{arm}.read_sensors", "memcopy", RT, dtype="fp32", bytes_in=7 * 8 * 2 + 32, bytes_out=7 * 8 * 2 + 32,
            instr={"scalar": 20, "vector": 0, "mem": 40},
            notes="read 7 joint positions and velocities plus status words from memory-mapped encoder registers (estimate)"),
-        op(f"{arm}.control_step", "control_law", RT, dtype="fp32", instr=cs["instr"], flops=cs["flops_est"],
+        op(f"{arm}.control_step", "control_law", RT, dtype="fp32", instr=instr, flops=cs["flops_est"],
            bytes_in=ControlInBytes + 3 * 7 * 8, bytes_out=7 * 8 + 14 * 8, preempt_boundary=False,
-           notes=(f"joint impedance + RNEA gravity/Coriolis (control.cpp), {cs['instr_total']} RV64GC instr per tick "
-                  f"from static count of compiled code; {cs['static_instructions']} static instructions, "
-                  f"exact={cs['exact']} (both sides of clamp branches counted)")),
+           notes=(f"joint impedance + RNEA gravity/Coriolis (control.cpp), {total} RV64 instr per tick; {inote}; "
+                  f"{cs['static_instructions']} static instructions in the function body")),
         op(f"{arm}.write_torque", "memcopy", RT, dtype="fp32", bytes_in=7 * 8, bytes_out=7 * 8,
            instr={"scalar": 10, "vector": 0, "mem": 14}, notes="write 7 torque commands to the motor drive registers (estimate)"),
     ])
     prov = provenance(source="Glass Chip C++ joint impedance controller for Franka Panda (control.cpp)",
-                      script=SCRIPT, method="analytic_count",
+                      script=SCRIPT, method="mixed" if "gem5" in inote else "analytic_count",
                       model_name="panda_joint_impedance_rnea", model_version=f"control.cpp sha256 {cs['source_sha256'][:16]}",
                       model_hash=f"sha256:{cs['source_sha256']}",
-                      notes=(f"Instruction counts: {meta['compiler']}, {meta['flags']}, -march={cs['march']} "
+                      notes=(f"Instruction counts: compiled with {meta['compiler']}, {meta['flags']}, -march={cs['march']}; {inote}. "
                              "(RT core has no vector unit). Static count of the compiled step function; "
                              "flops_est counts FP arithmetic instructions with FMA as 2. Period/deadline are spec defaults."),
                       references=["Franka Emika Panda modified DH parameters (Franka docs)",
@@ -53,18 +53,19 @@ ControlInBytes = (7 * 2 + 7 * 4 + 2 + 14 + 1) * 8
 
 def estimate_graph(c: dict, meta: dict) -> dict:
     es = c["estimate_step"]
+    instr, total, inote = dynamic_instr(es, "T6_estimate_step")
     ops = chain([
-        op("est.step", "cpu_kernel", CPU, dtype="fp32", instr=es["instr"], flops=es["flops_est"],
+        op("est.step", "cpu_kernel", CPU, dtype="fp32", instr=instr, flops=es["flops_est"],
            bytes_in=5 * 7 * 8 + 8 * 3 * 8 + 7 * 5 * 8 + 8 * 42 * 8, bytes_out=7 * 5 * 8 + 8 * 42 * 8,
            notes=(f"joint KF (7 joints x 5 samples) + 8-track 6-state object KF with Mahalanobis gating and greedy "
-                  f"association (estimate.cpp); worst-case tick with detections; {es['instr_total']} RV64GCV instr "
-                  f"(static count, both sides of branches counted, so an upper bound)")),
+                  f"association (estimate.cpp); tick with detections; {total} RV64GCV instr; {inote}")),
     ])
-    prov = provenance(source="Glass Chip C++ state estimator (estimate.cpp)", script=SCRIPT, method="analytic_count",
+    prov = provenance(source="Glass Chip C++ state estimator (estimate.cpp)", script=SCRIPT,
+                      method="mixed" if "gem5" in inote else "analytic_count",
                       model_name="joint_kf_plus_object_tracker",
                       model_version=f"estimate.cpp sha256 {es['source_sha256'][:16]}",
                       model_hash=f"sha256:{es['source_sha256']}",
-                      notes=f"Instruction counts: {meta['compiler']}, -march={es['march']}, {meta['flags']}.")
+                      notes=f"Instruction counts: compiled with {meta['compiler']}, -march={es['march']}, {meta['flags']}; {inote}.")
     msgs = [{"topic": "/state_estimate", "bytes": 7 * 16 + 8 * 48 + 64, "consumer": "T5_plan"},
             {"topic": "/state_estimate", "bytes": 7 * 16 + 8 * 48 + 64, "consumer": "T4_vla"}]
     return make_graph("T6_estimate", "State estimation: joint KF + object tracking", prov, ops, messages=msgs,

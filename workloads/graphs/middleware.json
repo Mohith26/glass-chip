@@ -2,7 +2,7 @@
  "provenance": {
   "source": "CDR micro-benchmark of the stack's ROS 2 message types (mw_bench.cpp) + published executor latency",
   "captured_by": "workloads/capture/middleware.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "mixed",
   "script_sha256": "2f7943e889745603edbdd0f1eff0b0a61eb8581fe4044713e82fa48969c9be2d",
@@ -12,17 +12,17 @@
   ]
  },
  "copy": {
-  "serialize_ns_per_kb": 56.51,
-  "deserialize_ns_per_kb": 62.13,
-  "fixed_ns_per_msg": 4168.3,
+  "serialize_ns_per_kb": 54.1,
+  "deserialize_ns_per_kb": 61.04,
+  "fixed_ns_per_msg": 4278.0,
   "copies": 2,
-  "copy_ns_per_kb": 55.92,
+  "copy_ns_per_kb": 54.68,
   "notes": "copy transport: serialize into a CDR buffer, DDS copies it into its history / shared segment, the reader copies it out, then deserializes: 2 full-buffer copies besides ser/deser."
  },
  "zero_copy": {
   "serialize_ns_per_kb": 0.0,
   "deserialize_ns_per_kb": 0.0,
-  "fixed_ns_per_msg": 510.8,
+  "fixed_ns_per_msg": 510.5,
   "copies": 0,
   "copy_ns_per_kb": 0.0,
   "notes": "loaned messages (bounded/plain types or type adaptation): refcount + pointer hand-off measured, plus 500 ns assumed for the loan/return calls into the RMW. Requires fixed-size message types."
@@ -31,7 +31,7 @@
   "single_threaded_dispatch_ns": 380000,
   "multi_threaded_dispatch_ns": 1080000,
   "events_dispatch_ns": 200000,
-  "thread_wakeup_floor_ns_measured_mac": 3125.0,
+  "thread_wakeup_floor_ns_measured_mac": 1875.0,
   "published": {
    "source": "Klepsydra, 'The ring-buffer ROS2 executor: a novel approach for real-time ROS2 Space applications', 2023, Table I (Autoware reference system, N=64, average critical-path latency); hot-path definition from github.com/ros-realtime/reference-system autoware_reference_system README",
    "avg_critical_path_ms": {
@@ -44,58 +44,58 @@
  },
  "scaling": {
   "mac_to_target_scale": 3.0,
-  "rationale": "Assumption. Mac P-core about 3.5-4 GHz, very wide OoO; VX-1 app core 2.0 GHz, IPC 2.0 assumed (vx1.yaml). Measured single-core bulk copy here is about 55 GB/s; a VX-1 core is assumed to sustain about 25 GB/s. Both ratios are near 3."
+  "rationale": "Assumption. Mac P-core about 3.5-4 GHz, very wide OoO; VX-1 app core 2.0 GHz, IPC 2.0 assumed (vx1.yaml). Measured single-core bulk copy here is about 56 GB/s; a VX-1 core is assumed to sustain about 25 GB/s. Both ratios are near 3."
  },
  "mac_measured": {
-  "serialize_ns_per_kb": 18.837,
-  "deserialize_ns_per_kb": 20.709,
-  "serialize_fixed_ns": 1050.0,
-  "deserialize_fixed_ns": 339.4,
-  "memcpy_ns_per_kb": 18.641,
-  "zero_copy_handoff_ns": 3.6
+  "serialize_ns_per_kb": 18.032,
+  "deserialize_ns_per_kb": 20.348,
+  "serialize_fixed_ns": 1045.4,
+  "deserialize_fixed_ns": 380.6,
+  "memcpy_ns_per_kb": 18.228,
+  "zero_copy_handoff_ns": 3.5
  },
  "per_message": {
   "JointState": {
    "bytes": 380,
-   "serialize_ns": 298.2,
-   "deserialize_ns": 703.2,
-   "copy_ns": 14.4
+   "serialize_ns": 341.7,
+   "deserialize_ns": 687.6,
+   "copy_ns": 14.7
   },
   "Float32MultiArray_action_chunk": {
    "bytes": 1656,
-   "serialize_ns": 147.0,
-   "deserialize_ns": 246.6,
+   "serialize_ns": 147.6,
+   "deserialize_ns": 249.9,
    "copy_ns": 57.0
   },
   "Detection3DArray_8": {
    "bytes": 4077,
-   "serialize_ns": 3375.0,
-   "deserialize_ns": 1265.7,
-   "copy_ns": 397.2
+   "serialize_ns": 3351.6,
+   "deserialize_ns": 1384.8,
+   "copy_ns": 157.8
   },
   "JointTrajectory_100pts": {
    "bytes": 20192,
-   "serialize_ns": 8422.2,
-   "deserialize_ns": 15000.0,
-   "copy_ns": 922.8
+   "serialize_ns": 8406.3,
+   "deserialize_ns": 19000.5,
+   "copy_ns": 630.9
   },
   "Image_16UC1_640x480": {
    "bytes": 614472,
-   "serialize_ns": 25999.5,
-   "deserialize_ns": 24750.0,
-   "copy_ns": 22562.4
+   "serialize_ns": 30687.0,
+   "deserialize_ns": 31125.0,
+   "copy_ns": 23250.0
   },
   "Image_rgb8_640x480": {
    "bytes": 921672,
-   "serialize_ns": 37375.5,
-   "deserialize_ns": 38751.0,
-   "copy_ns": 36937.5
+   "serialize_ns": 39000.0,
+   "deserialize_ns": 46875.0,
+   "copy_ns": 45438.0
   },
   "PointCloud2_640x480_xyzrgb": {
    "bytes": 4915353,
-   "serialize_ns": 260877.0,
-   "deserialize_ns": 283626.0,
-   "copy_ns": 256377.0
+   "serialize_ns": 254373.0,
+   "deserialize_ns": 286374.0,
+   "copy_ns": 255501.0
   }
  },
  "topic_types": {

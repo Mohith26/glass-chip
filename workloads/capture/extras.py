@@ -87,26 +87,53 @@ def speech_graph() -> dict:
             o["dtype"] = "bf16"
     ops += eops
     last = eops[-1]["op_id"]
-    # Cross-attention K/V over the encoder output, computed once per utterance.
-    ops.append(op("asr.dec.cross_kv", "matmul", NPU_MAC, dtype="int8", layer="asr.dec.cross_kv",
-                  shape={"M": S, "K": D, "N": 2 * D, "layers": L}, macs=L * S * D * 2 * D,
-                  bytes_in=S * D, bytes_w=L * D * 2 * D, bytes_out=L * 2 * S * D * 2, depends_on=[last],
-                  preempt_boundary=True, notes="per decoder layer K,V projections of the 1500 encoder states (bf16 cache)"))
-    prev = "asr.dec.cross_kv"
+    # Decoder, config_derived. Every op's shape is the exact GEMM it performs (core reads M, K, N, heads),
+    # so declared MACs equal shape-implied MACs. Cross-attention K/V over the encoder output is computed
+    # once per utterance, one op per decoder layer.
+    hd = D // Hh
+    for l in range(L):
+        ops.append(op(f"asr.dec.l{l}.cross_kv", "matmul", NPU_MAC, dtype="int8", layer="asr.dec.cross_kv",
+                      shape={"M": S, "K": D, "N": 2 * D}, macs=S * D * 2 * D, bytes_in=S * D, bytes_w=D * 2 * D + 2 * D * 4,
+                      bytes_out=2 * S * D * 2, depends_on=[last], preempt_boundary=(l == L - 1),
+                      notes="k_proj and v_proj of the 1500 encoder states for this layer (bf16 cache)"))
+    prev = f"asr.dec.l{L - 1}.cross_kv"
+
+    def lin(oid: str, layer: str, K: int, N: int, extra: float = 0, notes: str = "", bias: bool = True) -> None:
+        nonlocal prev
+        ops.append(op(oid, "matmul", NPU_MAC, dtype="int8", layer=layer, shape={"M": 1, "K": K, "N": N},
+                      macs=K * N, flops=2 * K * N + extra, bytes_in=K, bytes_w=K * N + (4 * N if bias else 0),
+                      bytes_out=N, depends_on=[prev], notes=notes))
+        prev = oid
+
+    def attn(oid: str, layer: str, kv_len: int, notes: str) -> None:
+        nonlocal prev
+        ops.append(op(f"{oid}.qk", "matmul", NPU_MAC, dtype="bf16", layer=layer,
+                      shape={"M": 1, "K": hd, "N": kv_len, "heads": Hh, "act_x_act": True},
+                      macs=Hh * kv_len * hd, flops=2 * Hh * kv_len * hd + 5 * Hh * kv_len,
+                      bytes_in=Hh * hd * 2 + kv_len * D * 2, bytes_out=Hh * kv_len * 2, depends_on=[prev],
+                      notes=f"QK^T + softmax (softmax flops folded in), K: {notes}"))
+        ops.append(op(f"{oid}.av", "matmul", NPU_MAC, dtype="bf16", layer=layer,
+                      shape={"M": 1, "K": kv_len, "N": hd, "heads": Hh, "act_x_act": True},
+                      macs=Hh * kv_len * hd, bytes_in=Hh * kv_len * 2 + kv_len * D * 2, bytes_out=D,
+                      depends_on=[f"{oid}.qk"], notes=f"AV, V: {notes}"))
+        prev = f"{oid}.av"
+
     for t in range(DECODE_TOKENS):
         pos = t + 4  # 3-4 forced prompt tokens precede the command (assumption)
-        macs = L * (D * 3 * D + D * D + D * D + D * D + 2 * D * F) + D * V
-        attn = L * Hh * (D // Hh) * 2 * (pos + S)
-        oid = f"asr.dec.t{t}"
-        ops.append(op(oid, "matmul", NPU_MAC, dtype="int8", layer=oid,
-                      shape={"M": 1, "K": D, "N": D, "layers": L, "self_kv_len": pos, "cross_kv_len": S},
-                      macs=macs + attn, flops=2 * (macs + attn) + L * D * 30 + V * 3,
-                      bytes_in=D + L * 2 * (pos + S) * D * 2,
-                      bytes_w=L * (6 * D * D + 2 * D * F) + D * V,
-                      bytes_out=D * 2 + V * 2, depends_on=[prev], preempt_boundary=True,
-                      notes=("one greedy decode step, batch 1: 4 layers (self-attn with KV cache, cross-attn over 1500 "
-                             "encoder states, MLP) + tied 51865-way logits; weight-streaming bound")))
-        prev = oid
+        for l in range(L):
+            P = f"asr.dec.t{t}.l{l}"
+            lin(f"{P}.self_qkv", P, D, 3 * D, extra=8 * D, notes="LayerNorm folded in; K,V appended to the self cache")
+            attn(f"{P}.self", P, pos, f"self cache ({pos} tokens)")
+            lin(f"{P}.self_o", P, D, D, extra=D, notes="out_proj + residual")
+            lin(f"{P}.cross_q", P, D, D, extra=8 * D, notes="LayerNorm folded in")
+            attn(f"{P}.cross", P, S, f"cross cache ({S} encoder states)")
+            lin(f"{P}.cross_o", P, D, D, extra=D, notes="out_proj + residual")
+            lin(f"{P}.fc1", P, D, F, extra=8 * D + 8 * F, notes="LayerNorm + GELU folded in")
+            lin(f"{P}.fc2", P, F, D, extra=D, notes="fc2 + residual")
+            ops[-1]["preempt_boundary"] = True
+        lin(f"asr.dec.t{t}.logits", f"asr.dec.t{t}.out", D, V, extra=8 * D + 2 * V, bias=False,
+            notes="final LayerNorm + tied 51865-way logits + argmax (weight-streaming bound)")
+        ops[-1]["preempt_boundary"] = True
     ops.append(op("asr.post.tokens_to_cmd", "cpu_kernel", CPU, dtype="int32", flops=1e4, bytes_in=V * 2, bytes_out=256,
                   instr={"scalar": 120000, "vector": 3000, "mem": 30000}, depends_on=[prev],
                   notes="argmax already on NPU; detokenize and match the command grammar (estimate)"))

@@ -5,14 +5,14 @@
  "provenance": {
   "source": "Glass Chip C++ state estimator (estimate.cpp)",
   "captured_by": "workloads/capture/estimate_control.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
-  "method": "analytic_count",
-  "script_sha256": "71cf181673abb0bca2db7b7835d0298b3ebe07bf970a11524762937beea6a791",
+  "method": "mixed",
+  "script_sha256": "f9bcc69498bf4f7058dec42b9a0ccffe6b37d4206f7bba4fafb561ebe9d0c2e4",
   "model_name": "joint_kf_plus_object_tracker",
   "model_version": "estimate.cpp sha256 bf10fec544d6fe22",
   "model_hash": "sha256:bf10fec544d6fe220c175c1d3a47afebfaef52a417f3075d29dd54d002231f7d",
-  "notes": "Instruction counts: Homebrew clang version 22.1.7, -march=rv64gcv, --target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20."
+  "notes": "Instruction counts: compiled with Homebrew clang version 22.1.7, -march=rv64gcv, --target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20; instr = gem5-measured dynamic count 5461/call (calib/tables/cpu_gem5.json, T6_estimate_step; includes a few harness instructions), split by the static mix; static count of the compiled code was 12436 (both branch sides counted)."
  },
  "release": {
   "kind": "periodic",
@@ -36,14 +36,14 @@
    "type": "cpu_kernel",
    "dtype": "fp32",
    "instr": {
-    "scalar": 6810,
-    "vector": 662,
-    "mem": 4964
+    "scalar": 2990,
+    "vector": 291,
+    "mem": 2180
    },
    "flops": 6039,
    "bytes_in": 3440,
    "bytes_out": 2968,
-   "notes": "joint KF (7 joints x 5 samples) + 8-track 6-state object KF with Mahalanobis gating and greedy association (estimate.cpp); worst-case tick with detections; 12436 RV64GCV instr (static count, both sides of branches counted, so an upper bound)",
+   "notes": "joint KF (7 joints x 5 samples) + 8-track 6-state object KF with Mahalanobis gating and greedy association (estimate.cpp); tick with detections; 5461 RV64GCV instr; instr = gem5-measured dynamic count 5461/call (calib/tables/cpu_gem5.json, T6_estimate_step; includes a few harness instructions), split by the static mix; static count of the compiled code was 12436 (both branch sides counted)",
    "eligible": [
     "cpu"
    ],
@@ -71,9 +71,9 @@
   "bytes_w": 0,
   "bytes_out": 2968,
   "instr": {
-   "scalar": 6810,
-   "vector": 662,
-   "mem": 4964
+   "scalar": 2990,
+   "vector": 291,
+   "mem": 2180
   },
   "num_ops": 1,
   "num_layers": 1,

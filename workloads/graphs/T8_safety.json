@@ -5,14 +5,14 @@
  "provenance": {
   "source": "torchvision lraspp_mobilenet_v3_large (COCO_WITH_VOC_LABELS_V1) + SSM in C++",
   "captured_by": "workloads/capture/safety.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "mixed",
-  "script_sha256": "48aeca572759c20b8dfc6b32954241b4398053a157b9f10b3ff6f5ed19861544",
+  "script_sha256": "ad509fe124523bf77bc6f0b105664fcb3f8c8dea5a1086a747a895910082a454",
   "model_name": "lraspp_mobilenet_v3_large",
   "model_version": "torchvision 0.29.2, onnx opset 17, input 1x3x240x320",
   "model_hash": "sha256:21f76e848ac2b3e98ed236a1f1739901cee0ce7f0d5a50e6bd22dc08750375b8",
-  "notes": "NPU part: onnx_graph_walk (160 ONNX nodes, 49 activations fused, 97 ops). int8 is a deployment assumption. DSP mask/depth fusion: analytic_count. RT SSM: compiled RV64 static instruction count of workloads/capture/control/ssm.cpp.",
+  "notes": "NPU part: onnx_graph_walk (160 ONNX nodes, 49 activations fused, 97 ops). int8 is a deployment assumption. DSP mask/depth fusion: analytic_count. RT SSM: workloads/capture/control/ssm.cpp compiled for RV64; instruction count per its op notes.",
   "references": [
    "ISO/TS 15066:2016 speed and separation monitoring formula"
   ]
@@ -3938,14 +3938,14 @@
    "type": "control_law",
    "dtype": "fp32",
    "instr": {
-    "scalar": 39909,
+    "scalar": 25906,
     "vector": 0,
-    "mem": 37073
+    "mem": 24065
    },
    "flops": 39189,
    "bytes_in": 1744,
    "bytes_out": 64,
-   "notes": "speed-and-separation monitoring (ISO/TS 15066 protective distance), 64 human points x 61 robot spheres; instruction counts from clang RV64 static count of ssm.cpp (76982 instr per call, straight-line, no loops)",
+   "notes": "speed-and-separation monitoring (ISO/TS 15066 protective distance), 64 human points x 61 robot spheres (ssm.cpp); 49971 instr per call; instr = gem5-measured dynamic count 49971/call (calib/tables/cpu_gem5.json, T8_ssm_step; includes a few harness instructions), split by the static mix; static count of the compiled code was 76982 (both branch sides counted)",
    "eligible": [
     "rt"
    ],
@@ -3971,9 +3971,9 @@
   "bytes_w": 3261560,
   "bytes_out": 12221056,
   "instr": {
-   "scalar": 39909,
+   "scalar": 25906,
    "vector": 0,
-   "mem": 37073
+   "mem": 24065
   },
   "num_ops": 99,
   "num_layers": 20,

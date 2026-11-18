@@ -7,6 +7,9 @@ Checks:
 - compute ops are not empty: conv/matmul/attention need MACs > 0; elementwise/softmax/
   norm/pool/resize/reduce/dsp/simt kernels need FLOPs > 0; cpu/rt kernels need
   instructions or FLOPs > 0
+- declared MACs agree with the MACs implied by the op's shape (within 2x) for every conv/matmul/
+  attention op, using the same GEMM view the core builds in core/src/kernel/config.cpp
+- every depends_on target appears earlier in the op list (the core requires this order)
 - totals in `summary` match the ops
 - middleware.json has the CONTRACTS.md fields
 - scenarios reference existing graphs and use known event actions
@@ -35,6 +38,51 @@ ACTIONS = {"enable_task", "disable_task", "set_conveyor_speed", "human_enter", "
 EXPECTED = ["T1_ingest_wrist", "T1_ingest_overhead", "T2_detect", "T3_esdf", "T4_vla", "T5_plan", "T6_estimate",
             "T7_control", "T8_safety", "T10_record", "T11_speech", "T12_arm2_control", "T13_map_save", "T14_ota",
             "T15_diag"]
+
+
+MAC_RATIO_LIMIT = 2.0
+
+
+def shape_implied_macs(o: dict[str, Any]) -> float | None:
+    """MACs implied by an op's shape, mirroring the core's GEMM view (config.cpp).
+
+    conv2d/dwconv2d: groups * (N*Ho*Wo) * ((C/groups)*R*S) * (K/groups)
+    matmul/attention: (batch or B) * heads * M * K * N
+    Returns None when the shape does not define a GEMM (the core then falls back to `macs`).
+    """
+    s = o.get("shape") or {}
+    t = o["type"]
+    if t in ("conv2d", "dwconv2d"):
+        N, C, H, W = s.get("N", 1), s.get("C", 0), s.get("H", 0), s.get("W", 0)
+        K, R, S, st = s.get("K", 0), s.get("R", 1), s.get("S", 1), s.get("stride", 1)
+        Ho = s.get("Ho", s.get("P", s.get("OH", -(-H // st) if st > 0 else H)))
+        Wo = s.get("Wo", s.get("Q", s.get("OW", -(-W // st) if st > 0 else W)))
+        g = max(s.get("groups", C if t == "dwconv2d" else 1), 1)
+        if C > 0 and K > 0 and Ho > 0 and Wo > 0:
+            return g * (N * Ho * Wo) * ((C / g) * R * S) * (K / g)
+        return None
+    if t in ("matmul", "attention"):
+        M, K, N = s.get("M", 0), s.get("K", 0), s.get("N", 0)
+        B = s.get("B", s.get("batch", 1)) * s.get("heads", 1)
+        if M > 0 and K > 0 and N > 0:
+            return B * M * K * N
+    return None
+
+
+def mac_shape_errors(o: dict[str, Any]) -> list[str]:
+    """Flag ops whose declared MACs disagree with their shape by more than MAC_RATIO_LIMIT."""
+    if o["type"] not in MAC_TYPES:
+        return []
+    implied = shape_implied_macs(o)
+    macs = o.get("macs", 0)
+    if implied is None:
+        return [f"{o['op_id']}: {o['type']} with MACs but no GEMM-defining shape"] if macs > 0 else []
+    if implied <= 0 or macs <= 0:
+        return []
+    r = macs / implied
+    if r > MAC_RATIO_LIMIT or r < 1 / MAC_RATIO_LIMIT:
+        return [f"{o['op_id']}: declared MACs {macs:.4g} vs shape-implied {implied:.4g} ({r:.2f}x)"]
+    return []
 
 
 def find_cycle(ops: list[dict[str, Any]]) -> list[str] | None:
@@ -80,10 +128,14 @@ def check_graph(g: dict[str, Any], validator: jsonschema.Draft202012Validator) -
     if len(ids) != len(set(ids)):
         errs.append("duplicate op_id")
     idset = set(ids)
+    pos = {i: k for k, i in enumerate(ids)}
     for o in g["ops"]:
         for d in o.get("depends_on", []):
             if d not in idset:
                 errs.append(f"{o['op_id']}: unknown dependency {d}")
+            elif pos[d] >= pos[o["op_id"]]:
+                errs.append(f"{o['op_id']}: dependency {d} does not precede it")
+        errs.extend(mac_shape_errors(o))
         t = o["type"]
         if t in MAC_TYPES and not o.get("macs", 0) > 0:
             errs.append(f"{o['op_id']}: {t} with zero MACs")

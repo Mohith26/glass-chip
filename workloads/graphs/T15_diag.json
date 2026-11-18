@@ -5,10 +5,10 @@
  "provenance": {
   "source": "system diagnostics aggregator",
   "captured_by": "workloads/capture/extras.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "analytic_count",
-  "script_sha256": "a0831a91c52196719a205c88e48281f19d6e36a01ff46f564b3faae2abec5058",
+  "script_sha256": "962297224508209dfb406d4dbe7439b00dc1d541b709ddb23f84eabd924e4ccc",
   "notes": "About 173840 instructions per 10 Hz job; estimate."
  },
  "release": {

@@ -5,10 +5,10 @@
  "provenance": {
   "source": "cuRoboV2 block-sparse TSDF + dense PBA+ ESDF mapper (NVlabs/curobo main)",
   "captured_by": "workloads/capture/curobo.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "mixed",
-  "script_sha256": "c95e8d4c352f161d1735fdda8155c3f330f8e1cfb4b4686ee303445f5fc18b82",
+  "script_sha256": "df6acf1439ef5b48f193b3e902ea118f5bb320e485b211da85054cc7737e4d80",
   "model_name": "curobo_v2_mapper",
   "model_version": "NVlabs/curobo main as fetched; mapper algorithm per arXiv 2603.05493 Sec. 5",
   "notes": "FALLBACK (spec V3): analytic_count of the Voxel-Project integration (4 phases) and PBA+ ESDF described in the cuRoboV2 paper, sized for this stack's workspace (assumptions in params); published RTX 4090 timings used only as a sanity check.",
@@ -52,8 +52,8 @@
    ]
   },
   "sanity_check": {
-   "integration_flops": 46726400,
-   "esdf_flops": 28800000,
+   "integration_flops": 47955400,
+   "esdf_flops": 28800000.0,
    "grid_voxels": 320000,
    "published": {
     "tsdf_integration_ms": [
@@ -65,7 +65,7 @@
     "source": "arXiv 2603.05493v2 Sec. 7.6 (Redwood bedroom, RTX 4090)"
    },
    "implied_rtx4090_tflops_if_paper_time": {
-    "integration": 0.0467,
+    "integration": 0.048,
     "esdf": 0.0282
    },
    "reading": "Paper times are for a different scene/grid; this only checks order of magnitude (both are memory/latency bound, far below FP32 peak)."
@@ -112,18 +112,18 @@
    "arith_intensity": 2.5
   },
   {
-   "op_id": "esdf.cam0.dedupe_alloc",
+   "op_id": "esdf.cam0.sort_keys",
    "type": "simt_kernel",
    "dtype": "fp32",
-   "flops": 4931200,
-   "bytes_in": 9830400,
+   "flops": 4915200,
+   "bytes_in": 4915200,
    "bytes_w": 0,
-   "bytes_out": 3200,
+   "bytes_out": 2457600,
    "shape": {
-    "kernel_launches": 3,
+    "kernel_launches": 1,
     "threads": 307200
    },
-   "notes": "sort/dedupe keys, CAS insert into block hash (400 visible blocks assumed)",
+   "notes": "radix sort of the per-pixel block keys",
    "eligible": [
     "simt",
     "cpu"
@@ -132,7 +132,53 @@
     "esdf.cam0.block_discovery"
    ],
    "macs": 0,
-   "arith_intensity": 0.5015
+   "arith_intensity": 0.6667
+  },
+  {
+   "op_id": "esdf.cam0.unique_keys",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 614400,
+   "bytes_in": 2457600,
+   "bytes_w": 0,
+   "bytes_out": 3200,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 307200
+   },
+   "notes": "drop duplicate block keys",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.cam0.sort_keys"
+   ],
+   "macs": 0,
+   "arith_intensity": 0.2497
+  },
+  {
+   "op_id": "esdf.cam0.alloc_blocks",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 16000,
+   "bytes_in": 6400,
+   "bytes_w": 0,
+   "bytes_out": 3200,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 400
+   },
+   "notes": "CAS insert into the block hash (400 visible blocks assumed)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.cam0.unique_keys"
+   ],
+   "macs": 0,
+   "arith_intensity": 1.6667
   },
   {
    "op_id": "esdf.cam0.sync_K",
@@ -151,7 +197,7 @@
     "cpu"
    ],
    "depends_on": [
-    "esdf.cam0.dedupe_alloc"
+    "esdf.cam0.alloc_blocks"
    ],
    "macs": 0,
    "bytes_w": 0,
@@ -220,18 +266,18 @@
    "arith_intensity": 2.5
   },
   {
-   "op_id": "esdf.cam1.dedupe_alloc",
+   "op_id": "esdf.cam1.sort_keys",
    "type": "simt_kernel",
    "dtype": "fp32",
-   "flops": 4931200,
-   "bytes_in": 9830400,
+   "flops": 4915200,
+   "bytes_in": 4915200,
    "bytes_w": 0,
-   "bytes_out": 3200,
+   "bytes_out": 2457600,
    "shape": {
-    "kernel_launches": 3,
+    "kernel_launches": 1,
     "threads": 307200
    },
-   "notes": "sort/dedupe keys, CAS insert into block hash (400 visible blocks assumed)",
+   "notes": "radix sort of the per-pixel block keys",
    "eligible": [
     "simt",
     "cpu"
@@ -240,7 +286,53 @@
     "esdf.cam1.block_discovery"
    ],
    "macs": 0,
-   "arith_intensity": 0.5015
+   "arith_intensity": 0.6667
+  },
+  {
+   "op_id": "esdf.cam1.unique_keys",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 614400,
+   "bytes_in": 2457600,
+   "bytes_w": 0,
+   "bytes_out": 3200,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 307200
+   },
+   "notes": "drop duplicate block keys",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.cam1.sort_keys"
+   ],
+   "macs": 0,
+   "arith_intensity": 0.2497
+  },
+  {
+   "op_id": "esdf.cam1.alloc_blocks",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 16000,
+   "bytes_in": 6400,
+   "bytes_w": 0,
+   "bytes_out": 3200,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 400
+   },
+   "notes": "CAS insert into the block hash (400 visible blocks assumed)",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.cam1.unique_keys"
+   ],
+   "macs": 0,
+   "arith_intensity": 1.6667
   },
   {
    "op_id": "esdf.cam1.sync_K",
@@ -259,7 +351,7 @@
     "cpu"
    ],
    "depends_on": [
-    "esdf.cam1.dedupe_alloc"
+    "esdf.cam1.alloc_blocks"
    ],
    "macs": 0,
    "bytes_w": 0,
@@ -313,18 +405,18 @@
    "arith_intensity": 2.5
   },
   {
-   "op_id": "esdf.pba_phase1",
+   "op_id": "esdf.pba_phase1.band",
    "type": "simt_kernel",
    "dtype": "fp32",
-   "flops": 4800000,
-   "bytes_in": 1280000,
+   "flops": 2400000,
+   "bytes_in": 640000,
    "bytes_w": 0,
-   "bytes_out": 1280000,
+   "bytes_out": 640000,
    "shape": {
-    "kernel_launches": 2,
+    "kernel_launches": 1,
     "threads": 320000
    },
-   "notes": "PBA+ phase 1: 1D banded nearest site along z",
+   "notes": "PBA+ phase 1 (band pass): 1D banded nearest site along z",
    "eligible": [
     "simt",
     "cpu"
@@ -336,51 +428,120 @@
    "arith_intensity": 1.875
   },
   {
-   "op_id": "esdf.pba_phase2",
+   "op_id": "esdf.pba_phase1.merge",
    "type": "simt_kernel",
    "dtype": "fp32",
-   "flops": 9600000,
-   "bytes_in": 2560000,
+   "flops": 2400000,
+   "bytes_in": 1280000,
    "bytes_w": 0,
    "bytes_out": 1280000,
    "shape": {
-    "kernel_launches": 2,
+    "kernel_launches": 1,
     "threads": 320000
    },
-   "notes": "PBA+ phase 2: proximate sites along y",
+   "notes": "PBA+ phase 1 (merge pass): 1D banded nearest site along z",
    "eligible": [
     "simt",
     "cpu"
    ],
    "depends_on": [
-    "esdf.pba_phase1"
+    "esdf.pba_phase1.band"
+   ],
+   "macs": 0,
+   "arith_intensity": 0.9375
+  },
+  {
+   "op_id": "esdf.pba_phase2.band",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 4800000,
+   "bytes_in": 1280000,
+   "bytes_w": 0,
+   "bytes_out": 640000,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 320000
+   },
+   "notes": "PBA+ phase 2 (band pass): proximate sites along y",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.pba_phase1.merge"
    ],
    "macs": 0,
    "arith_intensity": 2.5
   },
   {
-   "op_id": "esdf.pba_phase3",
+   "op_id": "esdf.pba_phase2.merge",
    "type": "simt_kernel",
    "dtype": "fp32",
-   "flops": 8000000,
+   "flops": 4800000,
+   "bytes_in": 2560000,
+   "bytes_w": 0,
+   "bytes_out": 1280000,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 320000
+   },
+   "notes": "PBA+ phase 2 (merge pass): proximate sites along y",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.pba_phase2.band"
+   ],
+   "macs": 0,
+   "arith_intensity": 1.25
+  },
+  {
+   "op_id": "esdf.pba_phase3.band",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 4000000,
+   "bytes_in": 1280000,
+   "bytes_w": 0,
+   "bytes_out": 960000,
+   "shape": {
+    "kernel_launches": 1,
+    "threads": 320000
+   },
+   "notes": "PBA+ phase 3 (band pass): along x, write fp16 distance + sign recovery",
+   "eligible": [
+    "simt",
+    "cpu"
+   ],
+   "depends_on": [
+    "esdf.pba_phase2.merge"
+   ],
+   "macs": 0,
+   "arith_intensity": 1.7857
+  },
+  {
+   "op_id": "esdf.pba_phase3.merge",
+   "type": "simt_kernel",
+   "dtype": "fp32",
+   "flops": 4000000,
    "bytes_in": 2560000,
    "bytes_w": 0,
    "bytes_out": 1920000,
    "shape": {
-    "kernel_launches": 2,
+    "kernel_launches": 1,
     "threads": 320000
    },
-   "notes": "PBA+ phase 3: along x, write fp16 distance + sign recovery",
+   "notes": "PBA+ phase 3 (merge pass): along x, write fp16 distance + sign recovery",
    "eligible": [
     "simt",
     "cpu"
    ],
    "preempt_boundary": true,
    "depends_on": [
-    "esdf.pba_phase2"
+    "esdf.pba_phase3.band"
    ],
    "macs": 0,
-   "arith_intensity": 1.7857
+   "arith_intensity": 0.8929
   }
  ],
  "messages": [
@@ -392,17 +553,17 @@
  ],
  "summary": {
   "macs": 0,
-  "flops": 75526600,
-  "bytes_in": 34304016,
+  "flops": 76755400,
+  "bytes_in": 32601616,
   "bytes_w": 0,
-  "bytes_out": 14777616,
+  "bytes_out": 21939216,
   "instr": {
    "scalar": 6000,
    "vector": 0,
    "mem": 1000
   },
-  "num_ops": 14,
-  "num_layers": 14,
-  "arith_intensity": 1.5388
+  "num_ops": 21,
+  "num_layers": 21,
+  "arith_intensity": 1.4073
  }
 }

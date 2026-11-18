@@ -5,7 +5,7 @@
  "provenance": {
   "source": "recording/logging stream at raw 4K30 (5.97 Gbit/s)",
   "captured_by": "workloads/capture/record.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "analytic_count",
   "script_sha256": "f9ef98f5742238fc6d5cde0002f70d56b04e11bf56e5b267926298aa7c434e83",

@@ -5,7 +5,7 @@
  "provenance": {
   "source": "lerobot/smolvla_base (SmolVLA, backbone HuggingFaceTB/SmolVLM2-500M-Video-Instruct)",
   "captured_by": "workloads/capture/vla.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "mixed",
   "script_sha256": "fc05272fa027632d81e2c3849624e5ec684d0c1cb0fd19cfa080d2f4b9ad580a",

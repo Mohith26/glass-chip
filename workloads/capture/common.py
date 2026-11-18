@@ -241,3 +241,30 @@ def op(op_id: str, type_: str, eligible: list[str], **kw: Any) -> dict[str, Any]
     d.update(kw)
     d["eligible"] = eligible
     return d
+
+
+GEM5_TABLE = ROOT / "calib" / "tables" / "cpu_gem5.json"
+
+
+def dynamic_instr(static: dict[str, Any], gem5_key: str) -> tuple[dict[str, int], int, str]:
+    """Per-call instruction mix for a compiled kernel.
+
+    If the calibration worker's gem5 table (calib/tables/cpu_gem5.json) has a measured
+    instr_per_call for this kernel, use it: it is a dynamic count, while the static count
+    in rv64_counts.json counts both sides of every branch. The scalar/vector/memory split
+    keeps the static mix, scaled to the measured total. Otherwise fall back to the static count.
+    Returns (instr, total, provenance note).
+    """
+    st_total = static["instr_total"]
+    if GEM5_TABLE.exists():
+        k = json.loads(GEM5_TABLE.read_text()).get("kernels", {}).get(gem5_key, {})
+        m = next((v for v in k.values() if isinstance(v, dict) and v.get("instr_per_call", 0) > 0), None)
+        if m:
+            dyn = float(m["instr_per_call"])
+            f = dyn / st_total
+            instr = {c: int(round(v * f)) for c, v in static["instr"].items()}
+            return instr, sum(instr.values()), (
+                f"instr = gem5-measured dynamic count {dyn:.0f}/call (calib/tables/cpu_gem5.json, {gem5_key}; includes a "
+                f"few harness instructions), split by the static mix; static count of the compiled code was {st_total} "
+                "(both branch sides counted)")
+    return dict(static["instr"]), st_total, f"instr = static count of the compiled code ({st_total}, both branch sides counted)"

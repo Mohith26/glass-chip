@@ -156,50 +156,53 @@ def plan_graph() -> dict:
 
     state_bytes = DOF * 4 * 4          # q, qd, qdd, qddd fp32
     esdf_bytes = 2                     # fp16 ESDF
+    # One op per kernel launch per iteration: the core charges blocks.simt.launch_overhead_us once per op
+    # and runs ops in dependency order, so this keeps both the launch overhead and the serial
+    # iteration-to-iteration dependency of the optimizers. Each iteration is grouped into a few fused
+    # kernels (cuRoboV2 launches more, smaller kernels per iteration; see paper Table 4).
     ops = []
     ops.append(op("plan.host_setup", "cpu_kernel", CPU, dtype="fp32", flops=2e4, bytes_in=8192, bytes_out=8192,
                   instr={"scalar": 60000, "vector": 2000, "mem": 20000},
                   notes="host orchestration: goal/scene update, seed buffers, CUDA-graph-style launch (estimate)"))
-    ops.append(simt("plan.ik_lm", ik_lm, lm_seeds * DOF * 4 + 64, lm_seeds * DOF * 4, lm_iters,
-                    f"seed IK: Levenberg-Marquardt, {lm_seeds} seeds x {lm_iters} iterations (pose only)",
-                    bytes_w=4096, threads=lm_seeds))
-    ops.append(simt("plan.ik_lbfgs.rollout", ik_evals * ik_state, ik_evals * (state_bytes + n_sph * 8 * esdf_bytes),
-                    ik_evals * 16, ik_lbfgs_iters,
-                    f"collision-free IK L-BFGS: {ik_lbfgs_seeds} seeds x {ik_lbfgs_iters} iters x {ls} line-search points; "
-                    f"kinematics fwd+bwd, ESDF sphere distance ({n_sph} spheres), self-collision ({self_pairs} pairs)",
-                    bytes_w=n_sph * 16 + 8192, threads=ik_lbfgs_seeds * ls))
-    ops.append(simt("plan.ik_lbfgs.update", ik_lbfgs, ik_lbfgs_seeds * ik_hist * DOF * 8, ik_lbfgs_seeds * DOF * 4,
-                    ik_lbfgs_iters, f"L-BFGS two-loop recursion, history {ik_hist}", threads=ik_lbfgs_seeds))
-    # TrajOpt in blocks of 25 iterations (the task YAML reuses a 25-iteration CUDA graph block).
-    blocks = math.ceil(traj_iters / 25)
-    for k in range(blocks):
-        it = min(25, traj_iters - 25 * k)
-        f = it / traj_iters
-        pre = f"plan.trajopt.b{k}"
-        ops.append(simt(f"{pre}.bspline_kinematics", f * evals * (bspl + kin), f * evals * state_bytes,
-                        f * evals * n_sph * 16, it * 2,
-                        f"B-spline eval ({knots} knots -> {T} states) + kinematics fwd/bwd; {to_seeds} seeds x {ls} line-search",
-                        bytes_w=n_sph * 16 + 4096, threads=to_seeds * ls * T))
-        ops.append(simt(f"{pre}.rnea", f * evals * rnea, f * evals * state_bytes, f * evals * DOF * 4, it,
-                        f"differentiable RNEA (fwd+bwd) for torque limits, {rf} flops per forward pass (from compiled RV64 RNEA)",
-                        bytes_w=DOF * 40 * 4, threads=to_seeds * ls * T))
-        ops.append(simt(f"{pre}.collision", f * evals * (coll_swept + selfc),
-                        f * evals * n_sph * SWEEP_SUBSAMPLES * 8 * esdf_bytes, f * evals * n_sph * 16, it * 2,
-                        f"swept-sphere ESDF collision ({n_sph} spheres x {SWEEP_SUBSAMPLES} sub-samples) + self-collision ({self_pairs} pairs)",
-                        threads=to_seeds * ls * T * n_sph))
-        ops.append(simt(f"{pre}.costs_reduce", f * (evals * cost + reduce_traj), f * evals * 64, f * to_seeds * ls * 8, it * 2,
-                        "cspace, pose, speed costs and per-trajectory reductions", threads=to_seeds * ls * T))
-        ops.append(simt(f"{pre}.lbfgs_linesearch", f * lbfgs_traj, f * to_seeds * traj_iters * to_hist * knots * DOF * 8 / traj_iters * it,
-                        f * to_seeds * knots * DOF * 4 * it, it,
-                        f"L-BFGS two-loop (history {to_hist}, {knots}x{DOF} variables) + approx-Wolfe selection over {ls} steps",
-                        threads=to_seeds))
+    for i in range(lm_iters):
+        ops.append(simt(f"plan.ik_lm.i{i}", ik_lm / lm_iters, lm_seeds * DOF * 4 + 64, lm_seeds * DOF * 4, 1,
+                        f"seed IK: Levenberg-Marquardt step {i + 1}/{lm_iters}, {lm_seeds} seeds (pose only)",
+                        bytes_w=4096, threads=lm_seeds))
+    for i in range(ik_lbfgs_iters):
+        ev = ik_lbfgs_seeds * ls
+        ops.append(simt(f"plan.ik_lbfgs.i{i}.rollout", ev * ik_state, ev * (state_bytes + n_sph * 8 * esdf_bytes), ev * 16, 1,
+                        f"collision-free IK L-BFGS iteration {i + 1}/{ik_lbfgs_iters}: {ik_lbfgs_seeds} seeds x {ls} line-search "
+                        f"points; kinematics fwd+bwd, ESDF sphere distance ({n_sph} spheres), self-collision ({self_pairs} pairs)",
+                        bytes_w=n_sph * 16 + 8192, threads=ev * n_sph))
+        ops.append(simt(f"plan.ik_lbfgs.i{i}.update", ik_lbfgs / ik_lbfgs_iters, ik_lbfgs_seeds * ik_hist * DOF * 8,
+                        ik_lbfgs_seeds * DOF * 4, 1, f"L-BFGS two-loop recursion, history {ik_hist}", threads=ik_lbfgs_seeds * DOF))
         ops[-1]["preempt_boundary"] = True
-    ops.append(simt("plan.timeopt", timeopt, to_seeds * DENSE_SAMPLES * state_bytes, to_seeds * 32 * 4,
-                    TIMEOPT_NEWTON_ITERS,
-                    f"TimeOpt: banded Newton on 32 timing controls, {DENSE_SAMPLES} dense samples with vel/acc/jerk/torque checks, "
-                    f"{TIMEOPT_NEWTON_ITERS} iterations (assumption) x {to_seeds} seeds", threads=to_seeds * DENSE_SAMPLES))
-    ops.append(simt("plan.validate", validate, DENSE_SAMPLES * (state_bytes + n_sph * 8 * esdf_bytes), 64, 2,
-                    f"final dense validation of the selected trajectory ({DENSE_SAMPLES} samples)", threads=DENSE_SAMPLES))
+    ev_it = to_seeds * ls * T                  # state evaluations per TrajOpt iteration
+    for i in range(traj_iters):
+        pre = f"plan.trajopt.i{i}"
+        ops.append(simt(f"{pre}.rollout", ev_it * (bspl + kin + rnea + cost) + to_seeds * ls * T * 40,
+                        ev_it * state_bytes, ev_it * (n_sph * 16 + DOF * 4), 1,
+                        f"iteration {i + 1}/{traj_iters}: B-spline eval ({knots} knots -> {T} states), kinematics fwd/bwd, "
+                        f"differentiable RNEA ({rf} flops per forward pass, from the compiled RV64 RNEA), costs and reductions; "
+                        f"{to_seeds} seeds x {ls} line-search points",
+                        bytes_w=n_sph * 16 + DOF * 40 * 4 + 4096, threads=ev_it))
+        ops.append(simt(f"{pre}.collision", ev_it * (coll_swept + selfc), ev_it * n_sph * SWEEP_SUBSAMPLES * 8 * esdf_bytes,
+                        ev_it * n_sph * 16, 1,
+                        f"swept-sphere ESDF collision ({n_sph} spheres x {SWEEP_SUBSAMPLES} sub-samples) + self-collision "
+                        f"({self_pairs} pairs)", threads=ev_it * n_sph))
+        ops.append(simt(f"{pre}.lbfgs_linesearch", lbfgs_traj / traj_iters, to_seeds * to_hist * knots * DOF * 8,
+                        to_seeds * knots * DOF * 4, 1,
+                        f"L-BFGS two-loop (history {to_hist}, {knots}x{DOF} variables) + approx-Wolfe selection over {ls} steps",
+                        threads=to_seeds * knots * DOF))
+        ops[-1]["preempt_boundary"] = True
+    for i in range(TIMEOPT_NEWTON_ITERS):
+        ops.append(simt(f"plan.timeopt.i{i}", timeopt / TIMEOPT_NEWTON_ITERS, to_seeds * DENSE_SAMPLES * state_bytes,
+                        to_seeds * 32 * 4, 1,
+                        f"TimeOpt Newton step {i + 1}/{TIMEOPT_NEWTON_ITERS} (assumed count): banded system on 32 timing "
+                        f"controls, {DENSE_SAMPLES} dense samples with vel/acc/jerk/torque checks, {to_seeds} seeds",
+                        threads=to_seeds * DENSE_SAMPLES))
+    ops.append(simt("plan.validate", validate, DENSE_SAMPLES * (state_bytes + n_sph * 8 * esdf_bytes), 64, 1,
+                    f"final dense validation of the selected trajectory ({DENSE_SAMPLES} samples)", threads=DENSE_SAMPLES * n_sph))
     ops.append(op("plan.readback", "memcopy", DMA, dtype="fp32", bytes_in=DENSE_SAMPLES * DOF * 4 * 4,
                   bytes_out=DENSE_SAMPLES * DOF * 4 * 4, notes="copy executable trajectory to host-visible buffer"))
     chain(ops)
@@ -211,10 +214,11 @@ def plan_graph() -> dict:
 
     total_flops = sum(o.get("flops", 0) for o in ops)
     shares = {
-        "kinematics": sum(o["flops"] for o in ops if "bspline_kinematics" in o["op_id"]) + ik_evals * kin,
-        "rnea": sum(o["flops"] for o in ops if o["op_id"].endswith(".rnea")),
-        "collision": sum(o["flops"] for o in ops if o["op_id"].endswith(".collision")) + ik_evals * (coll_static * 2 + selfc),
-        "lbfgs_linesearch": sum(o["flops"] for o in ops if "lbfgs" in o["op_id"] and "rollout" not in o["op_id"]),
+        "kinematics_bspline": evals * (kin + bspl) + ik_evals * kin,
+        "rnea": evals * rnea,
+        "collision": evals * (coll_swept + selfc) + ik_evals * (coll_static * 2 + selfc),
+        "costs_reduce": evals * cost + reduce_traj + ik_evals * cost,
+        "lbfgs_linesearch": lbfgs_traj + ik_lbfgs,
         "seed_ik_lm": ik_lm, "timeopt": timeopt,
     }
     gpu_flops = total_flops - ops[0]["flops"]
@@ -231,8 +235,8 @@ def plan_graph() -> dict:
                              / (PUB["gpu_fp32_peak_tflops"]["rtx5090"] * 1e12), 2)},
         "published": PUB,
         "reading": ("Low implied utilization is expected: these kernels are latency-bound (small batches, many dependent "
-                    "iterations, launch and synchronization overhead), which is why the core's SIMT model must charge "
-                    "launch overhead per kernel_launches and not only FLOPs."),
+                    "iterations, launch and synchronization overhead), which is why the graph has one op per kernel launch "
+                    "and per iteration: the core charges launch overhead per op and keeps the iterations serial."),
     }
     params = {"cuRobo_defaults": {"ik_lm_seeds": lm_seeds, "ik_lm_iterations": lm_iters, "ik_lbfgs_seeds": ik_lbfgs_seeds,
                                   "ik_lbfgs_iterations": ik_lbfgs_iters, "ik_lbfgs_history": ik_hist,
@@ -274,8 +278,11 @@ def esdf_graph() -> dict:
                       notes="aligned 16UC1 depth from T1 converted to float32 meters", depends_on=[] if c == 0 else None))
         ops.append(simt(f"{pre}.block_discovery", px * 30, px * 4, px * 8, 1,
                         f"per-pixel ray over the +/-{trunc} m truncation band, emit block keys", threads=px))
-        ops.append(simt(f"{pre}.dedupe_alloc", px * 2 * 8 + K * 40, px * 8 * 4, K * 8, 3,
-                        f"sort/dedupe keys, CAS insert into block hash ({K} visible blocks assumed)", threads=px))
+        ops.append(simt(f"{pre}.sort_keys", px * 2 * 8, px * 8 * 2, px * 8, 1,
+                        "radix sort of the per-pixel block keys", threads=px))
+        ops.append(simt(f"{pre}.unique_keys", px * 2, px * 8, K * 8, 1, "drop duplicate block keys", threads=px))
+        ops.append(simt(f"{pre}.alloc_blocks", K * 40, K * 8 * 2, K * 8, 1,
+                        f"CAS insert into the block hash ({K} visible blocks assumed)", threads=K))
         ops.append(op(f"{pre}.sync_K", "cpu_kernel", CPU, dtype="int32", flops=100, bytes_in=8, bytes_out=8,
                       instr={"scalar": 3000, "vector": 0, "mem": 500},
                       notes="device-to-host read of visible block count K (the paper notes this sync)"))
@@ -285,10 +292,12 @@ def esdf_graph() -> dict:
     # ESDF over the dense workspace grid.
     ops.append(simt("esdf.seed_gather", N * 20, N * 4, N * 4, 1,
                     f"gather seeding from block-sparse TSDF into dense {nx}x{ny}x{nz} grid ({ESDF_VOXEL_M*1000:.0f} mm)", threads=N))
-    ops.append(simt("esdf.pba_phase1", N * 15, N * 4, N * 4, 2, "PBA+ phase 1: 1D banded nearest site along z", threads=N))
-    ops.append(simt("esdf.pba_phase2", N * 30, N * 8, N * 4, 2, "PBA+ phase 2: proximate sites along y", threads=N))
-    ops.append(simt("esdf.pba_phase3", N * 25, N * 8, N * 2 + N * 4, 2,
-                    "PBA+ phase 3: along x, write fp16 distance + sign recovery", threads=N))
+    for ph, (fl, rd, wr, what) in enumerate([(15, 4, 4, "1D banded nearest site along z"),
+                                              (30, 8, 4, "proximate sites along y"),
+                                              (25, 8, 6, "along x, write fp16 distance + sign recovery")], start=1):
+        for half, sub in enumerate(("band", "merge")):
+            ops.append(simt(f"esdf.pba_phase{ph}.{sub}", N * fl / 2, N * rd / 2 * (1 + half), N * wr / 2 * (1 + half), 1,
+                            f"PBA+ phase {ph} ({sub} pass): {what}", threads=N))
     ops[-1]["preempt_boundary"] = True
     # cam1's first op depends on nothing; the ESDF waits for both integrations.
     chain(ops)
@@ -298,7 +307,7 @@ def esdf_graph() -> dict:
             o["depends_on"] = []
         if o["op_id"] == "esdf.seed_gather":
             o["depends_on"] = ["esdf.cam0.integrate", "esdf.cam1.integrate"]
-    integ_flops = sum(o.get("flops", 0) for o in ops if "integrate" in o["op_id"] or "block" in o["op_id"] or "dedupe" in o["op_id"])
+    integ_flops = sum(o.get("flops", 0) for o in ops if o["op_id"].startswith("esdf.cam"))
     esdf_flops = sum(o.get("flops", 0) for o in ops if o["op_id"].startswith("esdf.pba") or o["op_id"] == "esdf.seed_gather")
     sanity = {"integration_flops": integ_flops, "esdf_flops": esdf_flops, "grid_voxels": N,
               "published": PUB["paper_esdf_rtx4090"],

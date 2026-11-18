@@ -5,7 +5,7 @@
  "provenance": {
   "source": "ISP-like preprocessing for a 640x480 RGB-D camera",
   "captured_by": "workloads/capture/ingest.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "analytic_count",
   "script_sha256": "940fd8bb7f92e0841dc6e0a2a9c3c901f076f1a13d13f87480eba1db2525e612",

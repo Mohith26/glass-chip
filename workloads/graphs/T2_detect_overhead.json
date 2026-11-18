@@ -5,7 +5,7 @@
  "provenance": {
   "source": "ultralytics YOLOv8n (COCO-pretrained) exported to ONNX",
   "captured_by": "workloads/capture/detect.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
   "method": "mixed",
   "script_sha256": "3900c2727ebdaeb00ed7b1133b58cf067a09be83c8cda56ecfc719a34a21bcca",

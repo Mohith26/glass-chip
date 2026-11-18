@@ -5,14 +5,14 @@
  "provenance": {
   "source": "Glass Chip C++ joint impedance controller for Franka Panda (control.cpp)",
   "captured_by": "workloads/capture/estimate_control.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "machine": "macOS 27.2, arm64 (Apple Silicon), Python 3.12.13",
-  "method": "analytic_count",
-  "script_sha256": "71cf181673abb0bca2db7b7835d0298b3ebe07bf970a11524762937beea6a791",
+  "method": "mixed",
+  "script_sha256": "f9bcc69498bf4f7058dec42b9a0ccffe6b37d4206f7bba4fafb561ebe9d0c2e4",
   "model_name": "panda_joint_impedance_rnea",
   "model_version": "control.cpp sha256 9411ba50e3fd9e45",
   "model_hash": "sha256:9411ba50e3fd9e45a6b03546be5af13c03bfea85916ec20a9c9bea7ce5a5b511",
-  "notes": "Instruction counts: Homebrew clang version 22.1.7, --target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20, -march=rv64gc (RT core has no vector unit). Static count of the compiled step function; flops_est counts FP arithmetic instructions with FMA as 2. Period/deadline are spec defaults.",
+  "notes": "Instruction counts: compiled with Homebrew clang version 22.1.7, --target=riscv64-linux-gnu -O2 -S -ffreestanding -fno-math-errno -fno-exceptions -fno-rtti -std=c++20, -march=rv64gc; instr = gem5-measured dynamic count 2303/call (calib/tables/cpu_gem5.json, T7_control_step; includes a few harness instructions), split by the static mix; static count of the compiled code was 2280 (both branch sides counted). (RT core has no vector unit). Static count of the compiled step function; flops_est counts FP arithmetic instructions with FMA as 2. Period/deadline are spec defaults.",
   "references": [
    "Franka Emika Panda modified DH parameters (Franka docs)",
    "Gaz, Cognetti, Oliva, Robuffo Giordano, De Luca, Dynamic Identification of the Franka Emika Panda Robot, RA-L 2019"
@@ -60,15 +60,15 @@
    "type": "control_law",
    "dtype": "fp32",
    "instr": {
-    "scalar": 1463,
+    "scalar": 1478,
     "vector": 0,
-    "mem": 817
+    "mem": 825
    },
    "flops": 1951,
    "bytes_in": 640,
    "bytes_out": 168,
    "preempt_boundary": false,
-   "notes": "joint impedance + RNEA gravity/Coriolis (control.cpp), 2280 RV64GC instr per tick from static count of compiled code; 558 static instructions, exact=False (both sides of clamp branches counted)",
+   "notes": "joint impedance + RNEA gravity/Coriolis (control.cpp), 2303 RV64 instr per tick; instr = gem5-measured dynamic count 2303/call (calib/tables/cpu_gem5.json, T7_control_step; includes a few harness instructions), split by the static mix; static count of the compiled code was 2280 (both branch sides counted); 558 static instructions in the function body",
    "eligible": [
     "rt"
    ],
@@ -117,9 +117,9 @@
   "bytes_w": 0,
   "bytes_out": 368,
   "instr": {
-   "scalar": 1493,
+   "scalar": 1508,
    "vector": 0,
-   "mem": 871
+   "mem": 879
   },
   "num_ops": 3,
   "num_layers": 3,

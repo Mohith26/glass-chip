@@ -145,3 +145,32 @@ def test_onnx_graphs_have_hash_and_preempt_boundaries(task: str) -> None:
     g = load(task)
     assert g["provenance"]["model_hash"]
     assert any(o.get("preempt_boundary") for o in g["ops"])
+
+
+def test_declared_macs_match_shape_in_every_graph() -> None:
+    for p in sorted(GRAPHS.glob("T*.json")):
+        for o in json.loads(p.read_text())["ops"]:
+            assert not validate.mac_shape_errors(o), (p.name, o["op_id"])
+
+
+def test_mac_shape_check_flags_hidden_loop() -> None:
+    # The old T11 encoding: one 1x384x384 op carrying a whole decoder step.
+    o = {"op_id": "x", "type": "matmul", "eligible": ["npu"], "shape": {"M": 1, "K": 384, "N": 384, "layers": 4},
+         "macs": 32_793_984, "flops": 65_587_968}
+    assert validate.mac_shape_errors(o)
+    o["macs"] = 384 * 384
+    assert not validate.mac_shape_errors(o)
+
+
+def test_speech_decoder_is_explicit() -> None:
+    g = load("T11_speech")
+    dec = [o for o in g["ops"] if o["op_id"].startswith("asr.dec.t")]
+    assert len([o for o in dec if o["op_id"].endswith(".logits")]) == 12
+    assert all(o["shape"]["M"] == 1 for o in dec)
+
+
+def test_simt_ops_are_one_launch_each() -> None:
+    for t in ("T3_esdf", "T5_plan"):
+        for o in load(t)["ops"]:
+            if o["type"] == "simt_kernel":
+                assert o["shape"]["kernel_launches"] == 1, (t, o["op_id"])

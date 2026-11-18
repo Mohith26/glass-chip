@@ -15,7 +15,7 @@ from pathlib import Path
 
 import onnx
 
-from common import (DSP, MODELS, RT, WORKLOADS, chain, make_graph, op, provenance, sha256_file,
+from common import (DSP, MODELS, RT, WORKLOADS, chain, dynamic_instr, make_graph, op, provenance, sha256_file,
                     write_graph)
 from onnx_walk import WalkConfig, walk
 
@@ -80,11 +80,11 @@ def build() -> dict:
                          "downsampled to 320x240), deprojection for person pixels (30% coverage assumed), "
                          f"grid clustering to {HUMAN_POINTS} points. analytic_count")))
     rc = rt_counts()
-    ops.append(op("rt.ssm", "control_law", RT, dtype="fp32", instr=rc["instr"], flops=rc["flops_est"],
+    instr, total, inote = dynamic_instr(rc, "T8_ssm_step")
+    ops.append(op("rt.ssm", "control_law", RT, dtype="fp32", instr=instr, flops=rc["flops_est"],
                   bytes_in=HUMAN_POINTS * 12 + 61 * 16, bytes_out=64,
                   notes=(f"speed-and-separation monitoring (ISO/TS 15066 protective distance), {HUMAN_POINTS} human points "
-                         f"x 61 robot spheres; instruction counts from clang RV64 static count of ssm.cpp "
-                         f"({rc['instr_total']} instr per call, straight-line, no loops)")))
+                         f"x 61 robot spheres (ssm.cpp); {total} instr per call; {inote}")))
     chain(ops)
     prov = provenance(
         source="torchvision lraspp_mobilenet_v3_large (COCO_WITH_VOC_LABELS_V1) + SSM in C++",
@@ -93,7 +93,7 @@ def build() -> dict:
         model_hash=f"sha256:{sha256_file(path)}",
         notes=(f"NPU part: onnx_graph_walk ({stats['onnx_nodes']} ONNX nodes, {stats['fused']} activations fused, "
                f"{stats['kept_ops']} ops). int8 is a deployment assumption. DSP mask/depth fusion: analytic_count. "
-               "RT SSM: compiled RV64 static instruction count of workloads/capture/control/ssm.cpp."),
+               "RT SSM: workloads/capture/control/ssm.cpp compiled for RV64; instruction count per its op notes."),
         references=["ISO/TS 15066:2016 speed and separation monitoring formula"],
     )
     msgs = [{"topic": "/safety/speed_scale", "bytes": 32, "consumer": "T7_control"}]
