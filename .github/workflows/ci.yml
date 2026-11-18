@@ -14,6 +14,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build core module and C++ tests
         run: make -C core module cpptest PY=$(which python)
+      - name: Fetch third-party assets
+        run: tools/fetch_third_party.sh
       - name: Python tests
         run: python -m pytest -q
       - name: Task graph schema
