@@ -132,7 +132,8 @@ def test_curobo_defaults_recorded() -> None:
 
 def test_scenarios_cover_s1_to_s8() -> None:
     names = sorted(p.stem.split("_")[0] for p in (ROOT / "configs" / "scenarios").glob("S*.yaml"))
-    assert names == [f"S{i}" for i in range(1, 9)]
+    # S1-S8 come from the spec; later scenarios (e.g. S9) may be added on top.
+    assert {f"S{i}" for i in range(1, 9)} <= set(names)
 
 
 def test_summary_md_has_no_em_dash() -> None:
