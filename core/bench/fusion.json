@@ -1,7 +1,7 @@
 {
  "provenance": {
   "script": "core/bench/fusion_effect.py",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "configs": [
    "configs/soc/vx1.yaml",
    "configs/fidelity/interactive.yaml",
@@ -16,20 +16,20 @@
     "fuse_attention": false,
     "fuse_elementwise": false
    },
-   "alone_dram_bytes_per_inference": 2874153017.6003494,
-   "alone_response_ms": 75.521128388,
+   "alone_dram_bytes_per_inference": 2874155449.6003494,
+   "alone_response_ms": 65.481731737,
    "alone_attribution_ms": {
-    "compute": 38.085675825,
+    "compute": 38.27533916,
     "runqueue": 0.002,
-    "engine_queue": 1.505010839,
-    "noc": 23.947799309,
-    "dram": 11.566795006,
-    "cache": 0.02740554,
-    "middleware": 0.386441869
+    "engine_queue": 1.558147958,
+    "noc": 13.580605269,
+    "dram": 11.65188907,
+    "cache": 0.027206657,
+    "middleware": 0.386543623
    },
    "s1_jobs": 16,
-   "s1_p50_ms": 77.6546237085,
-   "s1_p99_ms": 79.23178783144999
+   "s1_p50_ms": 69.7641674615,
+   "s1_p99_ms": 72.75664295685
   },
   "attention_only": {
    "params": {
@@ -37,39 +37,39 @@
     "fuse_elementwise": false
    },
    "alone_dram_bytes_per_inference": 1345286393.6003494,
-   "alone_response_ms": 55.888528388,
+   "alone_response_ms": 53.333231737,
    "alone_attribution_ms": {
-    "compute": 37.860622357,
+    "compute": 38.04779903,
     "runqueue": 0.002,
-    "engine_queue": 1.587324635,
-    "noc": 6.489435193,
-    "dram": 9.537437122,
-    "cache": 0.025267212,
-    "middleware": 0.386441869
+    "engine_queue": 1.432885471,
+    "noc": 3.88426123,
+    "dram": 9.554480839,
+    "cache": 0.025261544,
+    "middleware": 0.386543623
    },
    "s1_jobs": 16,
-   "s1_p50_ms": 59.3237954025,
-   "s1_p99_ms": 60.584853564650004
+   "s1_p50_ms": 56.3281314455,
+   "s1_p99_ms": 57.20643467
   },
   "elementwise_only": {
    "params": {
     "fuse_attention": false,
     "fuse_elementwise": true
    },
-   "alone_dram_bytes_per_inference": 2270175353.6003494,
-   "alone_response_ms": 67.791328388,
+   "alone_dram_bytes_per_inference": 2270166713.6003494,
+   "alone_response_ms": 63.118331737,
    "alone_attribution_ms": {
-    "compute": 38.960932425,
+    "compute": 38.851579099,
     "runqueue": 0.002,
-    "engine_queue": 1.612882319,
-    "noc": 16.473715669,
-    "dram": 10.32914956,
-    "cache": 0.026206546,
-    "middleware": 0.386441869
+    "engine_queue": 1.904368553,
+    "noc": 11.698240733,
+    "dram": 10.249349517,
+    "cache": 0.026250212,
+    "middleware": 0.386543623
    },
    "s1_jobs": 16,
-   "s1_p50_ms": 72.257358393,
-   "s1_p99_ms": 74.76595097715
+   "s1_p50_ms": 65.896265351,
+   "s1_p99_ms": 67.24846938005
   },
   "both (default)": {
    "params": {
@@ -77,19 +77,19 @@
     "fuse_elementwise": true
    },
    "alone_dram_bytes_per_inference": 1345286393.6003494,
-   "alone_response_ms": 55.888528388,
+   "alone_response_ms": 53.333231737,
    "alone_attribution_ms": {
-    "compute": 37.860622357,
+    "compute": 38.04779903,
     "runqueue": 0.002,
-    "engine_queue": 1.587324635,
-    "noc": 6.489435193,
-    "dram": 9.537437122,
-    "cache": 0.025267212,
-    "middleware": 0.386441869
+    "engine_queue": 1.432885471,
+    "noc": 3.88426123,
+    "dram": 9.554480839,
+    "cache": 0.025261544,
+    "middleware": 0.386543623
    },
    "s1_jobs": 16,
-   "s1_p50_ms": 59.3237954025,
-   "s1_p99_ms": 60.584853564650004
+   "s1_p50_ms": 56.3281314455,
+   "s1_p99_ms": 57.20643467
   }
  }
 }

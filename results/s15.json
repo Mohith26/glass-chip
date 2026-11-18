@@ -1,11 +1,11 @@
 {
  "provenance": {
   "script": "studies/s15_external_sanity.py",
-  "git_sha": "73bd1989d53da169c7a0023f09f50d4fd8cec67e",
+  "git_sha": "9a01b8bb37a766614314f4c716a4bef712566780",
   "core_build_id": "3e9cf32325432d0f",
   "date": "2026-11-18",
   "seed": 1,
-  "wall_s": 7.0116798877716064,
+  "wall_s": 4.285963773727417,
   "config_files": [
    "configs/soc/orin_like.yaml",
    "configs/soc/vx1.yaml",
@@ -33,7 +33,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.00019095800234936178
+      "wall_s": 0.0004765409976243973
      },
      "gpu_wide_primary/interactive": {
       "modeled_ms": 0.369312003,
@@ -48,7 +48,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0027609170065261424
+      "wall_s": 0.0026090419851243496
      },
      "gpu_wide_primary/memory_focus": {
       "modeled_ms": 0.359255063,
@@ -63,7 +63,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.022083417017711326
+      "wall_s": 0.02147537498967722
      },
      "gpu_wide_primary/study": {
       "modeled_ms": 0.363934877,
@@ -80,7 +80,7 @@
       "warnings": [
        "npu: L2 requested but 54 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.006711708003422245
+      "wall_s": 0.0066987499594688416
      },
      "vx1_default_sensitivity/analytic": {
       "modeled_ms": 0.618792571,
@@ -93,7 +93,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.00014391701552085578
+      "wall_s": 0.00013216695515438914
      },
      "vx1_default_sensitivity/interactive": {
       "modeled_ms": 0.661383284,
@@ -107,7 +107,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.002913624979555607
+      "wall_s": 0.002598999999463558
      },
      "vx1_default_sensitivity/memory_focus": {
       "modeled_ms": 0.630865958,
@@ -121,7 +121,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.023875499988207594
+      "wall_s": 0.021136249997653067
      },
      "vx1_default_sensitivity/study": {
       "modeled_ms": 0.635973315,
@@ -137,7 +137,7 @@
       "warnings": [
        "npu: L2 requested but 54 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.006153082998935133
+      "wall_s": 0.0070737089845351875
      }
     }
    },
@@ -157,7 +157,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0004105409898329526
+      "wall_s": 0.0004136660136282444
      },
      "gpu_wide_primary/interactive": {
       "modeled_ms": 10.099619345,
@@ -172,7 +172,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.05183862501871772
+      "wall_s": 0.04836254200199619
      },
      "gpu_wide_primary/memory_focus": {
       "modeled_ms": 10.758766803,
@@ -187,7 +187,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.6890661669895053
+      "wall_s": 0.4283664579852484
      },
      "gpu_wide_primary/study": {
       "modeled_ms": 10.791830105,
@@ -204,7 +204,7 @@
       "warnings": [
        "npu: L2 requested but 111 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.13556904200231656
+      "wall_s": 0.08874495804775506
      },
      "vx1_default_sensitivity/analytic": {
       "modeled_ms": 17.871644725,
@@ -216,7 +216,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0004004160000476986
+      "wall_s": 0.0003744999994523823
      },
      "vx1_default_sensitivity/interactive": {
       "modeled_ms": 21.423337951,
@@ -230,7 +230,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.07920008400105871
+      "wall_s": 0.04872374999104068
      },
      "vx1_default_sensitivity/memory_focus": {
       "modeled_ms": 21.849606905,
@@ -244,7 +244,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.6720275830011815
+      "wall_s": 0.3978534159832634
      },
      "vx1_default_sensitivity/study": {
       "modeled_ms": 21.81450286,
@@ -260,7 +260,7 @@
       "warnings": [
        "npu: L2 requested but 111 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.131183166988194
+      "wall_s": 0.08893258305033669
      }
     }
    },
@@ -280,7 +280,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.0007764170004520565
+      "wall_s": 0.0008026669966056943
      },
      "gpu_wide_primary/interactive": {
       "modeled_ms": 6.23521029,
@@ -295,7 +295,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.04369074999704026
+      "wall_s": 0.029292875027749687
      },
      "gpu_wide_primary/memory_focus": {
       "modeled_ms": 5.982807441,
@@ -310,7 +310,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.5999398749845568
+      "wall_s": 0.24716349999653175
      },
      "gpu_wide_primary/study": {
       "modeled_ms": 5.976699721,
@@ -327,7 +327,7 @@
       "warnings": [
        "npu: L2 requested but 193 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.13496295901131816
+      "wall_s": 0.06809575000079349
      },
      "vx1_default_sensitivity/analytic": {
       "modeled_ms": 14.02667491,
@@ -339,7 +339,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.000731917010853067
+      "wall_s": 0.0007376249996013939
      },
      "vx1_default_sensitivity/interactive": {
       "modeled_ms": 13.318608988,
@@ -353,7 +353,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.05229033299838193
+      "wall_s": 0.030399125011172146
      },
      "vx1_default_sensitivity/memory_focus": {
       "modeled_ms": 13.196477189,
@@ -367,7 +367,7 @@
        "middleware": 0.002
       },
       "warnings": [],
-      "wall_s": 0.3791621669952292
+      "wall_s": 0.23953320900909603
      },
      "vx1_default_sensitivity/study": {
       "modeled_ms": 13.127726893,
@@ -383,7 +383,7 @@
       "warnings": [
        "npu: L2 requested but 193 op executions had no SCALE-Sim cycle table; used L1"
       ],
-      "wall_s": 0.1325328339880798
+      "wall_s": 0.06988395802909508
      }
     }
    }

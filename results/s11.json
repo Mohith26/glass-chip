@@ -2,7 +2,7 @@
  "provenance": {
   "script": "studies/s11_surrogate_quality.py",
   "driver": "surrogate/chiprun.py",
-  "git_sha": "73bd198",
+  "git_sha": "a82fd0b",
   "core_so_sha256": "4b0e98de5c2af677",
   "graphs_sha256": "78a623f046ce7ef3",
   "core_so_path": "data/surrogate/snapshot/glasschip_core.cpython-312-darwin.so",
@@ -18,7 +18,7 @@
   "machine": "Darwin arm64, Python 3.12.13",
   "date": "2026-11-18",
   "bundle": "data/surrogate/bundle.pkl",
-  "runtime_s": 1148.8205342292786
+  "runtime_s": 5.963105201721191
  },
  "dataset": {
   "n_total": 3600,
@@ -230,26 +230,26 @@
   }
  },
  "speed": {
-  "python_bundle_all_outputs_ms_per_design": 22.63078667980153,
-  "python_bundle_batch_ms_per_design": 0.7642710448999424,
+  "python_bundle_all_outputs_ms_per_design": 22.6926850003656,
+  "python_bundle_batch_ms_per_design": 0.7707158348057419,
   "n_outputs_python": 63,
-  "onnx_web_model_ms_per_design_python_ort": 0.07733062491752207,
+  "onnx_web_model_ms_per_design_python_ort": 0.09557562501868233,
   "onnx_bytes": 4594100,
   "onnxruntime_web_wasm_node": {
    "runtime": "onnxruntime-web wasm (Node v26.5.0)",
-   "load_ms": 234.961917,
-   "ms_per_run": 0.3101212266666675,
-   "p50_ms": 0.2480000000000473,
-   "p95_ms": 0.66862500000002,
-   "max_ms": 2.2698330000000055,
+   "load_ms": 233.68241700000002,
+   "ms_per_run": 0.32898210333333355,
+   "p50_ms": 0.285583000000031,
+   "p95_ms": 0.5707920000000399,
+   "max_ms": 1.8062079999999696,
    "n_runs": 300,
    "n_output_tensors": 36
   },
   "full_sim_wall_s_per_design_median": 7.036792666505789,
   "full_sim_cpu_s_per_design_median": 4.289347500000019,
-  "speedup_python_bundle_vs_sim_cpu": 189.53594325681817,
-  "speedup_onnx_vs_sim_cpu": 55467.643053122556,
-  "speedup_ortweb_vs_sim_cpu": 13831.196097422915,
+  "speedup_python_bundle_vs_sim_cpu": 189.01895037678062,
+  "speedup_onnx_vs_sim_cpu": 44879.09442560876,
+  "speedup_ortweb_vs_sim_cpu": 13038.239638385243,
   "note": "Full-sim time is one design point at 2.0 simulated seconds (1.0 s burn-in plus a 1.0 s measured window) on the interactive mix, measured as process CPU time inside dataset generation on a shared machine. Surrogate time covers every output plus its conformal interval."
  },
  "model_sizes": {
