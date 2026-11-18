@@ -22,7 +22,7 @@ void Noc::init(const SocCfg& soc, const ModelParams& p, int level) {
   level_ = level;
   buf_flits_ = p.noc_vc_buffer_flits * std::max(1, soc.vcs) / 4.0;  // params.noc_vc_buffer_flits, noc.virtual_channels
   window_ps_ = ns_to_ps(p.noc_window_ns);   // params.noc_util_window_ns
-  links_.assign(static_cast<size_t>(dimx_ * dimy_ * 5), NocLink{});
+  links_.assign(static_cast<size_t>(dimx_ * dimy_ * 6), NocLink{});
 }
 
 void Noc::set_qos(bool on) { qos_on_ = on; }
@@ -36,6 +36,7 @@ ps_t Noc::ser_ps(int bytes) const {
 
 void Noc::path(XY a, XY b, int* out, int* n) const {
   int k = 0, x = a.x, y = a.y;
+  out[k++] = idx(a.x, a.y, 5);  // injection port
   while (x != b.x) {
     int dir = b.x > x ? 0 : 1;
     out[k++] = idx(x, y, dir);
@@ -146,7 +147,7 @@ ps_t Noc::send(XY a, XY b, int bytes, int qos, ps_t t, uint64_t* flit_hops) {
     prev = p[i];
     prev_start = start;
     last_ser = s;
-    head = start + (i == n - 1 ? 0 : hop);
+    head = start + (is_mesh_link(p[i]) ? hop : 0);  // ports add occupancy, not hop latency
   }
   return head + last_ser;
 }
@@ -174,10 +175,11 @@ void Noc::remove_fluid(const std::vector<int32_t>& links, double rate) {
 }
 
 std::string Noc::link_name(int i) const {
-  int node = i / 5, dir = i % 5;
+  int node = i / 6, dir = i % 6;
   int x = node % dimx_, y = node / dimx_;
   std::string s = std::to_string(x) + "," + std::to_string(y);
   if (dir == 4) return s + ":eject";
+  if (dir == 5) return s + ":inject";
   int nx = x + (dir == 0 ? 1 : dir == 1 ? -1 : 0), ny = y + (dir == 2 ? 1 : dir == 3 ? -1 : 0);
   return s + "->" + std::to_string(nx) + "," + std::to_string(ny);
 }
@@ -185,7 +187,7 @@ std::string Noc::link_name(int i) const {
 ps_t Noc::total_busy_ps() const {
   ps_t s = 0;
   for (size_t i = 0; i < links_.size(); ++i)
-    if (i % 5 != 4) s += links_[i].busy_ps;
+    if (is_mesh_link(static_cast<int>(i))) s += links_[i].busy_ps;
   return s;
 }
 

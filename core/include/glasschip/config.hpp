@@ -164,21 +164,29 @@ struct ModelParams {
   int mapping = MAP_STATIC;          // params.mapping: static | eft
   bool middleware_on_rt = false;     // params.middleware_on_rt
   double rt_copy_bytes_per_ns = 16;  // params.rt_copy_bytes_per_ns: DMA copy into/out of TCM
+  // --- NPU compiler assumptions
+  bool fuse_attention = true;        // params.fuse_attention: flash-attention style QK^T/softmax/AV fusion
+  bool fuse_elementwise = true;      // params.fuse_elementwise: elementwise epilogues fused into conv/matmul
+  int flash_block = 64;              // params.flash_block: Br = Bc tile rows/cols for fused attention
 
   GC_IO(bulk_chunk_bytes, cpu_miss_bytes, noc_req_bytes, noc_model_requests, npu_l0_util, npu_vec_ops, npu_depth, npu_wload_overlap,
         npu_min_macs_per_tile, npu_max_tiles_per_op, npu_fp32_frac, simt_l0_eff, simt_warps_needed, simt_warp, cpu_vec_ipc,
         cpu_mem_ipc, cpu_mlp, cpu_l0_mem_bw_gbs, dsp_line_buffer_kb, dsp_fill_cycles, dsp_l1_eff, dma_bytes_per_cycle,
         noc_vc_buffer_flits, noc_window_ns, cache_block_bytes, stream_bypass_bytes, dram_queue_depth, dram_l0_eff, dram_ctrl_ns,
-        dram_interleave_bytes, dram_window_ns, irq_ns, rt_irq_ns, exec_cv, mapping, middleware_on_rt, rt_copy_bytes_per_ns)
+        dram_interleave_bytes, dram_window_ns, irq_ns, rt_irq_ns, exec_cv, mapping, middleware_on_rt, rt_copy_bytes_per_ns,
+        fuse_attention, fuse_elementwise, flash_block)
 };
 
 struct FidelityCfg {
   std::string name;
+  // L2 backend plugins (params.dram_backend_plugin / ramulator_config /
+  // noc_backend_plugin / booksim_config). Empty = not attached.
+  std::string dram_plugin, ramulator_config, noc_plugin, booksim_config;
   int cpu = 0, npu = 1, simt = 0, dsp = 0, noc = 1, dram = 1, cache = 1;  // requested levels
   double quantum_ns = 100;
   ModelParams p;
   std::vector<std::string> warnings;
-  GC_IO(name, cpu, npu, simt, dsp, noc, dram, cache, quantum_ns, p, warnings)
+  GC_IO(name, dram_plugin, ramulator_config, noc_plugin, booksim_config, cpu, npu, simt, dsp, noc, dram, cache, quantum_ns, p, warnings)
 };
 
 FidelityCfg parse_fidelity(const Json& f);

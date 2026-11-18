@@ -267,3 +267,176 @@ def test_real_workload_graphs_smoke(soc):
     assert {d["task_id"] for d in done} == set(ids)
     for d in done:
         assert sum(d["attribution"].values()) == d["response_ps"]
+
+
+def test_power_gating_and_cycles_by_domain(make_sim):
+    sim = make_sim(tasks=["T95_est"], middleware=None)
+    sim.set_power_gating("cpu_a", True, 30_000_000)  # 30 us wake-up
+    done = drive(sim, 0, 20, ["T95_est"])
+    c = sim.counters(reset=True)
+    assert c["cpu_a"]["wakeups"] == len(done) == 4
+    assert 0 < c["cpu_a"]["gated_ps"] <= c["cpu_a"]["idle_ps"]
+    assert c["cpu_b"]["gated_ps"] == 0 and c["cpu_b"]["wakeups"] == 0
+    for d in done:
+        assert d["attribution"]["dvfs"] == 30_000_000
+        assert d["cycles_by_domain"]["cpu_a"] == pytest.approx(12436 / 2.0)  # instr / ipc 2
+        assert d["busy_ps_by_domain"]["cpu_a"] > 0
+        assert d["corrupted"] is False and d["faults"] == 0
+
+
+def test_est_remaining_cycles_semantics(make_sim):
+    sim = make_sim(tasks=["T92_policy"], middleware=None)
+    sim.release_job("T92_policy", 0, 0)
+    est = sim.pending_jobs()[0]["est_remaining_cycles"]
+    done = sim.run_until(50 * PS_MS)
+    actual = done[0]["cycles_by_domain"]
+    for dom in ("npu", "cpu_a"):
+        assert est[dom] == pytest.approx(actual[dom], rel=1e-9)
+
+
+def test_set_domain_freq_accepts_any_positive(make_sim):
+    sim = make_sim(tasks=["T95_est"], middleware=None)
+    sim.set_domain_freq("cpu_a", 1_234_567_891.25)
+    assert sim.domain_freq("cpu_a") == pytest.approx(1_234_567_891.25)
+    with pytest.raises(Exception):
+        sim.set_domain_freq("cpu_a", 0)
+
+
+def test_dram_and_noc_csv_exports(make_sim, tmp_path):
+    import csv
+
+    sim = make_sim()
+    dpath, npath = tmp_path / "dram.csv", tmp_path / "noc.csv"
+    assert sim.dram_trace_open(str(dpath)) and sim.export_noc_trace(str(npath))
+    drive(sim, 0, 40)
+    sim.dram_trace_close()
+    sim.noc_trace_close()
+    with open(dpath) as f:
+        rows = list(csv.DictReader(f))
+    assert list(rows[0].keys()) == ["time_ns", "addr", "rw", "bytes", "latency_ns"]
+    t = [float(r["time_ns"]) for r in rows]
+    assert len(rows) > 100 and t == sorted(t)
+    assert {r["rw"] for r in rows} == {"R", "W"}
+    assert all(int(r["addr"], 16) < 16 << 30 and int(r["bytes"]) > 0 and float(r["latency_ns"]) > 0 for r in rows)
+    with open(npath) as f:
+        nrows = list(csv.DictReader(f))
+    assert list(nrows[0].keys()) == ["time_ns", "src_x", "src_y", "dst_x", "dst_y", "bytes", "latency_ns"]
+    assert len(nrows) > len(rows)
+    assert all(0 < int(r["bytes"]) <= 256 and float(r["latency_ns"]) > 0 for r in nrows)
+    tn = [float(r["time_ns"]) for r in nrows]
+    assert tn == sorted(tn)
+
+
+def test_orin_like_config_loads(soc):
+    path = ROOT / "configs" / "soc" / "orin_like.yaml"
+    if not path.exists():
+        pytest.skip("orin_like.yaml not present")
+    import yaml
+
+    orin = yaml.safe_load(path.read_text())
+    sim = gc.Sim(orin, load_fidelity("interactive"), 1)
+    sim.add_task(fixture_graph("T91_det"))
+    sim.release_job("T91_det", 0, 0)
+    done = sim.run_until(100 * PS_MS)
+    assert len(done) == 1
+
+
+def test_real_calib_l2_tables(soc):
+    tables = ROOT / "calib" / "tables"
+    gdir = ROOT / "workloads" / "graphs"
+    if not (tables / "cpu_gem5.json").exists() or not (gdir / "T2_detect.json").exists():
+        pytest.skip("calib tables or graphs missing")
+    res = {}
+    for lvl in ("L1", "L2"):
+        fid = dict(load_fidelity("study"), npu=lvl, cpu=lvl)
+        sim = gc.Sim(soc, fid, 1)  # L2 auto-loads calib/tables
+        for t in ("T2_detect", "T7_control", "T6_estimate"):
+            sim.add_task(json.loads((gdir / f"{t}.json").read_text()))
+            sim.release_job(t, 0, 0)
+        res[lvl] = ({d["task_id"]: d for d in sim.run_until(100 * PS_MS)}, sim.info())
+    done2, info2 = res["L2"]
+    assert info2["l2"]["npu_table_hits"] >= 60 and info2["l2"]["cpu_table_hits"] >= 2
+    assert any(s.startswith("npu_scalesim_T2_detect") for s in info2["l2"]["tables"])
+    # T7 on the in-order RT core uses gem5 Minor CPI (~1.76) instead of IPC 1.0: slower compute.
+    assert done2["T7_control"]["cycles_by_domain"]["rt"] > 1.5 * res["L1"][0]["T7_control"]["cycles_by_domain"]["rt"]
+    assert done2["T2_detect"]["cycles_by_domain"]["npu"] != res["L1"][0]["T2_detect"]["cycles_by_domain"]["npu"]
+
+
+def test_fault_hooks(make_sim):
+    out = []
+    for _ in range(2):
+        sim = make_sim()
+        sim.trace_enable(True)
+        sim.set_fault("npu_bitflip", 0.2, seed=5)
+        sim.set_fault("noc_delay", 0.05, seed=5, param_ns=100)
+        done = drive(sim, 0, 70)
+        kinds = {r["kind"] for r in sim.trace_drain()}
+        out.append(([(d["job_id"], d["corrupted"], d["faults"], d["finish_ps"]) for d in done], sim.info()["faults"]))
+    assert out[0] == out[1]
+    assert "fault" in kinds
+    info = out[0][1]
+    assert info["npu_bitflip"]["count"] > 0 and info["noc_delay"]["count"] > 0 and info["noc_drop"]["count"] == 0
+    assert any(c for _, c, _, _ in out[0][0])
+    with pytest.raises(Exception):
+        sim.set_fault("cosmic_ray", 0.1)
+
+
+def _tiny_npu_graph() -> dict:
+    g = json.loads(json.dumps(fixture_graph("T91_det")))
+    g["task_id"] = "T97_tiny"
+    g["ops"] = [{"op_id": "mm", "type": "matmul", "dtype": "int8", "macs": 256 * 512 * 512, "bytes_in": 131072, "bytes_w": 262144,
+                 "bytes_out": 131072, "shape": {"M": 256, "K": 512, "N": 512}, "eligible": ["npu"]}]
+    g.pop("messages", None)
+    return g
+
+
+@pytest.mark.parametrize("noc,dram", [("L2", "L1"), ("L1", "L2"), ("L2", "L2")])
+def test_l2_backends_in_loop(soc, noc, dram):
+    build = ROOT / "core" / "build"
+    if (noc == "L2" and not (build / "libgc_booksim.dylib").exists()) or (dram == "L2" and not (build / "libgc_ramulator.dylib").exists()):
+        pytest.skip("L2 plugin not built")
+    hashes, resp = [], []
+    for _ in range(2):
+        sim = gc.Sim(soc, dict(load_fidelity("study"), noc=noc, dram=dram), 1)
+        sim.add_task(_tiny_npu_graph())
+        sim.release_job("T97_tiny", 0, 0)
+        done = sim.run_until(2 * PS_MS)
+        info = sim.info()
+        assert not [w for w in info["warnings"] if w.startswith(("noc:", "dram:"))]
+        if noc == "L2":
+            assert info["backends"]["noc"].startswith("booksim2")
+        if dram == "L2":
+            assert info["backends"]["dram"].startswith("ramulator2")
+        assert len(done) == 1 and done[0]["attribution"]["dram"] > 0
+        hashes.append(sim.trace_hash())
+        resp.append(done[0]["response_ps"])
+        with pytest.raises(Exception):
+            sim.checkpoint()
+        del sim
+    assert hashes[0] == hashes[1] and resp[0] == resp[1]  # deterministic
+
+
+def test_l2_fallback_when_plugin_missing(soc, tmp_path):
+    fid = dict(load_fidelity("study"), dram="L2", noc="L2")
+    fid["params"] = dict(fid.get("params", {}), dram_backend_plugin=str(tmp_path / "nope.dylib"), noc_backend_plugin=str(tmp_path / "nope2.dylib"))
+    sim = gc.Sim(soc, fid, 1)
+    w = sim.info()["warnings"]
+    assert any(x.startswith("dram: L2 requested") for x in w) and any(x.startswith("noc: L2 requested") for x in w)
+    assert sim.info()["backends"]["dram"] == "builtin L1"
+
+
+def test_power_gating_idle_hysteresis(make_sim):
+    res = {}
+    for idle in (0, 3_000_000_000, 10_000_000_000):  # 0, 3 ms, 10 ms
+        sim = make_sim(tasks=["T95_est"], middleware=None)
+        sim.set_power_gating("cpu_a", True, 30_000_000, idle_before_gate_ps=idle)
+        done = drive(sim, 0, 20, ["T95_est"])  # a job every 5 ms
+        c = sim.counters(reset=True)
+        res[idle] = (c["cpu_a"]["wakeups"], c["cpu_a"]["gated_ps"], [d["attribution"]["dvfs"] for d in done])
+    assert res[0][0] == 4
+    # 3 ms hysteresis: the timer started at enable is cancelled by the job at t=0; later
+    # 5 ms gaps exceed 3 ms, so it wakes for the 3 later jobs and is gated for less time.
+    assert res[3_000_000_000][0] == 3 and res[3_000_000_000][1] < res[0][1]
+    assert res[3_000_000_000][2][0] == 0 and res[3_000_000_000][2][1:] == [30_000_000] * 3
+    # 10 ms hysteresis: never gates.
+    assert res[10_000_000_000][0] == 0 and res[10_000_000_000][1] == 0 and res[10_000_000_000][2] == [0, 0, 0, 0]

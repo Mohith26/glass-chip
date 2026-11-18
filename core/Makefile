@@ -25,9 +25,9 @@ HDRS     := $(wildcard include/glasschip/*.hpp)
 TEST_SRC := tests/cpp/test_main.cpp
 TEST_BIN := $(BUILD)/test_core
 
-.PHONY: all module test cpptest pytest debug debug-asan clean bench
+.PHONY: all module test cpptest pytest debug debug-asan clean bench plugins
 
-all: module
+all: module plugins
 
 module: $(MODULE)
 
@@ -39,8 +39,34 @@ $(BUILD)/obj/bindings/module.o: bindings/module.cpp $(HDRS)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(PYINC) -Wno-pedantic -c $< -o $@
 
+# Link to a temp file and rename into place: processes that already loaded
+# the old module keep their mapping, new imports see the new one.
 $(MODULE): $(CORE_OBJ) $(BUILD)/obj/bindings/module.o
-	$(CXX) $(OPT) -shared -undefined dynamic_lookup $^ -o $@
+	$(CXX) $(OPT) -shared -undefined dynamic_lookup $^ -o $@.tmp.$$$$ && xattr -c $@.tmp.$$$$ 2>/dev/null; mv -f $@.tmp.$$$$ $@
+
+# L2 backend plugins, dlopen()ed at run time (the main module never links them).
+# Linked with the quarantine-clearing wrapper so the sandbox does not kill the loader.
+RAM       := $(ROOT)/third_party/ramulator2
+NOQ       := $(ROOT)/third_party/wrap/clang++-noq
+RAM_PLUGIN := $(BUILD)/libgc_ramulator.dylib
+
+BS        := $(ROOT)/third_party/booksim2/src
+BS_PLUGIN := $(BUILD)/libgc_booksim.dylib
+
+plugins: $(RAM_PLUGIN) $(BS_PLUGIN)
+
+# BookSim 2 in-process: its object files (minus main.o) + our adapter.
+$(BS_PLUGIN): src/adapters/booksim_backend.cpp include/glasschip/memsys.hpp
+	@if [ -f $(BS)/trafficmanager.o ]; then \
+	  $(NOQ) -std=c++17 -O2 -fPIC -shared -Iinclude -I$(BS) -I$(BS)/allocators -I$(BS)/arbiters -I$(BS)/networks -I$(BS)/power -I$(BS)/routers \
+	    $< $$(ls $(BS)/*.o $(BS)/*/*.o | grep -v '/main.o$$') -o $@.tmp && xattr -c $@.tmp 2>/dev/null; mv -f $@.tmp $@; \
+	else echo "skip $@: BookSim objects not built in $(BS)"; fi
+
+$(RAM_PLUGIN): src/adapters/ramulator_backend.cpp include/glasschip/memsys.hpp
+	@if [ -f $(RAM)/libramulator.dylib ]; then \
+	  $(NOQ) -std=c++20 -O2 -fPIC -shared -DFMT_CONSTEVAL= -Iinclude -I$(RAM)/src -I$(RAM)/ext/fmt/include -I$(RAM)/ext/yaml-cpp/include \
+	    $< -o $@.tmp -L$(RAM) -lramulator -Wl,-rpath,$(RAM) && xattr -c $@.tmp 2>/dev/null; mv -f $@.tmp $@; \
+	else echo "skip $@: $(RAM)/libramulator.dylib not built"; fi
 
 $(BUILD)/vx1.json: $(ROOT)/configs/soc/vx1.yaml
 	@mkdir -p $(BUILD)

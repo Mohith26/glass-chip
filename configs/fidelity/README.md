@@ -11,6 +11,9 @@ example `noc: L2` falls back to L1 until a BookSim 2 backend is attached) and
 | study.yaml | L1 | L2 (L1 fallback) | L1 | L1 | L1 | L1 | L1 | studies, surrogate data |
 | analytic.yaml | L0 | L0 | L0 | L0 | L0 | L0 | L0 | sweeps |
 | memory_focus.yaml | L0 | L1 | L1 | L1 | L1 | L1 | L1 | NoC and DRAM questions, 1 KB transactions |
+| reference.yaml | L2 | L2 | L1 | L1 | L2 | L2 | L1 | calibration: gem5 CPI, SCALE-Sim, BookSim 2, Ramulator 2 |
+
+L2 details: NPU and CPU L2 read `calib/tables/` automatically (SCALE-Sim `vx1_cycles` per op for the SoC's dataflow, gem5 O3/Minor CPI per kernel). DRAM L2 and NoC L2 load plugins next to the module and run Ramulator 2 and BookSim 2 in-process, synchronized every `quantum_ns`; see core/README.md for what that approximates.
 
 The RT core is always analytic (it runs from TCM). DMA engines run at L1
 whenever the NoC or DRAM is L1.
@@ -55,3 +58,10 @@ whenever the NoC or DRAM is L1.
 | mapping | static | `static` (first eligible engine, honoring affinity) or `eft` (greedy earliest finish time) |
 | middleware_on_rt | false | run ROS 2 middleware cost on the RT core for RT tasks |
 | rt_copy_bytes_per_ns | 16 | DMA copy rate into and out of RT TCM |
+| fuse_attention | true | NPU compiler: flash-attention style fusion of QK^T, softmax, AV (scores stay in SRAM) |
+| fuse_elementwise | true | NPU compiler: elementwise ops consume their conv/matmul producer's output on-chip |
+| flash_block | 64 | Br = Bc tile size for the fused-attention SRAM fit check |
+| dram_backend_plugin | core/build/libgc_ramulator.dylib | DRAM L2 plugin path (string) |
+| ramulator_config | calib/ramulator/configs/lpddr5x_8533_derived.yaml | Ramulator 2 config (string) |
+| noc_backend_plugin | core/build/libgc_booksim.dylib | NoC L2 plugin path (string) |
+| booksim_config | (empty) | extra BookSim config text appended to the generated one, `key = value;` (string) |

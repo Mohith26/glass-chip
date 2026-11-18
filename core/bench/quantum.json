@@ -1,0 +1,118 @@
+{
+ "provenance": {
+  "script": "core/bench/quantum_error.py",
+  "date": "2026-11-17",
+  "configs": [
+   "configs/soc/vx1.yaml",
+   "configs/fidelity/study.yaml",
+   "core/tests/fixtures/T91_det.json"
+  ],
+  "seed": 1
+ },
+ "results": [
+  {
+   "noc": "L1",
+   "dram": "L2",
+   "quantum_ns": 1,
+   "response_us": 281.097258,
+   "dram_us": 18.262723,
+   "noc_us": 13.362867,
+   "cpu_s": 0.21223399999999998,
+   "backends": {
+    "noc": "builtin L1",
+    "dram": "ramulator2 (quantum 1.000000 ns)"
+   }
+  },
+  {
+   "noc": "L1",
+   "dram": "L2",
+   "quantum_ns": 10,
+   "response_us": 281.077042,
+   "dram_us": 18.330259,
+   "noc_us": 13.275115,
+   "cpu_s": 0.21796500000000002,
+   "backends": {
+    "noc": "builtin L1",
+    "dram": "ramulator2 (quantum 10.000000 ns)"
+   }
+  },
+  {
+   "noc": "L1",
+   "dram": "L2",
+   "quantum_ns": 100,
+   "response_us": 280.806898,
+   "dram_us": 18.128589,
+   "noc_us": 13.206641,
+   "cpu_s": 0.215893,
+   "backends": {
+    "noc": "builtin L1",
+    "dram": "ramulator2 (quantum 100.000000 ns)"
+   }
+  },
+  {
+   "noc": "L1",
+   "dram": "L2",
+   "quantum_ns": 1000,
+   "response_us": 281.12915,
+   "dram_us": 18.261893,
+   "noc_us": 13.374808,
+   "cpu_s": 0.21435199999999988,
+   "backends": {
+    "noc": "builtin L1",
+    "dram": "ramulator2 (quantum 1000.000000 ns)"
+   }
+  },
+  {
+   "noc": "L2",
+   "dram": "L1",
+   "quantum_ns": 1,
+   "response_us": 279.159,
+   "dram_us": 18.153842,
+   "noc_us": 11.533333,
+   "cpu_s": 4.745404,
+   "backends": {
+    "noc": "booksim2 (quantum 1.000000 ns)",
+    "dram": "builtin L1"
+   }
+  },
+  {
+   "noc": "L2",
+   "dram": "L1",
+   "quantum_ns": 10,
+   "response_us": 279.35,
+   "dram_us": 18.165929,
+   "noc_us": 11.708177,
+   "cpu_s": 4.7898309999999995,
+   "backends": {
+    "noc": "booksim2 (quantum 10.000000 ns)",
+    "dram": "builtin L1"
+   }
+  },
+  {
+   "noc": "L2",
+   "dram": "L1",
+   "quantum_ns": 100,
+   "response_us": 279.5,
+   "dram_us": 18.236947,
+   "noc_us": 11.772652,
+   "cpu_s": 4.687472000000001,
+   "backends": {
+    "noc": "booksim2 (quantum 100.000000 ns)",
+    "dram": "builtin L1"
+   }
+  },
+  {
+   "noc": "L2",
+   "dram": "L1",
+   "quantum_ns": 1000,
+   "response_us": 294.7,
+   "dram_us": 18.469858,
+   "noc_us": 23.067093,
+   "cpu_s": 4.807971000000002,
+   "backends": {
+    "noc": "booksim2 (quantum 1000.000000 ns)",
+    "dram": "builtin L1"
+   }
+  }
+ ]
+}

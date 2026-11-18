@@ -6,10 +6,14 @@
 #include <cmath>
 #include <cstring>
 #include <stdexcept>
+#include <filesystem>
+#include <dlfcn.h>
+#include <fstream>
+#include <sstream>
 
 namespace gc {
 
-static const char* kTraceKind[] = {"job_release", "job_start", "job_finish", "job_miss", "op", "xfer", "dram_q", "freq", "preempt"};
+static const char* kTraceKind[] = {"job_release", "job_start", "job_finish", "job_miss", "op", "xfer", "dram_q", "freq", "preempt", "fault"};
 static const char* kTraceBlock[] = {"cpu_a", "cpu_b", "rt", "dsp", "npu", "simt", "sys_cache", "dram", "dma", "noc", "noc_cache", "dram_io", "runtime"};
 const char* trace_kind_name(int k) { return (k >= 0 && k < N_TK) ? kTraceKind[k] : "?"; }
 const char* trace_block_name(int b) { return (b >= 0 && b < N_TB) ? kTraceBlock[b] : "?"; }
@@ -76,9 +80,108 @@ Sim::Sim(const Json& soc, const Json& fidelity, uint64_t seed) {
   cache_.init(soc_, fid_.p, fid_.cache);
   dram_.init(soc_, fid_.p, fid_.dram, rng_[1]);
   last_dram_q_.assign(static_cast<size_t>(dram_.n_channels()), 0);
+  if (fid_.noc >= 2) {
+    if (soc_.dimx != soc_.dimy) noc_l2_note_ = "BookSim mesh mapping assumes a square mesh";
+    else if (!fid_.noc_plugin.empty()) {
+      std::string err = attach_noc_backend(fid_.noc_plugin, fid_.booksim_config);
+      if (!err.empty()) noc_l2_note_ = err;
+    } else {
+      noc_l2_note_ = "no plugin path given";
+    }
+  }
+  if (fid_.dram >= 2 && !fid_.dram_plugin.empty()) {
+    std::string err = attach_dram_backend(fid_.dram_plugin, fid_.ramulator_config);
+    if (!err.empty()) dram_attach_error_ = err;
+  }
 }
 
-Sim::~Sim() { trace_close(); }
+std::string Sim::attach_dram_backend(const std::string& plugin, const std::string& config) {
+  if (dram_backend_) return "";
+  void* h = dlopen(plugin.c_str(), RTLD_NOW | RTLD_LOCAL);
+  if (!h) {
+    const char* e = dlerror();
+    return std::string("dlopen failed: ") + (e ? e : "?");
+  }
+  auto fn = reinterpret_cast<DramBackendFactory>(dlsym(h, "gc_make_dram_backend"));
+  if (!fn) {
+    dlclose(h);
+    return "plugin has no gc_make_dram_backend";
+  }
+  char err[512] = {0};
+  DramBackend* b = fn(config.c_str(), err, sizeof err);
+  if (!b) {
+    dlclose(h);
+    return std::string("backend construction failed: ") + err;
+  }
+  dram_dl_ = h;
+  dram_backend_ = b;
+  return "";
+}
+
+std::string Sim::attach_noc_backend(const std::string& plugin, const std::string& extra) {
+  if (noc_backend_) return "";
+  void* h = dlopen(plugin.c_str(), RTLD_NOW | RTLD_LOCAL);
+  if (!h) {
+    const char* e = dlerror();
+    return std::string("dlopen failed: ") + (e ? e : "?");
+  }
+  auto fn = reinterpret_cast<NocBackendFactory>(dlsym(h, "gc_make_noc_backend"));
+  if (!fn) return "plugin has no gc_make_noc_backend";
+  // BookSim configuration derived from the SoC noc: section (same mapping as
+  // calib/booksim/booksim_cfg.py: 2-cycle routers + 1-cycle links with
+  // speculative single-cycle VC/switch allocation, dim-order = XY routing).
+  std::ostringstream c;
+  c << "freq_hz=" << soc_.noc_freq << ";kx=" << soc_.dimx << ";flit_bytes=" << soc_.flit_bytes << ";max_packet_bytes=" << soc_.max_packet_bytes
+    << "|topology = mesh; k = " << soc_.dimx << "; n = 2; routing_function = dim_order; num_vcs = " << soc_.vcs
+    << "; vc_buf_size = 8; wait_for_tail_credit = 0; vc_allocator = separable_input_first; sw_allocator = separable_input_first;"
+    << " alloc_iters = 1; credit_delay = 1; routing_delay = 0; vc_alloc_delay = 1; sw_alloc_delay = 1; speculative = 1;"
+    << " st_final_delay = 1; input_speedup = 1; output_speedup = 1; internal_speedup = 1.0; seed = " << (seed_ % 100000) << ";" << extra;
+  char err[512] = {0};
+  NocBackend* b = fn(c.str().c_str(), err, sizeof err);
+  if (!b) return std::string("backend construction failed: ") + err;
+  noc_dl_ = h;
+  noc_backend_ = b;
+  return "";
+}
+
+Sim::~Sim() {
+  delete noc_backend_;
+  noc_backend_ = nullptr;
+  delete dram_backend_;
+  dram_backend_ = nullptr;  // the plugin handle stays loaded (Ramulator keeps static registries)
+  trace_close();
+  dram_trace_close();
+  noc_trace_close();
+}
+
+bool Sim::dram_trace_open(const std::string& path) {
+  dram_trace_close();
+  dram_csv_ = CsvTrace{};
+  dram_csv_.f = std::fopen(path.c_str(), "w");
+  if (!dram_csv_.f) return false;
+  std::fprintf(dram_csv_.f, "time_ns,addr,rw,bytes,latency_ns\n");
+  return true;
+}
+void Sim::dram_trace_close() {
+  if (!dram_csv_.f) return;
+  csv_flush(dram_csv_, PS_NEVER, true);
+  std::fclose(dram_csv_.f);
+  dram_csv_.f = nullptr;
+}
+bool Sim::noc_trace_open(const std::string& path) {
+  noc_trace_close();
+  noc_csv_ = CsvTrace{};
+  noc_csv_.f = std::fopen(path.c_str(), "w");
+  if (!noc_csv_.f) return false;
+  std::fprintf(noc_csv_.f, "time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns\n");
+  return true;
+}
+void Sim::noc_trace_close() {
+  if (!noc_csv_.f) return;
+  csv_flush(noc_csv_, PS_NEVER, false);
+  std::fclose(noc_csv_.f);
+  noc_csv_.f = nullptr;
+}
 
 void Sim::set_params(const Json& params) {
   apply_params(fid_.p, params, &fid_.warnings);
@@ -98,21 +201,185 @@ void Sim::set_l2_tables(const Json& tables) {
     for (const auto& kv : c->o) cpu_cpi_[kv.first] = kv.second.as_num(1);
 }
 
+void Sim::set_fault(const std::string& kind, double rate, uint64_t seed, ps_t param_ps) {
+  int k = kind == "npu_bitflip" ? F_NPU_BITFLIP : kind == "noc_delay" ? F_NOC_DELAY : kind == "noc_drop" ? F_NOC_DROP : -1;
+  if (k < 0) throw std::runtime_error("unknown fault kind: " + kind + " (npu_bitflip | noc_delay | noc_drop)");
+  if (rate < 0 || rate > 1) throw std::runtime_error("fault rate must be a probability in [0, 1]");
+  FaultCfg& f = faults_[k];
+  f.rate = rate;
+  f.param = param_ps >= 0 ? param_ps : (k == F_NOC_DROP ? 200 * PS_PER_NS : 50 * PS_PER_NS);
+  f.rng.seed(seed, std::string("fault.") + kind);
+}
+
+void Sim::note_fault(int kind, int64_t job, int task, int op, ps_t t, double value) {
+  faults_[kind].count++;
+  if (Job* j = job_ptr(job)) {
+    j->faults++;
+    if (kind == F_NPU_BITFLIP) j->corrupted = true;
+  }
+  TraceRec r;
+  r.t = t;
+  r.kind = TK_FAULT;
+  r.block = kind == F_NPU_BITFLIP ? TB_NPU : TB_NOC;
+  r.unit = static_cast<uint16_t>(kind);
+  r.job = job;
+  r.task = task;
+  r.op = op;
+  r.value = value;
+  emit(r);
+}
+
+int Sim::load_l2_tables(const std::string& dir) {
+  namespace fs = std::filesystem;
+  int n = 0;
+  if (!fs::is_directory(dir)) return 0;
+  std::vector<fs::path> files;
+  for (const auto& e : fs::directory_iterator(dir)) files.push_back(e.path());
+  std::sort(files.begin(), files.end());
+  const char* df = soc_.npu.weight_stationary ? "ws" : "os";
+  for (const auto& path : files) {
+    std::string name = path.filename().string();
+    bool npu = name.rfind("npu_scalesim_", 0) == 0 && path.extension() == ".json";
+    bool cpu = name == "cpu_gem5.json";
+    if (!npu && !cpu) continue;
+    std::ifstream f(path);
+    std::stringstream ss;
+    ss << f.rdbuf();
+    Json j = parse_json(ss.str());
+    if (npu) {
+      std::string task = j.str("task_id", "");
+      const Json* d = j.get("dataflows");
+      const Json* ops = (d && d->get(df)) ? d->get(df)->get("ops") : nullptr;
+      if (task.empty() || !ops || !ops->is_obj()) continue;
+      int k = 0;
+      for (const auto& kv : ops->o) {
+        // vx1_cycles: compute-only cycles on one tile at the VX-1 clock with the
+        // dtype rate applied; DRAM/NoC stalls come from the simulator itself.
+        double cyc = kv.second.num("vx1_cycles", -1);
+        if (cyc >= 0) { npu_l2_[task + "/" + kv.first] = cyc; ++k; }
+      }
+      n += k;
+      l2_sources_.push_back(name + " (" + df + ", " + std::to_string(k) + " ops)");
+    } else {
+      const Json* ks = j.get("kernels");
+      if (!ks || !ks->is_obj()) continue;
+      int k = 0;
+      for (const auto& kv : ks->o) {
+        double o3 = kv.second.get("o3") ? kv.second.get("o3")->num("cpi", -1) : -1;
+        double mi = kv.second.get("minor") ? kv.second.get("minor")->num("cpi", -1) : -1;
+        if (o3 > 0 && mi > 0) { cpu_kernel_cpi_[kv.first] = {o3, mi}; ++k; }
+      }
+      n += k;
+      l2_sources_.push_back(name + " (" + std::to_string(k) + " kernels)");
+    }
+  }
+  return n;
+}
+
+std::string Sim::cpu_kernel_for(const TaskDef& td, const OpDef& d) const {
+  if (cpu_kernel_cpi_.empty()) return "";
+  auto has = [&](const char* k) { return cpu_kernel_cpi_.count(k) > 0; };
+  // The real kernels measured in gem5, by task.
+  if ((td.id.rfind("T7_", 0) == 0 || td.id.rfind("T12_", 0) == 0) && has("T7_control_step")) return "T7_control_step";
+  if (td.id.rfind("T6_", 0) == 0 && has("T6_estimate_step")) return "T6_estimate_step";
+  if (td.id.rfind("T8_", 0) == 0 && (d.type == OT_CPU_KERNEL || d.type == OT_CONTROL_LAW) && has("T8_ssm_step")) return "T8_ssm_step";
+  // Otherwise a kernel class by instruction mix (assumption): vector vs scalar,
+  // streaming (memory-instruction heavy, axpy) vs compute (gemm).
+  double instr = d.i_scalar + d.i_vector + d.i_mem;
+  if (instr <= 0) return "";
+  bool vec = d.i_vector > 0.1 * instr;
+  bool stream = d.i_mem > 0.3 * instr;
+  const char* k = vec ? (stream ? "axpy_rvv_4096" : "gemm_rvv_64") : (stream ? "axpy_scalar_4096" : "gemm_scalar_64");
+  return has(k) ? k : "";
+}
+
 void Sim::unit_busy(int32_t u, bool busy) {
   Unit& un = units_[u];
+  DomainState& d = dom_[un.domain];
   if (busy) {
     un.busy_since = now_;
+    d.busy_units++;
   } else {
     un.busy_acc += now_ - std::max(un.busy_since, counters_since_);
+    if (--d.busy_units <= 0) {
+      d.busy_units = 0;
+      domain_went_idle(un.domain);
+    }
   }
+}
+
+void Sim::domain_went_idle(int di) {
+  DomainState& d = dom_[di];
+  if (!d.gate_enabled || d.gated) return;
+  ++d.gate_token;
+  if (d.idle_gate_ps <= 0) {
+    d.gated = true;
+    d.gated_since = now_;
+  } else {
+    // Gate only if the domain stays idle for idle_before_gate_ps.
+    q_.push(now_ + d.idle_gate_ps, CMP_RUNTIME, EV_GATE, di, d.gate_token);
+  }
+}
+
+ps_t Sim::domain_wake(int di) {
+  DomainState& d = dom_[di];
+  ++d.gate_token;  // new work cancels a pending gate timer
+  if (d.gated) {
+    d.gated = false;
+    d.gated_acc += now_ - std::max(d.gated_since, counters_since_);
+    d.wakeups++;
+    d.waking_until = now_ + d.wake_ps;
+  }
+  return std::max<ps_t>(0, d.waking_until - now_);
+}
+
+void Sim::set_power_gating(const std::string& domain, bool enabled, ps_t wake_latency_ps, ps_t idle_before_gate_ps) {
+  int di = parse_domain(domain);
+  if (di < 0) throw std::runtime_error("unknown power domain: " + domain);
+  if (di == D_NOC_CACHE || di == D_DRAM_IO) throw std::runtime_error("power gating is not modeled for " + domain + " (shared fabric)");
+  if (wake_latency_ps < 0) throw std::runtime_error("wake latency must be >= 0");
+  if (idle_before_gate_ps < 0) throw std::runtime_error("idle_before_gate_ps must be >= 0");
+  DomainState& d = dom_[di];
+  d.wake_ps = wake_latency_ps;
+  d.idle_gate_ps = idle_before_gate_ps;
+  if (enabled && !d.gate_enabled) {
+    d.gate_enabled = true;
+    if (d.busy_units == 0) domain_went_idle(di);
+  } else if (!enabled && d.gate_enabled) {
+    d.gate_enabled = false;
+    ++d.gate_token;
+    if (d.gated) {
+      d.gated = false;
+      d.gated_acc += now_ - std::max(d.gated_since, counters_since_);
+    }
+  }
+}
+
+void Sim::credit_job_cycles(const Exec& e, double cycles) {
+  if (cycles <= 0) return;
+  if (Job* j = job_ptr(e.job)) j->cycles[e.domain] += cycles;
+}
+
+void Sim::credit_job_busy(Exec& e) {
+  if (Job* j = job_ptr(e.job)) j->busy[e.domain] += now_ - e.run_since;
+  e.run_since = now_;
 }
 
 // ---------------------------------------------------------------------------
 void Sim::dispatch_event(const Event& e) {
   switch (e.comp) {
     case CMP_RUNTIME:
-      if (e.kind == EV_JOB_RELEASE) on_job_release(e.b);
-      else on_op_ready(e.b, e.a);
+      if (e.kind == EV_JOB_RELEASE) {
+        on_job_release(e.b);
+      } else if (e.kind == EV_GATE) {
+        DomainState& d = dom_[e.a];
+        if (e.b == d.gate_token && d.gate_enabled && !d.gated && d.busy_units == 0) {
+          d.gated = true;
+          d.gated_since = now_;
+        }
+      } else {
+        on_op_ready(e.b, e.a);
+      }
       break;
     case CMP_EXEC: {
       int32_t x = e.a;
@@ -151,6 +418,8 @@ void Sim::dispatch_event(const Event& e) {
     }
     case CMP_DRAM:
       if (e.kind == EV_DRAM_ARRIVE) on_dram_arrive(e.a);
+      else if (e.kind == EV_DRAM_BACKEND_TICK) on_dram_backend_tick();
+      else if (e.kind == EV_NOC_BACKEND_TICK) on_noc_backend_tick();
       else on_dram_decide(e.a, e.b);
       break;
     default: break;
@@ -166,6 +435,9 @@ std::vector<Completion> Sim::run_until(ps_t t_ps) {
     ev_kind_[e.kind & 31]++;
   }
   if (t_ps > now_) now_ = t_ps;
+  // Write CSV trace rows older than the flush horizon (1 ms) in time order.
+  csv_flush(dram_csv_, now_ - PS_PER_MS, true);
+  csv_flush(noc_csv_, now_ - PS_PER_MS, false);
   std::vector<Completion> out;
   out.swap(done_);
   return out;
@@ -242,7 +514,7 @@ std::array<Sim::CounterSet, N_DOMAINS> Sim::counters(bool reset) {
   // NoC+cache domain: mesh link occupancy plus DMA engines; DRAM I/O: data bus.
   int nlinks = 0;
   for (int i = 0; i < noc_.n_links(); ++i)
-    if (i % 5 != 4) nlinks++;
+    if (noc_.is_mesh_link(i)) nlinks++;
   ps_t noc_busy = noc_.total_busy_ps();
   out[D_NOC_CACHE].unit_busy += noc_busy - noc_busy_base_;
   out[D_NOC_CACHE].units += nlinks;
@@ -254,9 +526,17 @@ std::array<Sim::CounterSet, N_DOMAINS> Sim::counters(bool reset) {
     CounterSet& c = out[d];
     c.busy = c.units > 0 ? std::min(elapsed, c.unit_busy / c.units) : 0;
     c.idle = elapsed - c.busy;
+    const DomainState& ds = dom_[d];
+    c.gated = ds.gated_acc + (ds.gated ? now_ - std::max(ds.gated_since, counters_since_) : 0);
+    c.gated = std::min(c.gated, c.idle);
+    c.wakeups = ds.wakeups;
   }
   if (reset) {
-    for (auto& d : dom_) d.act.fill(0);
+    for (auto& d : dom_) {
+      d.act.fill(0);
+      d.gated_acc = 0;
+      d.wakeups = 0;
+    }
     for (auto& un : units_) {
       un.busy_acc = 0;
       if (un.exec >= 0) un.busy_since = now_;
@@ -461,15 +741,17 @@ std::vector<std::string> Sim::op_names(int task) const {
 // queue, component state, RNGs, counters, trace hash) is written with the
 // GC_IO field lists. Trace buffers and open files are not part of the state.
 static const uint32_t kCkptMagic = 0x4B434347;  // "GCCK"
-static const uint32_t kCkptVersion = 1;
+static const uint32_t kCkptVersion = 2;
 
 #define GC_SIM_STATE                                                                                                           \
   soc_, fid_, seed_, now_, q_, rng_, tasks_, plans_, task_index_, jobs_, free_jobs_, job_slot_, active_count_, job_seq_,       \
       next_job_id_, units_, eng_, execs_, free_execs_, next_uid_, txns_, free_txns_, dram_seq_, noc_, cache_, dram_, dom_,   \
       counters_since_, noc_busy_base_, dram_busy_base_, mw_, qos_on_, ready_seq_, npu_l2_, cpu_cpi_, l2_fallbacks_npu_,         \
-      l2_fallbacks_cpu_, l2_hits_npu_, l2_hits_cpu_, events_, hash_, last_dram_q_
+      l2_fallbacks_cpu_, l2_hits_npu_, l2_hits_cpu_, events_, hash_, last_dram_q_, cpu_kernel_cpi_, l2_sources_, faults_
 
 std::vector<uint8_t> Sim::checkpoint() {
+  if (dram_backend_ || noc_backend_)
+    throw std::runtime_error("checkpoint() is not supported while an external L2 backend (Ramulator / BookSim) is attached");
   Writer w;
   uint32_t m = kCkptMagic, v = kCkptVersion;
   sv(w, m);
@@ -516,6 +798,8 @@ Json Sim::info() const {
   for (const auto& s : fid_.warnings) w.push(Json::string(s));
   if (fid_.npu >= 2 && l2_fallbacks_npu_ > 0)
     w.push(Json::string("npu: L2 requested but " + std::to_string(l2_fallbacks_npu_) + " op executions had no SCALE-Sim cycle table; used L1"));
+  if (fid_.dram >= 2 && !dram_backend_) w.push(Json::string("dram: L2 requested but no DramBackend attached (" + dram_attach_error_ + "); using L1"));
+  if (fid_.noc >= 2 && !noc_backend_) w.push(Json::string("noc: L2 requested but " + noc_l2_note_ + "; using L1"));
   if (fid_.cpu >= 2 && l2_fallbacks_cpu_ > 0)
     w.push(Json::string("cpu: L2 requested but " + std::to_string(l2_fallbacks_cpu_) + " op executions had no CPI table entry; used L1"));
   j.set("warnings", w);
@@ -524,7 +808,20 @@ Json Sim::info() const {
   l2.set("npu_fallbacks", Json::number(static_cast<double>(l2_fallbacks_npu_)));
   l2.set("cpu_table_hits", Json::number(static_cast<double>(l2_hits_cpu_)));
   l2.set("cpu_fallbacks", Json::number(static_cast<double>(l2_fallbacks_cpu_)));
+  Json srcs = Json::array();
+  for (const auto& s2 : l2_sources_) srcs.push(Json::string(s2));
+  l2.set("tables", srcs);
   j.set("l2", l2);
+  Json fj = Json::object();
+  static const char* fk[] = {"npu_bitflip", "noc_delay", "noc_drop"};
+  for (int k = 0; k < N_FAULT; ++k) {
+    Json o = Json::object();
+    o.set("rate", Json::number(faults_[k].rate));
+    o.set("param_ns", Json::number(static_cast<double>(faults_[k].param) / 1000.0));
+    o.set("count", Json::number(static_cast<double>(faults_[k].count)));
+    fj.set(fk[k], o);
+  }
+  j.set("faults", fj);
   Json units = Json::object();
   for (int e = 0; e < N_ENGINES; ++e) units.set(engine_name(e), Json::number(static_cast<double>(eng_[e].units.size())));
   j.set("units", units);
@@ -552,8 +849,10 @@ Json Sim::info() const {
   for (const auto& t : tasks_) tasks.push(Json::string(t.id));
   j.set("tasks", tasks);
   Json backends = Json::object();
-  backends.set("noc", Json::string("builtin"));
-  backends.set("dram", Json::string("builtin"));
+  backends.set("noc", Json::string(noc_backend_ ? std::string(noc_backend_->name()) + " (quantum " + std::to_string(fid_.quantum_ns) + " ns)"
+                                                : "builtin L" + std::to_string(std::min(1, fid_.noc))));
+  backends.set("dram", Json::string(dram_backend_ ? std::string(dram_backend_->name()) + " (quantum " + std::to_string(fid_.quantum_ns) + " ns)"
+                                                  : "builtin L" + std::to_string(std::min(1, fid_.dram))));
   j.set("backends", backends);
   Json mp = Json::object();
   mp.set("bulk_chunk_bytes", Json::number(fid_.p.bulk_chunk_bytes));

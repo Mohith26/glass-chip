@@ -191,8 +191,8 @@ int main(int argc, char** argv) {
       for (int i = 0; i < 64; ++i) n.send(XY{0, 0}, XY{3, 0}, 4096, Q_BEST_EFFORT, 0, nullptr);
       ps_t s = n.send(XY{0, 0}, XY{3, 0}, 64, Q_SAFETY, 1000, nullptr) - 1000;
       ps_t pkt = n.ser_ps(soc.max_packet_bytes);
-      // QoS: at most one lower-class packet of blocking per link (3 links + ejection).
-      if (qos_on) CHECK(s <= 3 * n.hop_ps() + n.ser_ps(64) + 4 * pkt + 1);
+      // QoS: at most one lower-class packet of blocking per link (injection + 3 links + ejection).
+      if (qos_on) CHECK(s <= 3 * n.hop_ps() + n.ser_ps(64) + 5 * pkt + 1);
       else CHECK(s > 60 * n.ser_ps(4096));                               // FIFO: waits behind the burst
     }
   });
@@ -612,7 +612,170 @@ int main(int argc, char** argv) {
     std::printf("    64 MB weight stream: %.2f ms, %.1f GB/s effective\n", d[0].response / 1e9, gbps);
     CHECK(d[0].attribution[A_DRAM] + d[0].attribution[A_NOC] > d[0].attribution[A_COMPUTE]);
     CHECK(gbps < sim.dram().peak_bytes_per_ps() * 1e3);
+    CHECK(gbps <= 2.0 * soc.link_bytes * soc.noc_freq / 1e9);  // DRAM-node injection ports cap reads at 96 GB/s
     CHECK(gbps > 0.3 * sim.dram().peak_bytes_per_ps() * 1e3);
+  });
+
+  test("power_gating_wake_latency_and_counters", [&] {
+    Sim sim(soc_with_cpus(1, 0), fid("L0", "L0", "L0", "L0"), 1);
+    sim.add_task(task("T81_g", 100000, 100000, "high", {cpu_op("c", 1e6)}));
+    ps_t wake = 50 * PS_PER_US;
+    sim.set_power_gating("cpu_a", true, wake);
+    sim.release_job("T81_g", PS_PER_MS, 0);
+    auto d = sim.run_until(5 * PS_PER_MS);
+    ps_t ctx = ns_to_ps(soc.cpu[0].ctx_ns);
+    CHECK(d.size() == 1);
+    CHECK_NEAR(static_cast<double>(d[0].response), static_cast<double>(wake + ctx + 500 * PS_PER_US), 2000.0);
+    CHECK(d[0].attribution[A_DVFS] == wake);
+    sim.release_job("T81_g", 6 * PS_PER_MS, 1);
+    sim.run_until(10 * PS_PER_MS);
+    auto c = sim.counters(true);
+    CHECK(c[D_CPU_A].wakeups == 2);
+    // gated whenever idle: 10 ms minus two (wake + ctx + 0.5 ms) busy periods
+    ps_t busy_each = wake + ctx + 500 * PS_PER_US;
+    CHECK_NEAR(static_cast<double>(c[D_CPU_A].gated), static_cast<double>(10 * PS_PER_MS - 2 * busy_each), 4000.0);
+    CHECK(c[D_NPU].gated == 0);  // not enabled there
+    sim.set_power_gating("cpu_a", false, 0);
+    sim.release_job("T81_g", 11 * PS_PER_MS, 2);
+    auto d3 = sim.run_until(15 * PS_PER_MS);
+    CHECK(d3.size() == 1 && d3[0].attribution[A_DVFS] == 0);
+    bool threw = false;
+    try { sim.set_power_gating("noc_cache", true, 1); } catch (const std::exception&) { threw = true; }
+    CHECK(threw);
+  });
+
+  test("cycles_by_domain_matches_estimate", [&] {
+    Sim sim(soc_with_cpus(1, 0), fid("L0", "L1", "L0", "L1"), 1);
+    OpSpec g;
+    g.id = "gemm";
+    g.type = "matmul";
+    g.elig = {"npu"};
+    g.macs = 1024.0 * 512 * 256;
+    g.shape = {{"M", 1024}, {"K", 512}, {"N", 256}};
+    sim.add_task(task("T82_mix", 100000, 100000, "high", {cpu_op("pre", 1e6), g, cpu_op("post", 2e5)}));
+    sim.release_job("T82_mix", 0, 0);
+    auto pend = sim.pending_jobs();
+    CHECK(pend.size() == 1);
+    auto est = pend[0].est_remaining_cycles;
+    auto d = sim.run_until(20 * PS_PER_MS);
+    CHECK(d.size() == 1);
+    CHECK_NEAR(d[0].cycles_by_domain[D_CPU_A], 1.2e6, 1.0);
+    CHECK_NEAR(est[D_CPU_A], d[0].cycles_by_domain[D_CPU_A], 1.0);
+    CHECK_NEAR(est[D_NPU], d[0].cycles_by_domain[D_NPU], 1.0);  // L1 GEMM cycles on 4 tiles
+    CHECK(d[0].busy_by_domain[D_NPU] >= cycles_to_ps(d[0].cycles_by_domain[D_NPU], soc.npu.freq));
+  });
+
+  test("noc_dram_node_port_cap_matches_booksim", [&] {
+    // BookSim (calib/tables/noc_booksim.json) saturates all-to-DRAM traffic at
+    // ~95.5 GB/s: two DRAM nodes x one 32 B/cycle port x 1.5 GHz = 96 GB/s.
+    double cap = 2.0 * soc.link_bytes * soc.noc_freq / 1e9;  // GB/s
+    for (int dir = 0; dir < 2; ++dir) {
+      Sim sim(g_soc, fid("L0", "L1", "L0", "L1"), 1);
+      Noc& n = sim.noc();
+      std::vector<XY> dram = soc.dram.nodes;
+      double bytes = 0;
+      ps_t last = 0;
+      for (int k = 0; k < 400; ++k)
+        for (int x = 0; x < 4; ++x)
+          for (int y = 0; y < 4; ++y) {
+            XY node{static_cast<int8_t>(x), static_cast<int8_t>(y)};
+            XY d = dram[(k + x + y) % dram.size()];
+            if (node.x == d.x && node.y == d.y) continue;
+            ps_t a = dir == 0 ? n.send(node, d, 256, Q_REALTIME, 0, nullptr) : n.send(d, node, 256, Q_REALTIME, 0, nullptr);
+            last = std::max(last, a);
+            bytes += 256;
+          }
+      double gbps = bytes / (static_cast<double>(last) / 1e12) / 1e9;
+      std::printf("    %s DRAM nodes: %.1f GB/s (port cap %.1f)\n", dir == 0 ? "to" : "from", gbps, cap);
+      CHECK(gbps <= cap * 1.001);
+      if (dir == 0) CHECK(gbps >= cap * 0.95);  // reverse direction is also limited by row-3 XY route overlap
+    }
+  });
+
+  test("npu_fusion_keeps_intermediates_on_chip", [&] {
+    // QK^T (1024x64x1024, 12 heads, scores 12.6 MB) -> scale -> softmax -> AV, then a
+    // matmul with an 8 MB output and an elementwise epilogue.
+    auto mk = [&](const std::string& id, const std::string& type, double in, double out, std::vector<std::string> deps,
+                  std::map<std::string, double> shape, double macs) {
+      OpSpec o;
+      o.id = id;
+      o.type = type;
+      o.dtype = "bf16";
+      o.elig = {"npu", "cpu"};
+      o.bin = in;
+      o.bout = out;
+      o.deps = deps;
+      o.has_deps = true;
+      o.shape = shape;
+      o.macs = macs;
+      return o;
+    };
+    double S = 12.0 * 1024 * 1024;
+    std::vector<OpSpec> ops = {
+        mk("qk", "matmul", 1.5e6, S, {}, {{"M", 1024}, {"K", 64}, {"N", 1024}, {"heads", 12}}, 12.0 * 1024 * 64 * 1024),
+        mk("scale", "elementwise", S, S, {"qk"}, {}, 0),
+        mk("sm", "softmax", S, S, {"scale"}, {}, 0),
+        mk("av", "matmul", S + 0.75e6, 0.75e6, {"sm"}, {{"M", 1024}, {"K", 1024}, {"N", 64}, {"heads", 12}}, 12.0 * 1024 * 1024 * 64),
+        mk("up", "matmul", 0.75e6, 8e6, {"av"}, {{"M", 1024}, {"K", 768}, {"N", 4096}}, 1024.0 * 768 * 4096),
+        mk("gelu", "elementwise", 8e6, 8e6, {"up"}, {}, 0),
+    };
+    double bytes[2];
+    ps_t resp[2];
+    for (int on = 0; on < 2; ++on) {
+      Json fl = fid("L0", "L1", "L0", "L1");
+      Json p = Json::object();
+      p.set("fuse_attention", Json::boolean(on));
+      p.set("fuse_elementwise", Json::boolean(on));
+      fl.set("params", p);
+      Sim sim(g_soc, fl, 1);
+      sim.add_task(task("T83_attn", 100000, 100000, "high", ops));
+      sim.release_job("T83_attn", 0, 0);
+      auto d = sim.run_until(100 * PS_PER_MS);
+      CHECK(d.size() == 1);
+      resp[on] = d[0].response;
+      bytes[on] = sim.counters(false)[D_DRAM_IO].act[K_DRAM_BYTES];
+    }
+    std::printf("    DRAM bytes: %.1f MB unfused, %.1f MB fused; response %.3f -> %.3f ms\n", bytes[0] / 1e6, bytes[1] / 1e6, resp[0] / 1e9,
+                resp[1] / 1e9);
+    // Unfused: scores written and read twice more (3 x 2 x 12.6 MB) plus the 8 MB epilogue round trip.
+    CHECK(bytes[0] - bytes[1] > 6 * S + 2 * 8e6 - 4e6);
+    CHECK(bytes[1] < 16e6);
+    CHECK(resp[1] < resp[0]);
+  });
+
+  test("fault_injection_deterministic", [&] {
+    auto run = [&](double flip, double drop, uint64_t seed, std::vector<Completion>* out) {
+      Sim sim(g_soc, fid("L0", "L1", "L0", "L1"), 3);
+      mixed(sim);
+      sim.set_fault("npu_bitflip", flip, seed, -1);
+      sim.set_fault("noc_drop", drop, seed, 200 * PS_PER_NS);
+      drive(sim, 0, 140 * PS_PER_MS, out);
+      return sim.trace_hash();
+    };
+    std::vector<Completion> clean, a, b;
+    run(0, 0, 1, &clean);
+    std::string h1 = run(0.5, 0.01, 7, &a), h2 = run(0.5, 0.01, 7, &b);
+    CHECK(h1 == h2);
+    CHECK(a.size() == b.size());
+    int corrupted = 0, faulted = 0;
+    for (size_t i = 0; i < a.size(); ++i) {
+      corrupted += a[i].corrupted;
+      faulted += a[i].faults > 0;
+      CHECK(a[i].corrupted == b[i].corrupted && a[i].faults == b[i].faults);
+    }
+    int det = 0, det_corrupt = 0;
+    for (const auto& c : a)
+      if (c.task_id == "T61_det") { ++det; det_corrupt += c.corrupted; }
+    CHECK(det_corrupt > 0 && det_corrupt < det);  // one NPU op per job at p = 0.5
+    for (const auto& c : a)
+      if (c.task_id != "T61_det") CHECK(!c.corrupted);  // only NPU work can be corrupted
+    // Drop-and-retry only delays: no job is lost, and the average response rises.
+    CHECK(clean.size() == a.size());
+    double r0 = 0, r1 = 0;
+    for (const auto& c : clean) if (c.task_id == "T61_det") r0 += c.response;
+    for (const auto& c : a) if (c.task_id == "T61_det") r1 += c.response;
+    CHECK(r1 > r0);
+    CHECK(faulted > corrupted);
   });
 
   std::printf("\n%d checks, %d failures\n", g_checks, g_fail);

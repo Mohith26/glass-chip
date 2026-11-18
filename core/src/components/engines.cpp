@@ -90,6 +90,12 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
 
   const OpDef& d = td.ops[po.def];
   double bin = d.bytes_in * (1.0 - d.reuse);  // reuse: fraction of inputs hitting private caches/SRAM
+  double fused_in = 0;
+  if (engine == E_NPU && po.onchip_in > 0) {
+    // Inputs produced by fused ops stay in NPU SRAM (compiler fusion pass).
+    fused_in = std::min(bin, po.onchip_in);
+    bin -= fused_in;
+  }
   double bw = d.bytes_w, bout = d.bytes_out;
   double elems = std::max({d.flops, 2.0 * d.macs, d.bytes_in, d.bytes_out, 1.0});
 
@@ -109,7 +115,8 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
         c.cycles = l2c / nunits;  // SCALE-Sim cycles are for one tile; split across tiles
         c.l2 = true;
       } else {
-        if (level >= 2) c.l2_fallback = true;
+        // Only systolic ops have SCALE-Sim tables; vector ops are L1 by design.
+        if (level >= 2 && gemm) c.l2_fallback = true;
         if (gemm) {
           if (level == 0 || !d.has_gemm) {
             c.cycles = d.macs / (macs_tile * rate * nunits * p.npu_l0_util);  // params.npu_l0_util
@@ -139,7 +146,9 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
         if (!(pj.resident_out && pj.engine == E_NPU)) all_pred_resident = false;
       }
       double shared = soc_.npu.shared_kb * 1024.0;
+      c.sram += fused_in;
       if (all_pred_resident) { c.resident_in = true; c.sram += bin; bin = 0; }
+      if (po.out_onchip) { c.resident_out = true; c.sram += bout; bout = 0; }
       bool succ_npu = !po.succs.empty();
       for (int32_t si : po.succs)
         if (!pl.ops[si].npu_only) succ_npu = false;
@@ -201,6 +210,10 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
           c.cycles = n * it->second;  // per-op CPI table (L2 hook)
           c.l2 = true;
           done = true;
+        } else if (std::string k = cpu_kernel_for(td, d); !k.empty()) {
+          c.cycles = instr * cpu_kernel_cpi_.at(k)[0];  // gem5 O3 CPI (app core proxy), calib/tables/cpu_gem5.json
+          c.l2 = true;
+          done = true;
         } else {
           c.l2_fallback = true;
         }
@@ -230,8 +243,16 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
     case E_RT: {
       // RT core runs from TCM (blocks.rt.tcm_kb): no cache misses to DRAM.
       double instr = d.i_scalar + d.i_vector * 4 + d.i_mem;  // no vector unit: 4 scalar ops per vector op (assumption)
-      if (instr > 0) c.cycles = instr / soc_.rt.ipc;            // blocks.rt.ipc_scalar
-      else c.cycles = std::max(1.0, std::max(d.flops, 2 * d.macs) / soc_.rt.ipc);
+      std::string k = fid_.cpu >= 2 ? cpu_kernel_for(td, d) : std::string();
+      if (!k.empty()) {
+        c.cycles = (d.i_scalar + d.i_vector + d.i_mem) * cpu_kernel_cpi_.at(k)[1];  // gem5 Minor CPI (in-order RT proxy)
+        c.l2 = true;
+      } else if (instr > 0) {
+        if (fid_.cpu >= 2) c.l2_fallback = true;
+        c.cycles = instr / soc_.rt.ipc;  // blocks.rt.ipc_scalar
+      } else {
+        c.cycles = std::max(1.0, std::max(d.flops, 2 * d.macs) / soc_.rt.ipc);
+      }
       c.act[K_CPU_INSTR] = instr > 0 ? instr : c.cycles * soc_.rt.ipc;
       c.nsteps = 1;
       return;
@@ -269,8 +290,10 @@ void Sim::compute_cost(const Job& j, int32_t op, int engine, int nunits, int lev
 
 double Sim::est_cycles(const Job& j, int32_t op, int engine) const {
   if (engine < 0) return 0;
+  // Compute cycles at the engine's own fidelity level, on the units the op
+  // would get, i.e. wall-clock cycles at the domain clock if it ran alone.
   OpCost c;
-  compute_cost(j, op, engine, want_units(j, op, engine), 0, c);
+  compute_cost(j, op, engine, want_units(j, op, engine), engine == E_RT ? 0 : eng_[engine].level, c);
   return c.cycles;
 }
 
@@ -388,15 +411,151 @@ void Sim::emit_xfer(ps_t t, ps_t arrival, XY a, XY b, int bytes, int64_t job, in
   emit(r);
 }
 
+void Sim::schedule_noc_tick(ps_t t) {
+  if (noc_tick_pending_) return;
+  ps_t q = quantum_ps();
+  noc_tick_at_ = ((t + q - 1) / q) * q;
+  noc_tick_pending_ = true;
+  q_.push(noc_tick_at_, CMP_DRAM, EV_NOC_BACKEND_TICK);
+}
+
+void Sim::noc_deliver(MemTxn txn, XY a, int bytes, ps_t t) {
+  if (!noc_backend_) {
+    ps_t arr = noc_xfer(a, txn.src, bytes, txn.qos, t, false, txn.job, txn.task, txn.op);
+    txn.noc_ps += arr - t;
+    mem_deliver(txn, arr);
+    return;
+  }
+  // L2: BookSim decides when the data arrives.
+  int32_t i;
+  if (!noc_wait_free_.empty()) {
+    i = noc_wait_free_.back();
+    noc_wait_free_.pop_back();
+  } else {
+    i = static_cast<int32_t>(noc_wait_.size());
+    noc_wait_.emplace_back();
+  }
+  txn.t = t;
+  txn.channel = (a.y << 8) | a.x;  // remember the source node for the trace
+  noc_wait_[i] = txn;
+  uint64_t fh = 0;
+  noc_.header_latency(a, txn.src, bytes, &fh);
+  dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh);
+  noc_backend_->inject(static_cast<uint64_t>(i) + 1, a, txn.src, bytes, t);
+  schedule_noc_tick(t);
+}
+
+void Sim::on_noc_backend_tick() {
+  noc_tick_pending_ = false;
+  if (!noc_backend_) return;
+  noc_done_.clear();
+  noc_backend_->tick(now_, noc_done_);
+  for (const auto& pr : noc_done_) {
+    int32_t i = static_cast<int32_t>(pr.first) - 1;
+    MemTxn txn = noc_wait_[i];
+    noc_wait_free_.push_back(i);
+    XY a{static_cast<int8_t>(txn.channel & 0xff), static_cast<int8_t>(txn.channel >> 8)};
+    emit_xfer(txn.t, pr.second, a, txn.src, txn.bytes, txn.job, txn.task, txn.op);
+    txn.noc_ps += pr.second - txn.t;
+    mem_deliver(txn, pr.second);  // arrival can be up to one quantum before now
+  }
+  if (noc_backend_->busy()) {
+    noc_tick_pending_ = true;
+    noc_tick_at_ = now_ + quantum_ps();
+    q_.push(noc_tick_at_, CMP_DRAM, EV_NOC_BACKEND_TICK);
+  }
+}
+
+ps_t Sim::noc_xfer(XY a, XY b, int bytes, int qos, ps_t t, bool header, int64_t job, int task, int op) {
+  uint64_t fh = 0;
+  ps_t arr;
+  if (noc_backend_) {
+    // L2: the message loads BookSim (contention for everyone else); its own
+    // timing on this synchronous path is the zero-load latency.
+    arr = t + noc_.header_latency(a, b, bytes, &fh);
+    noc_backend_->inject(0, a, b, bytes, t);
+    schedule_noc_tick(t);
+  } else {
+    arr = (header && !fid_.p.noc_model_requests) ? t + noc_.header_latency(a, b, bytes, &fh) : noc_.send(a, b, bytes, qos, t, &fh);
+  }
+  dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh);
+  if (!header) {
+    // Timing faults on data messages (deterministic per seed).
+    FaultCfg& fd = faults_[F_NOC_DELAY];
+    if (fd.rate > 0 && fd.rng.uniform() < fd.rate) {
+      arr += fd.param;
+      note_fault(F_NOC_DELAY, job, task, op, t, static_cast<double>(fd.param));
+    }
+    FaultCfg& fr = faults_[F_NOC_DROP];
+    if (fr.rate > 0 && fr.rng.uniform() < fr.rate) {
+      // Dropped: the sender times out and retransmits, reserving the path again.
+      ps_t first = arr;
+      arr = noc_.send(a, b, bytes, qos, arr + fr.param, &fh);
+      note_fault(F_NOC_DROP, job, task, op, t, static_cast<double>(arr - first));
+    }
+    emit_xfer(t, arr, a, b, bytes, job, task, op);
+  }
+  if (noc_csv_.f) {
+    // One row per packet (max_packet_bytes); packet k's tail arrives
+    // ser(k+1 packets) after the head of the train.
+    const int pk = soc_.max_packet_bytes;
+    ps_t head = arr - noc_.ser_ps(bytes);
+    for (int off = 0; off < bytes; off += pk) {
+      int nb = std::min(pk, bytes - off);
+      CsvRow r;
+      r.t = t;
+      r.a = static_cast<uint64_t>(nb);
+      r.b = a.x; r.c = a.y; r.d = b.x; r.e = b.y;
+      r.lat = std::max<ps_t>(head + noc_.ser_ps(off + nb), t + noc_.ser_ps(nb)) - t;
+      csv_push(noc_csv_, r);
+    }
+  }
+  return arr;
+}
+
+void Sim::csv_push(CsvTrace& c, const CsvRow& r0) {
+  CsvRow r = r0;
+  r.seq = c.seq++;
+  if (r.t < c.flushed) c.late++;
+  c.heap.push_back(r);
+  std::push_heap(c.heap.begin(), c.heap.end(), [](const CsvRow& x, const CsvRow& y) { return x.t > y.t || (x.t == y.t && x.seq > y.seq); });
+}
+
+void Sim::csv_flush(CsvTrace& c, ps_t upto, bool dram) {
+  if (!c.f) return;
+  auto later = [](const CsvRow& x, const CsvRow& y) { return x.t > y.t || (x.t == y.t && x.seq > y.seq); };
+  while (!c.heap.empty() && c.heap.front().t <= upto) {
+    std::pop_heap(c.heap.begin(), c.heap.end(), later);
+    const CsvRow r = c.heap.back();
+    c.heap.pop_back();
+    if (dram)
+      std::fprintf(c.f, "%.3f,0x%llx,%c,%lld,%.3f\n", r.t / 1000.0, static_cast<unsigned long long>(r.a), r.b ? 'W' : 'R',
+                   static_cast<long long>(r.c), r.lat / 1000.0);
+    else
+      std::fprintf(c.f, "%.3f,%lld,%lld,%lld,%lld,%llu,%.3f\n", r.t / 1000.0, static_cast<long long>(r.b), static_cast<long long>(r.c),
+                   static_cast<long long>(r.d), static_cast<long long>(r.e), static_cast<unsigned long long>(r.a), r.lat / 1000.0);
+    c.rows++;
+  }
+  c.flushed = std::max(c.flushed, upto);
+}
+
+void Sim::dram_csv_row(ps_t arrive, uint64_t addr, bool write, int bytes, ps_t lat) {
+  if (!dram_csv_.f) return;
+  CsvRow r;
+  r.t = arrive;
+  r.a = addr;
+  r.b = write ? 1 : 0;
+  r.c = bytes;
+  r.lat = lat;
+  csv_push(dram_csv_, r);
+}
+
 // Sends a DRAM-bound transaction from node `from` (a cache slice).
 void Sim::mem_dram(MemTxn& txn, XY from) {
+  txn.addr = phys_addr(txn.addr);
   int ch = dram_.channel_of(txn.addr);
   XY dn = dram_node(ch);
-  uint64_t fh = 0;
-  ps_t t3 = (txn.write || fid_.p.noc_model_requests) ? noc_.send(from, dn, txn.write ? txn.bytes : fid_.p.noc_req_bytes, txn.qos, txn.t, &fh)
-                                                      : txn.t + noc_.header_latency(from, dn, fid_.p.noc_req_bytes, &fh);
-  dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh);
-  if (txn.write) emit_xfer(txn.t, t3, from, dn, txn.bytes, txn.job, txn.task, txn.op);
+  ps_t t3 = noc_xfer(from, dn, txn.write ? txn.bytes : fid_.p.noc_req_bytes, txn.qos, txn.t, !txn.write, txn.job, txn.task, txn.op);
   txn.noc_ps += t3 - txn.t;
   txn.t = t3;
   txn.channel = ch;
@@ -406,13 +565,22 @@ void Sim::mem_dram(MemTxn& txn, XY from) {
     dom_[D_DRAM_IO].act[K_DRAM_BYTES] += txn.bytes;
     dom_[D_DRAM_IO].act[K_DRAM_ACTIVATES] += 0.5 * txn.bytes / soc_.dram.row_bytes;  // L0: 50% row-hit assumption
     txn.dram_ps = lat;
-    if (!txn.write) {
-      uint64_t fh2 = 0;
-      ps_t t5 = noc_.send(dn, txn.src, txn.bytes, txn.qos, t3 + lat, &fh2);
-      dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh2);
-      emit_xfer(t3 + lat, t5, dn, txn.src, txn.bytes, txn.job, txn.task, txn.op);
-      txn.noc_ps += t5 - (t3 + lat);
-      mem_deliver(txn, t5);
+    dram_csv_row(t3, txn.addr, txn.write, txn.bytes, lat);
+    if (!txn.write) noc_deliver(txn, dn, txn.bytes, t3 + lat);
+    return;
+  }
+  if (dram_backend_) {
+    // L2: hand the request to the external DRAM model; it is ticked in
+    // quantum_ns steps (time-quantum synchronization) while it has work.
+    txn.t = t3;
+    dram_backend_->enqueue(txn, t3);
+    if (!dram_tick_pending_ || dram_tick_at_ < t3) {
+      if (!dram_tick_pending_) {
+        ps_t q = quantum_ps();
+        dram_tick_at_ = ((t3 + q - 1) / q) * q;
+        dram_tick_pending_ = true;
+        q_.push(dram_tick_at_, CMP_DRAM, EV_DRAM_BACKEND_TICK);
+      }
     }
     return;
   }
@@ -471,9 +639,7 @@ void Sim::mem_read(Exec& e, int32_t x, int slot, uint64_t addr, int bytes, bool 
   txn.op = e.op;
   txn.l0_hit = l0_hit;
   XY cn = cache_node(addr);
-  uint64_t fh = 0;
-  ps_t t1 = fid_.p.noc_model_requests ? noc_.send(txn.src, cn, fid_.p.noc_req_bytes, txn.qos, now_, &fh)
-                                       : now_ + noc_.header_latency(txn.src, cn, fid_.p.noc_req_bytes, &fh);
+  ps_t t1 = noc_xfer(txn.src, cn, fid_.p.noc_req_bytes, txn.qos, now_, true, txn.job, txn.task, txn.op);
   txn.noc_ps = t1 - now_;
   ps_t hit_lat = cycles_to_ps(soc_.cache.hit_cycles, noc_.freq());  // blocks.sys_cache.hit_latency_cycles
   wb_scratch_.clear();
@@ -495,13 +661,9 @@ void Sim::mem_read(Exec& e, int32_t x, int slot, uint64_t addr, int bytes, bool 
     MemTxn h = txn;
     h.bytes = hb;
     h.cache_ps = hit_lat;
-    ps_t t2 = noc_.send(cn, txn.src, hb, txn.qos, t1 + hit_lat, &fh);
-    h.noc_ps += t2 - (t1 + hit_lat);
-    emit_xfer(t1 + hit_lat, t2, cn, txn.src, hb, txn.job, txn.task, txn.op);
     s.outstanding++;
-    mem_deliver(h, t2);
+    noc_deliver(h, cn, hb, t1 + hit_lat);
   }
-  dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh);
   int miss = bytes - hb;
   if (miss > 0) {
     txn.bytes = miss;
@@ -514,10 +676,7 @@ void Sim::mem_read(Exec& e, int32_t x, int slot, uint64_t addr, int bytes, bool 
 
 void Sim::mem_write(int32_t /*x*/, uint64_t addr, int bytes, bool alloc, float l0_hit, int qos, XY src, int64_t job, int task, int op) {
   XY cn = cache_node(addr);
-  uint64_t fh = 0;
-  ps_t t1 = noc_.send(src, cn, bytes, qos, now_, &fh);
-  dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh);
-  emit_xfer(now_, t1, src, cn, bytes, job, task, op);
+  ps_t t1 = noc_xfer(src, cn, bytes, qos, now_, false, job, task, op);
   wb_scratch_.clear();
   int absorbed = cache_.access(addr, bytes, qos, true, alloc, l0_hit, 0, &wb_scratch_);
   dom_[D_NOC_CACHE].act[K_CACHE_BYTES] += bytes;
@@ -548,6 +707,31 @@ void Sim::mem_write(int32_t /*x*/, uint64_t addr, int bytes, bool alloc, float l
     w.task = task;
     w.op = op;
     mem_dram(w, cn);
+  }
+}
+
+void Sim::on_dram_backend_tick() {
+  dram_tick_pending_ = false;
+  if (!dram_backend_) return;
+  backend_done_.clear();
+  dram_backend_->tick(now_, backend_done_);
+  for (auto& pr : backend_done_) {
+    MemTxn& txn = pr.first;
+    ps_t done = pr.second + ns_to_ps(fid_.p.dram_ctrl_ns);
+    dom_[D_DRAM_IO].act[K_DRAM_BYTES] += txn.bytes;
+    txn.dram_ps = done - txn.t;
+    dram_csv_row(txn.t, txn.addr, txn.write, txn.bytes, done - txn.t);
+    if (!txn.write) {
+      XY dn = dram_node(dram_.channel_of(txn.addr));
+      // `done` can be up to one quantum in the past: the response is reserved
+      // from the true completion time and the requester sees it no earlier than now.
+      noc_deliver(txn, dn, txn.bytes, done);
+    }
+  }
+  if (dram_backend_->busy()) {
+    dram_tick_pending_ = true;
+    dram_tick_at_ = now_ + quantum_ps();
+    q_.push(dram_tick_at_, CMP_DRAM, EV_DRAM_BACKEND_TICK);
   }
 }
 
@@ -590,14 +774,9 @@ void Sim::on_dram_decide(int ch, int64_t token) {
   dom_[D_DRAM_IO].act[K_DRAM_BYTES] += txn.bytes;
   dom_[D_DRAM_IO].act[K_DRAM_ACTIVATES] += d.acts;
   txn.dram_ps = d.data_end - txn.t;
+  dram_csv_row(txn.t, txn.addr, txn.write, txn.bytes, d.data_end - txn.t);
   if (!txn.write) {
-    XY dn = dram_node(ch);
-    uint64_t fh = 0;
-    ps_t t5 = noc_.send(dn, txn.src, txn.bytes, txn.qos, d.data_end, &fh);
-    dom_[D_NOC_CACHE].act[K_FLIT_HOPS] += static_cast<double>(fh);
-    emit_xfer(d.data_end, t5, dn, txn.src, txn.bytes, txn.job, txn.task, txn.op);
-    txn.noc_ps += t5 - d.data_end;
-    mem_deliver(txn, t5);
+    noc_deliver(txn, dram_node(ch), txn.bytes, d.data_end);
   }
   // Queue-depth trace sample whenever the depth bucket changes.
   int bucket = c.qlen / 4;
@@ -740,6 +919,7 @@ void Sim::exec_compute_end(int32_t x) {
   ps_t dv = std::min(e.seg_dvfs, wall);
   e.cat[e.exec_cat] += wall - dv;
   e.cat[A_DVFS] += dv;
+  credit_job_cycles(e, e.seg_total);
   e.seg_rem = 0;
   e.next_compute++;
   exec_credit(e);
@@ -812,6 +992,7 @@ void Sim::exec_suspend(int32_t x) {
     ps_t dv = std::min(e.seg_dvfs, wall);
     e.cat[e.exec_cat] += wall - dv;
     e.cat[A_DVFS] += dv;
+    credit_job_cycles(e, e.seg_total - e.seg_rem);
     e.computing = false;
     e.partial = true;
     e.gen++;
@@ -824,6 +1005,7 @@ void Sim::exec_suspend(int32_t x) {
     e.mem_time = std::max<ps_t>(0, e.mem_done - now_);
     l0_unregister_fluid(e);
   }
+  credit_job_busy(e);
   for (int32_t u : e.units) {
     unit_busy(u, false);
     units_[u].exec = -1;
@@ -858,6 +1040,9 @@ void Sim::exec_resume(int32_t x, const std::vector<int32_t>& units, bool ctx_swi
   e.suspended = false;
   e.cat[A_PREEMPTION] += now_ - e.suspended_at;
   e.units = units;
+  e.domain = units_[units[0]].domain;
+  ps_t wake = domain_wake(e.domain);
+  e.run_since = now_;
   for (int32_t u : units) {
     units_[u].exec = x;
     units_[u].last_job = e.job;
@@ -867,6 +1052,11 @@ void Sim::exec_resume(int32_t x, const std::vector<int32_t>& units, bool ctx_swi
   if (ctx_switch) {
     // Context restore cost: blocks.cpu_*.context_switch_ns (RT: 0, bare-metal assumption).
     setup = e.engine == E_CPU ? ns_to_ps(soc_.cpu[units_[units[0]].cluster].ctx_ns) : 0;
+  }
+  if (wake > 0) {
+    e.cat[A_DVFS] += wake;  // power-gate wake-up
+    setup += wake;
+    e.cat[A_PREEMPTION] -= wake;  // the setup block below adds it again
   }
   if (e.level == 0 || e.engine == E_RT) {
     e.mem_done = now_ + setup + e.mem_time;
@@ -896,6 +1086,7 @@ void Sim::exec_finish(int32_t x) {
     e.act_credited = 1.0;
   }
   l0_unregister_fluid(e);
+  credit_job_busy(e);
   Job* j = job_ptr(e.job);
   int engine = e.engine;
   int32_t op = e.op;
@@ -915,6 +1106,10 @@ void Sim::exec_finish(int32_t x) {
         deficit -= take;
       }
     }
+  }
+  if (j && engine == E_NPU) {
+    FaultCfg& fb = faults_[F_NPU_BITFLIP];
+    if (fb.rate > 0 && fb.rng.uniform() < fb.rate) note_fault(F_NPU_BITFLIP, e.job, e.task, op, now_, 1.0);
   }
   if (j) {
     JobOp& o = j->ops[op];

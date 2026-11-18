@@ -19,76 +19,76 @@
    "mix": "interactive",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 2.4277858330169693,
-   "setup_seconds": 0.01698145898990333,
-   "cpu_seconds": 2.345783,
-   "speed_x_realtime": 0.8237958936907681,
-   "speed_x_realtime_cpu": 0.8525937821188064,
+   "wall_seconds": 6.615334000001894,
+   "setup_seconds": 0.032258166000247,
+   "cpu_seconds": 1.73783,
+   "speed_x_realtime": 0.30232789455519965,
+   "speed_x_realtime_cpu": 1.1508605559807346,
    "events_by_kind": {
     "job_release": 2893,
     "op_ready": 812,
-    "setup_done": 4444,
-    "compute_end": 91426,
-    "data_ready": 51966,
-    "mem_done": 803,
+    "setup_done": 4049,
+    "compute_end": 83752,
+    "data_ready": 45721,
+    "mem_done": 805,
     "dram_arrive": 0,
-    "dram_decide": 12278069
+    "dram_decide": 6259566
    },
-   "events": 12430413,
-   "events_per_wall_s": 5120061.593140171,
+   "events": 6397598,
+   "events_per_wall_s": 967086.1667752782,
    "releases": 2894,
    "skipped": 0,
    "completed": 2892,
    "warnings": [],
-   "trace_hash": "928defde198ae9c1dcbd478da62d7c02",
+   "trace_hash": "bd199a3df66b03d8a9422d0abe5178e7",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 0.593997728,
-     "p99_ms": 2.4168204473399997
+     "p50_ms": 0.596577415,
+     "p99_ms": 0.7043366625199998
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.360452204,
-     "p99_ms": 6.469221232009998
+     "p50_ms": 1.3361971165,
+     "p99_ms": 2.02245404103
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.621057309,
-     "p99_ms": 6.018853832689999
+     "p50_ms": 1.496966676,
+     "p99_ms": 3.1636619697299957
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.470953441,
-     "p99_ms": 9.660329333999982
+     "p50_ms": 3.1022501614999998,
+     "p99_ms": 4.5739797072399995
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 1.2902082145,
-     "p99_ms": 4.73487857784
+     "p50_ms": 1.284947848,
+     "p99_ms": 3.734913220630001
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 75.43284297150001,
-     "p99_ms": 78.93452546955
+     "p50_ms": 59.3237954025,
+     "p99_ms": 60.584853564650004
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 7.709898527,
-     "p99_ms": 20.6638275206
+     "p50_ms": 7.4913865,
+     "p99_ms": 11.28390628305
     },
     "T6_estimate": {
      "jobs": 400,
      "missed": 0,
-     "p50_ms": 0.815137252,
-     "p99_ms": 1.8431947985399773
+     "p50_ms": 0.8136671625,
+     "p99_ms": 1.57004997121
     },
     "T7_control": {
      "jobs": 2000,
@@ -99,8 +99,8 @@
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.4528890655,
-     "p99_ms": 5.409482542659996
+     "p50_ms": 1.3196659085,
+     "p99_ms": 2.808639860169997
     }
    }
   },
@@ -108,78 +108,78 @@
    "mix": "study",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 7.6070528750133235,
-   "setup_seconds": 0.0071395839913748205,
-   "cpu_seconds": 7.2910379999999995,
-   "speed_x_realtime": 0.2629139080351794,
-   "speed_x_realtime_cpu": 0.2743093644553766,
+   "wall_seconds": 32.6736223330081,
+   "setup_seconds": 0.0111445419897791,
+   "cpu_seconds": 8.901337999999999,
+   "speed_x_realtime": 0.06121145612861927,
+   "speed_x_realtime_cpu": 0.22468532258858165,
    "events_by_kind": {
-    "job_release": 2888,
+    "job_release": 2892,
     "op_ready": 812,
-    "setup_done": 4434,
-    "compute_end": 1268190,
-    "data_ready": 89418,
+    "setup_done": 4064,
+    "compute_end": 1260423,
+    "data_ready": 79887,
     "mem_done": 0,
     "dram_arrive": 0,
-    "dram_decide": 28806911
+    "dram_decide": 22771378
    },
-   "events": 30172653,
-   "events_per_wall_s": 3966405.05800969,
+   "events": 24119456,
+   "events_per_wall_s": 738193.5113950814,
    "releases": 2894,
-   "skipped": 5,
-   "completed": 2887,
+   "skipped": 1,
+   "completed": 2891,
    "warnings": [
-    "npu: L2 requested but 67116 op executions had no SCALE-Sim cycle table; used L1"
+    "npu: L2 requested but 28108 op executions had no SCALE-Sim cycle table; used L1"
    ],
-   "trace_hash": "45dbfee63682e8a700a9dd39c5b2b254",
+   "trace_hash": "88a558f7bc944bcb4c7b24608cf2bd09",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 0.6792242815,
-     "p99_ms": 2.93361153619
+     "p50_ms": 0.6104824090000001,
+     "p99_ms": 0.74814362785
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.8481960415,
-     "p99_ms": 5.2612627127299945
+     "p50_ms": 1.4703598764999999,
+     "p99_ms": 5.5580005874199925
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 2.187784405,
-     "p99_ms": 8.100619477139997
+     "p50_ms": 1.5870454280000001,
+     "p99_ms": 3.2467114773699994
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.9954741119999997,
-     "p99_ms": 11.885632430879998
+     "p50_ms": 3.3815800675,
+     "p99_ms": 6.726900559789992
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 3.1036318720000002,
-     "p99_ms": 7.55028828562
+     "p50_ms": 2.3428790115,
+     "p99_ms": 6.446590446170004
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 76.756723561,
-     "p99_ms": 80.90946780624999
+     "p50_ms": 64.7336744415,
+     "p99_ms": 70.2785901932
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 18.0837857925,
-     "p99_ms": 19.949659442450002
+     "p50_ms": 17.8576194535,
+     "p99_ms": 18.4089839138
     },
     "T6_estimate": {
-     "jobs": 395,
-     "missed": 5,
-     "p50_ms": 0.852662057,
-     "p99_ms": 5.85081052412
+     "jobs": 399,
+     "missed": 1,
+     "p50_ms": 0.824660387,
+     "p99_ms": 2.6457721589399963
     },
     "T7_control": {
      "jobs": 2000,
@@ -190,8 +190,8 @@
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.900952503,
-     "p99_ms": 7.300991869559993
+     "p50_ms": 1.5280758045,
+     "p99_ms": 4.288835294549978
     }
    }
   },
@@ -199,88 +199,88 @@
    "mix": "analytic",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 0.09892808299628086,
-   "setup_seconds": 0.008075042016571388,
-   "cpu_seconds": 0.09592400000000012,
-   "speed_x_realtime": 20.21670631255625,
-   "speed_x_realtime_cpu": 20.84983945623616,
+   "wall_seconds": 0.554106875002617,
+   "setup_seconds": 0.016472583985887468,
+   "cpu_seconds": 0.13071500000000036,
+   "speed_x_realtime": 3.609411992931064,
+   "speed_x_realtime_cpu": 15.300462839000838,
    "events_by_kind": {
-    "job_release": 2891,
+    "job_release": 2890,
     "op_ready": 812,
-    "setup_done": 3532,
-    "compute_end": 77462,
+    "setup_done": 3433,
+    "compute_end": 77459,
     "data_ready": 0,
-    "mem_done": 17800,
+    "mem_done": 16847,
     "dram_arrive": 0,
     "dram_decide": 0
    },
-   "events": 102497,
-   "events_per_wall_s": 1036075.873459039,
+   "events": 101441,
+   "events_per_wall_s": 183071.18098746004,
    "releases": 2894,
-   "skipped": 2,
-   "completed": 2890,
+   "skipped": 3,
+   "completed": 2889,
    "warnings": [],
-   "trace_hash": "ffe24c05c0510644615bc0073eac257f",
+   "trace_hash": "b064783074573d61a4b6d70c8d382386",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
      "p50_ms": 0.614108822,
-     "p99_ms": 2.0119826448799993
+     "p99_ms": 2.124864966
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.818186548,
-     "p99_ms": 6.455530877729999
+     "p50_ms": 1.820186548,
+     "p99_ms": 7.63506978062
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 2.024972547,
+     "p50_ms": 2.020787505,
      "p99_ms": 6.795795695899999
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.191838204,
-     "p99_ms": 6.637996767769999
+     "p50_ms": 3.067819202,
+     "p99_ms": 5.991149279909999
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 2.2883649005,
-     "p99_ms": 5.71419927398
+     "p50_ms": 2.4037639295,
+     "p99_ms": 7.930038053880002
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 53.4044184735,
-     "p99_ms": 61.5160298975
+     "p50_ms": 38.9334465605,
+     "p99_ms": 43.88180566075
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 7.24655953,
-     "p99_ms": 8.898208205249999
+     "p50_ms": 7.2822954965,
+     "p99_ms": 15.815725101250003
     },
     "T6_estimate": {
-     "jobs": 398,
-     "missed": 2,
+     "jobs": 397,
+     "missed": 3,
      "p50_ms": 0.824377899,
-     "p99_ms": 4.764703491309997
+     "p99_ms": 4.8871263475600015
     },
     "T7_control": {
      "jobs": 2000,
      "missed": 0,
      "p50_ms": 0.00197,
-     "p99_ms": 0.04234767660999999
+     "p99_ms": 0.0421338143
     },
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.182432773,
-     "p99_ms": 6.102536715229994
+     "p50_ms": 1.0269935785,
+     "p99_ms": 5.315426211579999
     }
    }
   },
@@ -288,76 +288,76 @@
    "mix": "memory_focus",
    "scenario": "S1_nominal",
    "sim_seconds": 2.0,
-   "wall_seconds": 11.910470791975968,
-   "setup_seconds": 0.008008041011635214,
-   "cpu_seconds": 11.579047,
-   "speed_x_realtime": 0.16791947479921543,
-   "speed_x_realtime_cpu": 0.17272578650039164,
+   "wall_seconds": 44.27770379197318,
+   "setup_seconds": 0.013423500000499189,
+   "cpu_seconds": 11.939756,
+   "speed_x_realtime": 0.045169460670238436,
+   "speed_x_realtime_cpu": 0.16750761070829254,
    "events_by_kind": {
-    "job_release": 2892,
+    "job_release": 2893,
     "op_ready": 812,
-    "setup_done": 4517,
-    "compute_end": 122722,
-    "data_ready": 80198,
-    "mem_done": 26,
+    "setup_done": 4093,
+    "compute_end": 113986,
+    "data_ready": 73770,
+    "mem_done": 19,
     "dram_arrive": 0,
-    "dram_decide": 53969381
+    "dram_decide": 30019134
    },
-   "events": 54180548,
-   "events_per_wall_s": 4548984.582246841,
+   "events": 30214707,
+   "events_per_wall_s": 682391.0097496391,
    "releases": 2894,
-   "skipped": 1,
-   "completed": 2891,
+   "skipped": 0,
+   "completed": 2892,
    "warnings": [],
-   "trace_hash": "99229883892318899ef835d6625da7e4",
+   "trace_hash": "742af9a568e5d4872ae5ce4ece52ce9a",
    "tasks": {
     "T10_record": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 0.6220540405,
-     "p99_ms": 2.484132810419999
+     "p50_ms": 0.606471751,
+     "p99_ms": 0.6933143207499997
     },
     "T1_ingest_overhead": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.721526181,
-     "p99_ms": 5.23483449291999
+     "p50_ms": 1.425086704,
+     "p99_ms": 2.272106035779998
     },
     "T1_ingest_wrist": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 1.8365046425,
-     "p99_ms": 3.771360548279995
+     "p50_ms": 1.5594711625,
+     "p99_ms": 2.6738752635199994
     },
     "T2_detect": {
      "jobs": 60,
      "missed": 0,
-     "p50_ms": 3.582073245,
-     "p99_ms": 8.434956142519997
+     "p50_ms": 3.1884791325,
+     "p99_ms": 5.478965914499999
     },
     "T3_esdf": {
      "jobs": 30,
      "missed": 0,
-     "p50_ms": 2.3714892809999997,
-     "p99_ms": 4.17411254403
+     "p50_ms": 1.8452038825,
+     "p99_ms": 3.893758102110001
     },
     "T4_vla": {
      "jobs": 16,
      "missed": 0,
-     "p50_ms": 83.96282002000001,
-     "p99_ms": 93.79484926725
+     "p50_ms": 59.912687491499995,
+     "p99_ms": 65.72728993075
     },
     "T5_plan": {
      "jobs": 6,
      "missed": 0,
-     "p50_ms": 18.026516745,
-     "p99_ms": 19.6318373274
+     "p50_ms": 17.896175278999998,
+     "p99_ms": 18.5808735274
     },
     "T6_estimate": {
-     "jobs": 399,
-     "missed": 1,
-     "p50_ms": 0.814188991,
-     "p99_ms": 1.579282653779998
+     "jobs": 400,
+     "missed": 0,
+     "p50_ms": 0.8112353605,
+     "p99_ms": 1.5676483139
     },
     "T7_control": {
      "jobs": 2000,
@@ -368,8 +368,8 @@
     "T8_safety": {
      "jobs": 200,
      "missed": 0,
-     "p50_ms": 1.6213476055,
-     "p99_ms": 5.618375295049997
+     "p50_ms": 1.344994269,
+     "p99_ms": 2.8689223557599997
     }
    }
   }

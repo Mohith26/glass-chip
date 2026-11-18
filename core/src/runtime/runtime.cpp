@@ -51,6 +51,7 @@ void Sim::build_plan(int t) {
       pl.ops[n + 1].preds.push_back(i);
     }
   pl.act_region = aoff;
+  fuse_plan(t);
   // Synthetic address map (buffer manager): weights persist across jobs,
   // activations alternate between two buffers by job parity.
   pl.w_base = (1ull << 44) + static_cast<uint64_t>(t) * (1ull << 38);
@@ -85,6 +86,91 @@ void Sim::build_plan(int t) {
       m |= 1ull << i;
     }
     pl.mw_mask = m ? m : 1ull;
+  }
+}
+
+// NPU compiler model (assumptions, see core/README.md):
+//  * fused attention: QK^T -> [elementwise] -> softmax -> [elementwise] -> AV
+//    runs as a flash-attention style tiled loop, so the score tensors never
+//    leave NPU SRAM when one Br x Bc tile with its Q, K, V blocks fits in half
+//    a tile's SRAM (params.fuse_attention, params.flash_block);
+//  * elementwise epilogues consume their conv/matmul producer's output on-chip
+//    (params.fuse_elementwise).
+// Fused edges skip the producer's DRAM write and the consumer's DRAM read;
+// fused ops are pinned to the NPU. Ops still execute (vector work is costed).
+void Sim::fuse_plan(int t) {
+  TaskPlan& pl = plans_[t];
+  const TaskDef& td = tasks_[t];
+  if (eng_[E_NPU].units.empty()) return;
+  const int n = static_cast<int>(pl.ops.size());
+  auto def = [&](int i) -> const OpDef* { return pl.ops[i].def >= 0 ? &td.ops[pl.ops[i].def] : nullptr; };
+  auto npu_ok = [&](int i) { const OpDef* d = def(i); return d && (d->eligible & (1u << E_NPU)); };
+  auto is_mm = [&](int i) { const OpDef* d = def(i); return d && (d->type == OT_MATMUL || d->type == OT_ATTENTION); };
+  auto is_ew = [&](int i) { const OpDef* d = def(i); return d && d->type == OT_ELEMENTWISE; };
+  std::vector<std::vector<int>> onchip(n);  // onchip[i] = preds of i whose output reaches i on-chip
+  auto mark = [&](int p, int c, int8_t kind) {
+    if (std::find(onchip[c].begin(), onchip[c].end(), p) == onchip[c].end()) onchip[c].push_back(p);
+    pl.ops[p].pin_npu = pl.ops[c].pin_npu = true;
+    pl.ops[p].fused = std::max(pl.ops[p].fused, kind);
+    pl.ops[c].fused = std::max(pl.ops[c].fused, kind);
+  };
+  if (fid_.p.fuse_attention) {
+    const double sram_half = soc_.npu.sram_tile_kb * 1024.0 / 2.0;
+    for (int s = 1; s < n - 1; ++s) {
+      const OpDef* sd = def(s);
+      if (!sd || sd->type != OT_SOFTMAX || !npu_ok(s)) continue;
+      std::vector<int> chain = {s};
+      int cur = s;  // walk back through single-consumer elementwise ops to QK
+      while (pl.ops[cur].preds.size() == 1 && is_ew(pl.ops[cur].preds[0]) && pl.ops[pl.ops[cur].preds[0]].succs.size() == 1) {
+        cur = pl.ops[cur].preds[0];
+        chain.insert(chain.begin(), cur);
+      }
+      if (pl.ops[cur].preds.size() != 1 || !is_mm(pl.ops[cur].preds[0]) || !npu_ok(pl.ops[cur].preds[0])) continue;
+      int qk = pl.ops[cur].preds[0];
+      chain.insert(chain.begin(), qk);
+      cur = s;  // walk forward to AV
+      while (pl.ops[cur].succs.size() == 1 && is_ew(pl.ops[cur].succs[0])) {
+        cur = pl.ops[cur].succs[0];
+        chain.push_back(cur);
+      }
+      if (pl.ops[cur].succs.size() != 1 || !is_mm(pl.ops[cur].succs[0]) || !npu_ok(pl.ops[cur].succs[0])) continue;
+      chain.push_back(pl.ops[cur].succs[0]);
+      bool ok = true;
+      for (int i : chain) ok = ok && npu_ok(i);
+      // Flash tile: Br x d Q block + two Bc x d K/V blocks + Br x Bc fp32 scores.
+      const OpDef* q = def(qk);
+      double d = q->has_gemm ? q->gK : 64;
+      double elem = (q->dtype == DT_INT8 || q->dtype == DT_FP8) ? 1 : 2;
+      double B = fid_.p.flash_block;
+      double tile = (B * d + 2 * B * d) * elem + B * B * 4;
+      if (!ok || tile > sram_half) continue;
+      for (size_t k = 0; k + 1 < chain.size(); ++k) mark(chain[k], chain[k + 1], 2);
+    }
+  }
+  if (fid_.p.fuse_elementwise) {
+    for (int e = 1; e < n - 1; ++e) {  // ops are in dependency order
+      if (!is_ew(e) || !npu_ok(e)) continue;
+      for (int p : pl.ops[e].preds) {
+        const OpDef* pd = def(p);
+        if (!pd || !npu_ok(p)) continue;
+        bool producer = pd->type == OT_CONV2D || pd->type == OT_DWCONV2D || pd->type == OT_MATMUL || pd->type == OT_ATTENTION ||
+                        (pd->type == OT_ELEMENTWISE && pl.ops[p].fused == 1);
+        if (producer) mark(p, e, 1);
+      }
+    }
+  }
+  for (int i = 0; i < n; ++i) {
+    const OpDef* d = def(i);
+    double b = 0;
+    for (int p : onchip[i]) b += def(p) ? def(p)->bytes_out : 0;
+    pl.ops[i].onchip_in = d ? std::min(b, d->bytes_in) : 0;
+  }
+  for (int i = 0; i < n; ++i) {
+    if (!def(i)) continue;
+    bool all = !pl.ops[i].succs.empty();
+    for (int s : pl.ops[i].succs) all = all && std::find(onchip[s].begin(), onchip[s].end(), i) != onchip[s].end();
+    pl.ops[i].out_onchip = all;
+    if (pl.ops[i].pin_npu) pl.ops[i].npu_only = true;
   }
 }
 
@@ -231,6 +317,7 @@ int Sim::map_op(const Job& j, int32_t op, uint64_t* mask) {
     return pl.mw_engine;
   }
   const OpDef& d = td.ops[po.def];
+  if (po.pin_npu && !eng_[E_NPU].units.empty()) return E_NPU;  // fused by the NPU compiler
   std::vector<int> cand;
   for (int e : d.elig_order)
     if (!eng_[e].units.empty()) cand.push_back(e);
@@ -619,6 +706,13 @@ void Sim::start_exec(int engine, const ReadyItem& it, const std::vector<int32_t>
       j.npu_restore = false;
     }
   }
+  // Power gating: the first work in a gated domain waits for the wake-up.
+  ps_t wake = domain_wake(e.domain);
+  if (wake > 0) {
+    e.cat[A_DVFS] += wake;
+    setup += wake;
+  }
+  e.run_since = now_;
   for (int32_t u : units) {
     units_[u].exec = x;
     if (units_[u].reserved_job == j.id) units_[u].reserved_job = -1;
@@ -673,7 +767,7 @@ void Sim::start_exec(int engine, const ReadyItem& it, const std::vector<int32_t>
     e.in_setup = true;
     e.setup_ps = setup;
     e.setup_cat = setup_cat;
-    e.cat[setup_cat] += setup - (stall_wait > 0 ? stall_wait : 0);
+    e.cat[setup_cat] += setup - (stall_wait > 0 ? stall_wait : 0) - wake;
     e.gen++;
     q_.push(now_ + setup, CMP_EXEC, EV_SETUP_DONE, x, e.uid, e.gen);
   } else {
@@ -712,6 +806,10 @@ void Sim::finish_job(Job& j) {
   c.deadline = j.deadline;
   c.response = j.finish - j.release;
   c.missed = j.finish > j.deadline;
+  c.cycles_by_domain = j.cycles;
+  c.busy_by_domain = j.busy;
+  c.corrupted = j.corrupted;
+  c.faults = j.faults;
   // Critical path: walk back from the final op through the predecessor that
   // determined each op's ready time. Every interval on the path is assigned
   // to exactly one category, so the attribution sums to the response time.

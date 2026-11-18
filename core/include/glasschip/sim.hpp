@@ -20,16 +20,19 @@ enum Comp : uint16_t { CMP_RUNTIME = 0, CMP_EXEC = 1, CMP_DRAM = 2 };
 enum EvKind : uint16_t {
   EV_JOB_RELEASE = 0,
   EV_OP_READY = 1,
+  EV_GATE = 2,
   EV_SETUP_DONE = 10,
   EV_COMPUTE_END = 11,
   EV_DATA_READY = 12,
   EV_MEM_DONE = 13,
   EV_DRAM_ARRIVE = 20,
   EV_DRAM_DECIDE = 21,
+  EV_DRAM_BACKEND_TICK = 22,
+  EV_NOC_BACKEND_TICK = 23,
 };
 
 // Trace event kinds (public names in trace dicts).
-enum TraceKind : uint8_t { TK_JOB_RELEASE, TK_JOB_START, TK_JOB_FINISH, TK_JOB_MISS, TK_OP, TK_XFER, TK_DRAM_Q, TK_FREQ, TK_PREEMPT, N_TK };
+enum TraceKind : uint8_t { TK_JOB_RELEASE, TK_JOB_START, TK_JOB_FINISH, TK_JOB_MISS, TK_OP, TK_XFER, TK_DRAM_Q, TK_FREQ, TK_PREEMPT, TK_FAULT, N_TK };
 // Trace block ids (public names in trace dicts).
 enum TraceBlock : uint8_t { TB_CPU_A, TB_CPU_B, TB_RT, TB_DSP, TB_NPU, TB_SIMT, TB_SYS_CACHE, TB_DRAM, TB_DMA, TB_NOC, TB_NOC_CACHE, TB_DRAM_IO, TB_RUNTIME, N_TB };
 const char* trace_kind_name(int k);
@@ -150,9 +153,10 @@ struct Exec {
   double util = 0;
   int exec_cat = A_COMPUTE;  // category for compute time (DMA engine ops -> dma, middleware -> middleware)
   bool partial = false;      // suspended mid-segment; seg_rem cycles remain
+  ps_t run_since = 0;        // when the exec last acquired its units (busy_by_domain)
   bool begun = false;        // setup finished at least once
   uint64_t unit_mask = ~0ull;
-  GC_IO(partial, begun, unit_mask, uid, live, job, op, engine, domain, level, units, k1, k2, qos, task, nsteps, depth, chunk, cycles_total, cyc_per_step, rd_w,
+  GC_IO(partial, run_since, begun, unit_mask, uid, live, job, op, engine, domain, level, units, k1, k2, qos, task, nsteps, depth, chunk, cycles_total, cyc_per_step, rd_w,
         rd_in, wr, next_issue, next_compute, slots, computing, seg_start, seg_last, seg_rem, seg_total, seg_dvfs, gen, in_setup,
         setup_ps, setup_cat, waiting, wait_start, l0mem, mem_time, mem_done, mem_noc_frac, in_tail, fluid_dram, fluid_noc,
         fluid_links, suspended, preempt_req, suspended_at, cat, act, act_credited, start_ps, est_end, util, exec_cat)
@@ -166,7 +170,13 @@ struct PlanOp {
   bool npu_only = false;
   double out_off = 0;  // offset of this op's output buffer inside the activation region
   double w_off = 0;    // offset of this op's weights inside the task weight region
-  GC_IO(def, preds, succs, npu_only, out_off, w_off)
+  // NPU compiler fusion (plan-time): bytes of this op's input that arrive on-chip from
+  // fused producers, whether its output stays on-chip, and whether it is pinned to the NPU.
+  double onchip_in = 0;
+  bool out_onchip = false;
+  bool pin_npu = false;
+  int8_t fused = 0;  // 0 none, 1 elementwise epilogue, 2 fused attention
+  GC_IO(def, preds, succs, npu_only, out_off, w_off, onchip_in, out_onchip, pin_npu, fused)
 };
 struct TaskPlan {
   std::vector<PlanOp> ops;
@@ -212,7 +222,11 @@ struct Job {
   bool npu_restore = false;  // pays NPU context restore on its next NPU op
   int parity = 0;
   std::vector<JobOp> ops;
-  GC_IO(id, task, tag, release, deadline, start, finish, remaining, released, npu_restore, parity, ops)
+  std::array<double, N_DOMAINS> cycles{};  // compute cycles executed per power domain (wall-clock cycles, not summed over units)
+  std::array<ps_t, N_DOMAINS> busy{};      // time this job held units in each domain (incl. memory stalls)
+  bool corrupted = false;                  // an injected NPU result fault hit one of its ops
+  int32_t faults = 0;                      // injected faults of any kind that touched this job
+  GC_IO(id, task, tag, release, deadline, start, finish, remaining, released, npu_restore, parity, ops, cycles, busy, corrupted, faults)
 };
 
 // Completed-job record returned by run_until().
@@ -228,6 +242,10 @@ struct Completion {
   bool missed = false;
   std::array<ps_t, N_CAT> attribution{};
   std::vector<CritEntry> critical_path;
+  std::array<double, N_DOMAINS> cycles_by_domain{};
+  std::array<ps_t, N_DOMAINS> busy_by_domain{};
+  bool corrupted = false;
+  int32_t faults = 0;
 };
 
 struct DomainState {
@@ -238,7 +256,29 @@ struct DomainState {
   int units = 0;
   uint64_t transitions = 0;
   ps_t stall_total = 0;
-  GC_IO(hz, nominal, stall_until, act, unit_busy, units, transitions, stall_total)
+  // power gating (set_power_gating)
+  bool gate_enabled = false;
+  ps_t wake_ps = 0;
+  bool gated = false;
+  ps_t gated_since = 0;
+  ps_t gated_acc = 0;       // gated time since the counters window started
+  uint64_t wakeups = 0;     // gate exits since the counters window started
+  ps_t waking_until = 0;    // a wake-up in progress ends here
+  int busy_units = 0;
+  ps_t idle_gate_ps = 0;    // idle time required before gating (hysteresis)
+  int64_t gate_token = 0;   // invalidates pending gate timers
+  GC_IO(hz, nominal, stall_until, act, unit_busy, units, transitions, stall_total, gate_enabled, wake_ps, gated, gated_since, gated_acc,
+        wakeups, waking_until, busy_units, idle_gate_ps, gate_token)
+};
+
+// Fault injection (spec stretch S3). kind 0 npu_bitflip, 1 noc_delay, 2 noc_drop.
+enum FaultKind : int { F_NPU_BITFLIP, F_NOC_DELAY, F_NOC_DROP, N_FAULT };
+struct FaultCfg {
+  double rate = 0;     // probability per NPU op (bitflip) or per NoC data message (delay/drop)
+  ps_t param = 0;      // extra delay (noc_delay) or retransmission timeout (noc_drop)
+  Rng rng;
+  uint64_t count = 0;
+  GC_IO(rate, param, rng, count)
 };
 
 struct MiddlewareCfg {
@@ -248,6 +288,23 @@ struct MiddlewareCfg {
   double ser_ns_kb = 0, deser_ns_kb = 0, fixed_ns = 0, copies = 0, copy_ns_kb = 0;
   double dispatch_ns = 0;
   GC_IO(transport, executor, ser_ns_kb, deser_ns_kb, fixed_ns, copies, copy_ns_kb, dispatch_ns)
+};
+
+// Optional CSV request traces (DRAM requests, NoC packets) for replay in
+// Ramulator 2 / BookSim 2. Rows are buffered in a min-heap and written in
+// time order once they are older than the flush horizon.
+struct CsvRow {
+  ps_t t = 0;
+  uint64_t seq = 0;
+  uint64_t a = 0;
+  int64_t b = 0, c = 0, d = 0, e = 0;
+  ps_t lat = 0;
+};
+struct CsvTrace {
+  std::FILE* f = nullptr;
+  std::vector<CsvRow> heap;
+  ps_t flushed = -PS_NEVER;
+  uint64_t seq = 0, rows = 0, late = 0;
 };
 
 // Cost of one op on one engine at one fidelity level (engines.cpp).
@@ -291,6 +348,20 @@ class Sim {
   void set_params(const Json& params);
   // Per-op tables: {"npu_cycles": {"task/op": cycles}, "cpu_cpi": {"op_id or type": cpi}}.
   void set_l2_tables(const Json& tables);
+  // Loads calib/tables-style files from `dir`: npu_scalesim_<task>.json (per-op
+  // vx1_cycles for the SoC's dataflow) and cpu_gem5.json (per-kernel CPI, O3 for
+  // application cores, Minor for the RT core). Returns the number of entries loaded.
+  int load_l2_tables(const std::string& dir);
+  // Attach a DRAM L2 backend plugin (e.g. build/libgc_ramulator.dylib). Returns ""
+  // on success or an error message (the model then stays at L1).
+  std::string attach_dram_backend(const std::string& plugin_path, const std::string& config_path);
+  bool dram_backend_attached() const { return dram_backend_ != nullptr; }
+  // Attach a NoC L2 backend plugin (build/libgc_booksim.dylib). `extra` is appended
+  // to the generated BookSim config ("key = value;" text). Returns "" on success.
+  std::string attach_noc_backend(const std::string& plugin_path, const std::string& extra);
+  bool noc_backend_attached() const { return noc_backend_ != nullptr; }
+  // gem5 kernel whose CPI an op uses at CPU L2 ("" if none applies).
+  std::string cpu_kernel_for(const TaskDef& td, const OpDef& d) const;
 
   // ---- running
   // Schedules a job of `task_id` released at t_ps. Returns the job id, or -1
@@ -302,9 +373,19 @@ class Sim {
 
   // ---- DVFS / observation
   void set_domain_freq(const std::string& domain, double hz);
+  // Power gating: when enabled the domain gates whenever none of its units
+  // has work; the next work waits wake_latency_ps (attributed to dvfs).
+  void set_power_gating(const std::string& domain, bool enabled, ps_t wake_latency_ps, ps_t idle_before_gate_ps = 0);
+  // Deterministic fault injection: kind "npu_bitflip" (rate = probability that an
+  // NPU op's result is corrupted; the job's completion is flagged corrupted),
+  // "noc_delay" (rate per NoC data message; adds param_ps), "noc_drop" (rate per
+  // NoC data message; the message is resent after a param_ps timeout). rate 0 disables.
+  void set_fault(const std::string& kind, double rate, uint64_t seed, ps_t param_ps);
+  uint64_t fault_count(int kind) const { return faults_[kind].count; }
   double domain_freq(const std::string& domain) const;
   struct CounterSet {
-    ps_t busy = 0, idle = 0, unit_busy = 0;
+    ps_t busy = 0, idle = 0, unit_busy = 0, gated = 0;
+    uint64_t wakeups = 0;
     int units = 0;
     std::array<double, N_ACT> act{};
   };
@@ -334,6 +415,15 @@ class Sim {
   uint64_t trace_count() const { return hash_.count; }
   bool trace_open(const std::string& path);  // .gct writer
   void trace_close();
+  // CSV request traces for external-simulator replay:
+  //   DRAM: time_ns,addr,rw,bytes,latency_ns  (one row per request at the controller)
+  //   NoC:  time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns  (one row per packet)
+  bool dram_trace_open(const std::string& path);
+  void dram_trace_close();
+  bool noc_trace_open(const std::string& path);
+  void noc_trace_close();
+  uint64_t dram_trace_rows() const { return dram_csv_.rows; }
+  uint64_t noc_trace_rows() const { return noc_csv_.rows; }
   // String tables for decoding trace records.
   std::vector<std::string> task_names() const;
   std::vector<std::string> op_names(int task) const;  // plan order incl. __rx/__tx
@@ -363,6 +453,7 @@ class Sim {
   // runtime
   Job* job_ptr(int64_t id);
   void build_plan(int t);
+  void fuse_plan(int t);
   void rebuild_plans();
   int map_op(const Job& j, int32_t op, uint64_t* mask);
   void op_deps_done(Job& j, int32_t op);
@@ -406,10 +497,21 @@ class Sim {
   XY dram_node(int ch) const;
   // units / domains
   void unit_busy(int32_t u, bool busy);
+  // Wake a gated domain for work starting now; returns how long the work must wait.
+  ps_t domain_wake(int d);
+  void domain_went_idle(int d);  // starts the gate timer (or gates now)
+  void credit_job_cycles(const Exec& e, double cycles);
+  void credit_job_busy(Exec& e);
   double unit_hz(int32_t u) const { return dom_[units_[u].domain].hz; }
   // trace
   void emit(const TraceRec& r);
   void emit_xfer(ps_t t, ps_t arrival, XY a, XY b, int bytes, int64_t job, int task, int op);
+  // Every NoC message goes through here: latency model (L1 reservation, or
+  // zero-load for unmodeled headers), counters, trace, CSV export, faults.
+  ps_t noc_xfer(XY a, XY b, int bytes, int qos, ps_t t, bool header, int64_t job, int task, int op);
+  void csv_push(CsvTrace& c, const CsvRow& r);
+  void csv_flush(CsvTrace& c, ps_t upto, bool dram);
+  void dram_csv_row(ps_t arrive, uint64_t addr, bool write, int bytes, ps_t lat);
 
   // ---- state (everything below is checkpointed)
   SocCfg soc_;
@@ -446,6 +548,8 @@ class Sim {
   uint64_t ready_seq_ = 0;
   std::map<std::string, double> npu_l2_;  // "task/op" or "op" -> cycles
   std::map<std::string, double> cpu_cpi_; // op_id or type name -> CPI
+  std::map<std::string, std::array<double, 2>> cpu_kernel_cpi_;  // gem5 kernel -> {O3 cpi, Minor cpi}
+  std::vector<std::string> l2_sources_;
   uint64_t l2_fallbacks_npu_ = 0, l2_fallbacks_cpu_ = 0, l2_hits_npu_ = 0, l2_hits_cpu_ = 0;
   uint64_t events_ = 0;
   std::array<uint64_t, 32> ev_kind_{};  // events processed per EvKind (diagnostics)
@@ -458,6 +562,40 @@ class Sim {
   std::FILE* gct_ = nullptr;
   std::string gct_path_;
   std::vector<uint64_t> wb_scratch_;
+  CsvTrace dram_csv_, noc_csv_;
+  std::array<FaultCfg, N_FAULT> faults_{};
+  // L2 backends (not checkpointable: checkpoint() refuses while attached)
+  void* dram_dl_ = nullptr;
+  DramBackend* dram_backend_ = nullptr;
+  std::string dram_attach_error_ = "no plugin path given";
+  std::string noc_l2_note_ = "no in-process NocBackend is available";
+  bool dram_tick_pending_ = false;
+  ps_t dram_tick_at_ = 0;
+  std::vector<std::pair<MemTxn, ps_t>> backend_done_;
+  void on_dram_backend_tick();
+  void* noc_dl_ = nullptr;
+  NocBackend* noc_backend_ = nullptr;
+  bool noc_tick_pending_ = false;
+  ps_t noc_tick_at_ = 0;
+  std::vector<MemTxn> noc_wait_;          // read returns waiting for the NoC backend
+  std::vector<int32_t> noc_wait_free_;
+  std::vector<std::pair<uint64_t, ps_t>> noc_done_;
+  void on_noc_backend_tick();
+  void schedule_noc_tick(ps_t t);
+  // Delivers read data from `a` to the requester (L1/L0: synchronous NoC model;
+  // L2: waits for BookSim's arrival time).
+  void noc_deliver(MemTxn txn, XY a, int bytes, ps_t t);
+  ps_t quantum_ps() const { return std::max<ps_t>(1000, ns_to_ps(fid_.quantum_ns)); }
+  void note_fault(int kind, int64_t job, int task, int op, ps_t t, double value);
 };
+
+// Folds the simulator's synthetic address space (per-task regions at 2^36+
+// strides) into a 16 GiB physical space by hashing 1 GiB pages. DRAM mapping
+// and exported DRAM traces use physical addresses.
+inline uint64_t phys_addr(uint64_t a) {
+  uint64_t page = a >> 30;
+  uint64_t slot = ((page * 0x9E3779B97F4A7C15ull) >> 60) & 15ull;
+  return (slot << 30) | (a & ((1ull << 30) - 1));
+}
 
 }  // namespace gc

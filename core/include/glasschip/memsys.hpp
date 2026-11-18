@@ -42,8 +42,13 @@ struct MemTxn {
 class NocBackend {
  public:
   virtual ~NocBackend() = default;
-  // Returns the tail arrival time of `bytes` sent from a to b at time t.
-  virtual ps_t send(XY a, XY b, int bytes, int qos, ps_t t) = 0;
+  // Inject a message of `bytes` from a to b created at time t. The backend
+  // splits it into packets; when the last packet arrives it reports (tag, time)
+  // from tick(). tag 0 = no completion report wanted (contention only).
+  virtual void inject(uint64_t tag, XY a, XY b, int bytes, ps_t t) = 0;
+  // Advance to time t; append completed (tag, arrival time) pairs to `done`.
+  virtual void tick(ps_t t, std::vector<std::pair<uint64_t, ps_t>>& done) = 0;
+  virtual bool busy() const = 0;
   virtual const char* name() const = 0;
 };
 class DramBackend {
@@ -54,11 +59,17 @@ class DramBackend {
   // Advance to time t and append (txn, completion time) pairs to `done`.
   virtual void tick(ps_t t, std::vector<std::pair<MemTxn, ps_t>>& done) = 0;
   virtual const char* name() const = 0;
+  // True while requests are queued or in flight inside the backend.
+  virtual bool busy() const = 0;
 };
+// Plugin entry points (extern "C" in the plugin dylib).
+using DramBackendFactory = DramBackend* (*)(const char* config_path, char* err, int errlen);
+using NocBackendFactory = NocBackend* (*)(const char* config_json, char* err, int errlen);
 
 // ----------------------------------------------------------------------------
 // NoC: 2D mesh with XY routing. Links are directional; each node also has an
-// ejection port that models contention at the destination.
+// injection port and an ejection port (one link width each, as in BookSim),
+// which model contention at the source and destination network interfaces.
 struct NocLink {
   std::array<ps_t, N_QOS> free_at{};  // per-QoS-class reservation timelines
   ps_t busy_ps = 0;                   // total serialization time reserved
@@ -97,6 +108,8 @@ class Noc {
   const NocLink& link(int i) const { return links_[i]; }
   // Human-readable "x,y->x,y" for link i.
   std::string link_name(int i) const;
+  // True for router-to-router links (false for injection/ejection ports).
+  bool is_mesh_link(int i) const { return i % 6 < 4; }
   double bytes_per_ps() const { return link_bytes_ * freq_ / 1e12; }
   ps_t total_busy_ps() const;
 
@@ -104,7 +117,7 @@ class Noc {
         window_ps_, links_)
 
  private:
-  int idx(int x, int y, int dir) const { return (y * dimx_ + x) * 5 + dir; }  // dir: 0 +x, 1 -x, 2 +y, 3 -y, 4 eject
+  int idx(int x, int y, int dir) const { return (y * dimx_ + x) * 6 + dir; }  // dir: 0 +x, 1 -x, 2 +y, 3 -y, 4 eject, 5 inject
   void path(XY a, XY b, int* out, int* n) const;
   void touch_window(NocLink& l, ps_t t, int bytes);
   double link_util(const NocLink& l, ps_t t) const;

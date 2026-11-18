@@ -227,7 +227,11 @@ void apply_params(ModelParams& p, const Json& params, std::vector<std::string>* 
     NUM("exec_cv", exec_cv)
     NUM("middleware_on_rt", middleware_on_rt)
     NUM("rt_copy_bytes_per_ns", rt_copy_bytes_per_ns)
+    NUM("fuse_attention", fuse_attention)
+    NUM("fuse_elementwise", fuse_elementwise)
+    NUM("flash_block", flash_block)
 #undef NUM
+    if (k == "dram_backend_plugin" || k == "ramulator_config" || k == "noc_backend_plugin" || k == "booksim_config") continue;
     if (k == "mapping") {
       std::string s = v.is_str() ? v.s : "static";
       p.mapping = (s == "eft" || s == "greedy_eft" || s == "earliest_finish_time") ? MAP_EFT : MAP_STATIC;
@@ -267,10 +271,18 @@ FidelityCfg parse_fidelity(const Json& f) {
   clamp(c.simt, 1, "simt", "no cycle-approximate SIMT model");
   clamp(c.dsp, 1, "dsp", "no cycle-approximate DSP model");
   clamp(c.cache, 1, "cache", "no cycle-approximate cache model");
-  clamp(c.noc, 1, "noc", "NocBackend for BookSim 2 not attached");
-  clamp(c.dram, 1, "dram", "DramBackend for Ramulator 2 not attached");
+  clamp(c.noc, 2, "noc", "no L3 NoC model");
+  clamp(c.dram, 2, "dram", "no L3 DRAM model");
   clamp(c.cpu, 2, "cpu", "L3 is offline gem5 only");
   clamp(c.npu, 2, "npu", "L3 not defined");
+  auto strings = [&](const Json* p) {
+    if (!p || !p->is_obj()) return;
+    c.dram_plugin = p->str("dram_backend_plugin", c.dram_plugin);
+    c.ramulator_config = p->str("ramulator_config", c.ramulator_config);
+    c.noc_plugin = p->str("noc_backend_plugin", c.noc_plugin);
+    c.booksim_config = p->str("booksim_config", c.booksim_config);
+  };
+  strings(f.get("params"));
   if (const Json* p = f.get("params")) apply_params(c.p, *p, &c.warnings);
   if (const Json* r = f.get("runtime")) apply_params(c.p, *r, &c.warnings);
   return c;

@@ -84,13 +84,67 @@ static py::dict completion_dict(const Completion& c) {
     cp.append(x);
   }
   d["critical_path"] = cp;
+  py::dict cyc, busy;
+  for (int k = 0; k < N_DOMAINS; ++k) {
+    if (c.cycles_by_domain[k] > 0) cyc[domain_name(k)] = c.cycles_by_domain[k];
+    if (c.busy_by_domain[k] > 0) busy[domain_name(k)] = c.busy_by_domain[k];
+  }
+  d["cycles_by_domain"] = cyc;
+  d["busy_ps_by_domain"] = busy;
+  d["corrupted"] = c.corrupted;
+  d["faults"] = c.faults;
   return d;
 }
 
 // Python wrapper that keeps name tables needed to decode trace records.
+// Fills default L2 backend plugin/config paths (relative to this module) when the
+// fidelity mix asks for dram: L2 or noc: L2 and does not name them.
+static Json with_backend_defaults(py::dict fidelity) {
+  Json f = to_json(fidelity);
+  auto wants = [&](const char* k) {
+    const Json* v = f.get(k);
+    return v && ((v->is_str() && (v->s == "L2" || v->s == "l2")) || (v->t == Json::Num && v->n >= 2));
+  };
+  if (!wants("dram") && !wants("noc")) return f;
+  std::string root;
+  try {
+    py::object os = py::module_::import("os");
+    std::string here = py::module_::import("glasschip_core").attr("__file__").cast<std::string>();
+    root = os.attr("path").attr("dirname")(here).cast<std::string>();
+  } catch (...) {
+    return f;
+  }
+  Json params = f.get("params") ? *f.get("params") : Json::object();
+  if (wants("dram")) {
+    if (!params.get("dram_backend_plugin")) params.set("dram_backend_plugin", Json::string(root + "/libgc_ramulator.dylib"));
+    if (!params.get("ramulator_config"))
+      params.set("ramulator_config", Json::string(root + "/../../calib/ramulator/configs/lpddr5x_8533_derived.yaml"));
+  }
+  if (wants("noc") && !params.get("noc_backend_plugin")) params.set("noc_backend_plugin", Json::string(root + "/libgc_booksim.dylib"));
+  f.set("params", params);
+  return f;
+}
+
 struct PySim {
   std::unique_ptr<Sim> s;
-  PySim(py::dict soc, py::dict fidelity, uint64_t seed) : s(std::make_unique<Sim>(to_json(soc), to_json(fidelity), seed)) {}
+  PySim(py::dict soc, py::dict fidelity, uint64_t seed, py::object l2_table_dir)
+      : s(std::make_unique<Sim>(to_json(soc), with_backend_defaults(fidelity), seed)) {
+    // L2 tables: explicit directory, or <repo>/calib/tables next to core/build when
+    // the fidelity mix asks for NPU or CPU L2.
+    std::string dir;
+    if (!l2_table_dir.is_none()) {
+      dir = py::str(l2_table_dir).cast<std::string>();
+    } else if (s->fidelity().npu >= 2 || s->fidelity().cpu >= 2) {
+      try {
+        py::object os = py::module_::import("os");
+        std::string here = py::module_::import("glasschip_core").attr("__file__").cast<std::string>();
+        dir = os.attr("path").attr("normpath")(os.attr("path").attr("join")(os.attr("path").attr("dirname")(here), "..", "..", "calib", "tables"))
+                  .cast<std::string>();
+      } catch (...) {
+      }
+    }
+    if (!dir.empty()) s->load_l2_tables(dir);
+  }
 
   py::list run_until(int64_t t) {
     std::vector<Completion> v;
@@ -191,8 +245,12 @@ PYBIND11_MODULE(glasschip_core, m) {
   m.attr("ATTRIBUTION_KEYS") = py::make_tuple("compute", "runqueue", "engine_queue", "noc", "dram", "cache", "dma", "preemption", "dvfs",
                                               "middleware");
   py::class_<PySim>(m, "Sim")
-      .def(py::init<py::dict, py::dict, uint64_t>(), py::arg("soc"), py::arg("fidelity"), py::arg("seed") = 0,
-           "Create a simulator from SoC and fidelity dicts (parsed YAML) and a master seed.")
+      .def(py::init<py::dict, py::dict, uint64_t, py::object>(), py::arg("soc"), py::arg("fidelity"), py::arg("seed") = 0,
+           py::arg("l2_table_dir") = py::none(),
+           "Create a simulator from SoC and fidelity dicts (parsed YAML) and a master seed. L2 tables load from l2_table_dir, "
+           "or automatically from calib/tables when npu or cpu is L2.")
+      .def("load_l2_tables", [](PySim& p, const std::string& d) { return p.s->load_l2_tables(d); }, py::arg("dir"),
+           "Load npu_scalesim_<task>.json and cpu_gem5.json tables from a directory; returns entries loaded.")
       .def("add_task", [](PySim& p, py::dict g) { p.s->add_task(to_json(g)); }, py::arg("graph"), "Add a task graph (dict).")
       .def(
           "set_middleware",
@@ -251,6 +309,20 @@ PYBIND11_MODULE(glasschip_core, m) {
            py::arg("freq_hz"), "Change a power domain's clock; the domain stalls for the DVFS transition latency.")
       .def("domain_freq", [](PySim& p, const std::string& d) { return p.s->domain_freq(d); }, py::arg("domain"))
       .def(
+          "set_fault",
+          [](PySim& p, const std::string& kind, double rate, uint64_t seed, py::object param_ns) {
+            int64_t ps = param_ns.is_none() ? -1 : static_cast<int64_t>(param_ns.cast<double>() * 1000.0);
+            p.s->set_fault(kind, rate, seed, ps);
+          },
+          py::arg("kind"), py::arg("rate"), py::arg("seed") = 0, py::arg("param_ns") = py::none(),
+          "Fault injection: 'npu_bitflip' (probability per NPU op; job flagged corrupted), 'noc_delay' (probability per NoC data "
+          "message, adds param_ns, default 50), 'noc_drop' (probability per data message, resent after param_ns timeout, default 200).")
+      .def("set_power_gating",
+           [](PySim& p, const std::string& d, bool en, int64_t wake, int64_t idle) { p.s->set_power_gating(d, en, wake, idle); },
+           py::arg("domain"), py::arg("enabled"), py::arg("wake_latency_ps") = 0, py::arg("idle_before_gate_ps") = 0,
+           "Gate the domain once it has had no work for idle_before_gate_ps (0 = immediately); the next work after gating waits "
+           "wake_latency_ps (attributed to dvfs).")
+      .def(
           "counters",
           [](PySim& p, bool reset) {
             auto cs = p.s->counters(reset);
@@ -260,6 +332,8 @@ PYBIND11_MODULE(glasschip_core, m) {
               c["busy_ps"] = cs[d].busy;
               c["idle_ps"] = cs[d].idle;
               c["unit_busy_ps"] = cs[d].unit_busy;
+              c["gated_ps"] = cs[d].gated;
+              c["wakeups"] = cs[d].wakeups;
               c["units"] = cs[d].units;
               for (int k = 0; k < N_ACT; ++k) c[act_name(k)] = cs[d].act[k];
               out[domain_name(d)] = c;
@@ -318,6 +392,18 @@ PYBIND11_MODULE(glasschip_core, m) {
       .def("trace_open", [](PySim& p, const std::string& path) { return p.s->trace_open(path); }, py::arg("path"),
            "Stream every trace record to a compact binary .gct file.")
       .def("trace_close", [](PySim& p) { p.s->trace_close(); })
+      .def("dram_trace_open", [](PySim& p, const std::string& path) { return p.s->dram_trace_open(path); }, py::arg("path"),
+           "Start a DRAM request CSV: time_ns,addr,rw,bytes,latency_ns (arrival at the controller; latency = arrival to data "
+           "transfer end at the controller, NoC excluded; physical addresses in a 16 GiB space).")
+      .def("dram_trace_close", [](PySim& p) { p.s->dram_trace_close(); })
+      .def("export_dram_trace", [](PySim& p, const std::string& path) { return p.s->dram_trace_open(path); }, py::arg("path"),
+           "Alias of dram_trace_open().")
+      .def("noc_trace_open", [](PySim& p, const std::string& path) { return p.s->noc_trace_open(path); }, py::arg("path"),
+           "Start a NoC packet CSV: time_ns,src_x,src_y,dst_x,dst_y,bytes,latency_ns (one row per max_packet_bytes packet; "
+           "latency = injection to that packet's tail arrival).")
+      .def("noc_trace_close", [](PySim& p) { p.s->noc_trace_close(); })
+      .def("export_noc_trace", [](PySim& p, const std::string& path) { return p.s->noc_trace_open(path); }, py::arg("path"),
+           "Alias of noc_trace_open().")
       .def("checkpoint",
            [](PySim& p) {
              auto b = p.s->checkpoint();
