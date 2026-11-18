@@ -101,10 +101,11 @@ Details are in [calib/VALIDATION.md](calib/VALIDATION.md) and the report.
 
 ## How to run
 
-Requirements: macOS or Linux, clang++ with C++20, Python 3.12 and Node 20 or newer. Everything below runs from the repo root.
+Requirements: macOS (the core Makefile links the Python module the macOS way; Linux needs a small linker-flag change), clang++ with C++20, Python 3.12 and Node 20 or newer. Everything below runs from the repo root.
 
 ```
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+tools/fetch_third_party.sh   # MuJoCo Menagerie Panda meshes for the co-sim (gitignored)
 
 make core                  # builds core/build/glasschip_core*.so and the L2 plugins
 make test                  # C++ unit tests (analytic expectations) plus core pytest

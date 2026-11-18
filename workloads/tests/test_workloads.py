@@ -109,7 +109,10 @@ def test_control_counts_are_compiled_counts() -> None:
 
 
 def test_classify_rv64() -> None:
-    import count_rv64 as cr
+    try:
+        import count_rv64 as cr
+    except SystemExit:  # module needs a clang with the RISC-V backend at import time
+        pytest.skip("no clang with the RISC-V backend on this machine")
     assert cr.classify("fld") == "mem" and cr.classify("vle32.v") == "mem"
     assert cr.classify("vfmacc.vv") == "vector" and cr.classify("fmadd.d") == "scalar"
     assert cr.classify("sll") == "scalar"
