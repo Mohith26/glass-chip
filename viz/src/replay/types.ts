@@ -110,6 +110,22 @@ export interface EventBlock {
   bytes: Float32Array;
   value: Float32Array;
   aux: Uint32Array;
+  /** Indices of op records (sorted by start time). Filled by the worker. */
+  ops?: Int32Array;
+  /** Indices of xfer records. */
+  xfers?: Int32Array;
+  /** NoC flow aggregates per (bucket, src, dst, task): used for particles at fast playback. */
+  agg?: FlowAgg;
+}
+
+export interface FlowAgg {
+  bucketPs: number;
+  n: number;
+  t: Float64Array;
+  src: Uint16Array;
+  dst: Uint16Array;
+  task: Uint16Array;
+  bytes: Float32Array;
 }
 
 export interface JobTable {

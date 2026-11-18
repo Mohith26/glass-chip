@@ -6,6 +6,7 @@ export const TASK_COLORS: Record<string, string> = {
   T1_ingest_wrist: '#5EC8F2',
   T1_ingest_overhead: '#3B8EEA',
   T2_detect: '#7D8BFF',
+  T2_detect_overhead: '#9AA6FF',
   T3_esdf: '#2ED3B0',
   T4_vla: '#B47CFF',
   T5_plan: '#FF8BB4',
@@ -13,6 +14,7 @@ export const TASK_COLORS: Record<string, string> = {
   T7_control: '#FF9F45',
   T8_safety: '#A8E35C',
   T10_record: '#A9BCD0',
+  T10_record_4k: '#C7D3E2',
   T11_speech: '#6FE3E3',
   T12_arm2_control: '#FFB48C',
   T13_map_save: '#CDAEFF',
@@ -39,4 +41,14 @@ export function voltageTint(v: number, vmin: number, vnom: number, throttled: bo
   const b = t < 0.5 ? mid : warm;
   const k = t < 0.5 ? t * 2 : (t - 0.5) * 2;
   return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+}
+
+/** Pipeline order used for rings and timeline rows. */
+export const TASK_ORDER = ['T1_ingest_wrist', 'T1_ingest_overhead', 'T2_detect', 'T2_detect_overhead', 'T3_esdf', 'T4_vla',
+  'T5_plan', 'T6_estimate', 'T7_control', 'T8_safety', 'T10_record', 'T10_record_4k', 'T11_speech', 'T12_arm2_control',
+  'T13_map_save', 'T14_ota', 'T15_diag'];
+
+export function taskRank(id: string): number {
+  const i = TASK_ORDER.indexOf(id);
+  return i < 0 ? 100 : i;
 }

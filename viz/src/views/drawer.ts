@@ -2,11 +2,26 @@
 import { fmtNum } from '../clock';
 import { MISS_RED, taskColor } from '../palette';
 import type { ReplayStore } from '../replay/store';
-import { SHORT, fmtMs } from './rings';
+import { SHORT } from './rings';
 
 const DOMAIN_LABEL: Record<string, string> = {
   cpu_a: 'CPU A', cpu_b: 'CPU B', rt: 'RT', npu: 'NPU', simt: 'SIMT', dsp: 'DSP', noc_cache: 'NoC + cache', dram_io: 'DRAM I/O',
 };
+
+interface S14Point { latency_ms: number; grasp_success_rate: number; grasp_success_ci95: [number, number]; runs: number }
+interface S14 {
+  sweep: Record<string, { points: S14Point[] }>;
+  baseline: Record<string, { grasp_success_rate: number; grasp_success_ci95: [number, number] }>;
+  summary: { grasp_tolerance_ms: Record<string, number> };
+  assumptions?: { policy?: string };
+  provenance?: { script?: string; seeds?: number[]; duration_s?: number; chip_models?: string[] };
+}
+
+let s14Cache: Promise<S14 | null> | null = null;
+function loadS14(): Promise<S14 | null> {
+  if (!s14Cache) s14Cache = fetch('results/s14.json').then((r) => (r.ok ? (r.json() as Promise<S14>) : null)).catch(() => null);
+  return s14Cache;
+}
 
 export class Drawer {
   private store: ReplayStore | null = null;
@@ -14,6 +29,8 @@ export class Drawer {
   private sparkCanvas: HTMLCanvasElement | null = null;
   private tolCanvas: HTMLCanvasElement | null = null;
   private totalPower: Float32Array | null = null;
+  private s14: S14 | null = null;
+  private tolSpeed = '0.2';
   onJumpMiss: ((dir: 1 | -1) => void) | null = null;
 
   constructor(private host: HTMLElement, private dseHost: HTMLElement) {}
@@ -21,7 +38,10 @@ export class Drawer {
   setStore(store: ReplayStore): void {
     this.store = store;
     const m = store.manifest;
-    const r = m.results;
+    // whole-run power numbers: the power manager's own summary when the replay carries it
+    const psum = (m as unknown as { power_summary?: { avg_power_w?: number; peak_power_w?: number; energy_per_robot_hour_wh?: number; peak_temp_c?: number } }).power_summary;
+    const r = { ...m.results, ...(psum ? { avg_power_w: psum.avg_power_w, peak_power_w: psum.peak_power_w,
+      energy_per_robot_hour_wh: psum.energy_per_robot_hour_wh, peak_temp_c: psum.peak_temp_c } : {}) };
     const doms = Object.keys(m.soc.power_domains);
     // total power series for the sparkline
     const ps = doms.map((d) => store.series.get(`power.${d}`)).filter((x): x is Float32Array => !!x);
@@ -48,7 +68,6 @@ export class Drawer {
       </div>`;
     }).join('');
 
-    const tol = m.latency_tolerance;
     this.host.innerHTML = `
       <section class="card">
         <header><h3>Deadlines</h3><span class="hint">p99 response vs deadline, misses / jobs, whole run</span></header>
@@ -75,17 +94,47 @@ export class Drawer {
         </div>
         <div class="foot">Run average ${r.avg_power_w != null ? fmtNum(r.avg_power_w, 2) + ' W' : '–'}, peak ${r.peak_power_w != null ? fmtNum(r.peak_power_w, 2) + ' W' : '–'}, peak temperature ${r.peak_temp_c != null ? fmtNum(r.peak_temp_c, 1) + ' °C' : '–'}.</div>
       </section>
-      <section class="card">
-        <header><h3>Latency tolerance</h3><span class="hint">grasp success vs end-to-end latency</span></header>
-        ${tol ? `<canvas class="tol" height="120"></canvas><div class="foot">${tol.synthetic ? '<b class="warn">Synthetic placeholder curve.</b> ' : ''}${tol.note ?? ''} Marker: latest VLA response.</div>` : '<div class="empty">No latency-tolerance data in this replay.</div>'}
+      <section class="card" id="tol-card">
+        <header><h3>Latency tolerance</h3><span class="hint">grasp success vs injected camera-to-grasp latency</span></header>
+        <div class="chips tol-speeds" data-speeds></div>
+        <canvas class="tol" height="150"></canvas>
+        <div class="foot" data-tolfoot>Loading results/s14.json…</div>
       </section>`;
     this.live.clear();
     this.host.querySelectorAll<HTMLElement>('[data-live]').forEach((el) => this.live.set(el.dataset.live!, el));
     this.sparkCanvas = this.host.querySelector('canvas.spark');
+    const spd = Number((m as unknown as { conveyor_speed_mps?: number }).conveyor_speed_mps ?? NaN);
+    if (Number.isFinite(spd)) this.tolSpeed = String(spd);
+    void loadS14().then((d) => { this.s14 = d; this.renderTolMeta(); });
     this.tolCanvas = this.host.querySelector('canvas.tol');
     this.host.querySelector('[data-act="next-miss"]')?.addEventListener('click', () => this.onJumpMiss?.(1));
     this.host.querySelector('[data-act="prev-miss"]')?.addEventListener('click', () => this.onJumpMiss?.(-1));
     void this.dseHost;
+  }
+
+  private renderTolMeta(): void {
+    const foot = this.host.querySelector('[data-tolfoot]') as HTMLElement | null;
+    const chips = this.host.querySelector('[data-speeds]') as HTMLElement | null;
+    const d = this.s14;
+    if (!foot || !chips) return;
+    if (!d) { foot.textContent = 'results/s14.json is not available, so no tolerance band is shown.'; chips.innerHTML = ''; return; }
+    const speeds = Object.keys(d.sweep).sort();
+    if (!speeds.includes(this.tolSpeed)) this.tolSpeed = speeds.includes('0.2') ? '0.2' : speeds[0];
+    chips.innerHTML = speeds.map((sp) => `<button class="chip ${sp === this.tolSpeed ? 'on' : ''}" data-sp="${sp}">${sp} m/s</button>`).join('');
+    chips.querySelectorAll<HTMLButtonElement>('[data-sp]').forEach((b) => b.addEventListener('click', () => {
+      this.tolSpeed = b.dataset.sp!;
+      this.renderTolMeta();
+    }));
+    const tol = d.summary.grasp_tolerance_ms[this.tolSpeed];
+    const lat = d.sweep[this.tolSpeed].points.map((p) => p.latency_ms);
+    const maxLat = Math.max(...lat);
+    const runs = d.sweep[this.tolSpeed].points[0]?.runs;
+    const seeds = d.provenance?.seeds?.length;
+    const dur = d.provenance?.duration_s;
+    foot.innerHTML = `${tol >= maxLat ? `At ${this.tolSpeed} m/s success stays within 90% of baseline across the whole sweep (up to ${maxLat} ms).`
+      : `At ${this.tolSpeed} m/s success stays within 90% of baseline up to ${tol} ms (shaded).`}
+      Shaded bands are 95% intervals over ${runs ?? '?'} runs${seeds ? ` (${seeds} seeds` : ''}${dur ? `, ${dur} s each)` : seeds ? ')' : ''}.
+      <b>Hybrid mode:</b> a scripted expert drives the arm and latency is injected, so this is the robot-side requirement, not a chip result. Source: ${d.provenance?.script ?? 'results/s14.json'}.`;
   }
 
   update(t: number): void {
@@ -152,52 +201,75 @@ export class Drawer {
   }
 
   private drawTol(t: number): void {
-    const c = this.tolCanvas, st = this.store;
-    const tol = st?.manifest.latency_tolerance;
-    if (!c || !st || !tol) return;
-    const w = c.clientWidth, h = 120, dpr = Math.min(devicePixelRatio, 2);
+    const c = this.tolCanvas, st = this.store, d = this.s14;
+    if (!c || !st || !d) return;
+    const w = c.clientWidth, h = 150, dpr = Math.min(devicePixelRatio, 2);
     if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
     const g = c.getContext('2d')!;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, w, h);
-    const L = tol.latency_ms, S = tol.success;
-    const lmax = Math.max(...L);
-    const pad = { l: 34, r: 8, t: 8, b: 20 };
+    const pad = { l: 36, r: 10, t: 10, b: 22 };
+    const lmax = 400, ymin = 0.5;
     const X = (l: number): number => pad.l + (l / lmax) * (w - pad.l - pad.r);
-    const Y = (s: number): number => pad.t + (1 - s) * (h - pad.t - pad.b);
-    // tolerance band: latency where success stays above 95%
-    let ok = L[0];
-    for (let i = 0; i < L.length; i++) if (S[i] >= 0.95) ok = L[i];
-    g.fillStyle = 'rgba(61,220,151,0.14)';
-    g.fillRect(X(0), pad.t, X(ok) - X(0), h - pad.t - pad.b);
-    g.strokeStyle = '#3ddc97';
-    g.lineWidth = 2;
-    g.beginPath();
-    L.forEach((l, i) => (i ? g.lineTo(X(l), Y(S[i])) : g.moveTo(X(l), Y(S[i]))));
-    g.stroke();
-    g.fillStyle = '#e8edf4';
+    const Y = (v: number): number => pad.t + (1 - (v - ymin) / (1 - ymin)) * (h - pad.t - pad.b);
     g.font = '500 11px "Inter Variable", Inter, system-ui, sans-serif';
-    g.fillText('100%', 2, Y(1) + 4);
-    g.fillText('0%', 12, Y(0));
-    g.fillText(`${lmax} ms`, w - 46, h - 4);
-    g.fillText('0', pad.l, h - 4);
-    g.fillText(`≥95% up to ${ok} ms`, X(0) + 6, pad.t + 12);
-    // marker: latest completed VLA job response
-    const ti = st.manifest.tasks.findIndex((x) => x.id === 'T4_vla');
-    if (ti >= 0) {
-      let ji = st.latestJob(ti, t);
-      while (ji >= 0 && st.jobs.finish[ji] > t) {
-        const arr = st.jobsByTask[ti];
-        const pos = arr.indexOf(ji);
-        ji = pos > 0 ? arr[pos - 1] : -1;
+    g.strokeStyle = '#2a3446';
+    g.lineWidth = 1;
+    for (const v of [0.5, 0.75, 1.0]) {
+      g.beginPath(); g.moveTo(pad.l, Y(v)); g.lineTo(w - pad.r, Y(v)); g.stroke();
+      g.fillStyle = '#dfe6f0';
+      g.fillText(`${Math.round(v * 100)}%`, 2, Y(v) + 4);
+    }
+    for (const l of [0, 100, 200, 300, 400]) {
+      g.fillStyle = '#dfe6f0';
+      g.fillText(l === 400 ? '400 ms' : String(l), Math.min(X(l) - 4, w - 44), h - 6);
+    }
+    const sel = this.tolSpeed;
+    const tol = d.summary.grasp_tolerance_ms[sel];
+    if (tol !== undefined) {
+      g.fillStyle = 'rgba(61,220,151,0.13)';
+      g.fillRect(X(0), pad.t, X(Math.min(tol, lmax)) - X(0), h - pad.t - pad.b);
+    }
+    const speeds = Object.keys(d.sweep).sort();
+    // end-of-curve labels for the other speeds, nudged apart so they never overlap
+    const labels = speeds.filter((sp) => sp !== sel).map((sp) => {
+      const pts = d.sweep[sp].points;
+      const last = pts[pts.length - 1];
+      return { sp, y: Y(Math.max(ymin, last.grasp_success_rate)) - 4 };
+    }).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 11) labels[i].y = labels[i - 1].y + 11;
+    for (const sp of speeds) {
+      const pts = [{ latency_ms: 0, grasp_success_rate: d.baseline[sp].grasp_success_rate, grasp_success_ci95: d.baseline[sp].grasp_success_ci95 },
+        ...d.sweep[sp].points];
+      const on = sp === sel;
+      if (on) {
+        g.fillStyle = 'rgba(61,220,151,0.22)';
+        g.beginPath();
+        pts.forEach((p, i) => (i ? g.lineTo(X(p.latency_ms), Y(Math.max(ymin, p.grasp_success_ci95[1]))) : g.moveTo(X(p.latency_ms), Y(Math.max(ymin, p.grasp_success_ci95[1])))));
+        for (let i = pts.length - 1; i >= 0; i--) g.lineTo(X(pts[i].latency_ms), Y(Math.max(ymin, pts[i].grasp_success_ci95[0])));
+        g.closePath();
+        g.fill();
       }
-      if (ji >= 0) {
-        const resp = st.jobs.finish[ji] - st.jobs.release[ji];
-        const x = X(Math.min(lmax, resp / 1e9));
-        g.fillStyle = (st.jobs.flags[ji] & 1) ? MISS_RED : '#ffffff';
-        g.fillRect(x - 1, pad.t, 2, h - pad.t - pad.b);
-        g.fillText(`VLA ${fmtMs(resp)}`, Math.min(w - 70, x + 4), h - pad.b - 4);
+      g.strokeStyle = on ? '#3ddc97' : 'rgba(210,220,235,0.55)';
+      g.lineWidth = on ? 2.2 : 1.2;
+      g.beginPath();
+      pts.forEach((p, i) => (i ? g.lineTo(X(p.latency_ms), Y(Math.max(ymin, p.grasp_success_rate))) : g.moveTo(X(p.latency_ms), Y(Math.max(ymin, p.grasp_success_rate)))));
+      g.stroke();
+      if (!on) {
+        const lab = labels.find((l) => l.sp === sp)!;
+        g.fillStyle = '#d3dbe6';
+        g.fillText(`${sp} m/s`, w - pad.r - 44, lab.y);
       }
     }
+    // marker: this replay's measured camera-to-grasp latency (median), when the replay carries it
+    const rm = (st.manifest as unknown as { robot_metrics?: { chain_latency_ms?: { camera_to_grasp?: { p50?: number | null } } } }).robot_metrics;
+    const e2e = rm?.chain_latency_ms?.camera_to_grasp?.p50;
+    if (e2e != null && Number.isFinite(e2e)) {
+      const x = X(Math.min(lmax, e2e));
+      g.fillStyle = '#ffffff';
+      g.fillRect(x - 1, pad.t, 2, h - pad.t - pad.b);
+      g.fillText(`this run ${e2e.toFixed(0)} ms (p50)`, Math.min(w - 120, x + 5), pad.t + 12);
+    }
+    void t;
   }
 }

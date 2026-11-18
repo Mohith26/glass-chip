@@ -1,32 +1,16 @@
-// Live mode: WebSocket client that consumes msgpack event batches from the Python server.
-// The binary payloads use the same record layouts as replay chunks, so decoding is shared.
+// Live mode: WebSocket client for tools/live_server.py (msgpack in, JSON commands out).
+// Batch payloads use the replay record layouts; LiveStore decodes them with the replay decoders.
 import { decode } from '@msgpack/msgpack';
-import { decodeEvents, decodeJobs } from '../replay/decode';
-import type { EventBlock, JobTable, Manifest } from '../replay/types';
+import type { Manifest } from '../replay/types';
+import type { LiveBatchMsg } from './liveStore';
 
-/**
- * Message shapes (msgpack maps):
- *   {type: "hello", manifest: Manifest}                  sent once on connect (same schema as replay manifest)
- *   {type: "batch", t_ps: int, events: bin, jobs: bin, series: {name: [float, ...]}, robot: bin}
- *       events: concatenated 48-byte event records
- *       jobs:   concatenated 80-byte job records
- *       robot:  float32 [frames, bodies, 7] for frames produced since the last batch
- *   {type: "control_ack", ...}
- */
-export interface LiveBatch {
-  t_ps: number;
-  events: EventBlock;
-  jobs: JobTable | null;
-  series: Record<string, number[]>;
-  robot: Float32Array | null;
-}
+export type LiveStatus = 'connecting' | 'open' | 'closed' | 'error';
 
 export class LiveClient {
   private ws: WebSocket | null = null;
-  onHello: ((m: Manifest) => void) | null = null;
-  onBatch: ((b: LiveBatch) => void) | null = null;
-  onStatus: ((s: 'connecting' | 'open' | 'closed' | 'error') => void) | null = null;
-  private nAttr = 10;
+  onHello: ((m: Manifest, applied: Record<string, unknown>[]) => void) | null = null;
+  onBatch: ((b: LiveBatchMsg) => void) | null = null;
+  onStatus: ((s: LiveStatus) => void) | null = null;
 
   connect(url: string): void {
     this.onStatus?.('connecting');
@@ -39,33 +23,15 @@ export class LiveClient {
     this.ws = ws;
   }
 
-  /** Send a control message (scenario action, policy switch) to the live server. */
+  /** Send a command (scenario, policy, vmin, qos, pause, resume, max_rate, restart). */
   send(msg: Record<string, unknown>): void {
-    this.ws?.send(JSON.stringify(msg));
+    if (this.ws?.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(msg));
   }
 
-  private handle(buf: ArrayBuffer): void {
-    const msg = decode(new Uint8Array(buf)) as Record<string, unknown>;
-    if (msg.type === 'hello') {
-      const m = msg.manifest as Manifest;
-      this.nAttr = m.jobs?.attribution_keys?.length ?? 10;
-      this.onHello?.(m);
-    } else if (msg.type === 'batch') {
-      const toBuf = (u: unknown): ArrayBuffer | null => {
-        if (!(u instanceof Uint8Array)) return null;
-        return u.buffer.slice(u.byteOffset, u.byteOffset + u.byteLength) as ArrayBuffer;
-      };
-      const ev = toBuf(msg.events);
-      const jb = toBuf(msg.jobs);
-      const rb = toBuf(msg.robot);
-      this.onBatch?.({
-        t_ps: Number(msg.t_ps ?? 0),
-        events: decodeEvents(ev ?? new ArrayBuffer(0)),
-        jobs: jb ? decodeJobs(jb, this.nAttr) : null,
-        series: (msg.series as Record<string, number[]>) ?? {},
-        robot: rb ? new Float32Array(rb) : null,
-      });
-    }
+  private handle(data: ArrayBuffer): void {
+    const msg = decode(new Uint8Array(data)) as Record<string, unknown>;
+    if (msg.type === 'hello') this.onHello?.(msg.manifest as Manifest, (msg.applied as Record<string, unknown>[]) ?? []);
+    else if (msg.type === 'batch') this.onBatch?.(msg as unknown as LiveBatchMsg);
   }
 
   close(): void {

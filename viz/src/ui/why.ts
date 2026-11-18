@@ -48,8 +48,8 @@ export class SelectionCard {
           <div class="attr-row"><span class="dot" style="background:${ATTR_COLOR[k] ?? '#ccc'}"></span><span>${ATTR_LABEL[k] ?? k}</span>
           <span class="kv-num">${fmtMs(attr[k] * 1000)}</span><span class="kv-num pct">${((attr[k] / total) * 100).toFixed(0)}%</span></div>`).join('')}</div>
         ${crit ? `<div class="why-title">Critical path, ${crit.length} ops</div>
-        <div class="crit-list">${crit.filter((c) => c.wait_ps > 0 || c.wait_cause !== 'none').slice(0, 5).map((c) => `
-          <div class="crit-row"><span>${c.op_id}</span><span>${engineLabel(c.engine)}</span><span class="kv-num">${c.wait_cause === 'none' ? '' : `${ATTR_LABEL[c.wait_cause] ?? c.wait_cause}${c.wait_ps > 0 ? ' wait ' + fmtMs(c.wait_ps) : ''}`}</span></div>`).join('') || '<div class="crit-row"><span>No queueing waits recorded on the path</span></div>'}</div>` : ''}
+        <div class="crit-list">${crit.filter((c) => c.wait_ps > 0 || (c.wait_cause && c.wait_cause !== 'none')).slice(0, 5).map((c) => `
+          <div class="crit-row"><div class="crit-op">${c.op_id}</div><div class="crit-meta">${engineLabel(c.engine)}${!c.wait_cause || c.wait_cause === 'none' ? '' : ` · ${ATTR_LABEL[c.wait_cause] ?? c.wait_cause}${c.wait_ps > 0 ? ' wait ' + fmtMs(c.wait_ps) : ''}`}</div></div>`).join('') || '<div class="crit-row"><div class="crit-op">No queueing waits recorded on the path</div></div>'}</div>` : ''}
       </div>` : '';
     this.host.innerHTML = `
       <div class="sel-head">

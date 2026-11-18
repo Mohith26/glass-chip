@@ -1,0 +1,885 @@
+{
+ "format": "glasschip-replay",
+ "version": 1,
+ "name": "smoke fixture",
+ "scenario": "S0_fixture",
+ "scenario_label": "S0_fixture",
+ "policy": "P0_nominal",
+ "policy_label": "P0_nominal",
+ "seed": 0,
+ "synthetic": true,
+ "duration_ps": 500000000000,
+ "created": "2026-11-18T04:41:56+00:00",
+ "provenance": {
+  "script": "viz/tests/make_fixture.py"
+ },
+ "soc": {
+  "name": "VX-1",
+  "process": {
+   "node": "generic-5nm-class",
+   "v_nominal": 0.75,
+   "vth": 0.3,
+   "alpha": 1.3
+  },
+  "noc": {
+   "topology": "mesh",
+   "dims": [
+    4,
+    4
+   ],
+   "link_bits": 256,
+   "freq_hz": "1.5e9",
+   "routing": "xy",
+   "virtual_channels": 4,
+   "router_latency_cycles": 2,
+   "link_latency_cycles": 1,
+   "flit_bytes": 32,
+   "max_packet_bytes": 256,
+   "qos_classes": [
+    "safety",
+    "realtime",
+    "best_effort"
+   ],
+   "power_domain": "noc_cache"
+  },
+  "blocks": [
+   {
+    "id": "cpu_a",
+    "kind": "cpu",
+    "cores": 4,
+    "isa": "rv64gcv",
+    "vlen_bits": 256,
+    "freq_hz": "2.0e9",
+    "l1d_kb": 64,
+    "l1i_kb": 64,
+    "l2_kb": 1024,
+    "ipc_scalar": 2.0,
+    "vector_flops_per_cycle": 16,
+    "context_switch_ns": 2000,
+    "nodes": [
+     [
+      0,
+      0
+     ]
+    ],
+    "power_domain": "cpu_a",
+    "floorplan": {
+     "x": 0.02,
+     "y": 0.02,
+     "w": 0.22,
+     "h": 0.22
+    }
+   },
+   {
+    "id": "cpu_b",
+    "kind": "cpu",
+    "cores": 4,
+    "isa": "rv64gcv",
+    "vlen_bits": 256,
+    "freq_hz": "2.0e9",
+    "l1d_kb": 64,
+    "l1i_kb": 64,
+    "l2_kb": 1024,
+    "ipc_scalar": 2.0,
+    "vector_flops_per_cycle": 16,
+    "context_switch_ns": 2000,
+    "nodes": [
+     [
+      1,
+      0
+     ]
+    ],
+    "power_domain": "cpu_b",
+    "floorplan": {
+     "x": 0.26,
+     "y": 0.02,
+     "w": 0.22,
+     "h": 0.22
+    }
+   },
+   {
+    "id": "rt",
+    "kind": "rtcpu",
+    "cores": 2,
+    "lockstep": true,
+    "isa": "rv64gc",
+    "freq_hz": "1.2e9",
+    "tcm_kb": 256,
+    "ipc_scalar": 1.0,
+    "nodes": [
+     [
+      2,
+      0
+     ]
+    ],
+    "power_domain": "rt",
+    "floorplan": {
+     "x": 0.5,
+     "y": 0.02,
+     "w": 0.2,
+     "h": 0.22
+    }
+   },
+   {
+    "id": "dsp",
+    "kind": "dsp",
+    "units": 2,
+    "simd_bits": 1024,
+    "freq_hz": "1.0e9",
+    "ops_per_cycle_int8": 128,
+    "nodes": [
+     [
+      3,
+      0
+     ],
+     [
+      3,
+      1
+     ]
+    ],
+    "power_domain": "dsp",
+    "floorplan": {
+     "x": 0.72,
+     "y": 0.02,
+     "w": 0.26,
+     "h": 0.47
+    }
+   },
+   {
+    "id": "npu",
+    "kind": "npu",
+    "tiles": 4,
+    "array": [
+     64,
+     64
+    ],
+    "dataflow": "weight_stationary",
+    "freq_hz": "1.2e9",
+    "int8_macs_per_cycle_per_tile": 4096,
+    "bf16_rate_fraction": 0.25,
+    "fp8_rate_fraction": 0.5,
+    "sram_per_tile_kb": 2048,
+    "shared_sram_kb": 4096,
+    "preemption": "layer",
+    "preempt_save_restore_us": 20,
+    "nodes": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      2
+     ]
+    ],
+    "power_domain": "npu",
+    "floorplan": {
+     "x": 0.02,
+     "y": 0.26,
+     "w": 0.46,
+     "h": 0.46
+    }
+   },
+   {
+    "id": "simt",
+    "kind": "simt",
+    "compute_units": 4,
+    "lanes_per_cu": 128,
+    "freq_hz": "1.3e9",
+    "shared_mem_kb_per_cu": 256,
+    "launch_overhead_us": 5,
+    "coalescing_efficiency": 0.7,
+    "nodes": [
+     [
+      3,
+      2
+     ],
+     [
+      3,
+      3
+     ]
+    ],
+    "power_domain": "simt",
+    "floorplan": {
+     "x": 0.72,
+     "y": 0.51,
+     "w": 0.26,
+     "h": 0.47
+    }
+   },
+   {
+    "id": "sys_cache",
+    "kind": "cache",
+    "size_kb": 8192,
+    "ways": 16,
+    "line_bytes": 64,
+    "hit_latency_cycles": 30,
+    "partitionable": true,
+    "nodes": [
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ]
+    ],
+    "power_domain": "noc_cache",
+    "floorplan": {
+     "x": 0.5,
+     "y": 0.26,
+     "w": 0.2,
+     "h": 0.46
+    }
+   },
+   {
+    "id": "dram",
+    "kind": "dram",
+    "standard": "LPDDR5X",
+    "data_rate_mts": 8533,
+    "bus_bits_total": 128,
+    "controllers": 2,
+    "channels_per_controller": 2,
+    "bank_groups": 4,
+    "banks_per_group": 8,
+    "row_bytes": 2048,
+    "scheduler": "fr_fcfs",
+    "nodes": [
+     [
+      0,
+      3
+     ],
+     [
+      2,
+      3
+     ]
+    ],
+    "power_domain": "dram_io",
+    "floorplan": {
+     "x": 0.02,
+     "y": 0.74,
+     "w": 0.46,
+     "h": 0.24
+    }
+   },
+   {
+    "id": "dma",
+    "kind": "dma",
+    "engines": 8,
+    "descriptor_latency_ns": 200,
+    "nodes": [
+     [
+      1,
+      3
+     ]
+    ],
+    "power_domain": "noc_cache",
+    "floorplan": {
+     "x": 0.5,
+     "y": 0.74,
+     "w": 0.2,
+     "h": 0.24
+    }
+   }
+  ],
+  "power_domains": {
+   "cpu_a": {
+    "v_min": 0.5,
+    "v_max": 0.85,
+    "opp_volts": [
+     0.5,
+     0.55,
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8,
+     0.85
+    ]
+   },
+   "cpu_b": {
+    "v_min": 0.5,
+    "v_max": 0.85,
+    "opp_volts": [
+     0.5,
+     0.55,
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8,
+     0.85
+    ]
+   },
+   "rt": {
+    "v_min": 0.55,
+    "v_max": 0.8,
+    "opp_volts": [
+     0.55,
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8
+    ]
+   },
+   "npu": {
+    "v_min": 0.45,
+    "v_max": 0.8,
+    "opp_volts": [
+     0.45,
+     0.5,
+     0.55,
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8
+    ]
+   },
+   "simt": {
+    "v_min": 0.5,
+    "v_max": 0.8,
+    "opp_volts": [
+     0.5,
+     0.55,
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8
+    ]
+   },
+   "dsp": {
+    "v_min": 0.5,
+    "v_max": 0.8,
+    "opp_volts": [
+     0.5,
+     0.55,
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8
+    ]
+   },
+   "noc_cache": {
+    "v_min": 0.6,
+    "v_max": 0.8,
+    "opp_volts": [
+     0.6,
+     0.65,
+     0.7,
+     0.75,
+     0.8
+    ]
+   },
+   "dram_io": {
+    "v_min": 0.5,
+    "v_max": 0.5,
+    "opp_volts": [
+     0.5
+    ]
+   }
+  },
+  "dvfs_transition_us": 20
+ },
+ "tasks": [
+  {
+   "id": "T4_vla",
+   "name": "VLA",
+   "period_us": 125000,
+   "deadline_us": 100000,
+   "criticality": "high"
+  },
+  {
+   "id": "T7_control",
+   "name": "Control",
+   "period_us": 1000,
+   "deadline_us": 1000,
+   "criticality": "safety"
+  }
+ ],
+ "events": {
+  "record_bytes": 48,
+  "kinds": [
+   "job_release",
+   "job_start",
+   "job_finish",
+   "job_miss",
+   "op",
+   "xfer",
+   "dram_q",
+   "freq",
+   "preempt"
+  ],
+  "chunk_ps": 250000000000,
+  "chunks": [
+   {
+    "t0_ps": 0,
+    "t1_ps": 250000000000,
+    "max_end_ps": 250000000000,
+    "file": "events/e0000.bin.gz",
+    "count": 102
+   },
+   {
+    "t0_ps": 250000000000,
+    "t1_ps": 500000000000,
+    "max_end_ps": 500000000000,
+    "file": "events/e0001.bin.gz",
+    "count": 102
+   }
+  ],
+  "strings": [
+   "vla.layer0",
+   "vla.layer1",
+   "vla.layer2",
+   "vla.layer3"
+  ],
+  "count": 204,
+  "stats": {
+   "raw_events": 204,
+   "raw_xfers": 0,
+   "stored_xfers": 0,
+   "dram_q_samples": 0
+  },
+  "xfer_coalescing": "NoC packets of one (task, job, op, src, dst) closer than the gap are merged; value = packet count"
+ },
+ "jobs": {
+  "file": "jobs.bin.gz",
+  "record_bytes": 80,
+  "count": 4,
+  "attribution_keys": [
+   "compute",
+   "runqueue",
+   "engine_queue",
+   "noc",
+   "dram",
+   "cache",
+   "dma",
+   "preemption",
+   "dvfs",
+   "middleware"
+  ],
+  "critpath_file": "critpath.json.gz"
+ },
+ "series": {
+  "file": "series.bin.gz",
+  "items": [
+   {
+    "name": "power.npu",
+    "label": "power.npu",
+    "unit": "W",
+    "group": "power",
+    "t0_ps": 0,
+    "rate_hz": 1000.0,
+    "offset": 0,
+    "count": 500
+   }
+  ]
+ },
+ "lod": {
+  "file": "lod.bin.gz",
+  "bin_ps": 1000000000,
+  "bins": 500,
+  "units": [
+   {
+    "block": "cpu_a",
+    "block_index": 0,
+    "unit": 0
+   },
+   {
+    "block": "cpu_a",
+    "block_index": 0,
+    "unit": 1
+   },
+   {
+    "block": "cpu_a",
+    "block_index": 0,
+    "unit": 2
+   },
+   {
+    "block": "cpu_a",
+    "block_index": 0,
+    "unit": 3
+   },
+   {
+    "block": "cpu_b",
+    "block_index": 1,
+    "unit": 0
+   },
+   {
+    "block": "cpu_b",
+    "block_index": 1,
+    "unit": 1
+   },
+   {
+    "block": "cpu_b",
+    "block_index": 1,
+    "unit": 2
+   },
+   {
+    "block": "cpu_b",
+    "block_index": 1,
+    "unit": 3
+   },
+   {
+    "block": "rt",
+    "block_index": 2,
+    "unit": 0
+   },
+   {
+    "block": "rt",
+    "block_index": 2,
+    "unit": 1
+   },
+   {
+    "block": "dsp",
+    "block_index": 3,
+    "unit": 0
+   },
+   {
+    "block": "dsp",
+    "block_index": 3,
+    "unit": 1
+   },
+   {
+    "block": "npu",
+    "block_index": 4,
+    "unit": 0
+   },
+   {
+    "block": "npu",
+    "block_index": 4,
+    "unit": 1
+   },
+   {
+    "block": "npu",
+    "block_index": 4,
+    "unit": 2
+   },
+   {
+    "block": "npu",
+    "block_index": 4,
+    "unit": 3
+   },
+   {
+    "block": "simt",
+    "block_index": 5,
+    "unit": 0
+   },
+   {
+    "block": "simt",
+    "block_index": 5,
+    "unit": 1
+   },
+   {
+    "block": "simt",
+    "block_index": 5,
+    "unit": 2
+   },
+   {
+    "block": "simt",
+    "block_index": 5,
+    "unit": 3
+   },
+   {
+    "block": "dram",
+    "block_index": 7,
+    "unit": 0
+   },
+   {
+    "block": "dram",
+    "block_index": 7,
+    "unit": 1
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 0
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 1
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 2
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 3
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 4
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 5
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 6
+   },
+   {
+    "block": "dma",
+    "block_index": 8,
+    "unit": 7
+   }
+  ],
+  "links": [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    0
+   ],
+   [
+    0,
+    4
+   ],
+   [
+    4,
+    0
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    1
+   ],
+   [
+    1,
+    5
+   ],
+   [
+    5,
+    1
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    3,
+    2
+   ],
+   [
+    2,
+    6
+   ],
+   [
+    6,
+    2
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    7,
+    3
+   ],
+   [
+    4,
+    5
+   ],
+   [
+    5,
+    4
+   ],
+   [
+    4,
+    8
+   ],
+   [
+    8,
+    4
+   ],
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    5
+   ],
+   [
+    5,
+    9
+   ],
+   [
+    9,
+    5
+   ],
+   [
+    6,
+    7
+   ],
+   [
+    7,
+    6
+   ],
+   [
+    6,
+    10
+   ],
+   [
+    10,
+    6
+   ],
+   [
+    7,
+    11
+   ],
+   [
+    11,
+    7
+   ],
+   [
+    8,
+    9
+   ],
+   [
+    9,
+    8
+   ],
+   [
+    8,
+    12
+   ],
+   [
+    12,
+    8
+   ],
+   [
+    9,
+    10
+   ],
+   [
+    10,
+    9
+   ],
+   [
+    9,
+    13
+   ],
+   [
+    13,
+    9
+   ],
+   [
+    10,
+    11
+   ],
+   [
+    11,
+    10
+   ],
+   [
+    10,
+    14
+   ],
+   [
+    14,
+    10
+   ],
+   [
+    11,
+    15
+   ],
+   [
+    15,
+    11
+   ],
+   [
+    12,
+    13
+   ],
+   [
+    13,
+    12
+   ],
+   [
+    13,
+    14
+   ],
+   [
+    14,
+    13
+   ],
+   [
+    14,
+    15
+   ],
+   [
+    15,
+    14
+   ]
+  ],
+  "busy_offset": 0,
+  "busy_bytes": 15000,
+  "link_offset": 15000
+ },
+ "robot": {
+  "fps": 60.0,
+  "frames": 30,
+  "bodies": [
+   "link0",
+   "hand"
+  ],
+  "chunk_frames": 120,
+  "chunks": [
+   "robot/r0000.bin.gz"
+  ],
+  "events": [],
+  "scene": null
+ },
+ "results": {
+  "source": "derived by tools/replay_writer.py from this replay",
+  "tasks": {
+   "T4_vla": {
+    "jobs": 4,
+    "misses": 1,
+    "miss_rate": 0.25,
+    "p50_ms": 82.5,
+    "p95_ms": 102.75,
+    "p99_ms": 104.55,
+    "max_ms": 105.0
+   },
+   "T7_control": {
+    "jobs": 0,
+    "misses": 0,
+    "miss_rate": 0.0,
+    "p50_ms": null,
+    "p95_ms": null,
+    "p99_ms": null,
+    "max_ms": null
+   }
+  },
+  "avg_power_w": 2.0,
+  "peak_power_w": 3.0,
+  "energy_j": 1.0,
+  "energy_per_robot_hour_wh": 2.0
+ }
+}

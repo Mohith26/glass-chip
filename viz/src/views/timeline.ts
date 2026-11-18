@@ -1,8 +1,9 @@
 // Perfetto-style timeline on a 2D canvas: overview brush, time axis, task tracks, engine tracks.
 import { fmtTime } from '../clock';
-import { MISS_RED, taskColor } from '../palette';
+import { MISS_RED, taskColor, taskRank } from '../palette';
 import type { ReplayStore } from '../replay/store';
 import { KIND } from '../replay/types';
+import { lowerBound } from '../replay/decode';
 import type { CritOp } from '../replay/types';
 import { blockLabel } from './die';
 import { SHORT } from './rings';
@@ -13,7 +14,7 @@ const AXIS_H = 24;
 const ROW_TASK = 20;
 const ROW_UNIT = 18;
 const GROUP_H = 22;
-const DETAIL_SPAN = 2.6e12; // draw individual ops when the view is narrower than this
+const DETAIL_SPAN = 1.2e12; // draw individual ops when the view is narrower than this
 
 type Row =
   | { kind: 'group'; label: string; y: number; h: number; key: string }
@@ -44,8 +45,11 @@ export class Timeline {
   private hoverY = -1;
   follow = true;
   onSeek: ((t: number) => void) | null = null;
+  onUserScrub: (() => void) | null = null;
   onSelectJob: ((jobIndex: number) => void) | null = null;
   private colors: string[] = [];
+  private ovCache: Float32Array | null = null;
+  private ovKey = '';
 
   constructor(private canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext('2d')!;
@@ -60,7 +64,11 @@ export class Timeline {
   setStore(store: ReplayStore): void {
     this.store = store;
     this.colors = store.manifest.tasks.map((t) => taskColor(t.id, t.color));
-    if (this.view1 <= 1 || this.view1 > store.duration) {
+    const live = !!(store.manifest as unknown as { live?: boolean }).live;
+    if (live) {
+      this.view0 = 0;
+      this.view1 = 3e12;
+    } else if (this.view1 <= 1 || this.view1 > store.duration) {
       this.view0 = 0;
       this.view1 = Math.min(store.duration, 3e12);
     }
@@ -76,7 +84,9 @@ export class Timeline {
 
   setView(a: number, b: number, animateMs = 0): void {
     const st = this.store;
-    const dur = st ? st.duration : 1;
+    const live = !!(st?.manifest as unknown as { live?: boolean } | undefined)?.live;
+    // live runs grow, so the view may extend past the data received so far
+    const dur = st ? (live ? Math.max(st.duration, b) : st.duration) : 1;
     const span = Math.max(2e5, Math.min(dur, b - a));
     let a2 = Math.max(0, a), b2 = a2 + span;
     if (b2 > dur) { b2 = dur; a2 = Math.max(0, dur - span); }
@@ -108,9 +118,10 @@ export class Timeline {
     rows.push({ kind: 'group', label: 'Robot tasks', y, h: GROUP_H, key: 'tasks' });
     y += GROUP_H;
     if (!this.collapsedGroups.has('tasks')) {
-      m.tasks.forEach((_t, i) => {
+      const order = m.tasks.map((t, i) => [t.id, i] as const).sort((a, b) => taskRank(a[0]) - taskRank(b[0]));
+      for (const [, i] of order) {
         if (st.jobsByTask[i]?.length) { rows.push({ kind: 'task', task: i, y, h: ROW_TASK }); y += ROW_TASK; }
-      });
+      }
     }
     rows.push({ kind: 'group', label: 'Engines', y, h: GROUP_H, key: 'engines' });
     y += GROUP_H;
@@ -316,18 +327,29 @@ export class Timeline {
     g.fillRect(0, 0, this.w, OVERVIEW_H);
     g.fillStyle = '#121824';
     g.fillRect(GUTTER, 6, W, OVERVIEW_H - 10);
-    // total busy (LOD) as a faint area
+    // total busy (LOD) as a faint area, cached per store and width (it only changes in live mode)
     const m = st.manifest;
-    const nu = m.lod.units.length;
-    const bins = m.lod.bins;
-    const step = Math.max(1, Math.floor(bins / W));
-    g.fillStyle = 'rgba(125, 160, 220, 0.35)';
-    for (let px = 0; px < W; px++) {
-      const b0 = Math.floor((px / W) * bins);
-      let s = 0, c = 0;
-      for (let b = b0; b < Math.min(bins, b0 + step); b++) for (let u = 0; u < nu; u++) { s += st.lodBusy[b * nu + u]; c++; }
-      const v = c ? s / c / 255 : 0;
-      const hh = Math.min(1, v * 3.2) * (OVERVIEW_H - 12);
+    const key = `${W}|${m.lod.bins}|${st.version}`;
+    if (!this.ovCache || this.ovKey !== key) {
+      this.ovKey = key;
+      const nu = m.lod.units.length;
+      const bins = m.lod.bins;
+      const step = Math.max(1, Math.floor(bins / W));
+      const hs = new Float32Array(Math.max(1, Math.floor(W)));
+      for (let px = 0; px < hs.length; px++) {
+        const b0 = Math.floor((px / W) * bins);
+        let s = 0, c = 0;
+        for (let b = b0; b < Math.min(bins, b0 + step); b++) for (let u = 0; u < nu; u++) { s += st.lodBusy[b * nu + u]; c++; }
+        hs[px] = c ? s / c / 255 : 0;
+      }
+      let mx = 0;
+      for (const v of hs) mx = Math.max(mx, v);
+      this.ovCache = hs.map((v) => (mx > 0 ? v / mx : 0));
+    }
+    g.fillStyle = 'rgba(125, 160, 220, 0.4)';
+    const hs = this.ovCache;
+    for (let px = 0; px < hs.length; px++) {
+      const hh = hs[px] * (OVERVIEW_H - 12);
       g.fillRect(GUTTER + px, OVERVIEW_H - 5 - hh, 1, hh);
     }
     g.fillStyle = MISS_RED;
@@ -584,11 +606,16 @@ export class Timeline {
     const dimmed = selJob >= 0;
     let last = -10;
     for (const b of blocks) {
-      for (let i = 0; i < b.n; i++) {
-        if (b.kind[i] !== KIND.op || b.block[i] !== block) continue;
+      const oi = b.ops;
+      if (!oi) continue;
+      const j0 = lowerBound(b, oi, this.view0 - 1e11);
+      for (let j = j0; j < oi.length; j++) {
+        const i = oi[j];
+        if (b.t[i] > this.view1) break;
+        if (b.block[i] !== block) continue;
         if (unit >= 0 && b.unit[i] !== unit) continue;
         const s = b.t[i], e = s + b.dur[i];
-        if (e < this.view0 || s > this.view1) continue;
+        if (e < this.view0) continue;
         const x0 = this.x(s), x1 = this.x(e);
         const isSel = b.job[i] === selJob;
         if (x1 - x0 < 1 && !isSel) {

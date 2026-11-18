@@ -183,6 +183,30 @@ def soc_units(soc: Mapping[str, Any]) -> list[dict[str, Any]]:
     return units
 
 
+def coalesce_xfers(x: np.ndarray, gap_ps: int) -> np.ndarray:
+    """Merge back-to-back packets of the same (task, job, op, src, dst) into one transfer record.
+
+    A new record starts when the key changes or the next packet starts more than gap_ps after the
+    previous one ends. bytes are summed, dur spans first start to last end, value = packet count.
+    """
+    if len(x) == 0:
+        return x
+    order = np.lexsort((x["t_ps"], x["dst"], x["src"], x["op"], x["job"], x["task"]))
+    y = x[order]
+    end = y["t_ps"] + y["dur_ps"]
+    same = np.ones(len(y), dtype=bool)
+    same[0] = False
+    for f in ("task", "job", "op", "src", "dst"):
+        same[1:] &= y[f][1:] == y[f][:-1]
+    same[1:] &= y["t_ps"][1:] <= end[:-1] + gap_ps
+    starts = np.flatnonzero(~same)
+    out = y[starts].copy()
+    out["bytes"] = np.add.reduceat(y["bytes"].astype(np.float64), starts).astype(np.float32)
+    out["dur_ps"] = np.maximum.reduceat(end, starts) - out["t_ps"]
+    out["value"] = np.diff(np.append(starts, len(y))).astype(np.float32)
+    return out[np.argsort(out["t_ps"], kind="stable")]
+
+
 class ReplayWriter:
     """Accumulates one replay in memory and writes it to a directory.
 
@@ -249,6 +273,28 @@ class ReplayWriter:
         self._robot_events: list[dict[str, Any]] = []
         self._results: dict[str, Any] | None = None
         self._extra: dict[str, Any] = {}
+        # LOD accumulators, filled as events arrive so raw packets never need to be kept
+        self._units = soc_units(self.soc)
+        self._unit_lut = np.full((256, 1024), -1, dtype=np.int64)
+        for i, u in enumerate(self._units):
+            self._unit_lut[u["block_index"], u["unit"]] = i
+        self._links = mesh_links(self.dims)
+        nn = int(self.dims[0]) * int(self.dims[1])
+        self._nnodes = nn
+        inc = np.zeros((nn * nn, len(self._links)), dtype=np.float32)
+        lk = {l: i for i, l in enumerate(self._links)}
+        for a in range(nn):
+            for b in range(nn):
+                if a != b:
+                    for h in xy_route(a, b, self.dims):
+                        inc[a * nn + b, lk[h]] = 1.0
+        self._incidence = inc
+        self._nbins = max(1, math.ceil(self.duration_ps / LOD_BIN_PS))
+        self._busy = np.zeros((self._nbins, len(self._units)), dtype=np.float64)
+        self._pair_bytes = np.zeros(self._nbins * nn * nn, dtype=np.float64)
+        self._dram_q: list[np.ndarray] = []   # rows (t_ps, unit, value)
+        self._freq: list[np.ndarray] = []     # rows (t_ps, block_index_or_domain, value)
+        self.stats: dict[str, int] = {"raw_events": 0, "raw_xfers": 0, "stored_xfers": 0, "dram_q_samples": 0}
 
     # ---------------------------------------------------------------- inputs
     def _intern(self, s: str | None) -> int:
@@ -327,12 +373,218 @@ class ReplayWriter:
                 )
             )
         if buf:
-            self._events.append(np.array(buf, dtype=EVENT_DTYPE))
+            arr = np.array(buf, dtype=EVENT_DTYPE)
+            self.stats["raw_events"] += len(arr)
+            self._accumulate_lod(arr)
+            self._events.append(arr)
+
+    def add_trace(
+        self,
+        trace: np.ndarray,
+        names: Mapping[str, Any],
+        *,
+        coalesce_gap_ps: int = 2_000_000,
+        keep_job_events: bool = False,
+    ) -> None:
+        """Add a numpy trace from glasschip_core (`sim.trace_drain(as_numpy=True)` + `sim.trace_names()`).
+
+        This is the fast path for real runs (millions of records per simulated second):
+        - every packet still counts in the per-millisecond link and unit aggregates;
+        - NoC packets of the same (task, job, op, src, dst) closer than `coalesce_gap_ps` are merged
+          into one transfer record (bytes summed, `value` = packet count);
+        - dram_q samples become `dram_q.<unit>` series (peak per millisecond), freq events become
+          `freq.<domain>` step series; neither is stored as events;
+        - job_release/start/finish events are dropped unless keep_job_events (jobs live in jobs.bin).
+        Call it once per drain; batches may arrive in any order.
+        """
+        enc = self.encode_trace(trace, names, coalesce_gap_ps=coalesce_gap_ps, keep_job_events=keep_job_events,
+                                lod=True)
+        if enc["dram_q"] is not None:
+            self._dram_q.append(enc["dram_q"])
+        if enc["freq"] is not None:
+            self._freq.append(enc["freq"])
+            self._freq_blocks = list(names["blocks"])
+        self._events.append(enc["records"])
+
+    def encode_trace(
+        self,
+        trace: np.ndarray,
+        names: Mapping[str, Any],
+        *,
+        coalesce_gap_ps: int = 2_000_000,
+        keep_job_events: bool = False,
+        lod: bool = False,
+    ) -> dict[str, Any]:
+        """Convert a core numpy trace into replay event records without storing them.
+
+        Returns {records (EVENT_DTYPE, xfers coalesced), dram_q rows (t, unit, value) or None,
+        freq rows (t, block, value) or None, raw_xfers, stored_xfers}. With lod=True the raw
+        packets and ops are also added to this writer's per-ms aggregates. The live server uses
+        this to encode batches with exactly the same rules as offline replays.
+        """
+        out_empty = {"records": np.zeros(0, dtype=EVENT_DTYPE), "dram_q": None, "freq": None,
+                     "raw_xfers": 0, "stored_xfers": 0}
+        if len(trace) == 0:
+            return out_empty
+        kinds = list(names["kinds"])
+        blocks = list(names["blocks"])
+        tasks = list(names["tasks"])
+        ops = names["ops"]
+        k_of = {k: kinds.index(k) for k in kinds}
+        kcode = trace["kind"]
+        res = dict(out_empty)
+        dq = kcode == k_of.get("dram_q", 255)
+        if dq.any():
+            d = trace[dq]
+            res["dram_q"] = np.stack([d["t_ps"].astype(np.float64), d["unit"].astype(np.float64),
+                                      d["value"].astype(np.float64)], axis=1)
+            self.stats["dram_q_samples"] += int(dq.sum())
+        fq = kcode == k_of.get("freq", 255)
+        if fq.any():
+            f = trace[fq]
+            res["freq"] = np.stack([f["t_ps"].astype(np.float64), f["block"].astype(np.float64),
+                                    f["value"].astype(np.float64)], axis=1)
+        xk = k_of.get("xfer", 255)
+        isx = kcode == xk
+        rest = ~(dq | fq | isx)
+        if not keep_job_events:
+            for k in ("job_release", "job_start", "job_finish"):
+                if k in k_of:
+                    rest &= kcode != k_of[k]
+        dimx = int(self.dims[0])
+        nn = self._nnodes
+
+        # ---- xfers: coalesce on the raw arrays (one int64 key + stable sort keeps time order)
+        x = trace[isx]
+        nx_raw = len(x)
+        self.stats["raw_xfers"] += nx_raw
+        if nx_raw:
+            src = np.where(x["src_x"] < 0, nn, x["src_y"].astype(np.int64) * dimx + x["src_x"].astype(np.int64))
+            dst = np.where(x["dst_x"] < 0, nn, x["dst_y"].astype(np.int64) * dimx + x["dst_x"].astype(np.int64))
+            if lod:
+                ok = (src < nn) & (dst < nn) & (src != dst)
+                b = np.minimum(x["t_ps"][ok] // LOD_BIN_PS, self._nbins - 1).astype(np.int64)
+                self._pair_bytes += np.bincount(b * nn * nn + src[ok] * nn + dst[ok],
+                                                weights=x["bytes"][ok].astype(np.float64),
+                                                minlength=self._nbins * nn * nn)[: self._nbins * nn * nn]
+            task = x["task"].astype(np.int64) + 1
+            op = x["op"].astype(np.int64) + 1
+            job = x["job_id"].astype(np.int64) + 1
+            key = ((((job * 64 + task) * 65536 + op) * 32 + src) * 32 + dst)
+            t0 = x["t_ps"]
+            order = np.lexsort((t0, key))
+            ks = key[order]
+            ts = t0[order]
+            ends = ts + x["dur_ps"][order]
+            new = np.ones(len(ks), dtype=bool)
+            new[1:] = (ks[1:] != ks[:-1]) | (ts[1:] > ends[:-1] + coalesce_gap_ps)
+            starts = np.flatnonzero(new)
+            first = order[starts]
+            xr = np.zeros(len(starts), dtype=EVENT_DTYPE)
+            xr["t_ps"] = ts[starts]
+            xr["dur_ps"] = np.maximum.reduceat(ends, starts) - ts[starts]
+            xr["kind"] = EVENT_KINDS.index("xfer")
+            xr["bytes"] = np.add.reduceat(x["bytes"][order].astype(np.float64), starts).astype(np.float32)
+            xr["value"] = np.diff(np.append(starts, len(ks))).astype(np.float32)
+            xsel = x[first]
+            xr["src"] = np.where(src[first] >= nn, NONE16, src[first]).astype(np.uint16)
+            xr["dst"] = np.where(dst[first] >= nn, NONE16, dst[first]).astype(np.uint16)
+            xr_fields = xsel
+        else:
+            xr = np.zeros(0, dtype=EVENT_DTYPE)
+            xr_fields = x
+        self.stats["stored_xfers"] += len(xr)
+
+        # ---- everything else (ops, misses, preempts)
+        r = trace[rest]
+        rr = np.zeros(len(r), dtype=EVENT_DTYPE)
+        rr["t_ps"] = r["t_ps"]
+        rr["dur_ps"] = r["dur_ps"]
+        kind_map = np.array([EVENT_KINDS.index(k) if k in EVENT_KINDS else 255 for k in kinds], dtype=np.uint8)
+        rr["kind"] = kind_map[r["kind"]]
+        rr["src"] = NONE16
+        rr["dst"] = NONE16
+        rr["bytes"] = r["bytes"].astype(np.float32)
+        rr["value"] = r["value"].astype(np.float32)
+
+        # ---- shared fields: block, unit, task, job, op for both parts
+        blut = np.array([self.block_index.get(b, 255) for b in blocks] + [255], dtype=np.uint8)
+        tlut = np.array([self.task_index.get(t, NONE16) for t in tasks] + [NONE16], dtype=np.uint16)
+        for dst_arr, srcrec in ((xr, xr_fields), (rr, r)):
+            if len(dst_arr) == 0:
+                continue
+            dst_arr["block"] = blut[np.minimum(srcrec["block"].astype(np.int64), len(blocks))]
+            dst_arr["unit"] = srcrec["unit"]
+            traw = srcrec["task"].astype(np.int64)
+            traw = np.where((traw < 0) | (traw >= len(tasks)), len(tasks), traw)
+            dst_arr["task"] = tlut[traw]
+            jid = srcrec["job_id"].astype(np.int64)
+            dst_arr["job"] = np.where(jid < 0, 0xFFFFFFFF, jid & 0xFFFFFFFF).astype(np.uint32)
+            op_raw = srcrec["op"].astype(np.int64)
+            op_idx = np.full(len(dst_arr), 0xFFFFFFFF, dtype=np.uint32)
+            valid = (op_raw >= 0) & (traw < len(tasks))
+            if valid.any():
+                pairs = traw[valid] * 1_000_000 + op_raw[valid]
+                uniq, inv = np.unique(pairs, return_inverse=True)
+                ids = np.empty(len(uniq), dtype=np.uint32)
+                for i, pr in enumerate(uniq):
+                    ti, oi = divmod(int(pr), 1_000_000)
+                    tbl = ops[ti] if ti < len(ops) else []
+                    ids[i] = self._intern(str(tbl[oi]) if oi < len(tbl) else None)
+                op_idx[valid] = ids[inv]
+            dst_arr["op"] = op_idx
+        if lod and len(rr):
+            self._accumulate_lod(rr)
+        self.stats["raw_events"] += nx_raw + len(rr)
+        recs = np.concatenate([rr, xr])
+        res["records"] = recs[np.argsort(recs["t_ps"], kind="stable")]
+        res["raw_xfers"] = nx_raw
+        res["stored_xfers"] = len(xr)
+        return res
+
+    def _accumulate_lod(self, ev: np.ndarray) -> None:
+        """Add a batch to the per-ms unit busy and per-link byte aggregates (vectorized)."""
+        nb = self._nbins
+        op = ev[ev["kind"] == EVENT_KINDS.index("op")]
+        if len(op):
+            col = self._unit_lut[op["block"].astype(np.int64), np.minimum(op["unit"].astype(np.int64), 1023)]
+            ok = col >= 0
+            op, col = op[ok], col[ok]
+            edges = np.arange(nb + 1, dtype=np.float64) * LOD_BIN_PS
+            for c in np.unique(col):
+                sel = op[col == c]
+                s0 = np.sort(sel["t_ps"].astype(np.float64))
+                e0 = np.sort((sel["t_ps"] + np.maximum(sel["dur_ps"], 1)).astype(np.float64))
+                cs, ce = np.concatenate([[0.0], np.cumsum(s0)]), np.concatenate([[0.0], np.cumsum(e0)])
+                ns, ne = np.searchsorted(s0, edges), np.searchsorted(e0, edges)
+                F = (ns * edges - cs[ns]) - (ne * edges - ce[ne])  # total busy time before each edge
+                self._busy[:, c] += np.diff(F) / LOD_BIN_PS
+        x = ev[(ev["kind"] == EVENT_KINDS.index("xfer")) & (ev["src"] != NONE16) & (ev["dst"] != NONE16)]
+        if len(x):
+            nn = self._nnodes
+            src = x["src"].astype(np.int64)
+            dst = x["dst"].astype(np.int64)
+            ok = (src < nn) & (dst < nn) & (src != dst)
+            b = np.minimum(x["t_ps"][ok] // LOD_BIN_PS, nb - 1).astype(np.int64)
+            pair = src[ok] * nn + dst[ok]
+            self._pair_bytes += np.bincount(b * nn * nn + pair, weights=x["bytes"][ok].astype(np.float64),
+                                            minlength=nb * nn * nn)[: nb * nn * nn]
 
     def add_jobs(self, jobs: Iterable[Mapping[str, Any]]) -> None:
         """Add completed (or skipped) jobs, using the completion dict from sim.run_until."""
+        rec, cps = self.jobs_to_records(jobs)
+        self._critpaths.update(cps)
+        if len(rec):
+            self._jobs.append(rec)
+
+    def jobs_to_records(self, jobs: Iterable[Mapping[str, Any]]) -> tuple[np.ndarray, dict[int, list[dict[str, Any]]]]:
+        """Completion dicts -> (JOB_DTYPE records, {job_id: critical_path}). Unknown tasks are skipped."""
         buf: list[tuple[Any, ...]] = []
+        cps: dict[int, list[dict[str, Any]]] = {}
         for j in jobs:
+            ti = self.task_index.get(str(j["task_id"]))
+            if ti is None:
+                continue
             attr = j.get("attribution") or {}
             flags = 0
             if j.get("missed"):
@@ -342,23 +594,24 @@ class ReplayWriter:
             cp = j.get("critical_path")
             if cp:
                 flags |= JOB_HAS_CRITPATH
-                self._critpaths[int(j["job_id"])] = [dict(c) for c in cp]
+                cps[int(j["job_id"])] = [
+                    {k: (int(v) if isinstance(v, (np.integer,)) else v) for k, v in dict(c).items()} for c in cp
+                ]
             start = j.get("start_ps")
             finish = j.get("finish_ps")
             buf.append(
                 (
-                    int(j["job_id"]),
-                    self.task_index[str(j["task_id"])],
+                    int(j["job_id"]) & 0xFFFFFFFF,
+                    ti,
                     flags,
                     int(j["release_ps"]),
                     int(start) if start is not None else -1,
                     int(finish) if finish is not None else -1,
                     int(j["deadline_ps"]),
-                    [float(attr.get(k, 0.0)) / 1000.0 for k in ATTRIBUTION_KEYS],
+                    [float(attr.get(k, 0.0) or 0.0) / 1000.0 for k in ATTRIBUTION_KEYS],
                 )
             )
-        if buf:
-            self._jobs.append(np.array(buf, dtype=JOB_DTYPE))
+        return np.array(buf, dtype=JOB_DTYPE), cps
 
     def add_series(
         self,
@@ -412,56 +665,68 @@ class ReplayWriter:
         return jb[np.argsort(jb["release_ps"], kind="stable")]
 
     def _lod(self, ev: np.ndarray) -> tuple[dict[str, Any], bytes]:
-        """Per-millisecond unit busy fractions (uint8 0..255) and directed-link bytes (float32)."""
-        units = soc_units(self.soc)
-        unit_key = {(u["block_index"], u["unit"]): i for i, u in enumerate(units)}
-        links = mesh_links(self.dims)
-        link_key = {l: i for i, l in enumerate(links)}
-        nbins = max(1, math.ceil(self.duration_ps / LOD_BIN_PS))
-        busy = np.zeros((nbins, len(units)), dtype=np.float64)
-        lbytes = np.zeros((nbins, len(links)), dtype=np.float64)
-        op_kind = EVENT_KINDS.index("op")
-        xf_kind = EVENT_KINDS.index("xfer")
-        ops = ev[ev["kind"] == op_kind]
-        for e in ops:
-            k = unit_key.get((int(e["block"]), int(e["unit"])))
-            if k is None:
-                continue
-            t0 = int(e["t_ps"])
-            t1 = t0 + max(int(e["dur_ps"]), 1)
-            b0 = t0 // LOD_BIN_PS
-            b1 = min((t1 - 1) // LOD_BIN_PS, nbins - 1)
-            for b in range(b0, b1 + 1):
-                lo = max(t0, b * LOD_BIN_PS)
-                hi = min(t1, (b + 1) * LOD_BIN_PS)
-                if hi > lo:
-                    busy[b, k] += (hi - lo) / LOD_BIN_PS
-        xf = ev[ev["kind"] == xf_kind]
-        route_cache: dict[tuple[int, int], list[int]] = {}
-        for e in xf:
-            s, d = int(e["src"]), int(e["dst"])
-            if s == NONE16 or d == NONE16 or s == d:
-                continue
-            r = route_cache.get((s, d))
-            if r is None:
-                r = [link_key[h] for h in xy_route(s, d, self.dims)]
-                route_cache[(s, d)] = r
-            b = min(int(e["t_ps"]) // LOD_BIN_PS, nbins - 1)
-            for li in r:
-                lbytes[b, li] += float(e["bytes"])
-        busy_u8 = np.clip(np.round(busy * 255.0), 0, 255).astype(np.uint8)
+        """Pack the accumulated per-ms unit busy fractions (uint8) and directed-link bytes (float32)."""
+        del ev
+        nn = self._nnodes
+        lbytes = self._pair_bytes.reshape(self._nbins, nn * nn).astype(np.float32) @ self._incidence
+        busy_u8 = np.clip(np.round(self._busy * 255.0), 0, 255).astype(np.uint8)
         meta = {
             "file": "lod.bin.gz",
             "bin_ps": LOD_BIN_PS,
-            "bins": nbins,
-            "units": units,
-            "links": [list(l) for l in links],
+            "bins": self._nbins,
+            "units": self._units,
+            "links": [list(l) for l in self._links],
             "busy_offset": 0,
             "busy_bytes": int(busy_u8.nbytes),
             "link_offset": int(busy_u8.nbytes) + ((-busy_u8.nbytes) % 4),
         }
         pad = b"\x00" * ((-busy_u8.nbytes) % 4)
         return meta, busy_u8.tobytes() + pad + lbytes.astype("<f4").tobytes()
+
+    def _trace_series(self) -> None:
+        """Turn accumulated dram_q / freq samples into 1 kHz series (dram_q: peak per ms)."""
+        nb = self._nbins
+        have = {s["name"] for s in self._series}
+        if self._dram_q:
+            d = np.concatenate(self._dram_q)
+            for u in np.unique(d[:, 1]).astype(int):
+                name = f"dram_q.{u}"
+                if name in have:
+                    continue
+                du = d[d[:, 1] == u]
+                order = np.argsort(du[:, 0], kind="stable")
+                du = du[order]
+                b = np.minimum((du[:, 0] // LOD_BIN_PS).astype(np.int64), nb - 1)
+                peak = np.full(nb, np.nan)
+                np.fmax.at(peak, b, du[:, 2])
+                # bins without samples hold the last known value
+                last = 0.0
+                for i in range(nb):
+                    if np.isnan(peak[i]):
+                        peak[i] = last
+                    else:
+                        last = du[np.searchsorted(du[:, 0], (i + 1) * LOD_BIN_PS) - 1, 2]
+                self.add_series(name, t0_ps=0, rate_hz=1e12 / LOD_BIN_PS, values=peak, unit="req", group="dram",
+                                label=f"DRAM queue {u} (peak per ms)")
+        if self._freq:
+            f = np.concatenate(self._freq)
+            blocks = getattr(self, "_freq_blocks", [])
+            for bi in np.unique(f[:, 1]).astype(int):
+                bname = blocks[bi] if bi < len(blocks) else str(bi)
+                dom = self.soc["blocks"].get(bname, {}).get("power_domain", bname)
+                name = f"freq.{dom}"
+                if name in have:
+                    continue
+                fb = f[f[:, 1] == bi]
+                fb = fb[np.argsort(fb[:, 0], kind="stable")]
+                edges = np.arange(nb) * LOD_BIN_PS
+                idx = np.searchsorted(fb[:, 0], edges, side="right") - 1
+                vals = np.where(idx >= 0, fb[np.maximum(idx, 0), 2], np.nan)
+                if np.isnan(vals).all():
+                    continue
+                vals = np.where(np.isnan(vals), fb[0, 2], vals)
+                self.add_series(name, t0_ps=0, rate_hz=1e12 / LOD_BIN_PS, values=vals, unit="Hz", group="frequency")
+                have.add(name)
 
     def _derive_results(self, jobs: np.ndarray) -> dict[str, Any]:
         """Summary computed from the replay itself (used when set_results was not called)."""
@@ -498,8 +763,39 @@ class ReplayWriter:
         return out
 
     # ---------------------------------------------------------------- output
+    def base_manifest(self) -> dict[str, Any]:
+        """Identity, provenance, SoC floorplan and task table (shared by replays and the live hello)."""
+        domains = self.soc.get("power_domains", {})
+        return {
+            "format": FORMAT_NAME,
+            "version": FORMAT_VERSION,
+            "name": self.name,
+            "scenario": self.scenario,
+            "scenario_label": self.scenario_label,
+            "policy": self.policy,
+            "policy_label": self.policy_label,
+            "seed": self.seed,
+            "synthetic": self.synthetic,
+            "duration_ps": self.duration_ps,
+            "created": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
+            "provenance": self.provenance,
+            "soc": {
+                "name": self.soc.get("name", "SoC"),
+                "process": self.soc.get("process", {}),
+                "noc": self.soc.get("noc", {}),
+                "blocks": [
+                    {"id": bid, **{k: v for k, v in b.items() if not isinstance(v, dict) or k == "floorplan"}}
+                    for bid, b in self.soc["blocks"].items()
+                ],
+                "power_domains": {k: v for k, v in domains.items() if isinstance(v, dict)},
+                "dvfs_transition_us": (domains.get("dvfs_transition_us") if isinstance(domains, dict) else None),
+            },
+            "tasks": self.tasks,
+        }
+
     def write(self) -> Path:
         """Write the replay directory and return its path."""
+        self._trace_series()
         out = self.out_dir
         (out / "events").mkdir(parents=True, exist_ok=True)
         (out / "robot").mkdir(parents=True, exist_ok=True)
@@ -562,34 +858,8 @@ class ReplayWriter:
                 "scene": self.scene,
             }
 
-        domains = self.soc.get("power_domains", {})
-        manifest = {
-            "format": FORMAT_NAME,
-            "version": FORMAT_VERSION,
-            "name": self.name,
-            "scenario": self.scenario,
-            "scenario_label": self.scenario_label,
-            "policy": self.policy,
-            "policy_label": self.policy_label,
-            "seed": self.seed,
-            "synthetic": self.synthetic,
-            "duration_ps": self.duration_ps,
-            "created": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
-            "provenance": self.provenance,
-            "soc": {
-                "name": self.soc.get("name", "SoC"),
-                "process": self.soc.get("process", {}),
-                "noc": self.soc.get("noc", {}),
-                "blocks": [
-                    {"id": bid, **{k: v for k, v in b.items() if not isinstance(v, dict) or k == "floorplan"}}
-                    for bid, b in self.soc["blocks"].items()
-                ],
-                "power_domains": {
-                    k: v for k, v in domains.items() if isinstance(v, dict)
-                },
-                "dvfs_transition_us": (domains.get("dvfs_transition_us") if isinstance(domains, dict) else None),
-            },
-            "tasks": self.tasks,
+        manifest = self.base_manifest()
+        manifest.update({
             "events": {
                 "record_bytes": EVENT_DTYPE.itemsize,
                 "kinds": list(EVENT_KINDS),
@@ -597,6 +867,8 @@ class ReplayWriter:
                 "chunks": chunks,
                 "strings": self.strings,
                 "count": int(len(ev)),
+                "stats": self.stats,
+                "xfer_coalescing": "NoC packets of one (task, job, op, src, dst) closer than the gap are merged; value = packet count",
             },
             "jobs": {
                 "file": "jobs.bin.gz",
@@ -609,7 +881,7 @@ class ReplayWriter:
             "lod": lod_meta,
             "robot": robot_meta,
             "results": self._results if self._results is not None else self._derive_results(jobs),
-        }
+        })
         manifest.update(self._extra)
         (out / "manifest.json").write_text(json.dumps(manifest, indent=1, default=_json_default))
         return out

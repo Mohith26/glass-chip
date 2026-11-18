@@ -12,7 +12,8 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { Spring } from '../clock';
 import { taskColor, voltageTint } from '../palette';
 import type { ReplayStore } from '../replay/store';
-import { KIND, NONE16 } from '../replay/types';
+import { NONE16 } from '../replay/types';
+import { lowerBound } from '../replay/decode';
 import type { BlockInfo, CritOp } from '../replay/types';
 
 const DIE = 10;
@@ -132,7 +133,7 @@ export class DieView {
   private aT0!: THREE.InstancedBufferAttribute;
   private aColor!: THREE.InstancedBufferAttribute;
   private aSize!: THREE.InstancedBufferAttribute;
-  private window = { base: 0, t0: -1, t1: -1, travel: 0, complete: false };
+  private window = { base: 0, t0: -1, t1: -1, travel: 0, complete: false, agg: false, version: -1 };
   particleCount = 0;
   private npuCells: THREE.InstancedMesh | null = null;
   private npuCellInfo: { tile: number; i: number; j: number }[] = [];
@@ -213,8 +214,9 @@ export class DieView {
     const firstBuild = this.store === null || JSON.stringify(this.store.manifest.soc) !== JSON.stringify(store.manifest.soc);
     this.store = store;
     this.taskColors = store.manifest.tasks.map((t) => new THREE.Color(taskColor(t.id, t.color)));
-    this.window = { base: 0, t0: -1, t1: -1, travel: 0, complete: false };
+    this.window = { base: 0, t0: -1, t1: -1, travel: 0, complete: false, agg: false, version: -1 };
     if (firstBuild) this.build();
+    else this.buildDram();
   }
 
   private clearScene(): void {
@@ -404,19 +406,34 @@ export class DieView {
     this.npuCells = im;
   }
 
+  private dramObjs: THREE.Object3D[] = [];
+  private dramMax = 64;
+
+  /** One queue column per dram_q.<n> series in the replay (controllers or channels). */
   private buildDram(): void {
     const dram = this.blockById.get('dram');
     if (!dram || !this.store) return;
-    const ctrls = Number(dram.info.controllers ?? 2) || 2;
-    for (let c = 0; c < ctrls; c++) {
+    for (const o of this.dramObjs) o.removeFromParent();
+    this.dramObjs = [];
+    this.dramCols = [];
+    const names = this.store.seriesNames('dram_q.').sort((a, b) => Number(a.split('.')[1]) - Number(b.split('.')[1]));
+    const ids = names.length ? names.map((n) => Number(n.split('.')[1])) : [0, 1];
+    // scale columns to the replay's own peak so the tallest column means "the worst this run saw"
+    let mx = 0;
+    for (const n of names) { const a = this.store.series.get(n); if (a) for (let i = 0; i < a.length; i++) mx = Math.max(mx, a[i]); }
+    this.dramMax = Math.max(8, mx);
+    const ctrls = ids.length;
+    const rad = ctrls > 2 ? 0.12 : 0.15;
+    ids.forEach((id, c) => {
       const x = dram.cx - dram.w / 2 + ((c + 0.5) / ctrls) * dram.w;
       const sleeve = new THREE.Mesh(
         new THREE.CylinderGeometry(0.2, 0.2, 2.4, 32, 1, true),
         new THREE.MeshPhysicalMaterial({ color: '#c5d3ea', transparent: true, opacity: 0.08, roughness: 0.1, depthWrite: false, side: THREE.DoubleSide }),
       );
       sleeve.position.set(x, 1.2, dram.cz);
+      sleeve.scale.set(rad / 0.15, 1, rad / 0.15);
       this.scene.add(sleeve);
-      const geo = new THREE.CylinderGeometry(0.15, 0.15, 1, 32);
+      const geo = new THREE.CylinderGeometry(rad, rad, 1, 32);
       geo.translate(0, 0.5, 0);
       const mat = new THREE.MeshBasicMaterial({ color: '#ffb547', toneMapped: false }) as unknown as THREE.MeshStandardMaterial;
       const mesh = new THREE.Mesh(geo, mat);
@@ -427,8 +444,9 @@ export class DieView {
       const lbl = new CSS2DObject(el);
       lbl.position.set(x, 0.1, dram.cz + dram.d / 2 - 0.35);
       this.scene.add(lbl);
-      this.dramCols.push({ mesh, mat, h: new Spring(0.05, 140, 20), label: el, ctrl: c });
-    }
+      this.dramObjs.push(sleeve, mesh, lbl);
+      this.dramCols.push({ mesh, mat, h: new Spring(0.05, 140, 20), label: el, ctrl: id });
+    });
   }
 
   /** Slide the die horizontally (px) to make room for an overlay card, with a spring. */
@@ -486,17 +504,21 @@ export class DieView {
   private refreshParticles(t: number, speed: number): void {
     const st = this.store!;
     const travel = Math.max(speed * (speed > 1e-3 ? 0.35e12 : 0.6e12), 4000 * 3); // ps of sim time a particle takes, at least ~12 ns
-    // level of detail in time: at fast playback one particle per transfer (link glow carries volume),
-    // at slow motion each transfer becomes a stream of particles
+    // level of detail in time: at fast playback particles come from per-bucket flow aggregates
+    // (one per src/dst/task per 4 ms), in slow motion each transfer becomes a stream of particles
+    const useAgg = speed > 2e-3;
     const spacing = Math.max(1, speed * 0.008e12); // one particle per ~8 ms of wall time per transfer
     const ahead = Math.max(speed * 1.6e12, 2e5);
     const behind = travel * 1.4;
     const w = this.window;
-    const needs = w.t0 < 0 || t < w.t0 + behind * 0.25 || t + travel > w.t1 || Math.abs(Math.log(travel / Math.max(1, w.travel))) > 0.4 || !w.complete;
+    // prefetch further ahead so chunks are decoded before the window reaches them
+    void st.ensureEvents(t, t + ahead * 2.5 + 3e11);
+    const needs = w.t0 < 0 || t < w.t0 + behind * 0.25 || t + travel > w.t1 ||
+      Math.abs(Math.log(travel / Math.max(1, w.travel))) > 0.4 || useAgg !== w.agg ||
+      (!w.complete && st.version !== w.version);
     if (!needs) return;
     const t0 = Math.max(0, t - behind);
     const t1 = t + ahead;
-    void st.ensureEvents(t0, t1);
     const blocks = st.loadedBlocks(t0, t1);
     const base = t;
     let k = 0;
@@ -505,30 +527,54 @@ export class DieView {
     const nx = this.dims[0];
     // scale: ns relative to base keeps float32 precision near "now"
     const unit = 1e3;
-    let total = 0;
-    for (const b of blocks) for (let i = 0; i < b.n; i++) if (b.kind[i] === KIND.xfer) total++;
-    const budget = MAX_PARTICLES;
-    outer: for (const b of blocks) {
-      for (let i = 0; i < b.n; i++) {
-        if (b.kind[i] !== KIND.xfer) continue;
-        const s = b.src[i], d = b.dst[i];
-        if (s === NONE16 || d === NONE16) continue;
-        const xs = b.t[i], xd = Math.max(b.dur[i], 1000);
-        if (xs + xd + travel * 1.12 < t0 || xs > t1) continue;
-        let np = Math.max(1, Math.min(600, Math.round((xd / spacing) * Math.min(1, b.bytes[i] / 65536))));
-        if (total * 8 > budget) np = Math.max(1, Math.floor(np * budget / (total * 10)));
-        const c = this.taskColors[b.task[i]] ?? this.tmpColor.set('#c8d2de');
-        const sz = 0.075 + Math.min(0.07, b.bytes[i] / 4e7);
-        for (let q = 0; q < np; q++) {
-          if (k >= MAX_PARTICLES) break outer;
-          const te = xs + (xd * q) / np;
-          if (te + travel * 1.12 < t0 || te > t1) continue;
-          src[k * 2] = s % nx; src[k * 2 + 1] = Math.floor(s / nx);
-          dst[k * 2] = d % nx; dst[k * 2 + 1] = Math.floor(d / nx);
-          tt[k] = (te - base) / unit;
-          col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b;
-          size[k] = sz;
-          k++;
+    const put = (s: number, d: number, te: number, task: number, sz: number): void => {
+      const c = this.taskColors[task] ?? this.tmpColor.set('#c8d2de');
+      src[k * 2] = s % nx; src[k * 2 + 1] = Math.floor(s / nx);
+      dst[k * 2] = d % nx; dst[k * 2 + 1] = Math.floor(d / nx);
+      tt[k] = (te - base) / unit;
+      col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b;
+      size[k] = sz;
+      k++;
+    };
+    if (useAgg) {
+      outerA: for (const b of blocks) {
+        const g = b.agg;
+        if (!g) continue;
+        for (let i = 0; i < g.n; i++) {
+          const ts = g.t[i];
+          if (ts + g.bucketPs + travel * 1.12 < t0 || ts > t1) continue;
+          // stagger inside the bucket with a stable hash so particles do not pulse in lockstep
+          const h = ((g.src[i] * 73856093) ^ (g.dst[i] * 19349663) ^ (g.task[i] * 83492791)) >>> 0;
+          const n = Math.min(4, 1 + Math.floor(g.bytes[i] / 2e6));
+          for (let q = 0; q < n; q++) {
+            if (k >= MAX_PARTICLES) break outerA;
+            const te = ts + (((h >>> (q * 5)) % 997) / 997) * g.bucketPs;
+            if (te + travel * 1.12 < t0 || te > t1) continue;
+            put(g.src[i], g.dst[i], te, g.task[i], 0.07 + Math.min(0.09, g.bytes[i] / 3e7));
+          }
+        }
+      }
+    } else {
+      let total = 0;
+      for (const b of blocks) total += b.xfers ? b.xfers.length : 0;
+      outer: for (const b of blocks) {
+        const xi = b.xfers;
+        if (!xi) continue;
+        for (let j = 0; j < xi.length; j++) {
+          const i = xi[j];
+          const s = b.src[i], d = b.dst[i];
+          if (s === NONE16 || d === NONE16) continue;
+          const xs = b.t[i], xd = Math.max(b.dur[i], 1000);
+          if (xs + xd + travel * 1.12 < t0 || xs > t1) continue;
+          let np = Math.max(1, Math.min(600, Math.round((xd / spacing) * Math.min(1, b.bytes[i] / 65536))));
+          if (total * 8 > MAX_PARTICLES) np = Math.max(1, Math.floor((np * MAX_PARTICLES) / (total * 10)));
+          const sz = 0.075 + Math.min(0.07, b.bytes[i] / 4e7);
+          for (let q = 0; q < np; q++) {
+            if (k >= MAX_PARTICLES) break outer;
+            const te = xs + (xd * q) / np;
+            if (te + travel * 1.12 < t0 || te > t1) continue;
+            put(s, d, te, b.task[i], sz);
+          }
         }
       }
     }
@@ -542,7 +588,9 @@ export class DieView {
     // keep total light roughly constant: estimate how many particles are in flight at once
     const inFlight = k * Math.min(1, (travel * 1.12) / Math.max(1, t1 - t0));
     this.pMat.uniforms.uGain.value = Math.max(0.03, Math.min(1, 900 / Math.max(1, inFlight)));
-    this.window = { base, t0, t1, travel, complete: st.windowLoaded(t0, t1) };
+    // fill-rate LOD: shorter trails when very many particles are in flight
+    this.pMat.uniforms.uTrail.value = Math.max(0.2, Math.min(1, 15000 / Math.max(1, inFlight)));
+    this.window = { base, t0, t1, travel, complete: st.windowLoaded(t0, t1), agg: useAgg, version: st.version };
     this.pMat.uniforms.uTravel.value = travel / unit;
   }
 
@@ -550,13 +598,19 @@ export class DieView {
     const st = this.store!;
     this.unitActivity.clear();
     for (const b of st.loadedBlocks(t - 5e10, t)) {
-      for (let i = 0; i < b.n; i++) {
-        if (b.kind[i] !== KIND.op) continue;
-        const s = b.t[i];
-        if (s > t) continue;
-        const e = s + b.dur[i];
-        if (e < t) continue;
-        this.unitActivity.set(`${b.block[i]}:${b.unit[i]}`, { task: b.task[i], progress: (t - s) / Math.max(1, b.dur[i]), layer: b.aux[i], job: b.job[i] });
+      const oi = b.ops;
+      if (!oi) continue;
+      // ops are sorted by start; scan back from the first op starting after t
+      const hi = lowerBound(b, oi, t + 1);
+      for (let j = hi - 1; j >= 0; j--) {
+        const i = oi[j];
+        const s0 = b.t[i];
+        if (t - s0 > 5e10) break;
+        if (s0 + b.dur[i] < t) continue;
+        const key = `${b.block[i]}:${b.unit[i]}`;
+        if (!this.unitActivity.has(key)) {
+          this.unitActivity.set(key, { task: b.task[i], progress: (t - s0) / Math.max(1, b.dur[i]), layer: b.aux[i], job: b.job[i] });
+        }
       }
     }
   }
@@ -582,14 +636,14 @@ export class DieView {
       let frac = active / b.units;
       if (speed > 0.05) {
         let busy = 0, cnt = 0;
-        m.lod.units.forEach((u, ui) => { if (u.block_index === b.index) { busy += st.lodBusy[bin * nUnits + ui] / 255; cnt++; } });
+        m.lod.units.forEach((u, ui) => { if (u.block_index === b.index) { busy += (st.lodBusy[bin * nUnits + ui] ?? 0) / 255; cnt++; } });
         if (cnt) frac = busy / cnt;
       }
       if (b.info.id === 'sys_cache' || b.info.id === 'dram') {
         const q = (st.sample('dram_q.0', t) + st.sample('dram_q.1', t)) / 128;
         frac = Number.isFinite(q) ? Math.min(1, q * 1.6) : 0;
       }
-      b.glow.target = frac;
+      b.glow.target = Number.isFinite(frac) ? frac : 0;
       b.glow.step(dt);
       const p = st.sample(`power.${b.domain}`, t);
       const dom = m.soc.power_domains[b.domain];
@@ -648,8 +702,8 @@ export class DieView {
       let bytes = 0;
       for (let k = -2; k <= 0; k++) {
         const bb = Math.max(0, bin + k);
-        if (i1 >= 0) bytes += st.lodLinks[bb * nl + i1];
-        if (i2 >= 0) bytes += st.lodLinks[bb * nl + i2];
+        if (i1 >= 0) bytes += st.lodLinks[bb * nl + i1] ?? 0;
+        if (i2 >= 0) bytes += st.lodLinks[bb * nl + i2] ?? 0;
       }
       lg.util.target = Math.min(1, bytes / 3 / cap);
       const u = Math.max(0, lg.util.step(dt));
@@ -693,12 +747,12 @@ export class DieView {
     for (const c of this.dramCols) {
       const q = st.sample(`dram_q.${c.ctrl}`, t);
       const qq = Number.isFinite(q) ? q : 0;
-      c.h.target = 0.05 + (qq / 64) * 2.3;
+      c.h.target = 0.05 + Math.min(1, qq / this.dramMax) * 2.3;
       c.mesh.scale.y = Math.max(0.02, c.h.step(dt));
-      const k = Math.min(1, qq / 40);
+      const k = Math.min(1, qq / this.dramMax);
       const br = 0.75 + 0.6 * k;
       c.mat.color.setRGB(1.0 * br, (0.72 - 0.52 * k) * br, (0.18 - 0.08 * k) * br, THREE.SRGBColorSpace);
-      const txt = Number.isFinite(q) ? `Queue ${c.ctrl}  ${qq.toFixed(0)}` : '';
+      const txt = Number.isFinite(q) ? `${this.dramCols.length > 2 ? 'Ch' : 'Queue'} ${c.ctrl}  ${qq.toFixed(0)}` : '';
       if (c.label.textContent !== txt) c.label.textContent = txt;
       c.label.style.display = this.showLabels ? '' : 'none';
     }

@@ -1,15 +1,30 @@
 // Design-space panel backed by the conformal surrogate (ONNX, run with onnxruntime-web).
 // Until a model exists, the panel renders a clearly disabled state with no outputs.
 
-export interface SurrogateInput { name: string; label: string; unit?: string; min: number; max: number; step?: number; default: number }
-export interface SurrogateOutput { name: string; label: string; unit?: string; lo?: string; hi?: string }
+export interface SurrogateInput {
+  name: string; label: string; unit?: string; min: number; max: number; step?: number; default: number;
+  /** Dotted path into the SoC config (e.g. "blocks.npu.tiles"), used when a full run is requested. */
+  config_path?: string;
+  /** Categorical inputs: allowed values (slider snaps to them). */
+  choices?: number[];
+}
+export interface SurrogateOutput {
+  name: string; label: string; unit?: string;
+  /** Output names holding the conformal interval bounds for this output. */
+  lo?: string; hi?: string;
+  /** Interval width above which the result is flagged "uncertain, run full model". */
+  max_width?: number;
+  digits?: number;
+}
 export interface SurrogateMeta {
   model: string;
   input_name?: string;
   inputs: SurrogateInput[];
   outputs: SurrogateOutput[];
   coverage?: number;
-  pareto?: { x: string; y: string; points?: number[][] };
+  /** Interval width relative to |value| above which an output is flagged uncertain (default 0.25). */
+  uncertain_rel_width?: number;
+  pareto?: { x: string; y: string; x_label?: string; y_label?: string; points?: number[][]; source?: string };
   provenance?: Record<string, unknown>;
 }
 
@@ -24,16 +39,25 @@ const PLACEHOLDER_INPUTS: SurrogateInput[] = [
   { name: 'vmin_npu', label: 'NPU Vmin', unit: 'V', min: 0.45, max: 0.8, step: 0.01, default: 0.45 },
 ];
 
+function setPath(obj: Record<string, number>, path: string, v: number): void {
+  obj[path] = v;
+}
+
 export class DsePanel {
   private session: Session | null = null;
+  get loaded(): boolean { return this.session !== null; }
   private meta: SurrogateMeta | null = null;
   private values: Record<string, number> = {};
   private ort: OrtModule | null = null;
+  private lastOut: Record<string, number | null> = {};
+  /** Live mode hook: request a full simulation for the current slider point. */
+  onRunFull: ((overrides: Record<string, number>, values: Record<string, number>) => void) | null = null;
+  liveAvailable = false;
 
   constructor(private host: HTMLElement) {}
 
   async init(metaUrl: string | null): Promise<void> {
-    if (!metaUrl) { this.renderDisabled('No surrogate is listed in replays/index.json (key "surrogate.meta").'); return; }
+    if (!metaUrl) { this.renderDisabled('No surrogate model has been published to surrogate/meta.json yet.'); return; }
     try {
       const r = await fetch(metaUrl);
       if (!r.ok) throw new Error(`metadata ${r.status}`);
@@ -74,16 +98,25 @@ export class DsePanel {
           <label class="slider-row"><span>${i.label}</span>
             <input type="range" data-in="${i.name}" min="${i.min}" max="${i.max}" step="${i.step ?? (i.max - i.min) / 100}" value="${i.default}" />
             <span class="slider-val" data-val="${i.name}">${i.default}${i.unit ? ' ' + i.unit : ''}</span></label>`).join('')}
-        <div class="dse-out">${m.outputs.map((o) => `<div class="dse-row"><span>${o.label}</span><span data-out="${o.name}">–</span></div>`).join('')}</div>
+        <div class="dse-out">${m.outputs.map((o) => `<div class="dse-row" data-row="${o.name}"><span>${o.label}</span><span class="dse-val" data-out="${o.name}">–</span></div>`).join('')}</div>
+        <div class="dse-uncertain" data-unc hidden>
+          <div><b>Uncertain, run full model.</b> <span data-unc-why></span></div>
+          <button class="btn small" data-runfull>Run full model</button>
+        </div>
+        ${m.pareto ? '<canvas class="pareto" height="170"></canvas>' : ''}
         <div class="foot" data-ms></div>
       </section>`;
+    this.host.querySelector('[data-runfull]')?.addEventListener('click', () => this.runFull());
     this.host.querySelectorAll<HTMLInputElement>('input[data-in]').forEach((el) => {
       el.addEventListener('input', () => {
         const name = el.dataset.in!;
-        this.values[name] = Number(el.value);
+        const inp0 = m.inputs.find((x) => x.name === name);
+        let v = Number(el.value);
+        if (inp0?.choices?.length) v = inp0.choices.reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a));
+        this.values[name] = v;
         const inp = m.inputs.find((x) => x.name === name);
-        const v = this.host.querySelector(`[data-val="${name}"]`);
-        if (v) v.textContent = `${el.value}${inp?.unit ? ' ' + inp.unit : ''}`;
+        const lab = this.host.querySelector(`[data-val="${name}"]`);
+        if (lab) lab.textContent = `${this.values[name]}${inp?.unit ? ' ' + inp.unit : ''}`;
         void this.run();
       });
     });
@@ -101,13 +134,81 @@ export class DsePanel {
       if (!n || !out[n]) return null;
       return Number((out[n].data as Float32Array)[0]);
     };
+    const rel = m.uncertain_rel_width ?? 0.25;
+    const unc: string[] = [];
+    this.lastOut = {};
     for (const o of m.outputs) {
       const el = this.host.querySelector(`[data-out="${o.name}"]`);
-      if (!el) continue;
+      const row = this.host.querySelector(`[data-row="${o.name}"]`);
       const v = get(o.name), lo = get(o.lo), hi = get(o.hi);
-      el.textContent = v == null ? '–' : `${v.toFixed(3)}${lo != null && hi != null ? ` [${lo.toFixed(3)}, ${hi.toFixed(3)}]` : ''}${o.unit ? ' ' + o.unit : ''}`;
+      this.lastOut[o.name] = v;
+      if (o.lo) this.lastOut[o.lo] = lo;
+      if (o.hi) this.lastOut[o.hi] = hi;
+      const d = o.digits ?? 2;
+      if (el) el.innerHTML = v == null ? '–' : `<b>${v.toFixed(d)}</b>${lo != null && hi != null ? ` <small>[${lo.toFixed(d)}, ${hi.toFixed(d)}]</small>` : ''}${o.unit ? ` <small>${o.unit}</small>` : ''}`;
+      let wide = false;
+      if (v != null && lo != null && hi != null) {
+        const w = hi - lo;
+        wide = o.max_width != null ? w > o.max_width : w > rel * Math.max(Math.abs(v), 1e-9);
+        if (wide) unc.push(o.label);
+      }
+      row?.classList.toggle('wide', wide);
     }
+    const ub = this.host.querySelector('[data-unc]') as HTMLElement | null;
+    if (ub) {
+      ub.hidden = unc.length === 0;
+      const why = ub.querySelector('[data-unc-why]');
+      if (why) why.textContent = `The ${Math.round((m.coverage ?? 0.9) * 100)}% interval is wide for ${unc.join(', ')}.` +
+        (this.liveAvailable ? '' : ' Start live mode to run this point through the full simulator.');
+      const btn = ub.querySelector('[data-runfull]') as HTMLButtonElement | null;
+      if (btn) btn.disabled = !this.liveAvailable;
+    }
+    this.drawPareto();
     const f = this.host.querySelector('[data-ms]');
-    if (f) f.textContent = `Inference ${ms.toFixed(1)} ms in this browser.`;
+    if (f) f.textContent = `Inference ${ms.toFixed(1)} ms in this browser${m.coverage ? `; intervals are split-conformal at ${Math.round(m.coverage * 100)}% nominal coverage` : ''}.`;
+  }
+
+  private runFull(): void {
+    if (!this.meta || !this.onRunFull) return;
+    const ov: Record<string, number> = {};
+    for (const i of this.meta.inputs) if (i.config_path) setPath(ov, i.config_path, this.values[i.name]);
+    this.onRunFull(ov, { ...this.values });
+  }
+
+  private drawPareto(): void {
+    const m = this.meta;
+    const c = this.host.querySelector('canvas.pareto') as HTMLCanvasElement | null;
+    if (!m?.pareto || !c) return;
+    const p = m.pareto;
+    const w = c.clientWidth, h = 170, dpr = Math.min(devicePixelRatio, 2);
+    if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const g = c.getContext('2d')!;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, w, h);
+    const pts = p.points ?? [];
+    const cx = this.lastOut[p.x], cy = this.lastOut[p.y];
+    const xo = m.outputs.find((o) => o.name === p.x), yo = m.outputs.find((o) => o.name === p.y);
+    const xs = [...pts.map((q) => q[0]), ...(cx != null ? [cx, this.lastOut[xo?.lo ?? ''] ?? cx, this.lastOut[xo?.hi ?? ''] ?? cx] : [])];
+    const ys = [...pts.map((q) => q[1]), ...(cy != null ? [cy, this.lastOut[yo?.lo ?? ''] ?? cy, this.lastOut[yo?.hi ?? ''] ?? cy] : [])];
+    if (!xs.length) return;
+    const pad = { l: 40, r: 10, t: 10, b: 30 };
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const X = (v: number): number => pad.l + ((v - x0) / Math.max(1e-9, x1 - x0)) * (w - pad.l - pad.r);
+    const Y = (v: number): number => h - pad.b - ((v - y0) / Math.max(1e-9, y1 - y0)) * (h - pad.t - pad.b);
+    g.font = '500 11px "Inter Variable", Inter, system-ui, sans-serif';
+    g.fillStyle = '#dfe6f0';
+    g.fillText(p.x_label ?? xo?.label ?? p.x, pad.l, h - 8);
+    g.save(); g.translate(11, h - pad.b); g.rotate(-Math.PI / 2); g.fillText(p.y_label ?? yo?.label ?? p.y, 0, 0); g.restore();
+    g.fillStyle = 'rgba(160, 182, 220, 0.75)';
+    for (const q of pts) { g.beginPath(); g.arc(X(q[0]), Y(q[1]), 2.5, 0, Math.PI * 2); g.fill(); }
+    if (cx != null && cy != null) {
+      const xl = this.lastOut[xo?.lo ?? ''], xh = this.lastOut[xo?.hi ?? ''], yl = this.lastOut[yo?.lo ?? ''], yh = this.lastOut[yo?.hi ?? ''];
+      g.strokeStyle = '#ffffff';
+      g.lineWidth = 1.5;
+      if (xl != null && xh != null) { g.beginPath(); g.moveTo(X(xl), Y(cy)); g.lineTo(X(xh), Y(cy)); g.stroke(); }
+      if (yl != null && yh != null) { g.beginPath(); g.moveTo(X(cx), Y(yl)); g.lineTo(X(cx), Y(yh)); g.stroke(); }
+      g.fillStyle = '#ffffff';
+      g.beginPath(); g.arc(X(cx), Y(cy), 5, 0, Math.PI * 2); g.fill();
+    }
   }
 }

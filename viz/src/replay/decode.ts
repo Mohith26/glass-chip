@@ -92,7 +92,60 @@ export async function gunzip(buf: ArrayBuffer): Promise<ArrayBuffer> {
   return await new Response(stream).arrayBuffer();
 }
 
+/** Op/xfer index lists and per-bucket NoC flow aggregates (done once per chunk, off the main thread). */
+export function indexEvents(b: EventBlock, bucketPs = 4e9): EventBlock {
+  const ops: number[] = [];
+  const xf: number[] = [];
+  const agg = new Map<number, number>();
+  const at: number[] = [], as: number[] = [], ad: number[] = [], ak: number[] = [], ab: number[] = [];
+  for (let i = 0; i < b.n; i++) {
+    const k = b.kind[i];
+    if (k === 4) ops.push(i);
+    else if (k === 5) {
+      xf.push(i);
+      const s = b.src[i], d = b.dst[i];
+      if (s === 0xffff || d === 0xffff) continue;
+      // spread a long transfer over the buckets it covers
+      const t0 = b.t[i], t1 = t0 + Math.max(b.dur[i], 1);
+      const b0 = Math.floor(t0 / bucketPs), b1 = Math.floor((t1 - 1) / bucketPs);
+      const per = b.bytes[i] / (b1 - b0 + 1);
+      for (let q = b0; q <= b1; q++) {
+        const key = ((q * 64 + s) * 64 + d) * 4096 + (b.task[i] & 4095);
+        let j = agg.get(key);
+        if (j === undefined) {
+          j = at.length;
+          agg.set(key, j);
+          at.push(q * bucketPs); as.push(s); ad.push(d); ak.push(b.task[i]); ab.push(0);
+        }
+        ab[j] += per;
+      }
+    }
+  }
+  ops.sort((x, y) => b.t[x] - b.t[y]);
+  b.ops = Int32Array.from(ops);
+  b.xfers = Int32Array.from(xf);
+  b.agg = {
+    bucketPs, n: at.length, t: Float64Array.from(at), src: Uint16Array.from(as), dst: Uint16Array.from(ad),
+    task: Uint16Array.from(ak), bytes: Float32Array.from(ab),
+  };
+  return b;
+}
+
+/** First index in sorted idx (by b.t) whose start time is >= t. */
+export function lowerBound(b: EventBlock, idx: Int32Array, t: number): number {
+  let lo = 0, hi = idx.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (b.t[idx[mid]] < t) lo = mid + 1; else hi = mid;
+  }
+  return lo;
+}
+
 export function eventBuffers(b: EventBlock): ArrayBuffer[] {
-  return [b.t, b.dur, b.kind, b.block, b.unit, b.task, b.src, b.dst, b.flags, b.job, b.op, b.bytes, b.value, b.aux]
+  const out = [b.t, b.dur, b.kind, b.block, b.unit, b.task, b.src, b.dst, b.flags, b.job, b.op, b.bytes, b.value, b.aux]
     .map((a) => a.buffer as ArrayBuffer);
+  if (b.ops) out.push(b.ops.buffer as ArrayBuffer);
+  if (b.xfers) out.push(b.xfers.buffer as ArrayBuffer);
+  if (b.agg) out.push(...[b.agg.t, b.agg.src, b.agg.dst, b.agg.task, b.agg.bytes].map((a) => a.buffer as ArrayBuffer));
+  return out;
 }

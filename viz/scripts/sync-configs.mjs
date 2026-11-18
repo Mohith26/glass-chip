@@ -22,3 +22,15 @@ function walk(dir) {
 walk(root);
 writeFileSync(join(out, 'index.json'), JSON.stringify({ files: files.sort() }, null, 1));
 console.log(`synced ${files.length} config files`);
+
+// results JSON used by the viewer (latency tolerance band, later the DSE summaries)
+const resRoot = new URL('../../results/', import.meta.url).pathname;
+const resOut = new URL('../public/results/', import.meta.url).pathname;
+mkdirSync(resOut, { recursive: true });
+let nres = 0;
+if (existsSync(resRoot)) {
+  for (const name of readdirSync(resRoot)) {
+    if (name.endsWith('.json')) { cpSync(join(resRoot, name), join(resOut, name)); nres++; }
+  }
+}
+console.log(`synced ${nres} results files`);

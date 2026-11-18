@@ -47,6 +47,8 @@ export class ReplayStore {
   lodBusy!: Uint8Array;
   lodLinks!: Float32Array;
   readonly eventChunks = new Map<number, EventBlock>();
+  /** Bumped whenever a chunk finishes loading. */
+  version = 0;
   private eventLoading = new Map<number, Promise<EventBlock>>();
   readonly robotChunks = new Map<number, Float32Array>();
   private robotLoading = new Set<number>();
@@ -187,6 +189,7 @@ export class ReplayStore {
       p = worker().call<EventBlock>({ type: 'events', url: this.url(this.manifest.events.chunks[i].file) }).then((b) => {
         this.eventChunks.set(i, b);
         this.eventLoading.delete(i);
+        this.version++;
         this.evictEvents(i);
         return b;
       });
@@ -198,7 +201,8 @@ export class ReplayStore {
   private evictEvents(keep: number): void {
     if (this.eventChunks.size <= 24) return;
     for (const k of [...this.eventChunks.keys()]) {
-      if (Math.abs(k - keep) > 10) this.eventChunks.delete(k);
+      // keep a window around the newest chunk, plus the first two (the loop restarts there)
+      if (Math.abs(k - keep) > 10 && k > 1) this.eventChunks.delete(k);
     }
   }
 

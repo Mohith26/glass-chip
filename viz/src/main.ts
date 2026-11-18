@@ -3,8 +3,9 @@ import './styles.css';
 import { Clock, fmtSpeed, fmtTime } from './clock';
 import { DsePanel } from './dse/surrogate';
 import { LiveClient } from './live/client';
+import { LiveStore } from './live/liveStore';
 import { ReplayStore, fetchJson } from './replay/store';
-import type { ReplayIndex, ReplayIndexEntry } from './replay/types';
+import type { Manifest, ReplayIndex, ReplayIndexEntry } from './replay/types';
 import { KIND } from './replay/types';
 import { EngineerPanel } from './ui/engineer';
 import { Tour } from './ui/tour';
@@ -18,16 +19,17 @@ import { Timeline } from './views/timeline';
 
 const $ = <T extends HTMLElement = HTMLElement>(sel: string): T => document.querySelector(sel) as T;
 
-const SCENARIOS: { prefix: string; label: string }[] = [
-  { prefix: 'S1_', label: 'Nominal' },
-  { prefix: 'S2_', label: 'Second camera' },
-  { prefix: 'S3_', label: 'Human enters' },
-  { prefix: 'S4_', label: 'Faster conveyor' },
-  { prefix: 'S5_', label: 'Hot day' },
-  { prefix: 'S6_', label: 'Fifteen at once' },
-  { prefix: 'S7_', label: '4K recording' },
-  { prefix: 'S8_', label: 'Lower voltage' },
+const SCENARIOS: { prefix: string; label: string; live: string }[] = [
+  { prefix: 'S1_', label: 'Nominal', live: 'nominal' },
+  { prefix: 'S2_', label: 'Second camera', live: 'second_camera' },
+  { prefix: 'S3_', label: 'Human enters', live: 'human' },
+  { prefix: 'S4_', label: 'Faster conveyor', live: 'conveyor_fast' },
+  { prefix: 'S5_', label: 'Hot day', live: 'hot_day' },
+  { prefix: 'S6_', label: 'Fifteen at once', live: 'fifteen' },
+  { prefix: 'S7_', label: '4K recording', live: 'record_4k' },
+  { prefix: 'S8_', label: 'Low voltage', live: 'lower_voltage' },
 ];
+const LIVE_POLICIES = ['P0_nominal', 'P1_fixed_priority', 'P2_edf', 'P3_race_to_idle', 'P4_pace_to_deadline', 'P6_surrogate_guided'];
 const POLICIES = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6'];
 
 class App implements TourHost {
@@ -45,6 +47,10 @@ class App implements TourHost {
   tour = new Tour($('#tour'), this);
   drawerOpen = false;
   selected = -1;
+  live: LiveClient | null = null;
+  liveFollow = true;
+  private liveApplied: string[] = [];
+  private loopStarted = false;
   private last = performance.now();
   private lastDrawer = 0;
   private frameTimes: number[] = [];
@@ -62,9 +68,25 @@ class App implements TourHost {
     } catch {
       this.index = { format: 'glasschip-replay-index', version: 1, replays: [] };
     }
-    const metaPath = this.index.surrogate?.meta ? new URL(this.index.surrogate.meta, new URL('replays/', location.href)).href : null;
+    // surrogate metadata: index.json "surrogate.meta" (relative to replays/), else the default location
+    const sp = params.get('surrogate');
+    const metaPath = sp ? new URL(sp, location.href).href
+      : this.index.surrogate?.meta ? new URL(this.index.surrogate.meta, new URL('replays/', location.href)).href
+        : (await fetch('surrogate/meta.json', { method: 'HEAD' }).then((r) => r.ok && (r.headers.get('content-type') ?? '').includes('json')).catch(() => false))
+          ? new URL('surrogate/meta.json', location.href).href : null;
+    this.dse.liveAvailable = !!live;
+    this.dse.onRunFull = (ov) => this.liveCmd({ cmd: 'run_config', soc_overrides: ov });
     void this.dse.init(metaPath);
     if (live) { this.startLive(live); return; }
+    const direct = params.get('manifest');
+    if (direct) {
+      const st = new ReplayStore(new URL(direct, location.href).href, null);
+      await st.load(new URL(direct, location.href).href, (m) => this.setLoading(m));
+      await this.attach(st);
+      this.setLoading(null);
+      requestAnimationFrame((n) => this.frame(n));
+      return;
+    }
     const want = params.get('replay');
     const entry = this.index.replays.find((r) => r.id === want) ?? this.index.replays.find((r) => r.default) ?? this.index.replays[0];
     if (!entry) { this.setLoading('No replays found in replays/index.json. Run tools/make_dev_replay.py.'); return; }
@@ -76,6 +98,19 @@ class App implements TourHost {
 
   // ------------------------------------------------------------- TourHost
   hasReplay(id: string): boolean { return this.index.replays.some((r) => r.id === id); }
+  replays(): ReplayIndexEntry[] { return this.index.replays; }
+  private manifestCache = new Map<string, Promise<Manifest | null>>();
+  manifestOf(id: string): Promise<Manifest | null> {
+    if (this.store?.entry?.id === id) return Promise.resolve(this.store.manifest);
+    let p = this.manifestCache.get(id);
+    if (!p) {
+      const e = this.index.replays.find((r) => r.id === id);
+      p = e ? fetchJson<Manifest>(new URL(`replays/${e.path}`, location.href).href).catch(() => null) : Promise.resolve(null);
+      this.manifestCache.set(id, p);
+    }
+    return p;
+  }
+  surrogateLoaded(): boolean { return this.dse.loaded; }
   replayId(): string { return this.store?.entry?.id ?? ''; }
   seekSeconds(s: number): void { this.clock.seek(s * 1e12); }
   setSpeed(s: number): void { this.clock.setSpeed(s); }
@@ -104,8 +139,9 @@ class App implements TourHost {
     const dp = $('#die-pane').getBoundingClientRect();
     const [l, r] = this.insets();
     // rails take ~130 px on each side; with a card open the left rail is hidden behind it
-    const left = l > 0 ? l + 10 : 130;
-    const right = dp.width - r - 130;
+    const mg = this.rings.margin;
+    const left = l > 0 ? l + 10 : mg;
+    const right = dp.width - r - mg;
     this.die.fitTo((left + right) / 2, Math.min(right - left - 20, dp.height * 1.02));
     $('#rings').classList.toggle('hide-left', l > 0);
   }
@@ -133,6 +169,7 @@ class App implements TourHost {
     if (seq !== this.loadSeq) return;
     await this.attach(st);
     this.clock.seek(keepTime ? Math.min(t, st.duration) : 0);
+    if (!keepTime) this.timeline.setView(0, Math.min(st.duration, 3e12));
     this.setLoading(null);
     const u = new URL(location.href);
     u.searchParams.set('replay', id);
@@ -149,14 +186,42 @@ class App implements TourHost {
     this.timeline.setStore(st);
     this.drawer.setStore(st);
     this.renderHeader();
+    this.renderTransport();
     this.resize();
   }
 
   private startLive(url: string): void {
     const lc = new LiveClient();
-    lc.onStatus = (s) => this.setLoading(s === 'open' ? 'Live: waiting for the first batch' : `Live: ${s}`);
-    lc.onHello = () => this.setLoading('Live mode: the server sent a manifest. Streaming playback is not wired to the views yet.');
+    this.live = lc;
+    document.body.classList.add('is-live');
+    lc.onStatus = (s) => {
+      if (s === 'open') this.setLoading('Live: waiting for the simulator');
+      else if (s !== 'connecting') this.setLoading(`Live server ${s}. Start it with: .venv/bin/python tools/live_server.py`);
+      else this.setLoading('Connecting to the live server');
+    };
+    lc.onHello = (m, applied) => {
+      const st = new LiveStore(m);
+      this.liveApplied = applied.map((a) => String(a.id ?? a.cmd));
+      void this.attach(st).then(() => {
+        this.setLoading(null);
+        this.liveFollow = true;
+        this.clock.playing = true;
+        this.renderHeader();
+        if (!this.loopStarted) requestAnimationFrame((n) => this.frame(n));
+      });
+    };
+    lc.onBatch = (b) => {
+      const st = this.store;
+      if (!(st instanceof LiveStore)) return;
+      st.ingest(b);
+      this.clock.duration = st.duration;
+    };
     lc.connect(url);
+  }
+
+  private liveCmd(c: Record<string, unknown>): void {
+    this.live?.send(c);
+    if (c.cmd === 'scenario') { this.liveApplied.push(String(c.id)); this.renderHeader(); }
   }
 
   // ------------------------------------------------------------- UI
@@ -183,8 +248,17 @@ class App implements TourHost {
     $('#btn-engineer').addEventListener('click', () => this.engineer.toggle());
     $('#btn-tour').addEventListener('click', () => (this.tour.active ? this.tour.stop() : this.tour.start()));
     $('#btn-reset-cam').addEventListener('click', () => this.die.focusOverview());
+    $('#btn-live-follow').addEventListener('click', () => { this.liveFollow = true; });
+    $('#btn-live-pause').addEventListener('click', () => {
+      const st = this.store;
+      this.liveCmd({ cmd: st instanceof LiveStore && st.stats?.paused ? 'resume' : 'pause' });
+    });
+    const vs = $('#vmin') as HTMLInputElement;
+    vs.addEventListener('input', () => { $('#vmin-val').textContent = `${Number(vs.value).toFixed(2)} V`; });
+    vs.addEventListener('change', () => this.liveCmd({ cmd: 'vmin', domain: 'npu', v: Number(vs.value) }));
+    this.timeline.onUserScrub = () => { if (this.live) this.liveFollow = false; };
     this.rings.onSelect = (task) => this.ringClick(task);
-    this.timeline.onSeek = (t) => this.clock.seek(t);
+    this.timeline.onSeek = (t) => { if (this.live) this.liveFollow = false; this.clock.seek(t); };
     this.timeline.onSelectJob = (ji) => void this.select(ji, false);
     this.card.onClose = () => this.select(-1);
     this.card.onWhy = (ji) => void this.why(ji);
@@ -204,14 +278,16 @@ class App implements TourHost {
   private renderHeader(): void {
     const st = this.store!;
     const m = st.manifest;
+    if (st instanceof LiveStore) { this.renderLiveHeader(st); return; }
     $('#replay-title').textContent = `${m.scenario_label}`;
-    $('#replay-policy').textContent = m.policy_label;
+    $('#replay-policy').textContent = prettyPolicy(m.policy_label || m.policy);
     $('#badge-synthetic').hidden = !m.synthetic;
     const cur = st.entry;
     const sc = $('#scenarios');
     sc.innerHTML = '';
     for (const s of SCENARIOS) {
-      const avail = this.index.replays.filter((r) => r.scenario.startsWith(s.prefix));
+      const avail = this.index.replays.filter((r) => r.scenario.startsWith(s.prefix))
+        .sort((a, b) => Number(a.synthetic) - Number(b.synthetic));
       const b = document.createElement('button');
       b.className = 'seg';
       b.textContent = s.label;
@@ -226,7 +302,9 @@ class App implements TourHost {
     }
     const pol = $('#policies');
     pol.innerHTML = '';
-    const forScenario = this.index.replays.filter((r) => r.scenario === cur?.scenario);
+    let forScenario = this.index.replays.filter((r) => r.scenario === cur?.scenario);
+    // when real replays exist for this scenario, older synthetic dev replays are not offered
+    if (forScenario.some((r) => !r.synthetic)) forScenario = forScenario.filter((r) => !r.synthetic || r.id === cur?.id);
     for (const p of POLICIES) {
       const e = forScenario.filter((r) => r.policy.startsWith(p + '_'));
       if (e.length === 0) {
@@ -248,6 +326,51 @@ class App implements TourHost {
         pol.appendChild(b);
       }
     }
+  }
+
+  private renderLiveHeader(st: LiveStore): void {
+    $('#replay-title').textContent = 'Live co-simulation';
+    $('#replay-policy').textContent = prettyPolicy(st.stats?.policy ?? st.manifest.policy);
+    $('#badge-synthetic').hidden = true;
+    const sc = $('#scenarios');
+    sc.innerHTML = '';
+    for (const s of SCENARIOS) {
+      const b = document.createElement('button');
+      b.className = 'seg';
+      b.textContent = s.label;
+      b.title = s.live === 'nominal' ? 'Return to the nominal task set, speed and ambient' : `Apply "${s.label}" to the running simulation now`;
+      if (this.liveApplied.includes(s.live)) b.classList.add('on');
+      b.addEventListener('click', () => {
+        if (s.live === 'nominal') this.liveApplied = [];
+        this.liveCmd({ cmd: 'scenario', id: s.live });
+      });
+      sc.appendChild(b);
+    }
+    const pol = $('#policies');
+    pol.innerHTML = '';
+    const cur = st.stats?.policy ?? st.manifest.policy;
+    for (const p of LIVE_POLICIES) {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.textContent = p.split('_')[0];
+      b.title = prettyPolicy(p);
+      if (p === cur) b.classList.add('on');
+      b.addEventListener('click', () => this.liveCmd({ cmd: 'policy', id: p }));
+      pol.appendChild(b);
+    }
+  }
+
+  private renderLiveBar(st: LiveStore): void {
+    const s = st.stats;
+    const el = $('#live-rate');
+    if (!s) { el.textContent = 'Waiting for data'; return; }
+    const txt = `${s.paused ? 'Paused' : 'Running'} at ${s.rate.toFixed(2)}× real time · ${s.sim_s.toFixed(1)} s simulated`;
+    if (el.textContent !== txt) el.textContent = txt;
+    el.classList.toggle('slow', s.rate < 0.25);
+    $('#btn-live-follow').hidden = this.liveFollow;
+    $('#btn-live-pause').textContent = s.paused ? 'Resume sim' : 'Pause sim';
+    const pol = st.stats?.policy;
+    if (pol && $('#replay-policy').textContent !== prettyPolicy(pol)) this.renderLiveHeader(st);
   }
 
   private renderTransport(): void {
@@ -390,18 +513,35 @@ class App implements TourHost {
   }
 
   private frame(now: number): void {
+    this.loopStarted = true;
     const dt = Math.min(0.1, (now - this.last) / 1000);
     this.last = now;
     this.frameTimes.push(now);
     if (this.frameTimes.length > 240) this.frameTimes.shift();
-    this.clock.tick(dt, now);
+    const st0 = this.store;
+    if (st0 instanceof LiveStore) {
+      // follow the head of the stream with a small lag so chunks are complete when drawn
+      if (this.liveFollow && st0.duration > 0) this.clock.seek(Math.max(0, st0.duration - 1.5e11));
+      else this.clock.tick(dt, now);
+      this.clock.speed = Math.max(1e-5, st0.stats?.rate ?? 1);
+      this.renderLiveBar(st0);
+    } else {
+      this.clock.tick(dt, now);
+    }
     const t = this.clock.t;
+    // the clock loops: warm the first chunks before the wrap so the restart does not refetch on the hot path
+    if (this.store && !(this.store instanceof LiveStore) && this.clock.loop && t > this.clock.duration - 1.5e12) {
+      void this.store.ensureEvents(0, 5e11);
+      void this.store.ensureRobot(0);
+    }
     if (this.store) {
       this.robot.update(t, dt);
       this.die.update(t, this.clock.speed, dt);
       const dp = $('#die-pane').getBoundingClientRect();
       const [li, ri] = this.insets();
+      const wasCompact = this.rings.margin;
       this.rings.layout(this.die.dieScreen(dp.width, dp.height), dp.width, dp.height, li, ri);
+      if (wasCompact !== this.rings.margin) this.updateShift();
       this.rings.update(t, this.clock.speed, now);
       this.timeline.draw(t, this.clock.playing);
       if (now - this.lastDrawer > 120 && this.drawerOpen) {
@@ -419,16 +559,20 @@ class App implements TourHost {
   private robotKey = '';
   private robotStatus(t: number): void {
     const evs = this.store?.manifest.robot?.events ?? [];
+    // co-sim recordings log "placed" (object in the bin) and "exited" (object left the belt unpicked);
+    // older dev data logs grasp_success / grasp_miss
+    const hasPlaced = evs.some((e) => e.kind === 'placed');
     let ok = 0, miss = 0;
     for (const e of evs) {
-      if (e.t_ps > t) break;
-      if (e.kind === 'grasp_success') ok++;
-      else if (e.kind === 'grasp_miss') miss++;
+      if (e.t_ps > t) continue;
+      if (hasPlaced ? e.kind === 'placed' : e.kind === 'grasp_success') ok++;
+      else if (e.kind === 'grasp_miss' || e.kind === 'exited') miss++;
     }
-    const key = `${ok}:${miss}`;
+    const key = `${ok}:${miss}:${hasPlaced}`;
     if (key === this.robotKey) return;
     this.robotKey = key;
-    $('#robot-status').innerHTML = `<span class="pill">Picked <b>${ok}</b></span><span class="pill ${miss ? 'bad' : ''}">Missed <b>${miss}</b></span>`;
+    $('#robot-status').innerHTML = `<span class="pill">${hasPlaced ? 'Placed in bin' : 'Picked'} <b>${ok}</b></span>` +
+      `<span class="pill ${miss ? 'bad' : ''}">${hasPlaced ? 'Left the belt' : 'Missed'} <b>${miss}</b></span>`;
   }
 
   fps(): number {
@@ -436,6 +580,14 @@ class App implements TourHost {
     if (f.length < 2) return 0;
     return ((f.length - 1) * 1000) / (f[f.length - 1] - f[0]);
   }
+}
+
+/** "P4_pace_to_deadline" -> "P4 Pace to deadline" (labels that are already readable pass through). */
+function prettyPolicy(p: string): string {
+  if (!p.includes('_')) return p;
+  const [id, ...rest] = p.split('_');
+  const words = rest.join(' ');
+  return `${id} ${words.charAt(0).toUpperCase()}${words.slice(1)}`;
 }
 
 const app = new App();

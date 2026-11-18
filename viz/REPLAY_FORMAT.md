@@ -55,6 +55,17 @@ Times are int64 picoseconds everywhere (`*_ps`). The reader converts them to flo
 
 Events are sorted by `t_ps` and stored in the chunk containing their start time. `max_end_ps` lets the reader find long events that started in an earlier chunk.
 
+### Real traces: coalescing
+
+A real run produces millions of NoC packets per simulated second (S1: about 2.07 million packet records per 0.2 s). `ReplayWriter.add_trace` takes the core's numpy trace directly and:
+
+- counts every packet in the per-millisecond link aggregates (`lod.bin.gz`) before anything is merged;
+- merges packets of the same (task, job, op, src, dst) whose gaps are at most `coalesce_gap_ps` (default 2 us) into one `xfer` record: `t_ps` is the first start, `dur_ps` spans to the last end, `bytes` is the sum and `value` is the packet count (`events.xfer_coalescing` in the manifest says so). S1 goes from 2.07 million packets to about 20 thousand records per 0.2 s;
+- turns `dram_q` samples into `dram_q.<unit>` series holding the peak queue depth per millisecond, and `freq` events into `freq.<domain>` step series;
+- drops `job_release/start/finish` events, since jobs are in `jobs.bin.gz`.
+
+`events.stats` records `raw_events`, `raw_xfers`, `stored_xfers` and `dram_q_samples`, so the reduction is visible in every manifest. The viewer computes per-chunk flow aggregates (one entry per 4 ms bucket, source, destination and task) in its worker and draws those at fast playback; individual transfers are drawn in slow motion.
+
 ## Job record (80 bytes)
 
 | Offset | Type | Field |
@@ -106,7 +117,28 @@ Scenario buttons enable themselves for every scenario prefix (`S1_` ... `S8_`) t
 
 ## Live mode
 
-`?live=ws://host:port` connects `viz/src/live/client.ts`. Messages are msgpack maps: `{type: "hello", manifest}` once, then `{type: "batch", t_ps, events, jobs, series, robot}` where `events` and `jobs` are byte strings of the same 48-byte and 80-byte records, `series` maps names to new samples, and `robot` is float32 frames. Decoding goes through the same functions as replay chunks.
+`tools/live_server.py` runs the co-sim, glasschip_core and the PowerManager and streams them; `?live=ws://127.0.0.1:8770` connects the viewer (`viz/src/live/`). Messages are msgpack maps:
+
+- `{type: "hello", manifest, applied}` once per connection (and again after a restart). `manifest` has the same schema as a replay manifest with `live: true` and empty chunk lists.
+- `{type: "batch", t_ps, events, jobs, critpaths, strings_add, series, robot, robot_events, stats}` every 50 ms of simulated time. `events` and `jobs` are byte strings of the same 48-byte and 80-byte records produced by `ReplayWriter.encode_trace` and `ReplayWriter.jobs_to_records`; `strings_add` extends `events.strings`; `series` maps names to `{t0_ps, rate_hz, unit, group, values}` (float32 bytes); `robot` is float32 frames `[n, bodies, 7]`; `stats` carries the measured simulated-seconds-per-wall-second rate shown on screen.
+
+Commands go the other way as JSON text: `{"cmd": "scenario", "id": "second_camera" | "human" | "conveyor_fast" | "hot_day" | "fifteen" | "record_4k" | "lower_voltage" | "nominal"}`, `{"cmd": "policy", "id": "P4_pace_to_deadline"}`, `{"cmd": "vmin", "domain": "npu", "v": 0.55}`, `{"cmd": "qos", "on": true}`, `{"cmd": "pause"}`, `{"cmd": "resume"}`, `{"cmd": "max_rate", "x": 1}`, `{"cmd": "restart", "policy": ...}`, `{"cmd": "run_config", "soc_overrides": {"blocks.npu.tiles": 6}}` (the design panel's "run full model") and `{"cmd": "shutdown"}` (local development).
+
+## Surrogate metadata
+
+The design panel loads `surrogate/meta.json` (or the path in `replays/index.json` under `surrogate.meta`, relative to `replays/`, or `?surrogate=` in the URL):
+
+```json
+{"model": "model.onnx", "input_name": "x", "coverage": 0.9, "uncertain_rel_width": 0.25,
+ "inputs": [{"name": "npu_tiles", "label": "NPU tiles", "min": 2, "max": 8, "step": 1, "default": 4,
+             "config_path": "blocks.npu.tiles", "choices": [2, 4, 6, 8]}],
+ "outputs": [{"name": "energy_wh", "label": "Energy per robot-hour", "unit": "Wh", "lo": "energy_wh_lo",
+              "hi": "energy_wh_hi", "max_width": 0.5, "digits": 2}],
+ "pareto": {"x": "energy_wh", "y": "worst_safety_miss", "points": [[4.1, 0.0]], "source": "results/s12.json"},
+ "provenance": {"script": "surrogate/export_onnx.py"}}
+```
+
+The model takes one float32 tensor `[1, len(inputs)]` in `inputs` order and returns one output per name (`[1]` or `[1, 1]`). An output whose interval is wider than `max_width` (or `uncertain_rel_width` times its value) is flagged "uncertain, run full model"; in live mode the button sends `run_config` with every input that has a `config_path`.
 
 ## Writer API
 
@@ -122,6 +154,10 @@ w.add_jobs(completions)     # completion dicts from sim.run_until(), with attrib
 w.add_series(name, *, t0_ps, rate_hz, values, unit, group, label=None)
 w.set_results(results)      # optional; otherwise derived from the replay
 w.set_extra(key, value)     # e.g. "scenario_events", "latency_tolerance"
+w.add_trace(trace_np, names, coalesce_gap_ps=2_000_000)   # sim.trace_drain(as_numpy=True), sim.trace_names()
+w.encode_trace(trace_np, names, lod=False) -> dict        # same encoding without storing (live server)
+w.jobs_to_records(completions) -> (JOB_DTYPE array, critpaths)
+w.base_manifest() -> dict
 w.write() -> Path
 stage_scene(src_dir, dst_dir)          # copy + gzip a co-sim scene export into the site
 update_index(index_path, entry)        # add or replace a replay in the site index

@@ -1,5 +1,5 @@
 // Web Worker: fetch, gunzip and decode replay chunks off the main thread.
-import { decodeEvents, decodeJobs, eventBuffers, gunzip } from './decode';
+import { decodeEvents, decodeJobs, eventBuffers, gunzip, indexEvents } from './decode';
 
 type Req =
   | { id: number; type: 'events'; url: string }
@@ -23,7 +23,7 @@ ctx.onmessage = async (ev: MessageEvent<Req>) => {
   const m = ev.data;
   try {
     if (m.type === 'events') {
-      const blk = decodeEvents(await load(m.url, true));
+      const blk = indexEvents(decodeEvents(await load(m.url, true)));
       ctx.postMessage({ id: m.id, ok: true, data: blk }, eventBuffers(blk));
     } else if (m.type === 'jobs') {
       const j = decodeJobs(await load(m.url, true), m.nAttr);
