@@ -1,0 +1,143 @@
+# Power and thermal parameters for the fictional VX-1 SoC.
+# Every number in this file is an ASSUMPTION. Seeds come from published tables
+# (sources below and in power/README.md); the scaling to a generic 5 nm class is
+# my own documented rule, not a measurement of any real chip.
+
+version: 1
+
+# ---------------------------------------------------------------------------
+# Dynamic energy seeds (pJ per operation at the seed node and seed voltage).
+# kind selects the node-scaling factor in `node_scaling`.
+# Sources:
+#   J21  = Jouppi et al., "Ten Lessons From Three Generations Shaped Google's
+#          TPUv4i", ISCA 2021, Table 2 (Horowitz 45 nm values updated to 7 nm).
+#   H14  = Horowitz, "Computing's energy problem (and what we can do about it)",
+#          ISSCC 2014 (45 nm; 70 pJ per instruction for a simple in-order core).
+#   K11  = Keckler et al., "GPUs and the Future of Parallel Computing",
+#          IEEE Micro 2011, Table 1 (wire energy per bit per mm).
+#   D18  = Dally et al., "Hardware-Enabled Artificial Intelligence", VLSI 2018
+#          (on-chip wires 20-40 fJ/bit-mm, not improving with scaling).
+#   D17  = Dally, NVIDIA DLI keynote 2017, "Energy shopping list" slide citing
+#          Keckler 2011 and Vogelsang 2010: DRAM interface 2 pJ/bit and access
+#          2.5 pJ/bit at the 16 nm generation.
+# ---------------------------------------------------------------------------
+seed_voltage_v: 0.75        # assumption: the 7 nm table is treated as measured near 0.75 V
+energy_seeds_pj:
+  int8_macs:     {pj: 0.10,  kind: logic, src: "J21 7nm: int8 mult 0.07 + int32 add 0.03"}
+  bf16_macs:     {pj: 0.59,  kind: logic, src: "J21 7nm: bf16 mult 0.21 + fp32 add 0.38"}
+  fp8_macs:      {pj: 0.265, kind: logic, src: "assumption: fp8 mult ~1.5x int8 mult (0.105) + J21 fp16 add 0.16"}
+  sram_bytes:    {pj: 1.0625, kind: sram, src: "J21 7nm: 32 KB SRAM 8.5 pJ per 64-bit access / 8 B"}
+  cache_bytes:   {pj: 1.75,  kind: sram,  src: "J21 7nm: 1 MB banked SRAM 14 pJ per 64-bit access / 8 B"}
+  flit_hops:     {pj: 51.2,  kind: wire,  src: "D18 40 fJ/bit-mm x 256 bit x 2.5 mm hop = 25.6 pJ link, router assumed equal to link"}
+  dram_bytes:    {pj: 36.0,  kind: dram,  src: "D17: (2 pJ/bit interface + 2.5 pJ/bit access) x 8 bit"}
+  dram_activates: {pj: 800.0, kind: dram, src: "assumption, no published seed used: ACT+PRE of one 2 KB row"}
+  cpu_instr:     {pj: 26.9,  kind: logic, src: "H14 70 pJ/instr (45 nm) / 2.6 (J21 geomean 45->7 nm gain)"}
+  vec_ops:       {pj: 2.54,  kind: logic, src: "J21 7nm fp32 FMA (0.38 + 1.31) x 1.5 vector register-file overhead (assumption)"}
+  simt_flops:    {pj: 1.69,  kind: logic, src: "J21 7nm fp32 FMA / 2 flops x 2.0 SIMT issue+RF overhead (assumption)"}
+  dsp_ops:       {pj: 0.20,  kind: logic, src: "J21 7nm int8 MAC (0.10) x 2.0 SIMD overhead (assumption)"}
+  dma_bytes:     {pj: 1.875, kind: sram,  src: "J21 7nm: 8 KB SRAM read + write (2 x 7.5 pJ per 64 bit) / 8 B"}
+
+# 7 nm -> generic 5 nm class. Assumptions: logic gains about 20 percent per node,
+# SRAM less, wires and DRAM do not scale with the logic node (J21 lesson 1, D18).
+node_scaling:
+  logic: 0.80
+  sram: 0.90
+  wire: 1.00
+  dram: 1.00
+
+# Reference voltage for DRAM-side energy (device + PHY do not follow SoC DVFS).
+dram_reference_domain: dram_io
+
+# Activity factors per class (multiplies the seed). 1.0 = seed already includes typical activity.
+activity_factor:
+  default: 1.0
+
+# Domain-specific multipliers on a class (assumptions).
+domain_class_scale:
+  cpu_a: {cpu_instr: 3.0}    # out-of-order core overhead vs H14 in-order core
+  cpu_b: {cpu_instr: 3.0}
+  rt:    {cpu_instr: 2.0}    # lockstep pair executes every instruction twice
+
+# Activity per cycle when a domain is 100 percent busy (used for peak power
+# estimates and by the synthetic FakeSim). Derived from vx1.yaml widths.
+peak_activity_per_cycle:
+  cpu_a:     {cpu_instr: 8, vec_ops: 8, sram_bytes: 24}       # 4 cores x IPC 2
+  cpu_b:     {cpu_instr: 8, vec_ops: 8, sram_bytes: 24}
+  rt:        {cpu_instr: 1, sram_bytes: 4}                    # lockstep pair, IPC 1
+  npu:       {int8_macs: 16384, sram_bytes: 512}              # 4 tiles x 4096
+  simt:      {simt_flops: 1024, sram_bytes: 256}              # 4 CU x 128 lanes x 2
+  dsp:       {dsp_ops: 256, sram_bytes: 128}                  # 2 units x 128
+  noc_cache: {flit_hops: 48, cache_bytes: 64, dma_bytes: 32}  # 48 mesh links
+  dram_io:   {dram_bytes: 16, dram_activates: 0.0078125}      # per transfer, 1 ACT per 2 KB row
+
+# Clock tree and other always-on switching while the domain is clocked
+# (busy or idle, not power gated), as a fraction of estimated peak dynamic power
+# at nominal V/f. Scales with V^2 * f. Assumption.
+clock_tree_fraction:
+  default: 0.10
+  dram_io: 0.04              # background + refresh, assumption
+
+# ---------------------------------------------------------------------------
+# Leakage: P_leak = V * I0 * exp(cT * (T - T0)).
+# I0 is set so leakage at (v_nominal, T0) is `fraction_of_peak_dynamic` of the
+# domain's estimated peak dynamic power. Assumptions.
+# ---------------------------------------------------------------------------
+leakage:
+  t0_c: 25.0
+  c_t_per_c: 0.025           # leakage roughly doubles every 28 C, assumption
+  fraction_of_peak_dynamic: 0.05
+
+# ---------------------------------------------------------------------------
+# Voltage regulator: P_loss = rated * (a0 + a1 * x + a2 * x^2), x = P_out / rated.
+# Fixed switching loss, linear and conduction (I^2 R) terms. Assumption, shape
+# follows the usual buck converter efficiency curve.
+# ---------------------------------------------------------------------------
+regulator:
+  rated_over_peak: 1.2       # rated load = 1.2 x peak dynamic at v_max + leakage at 105 C
+  a0: 0.01
+  a1: 0.06
+  a2: 0.03
+  loss_node: enclosure       # PMIC sits on the board, heats the enclosure node
+
+# ---------------------------------------------------------------------------
+# DVFS and power gating mechanics (assumptions).
+# ---------------------------------------------------------------------------
+dvfs:
+  rail_cap_nf: 200.0         # transition energy 0.5 * C * |V1^2 - V0^2|
+gating:
+  wake_latency_us: 10.0
+  retention_leak_fraction: 0.05
+  wake_energy_rail_cap_nf: 200.0   # recharge of the gated rail: C * V^2 per wake
+  gateable: [cpu_a, cpu_b, npu, simt, dsp]   # rt (safety island), noc_cache and dram_io stay on
+
+# ---------------------------------------------------------------------------
+# Low-voltage arithmetic toggle (HYPOTHETICAL when enabled with non-default values).
+# Represents the class of low-voltage techniques Velaura says Titan Core uses.
+# The 2-4x arithmetic power reduction is Velaura's claim, not a measurement,
+# and this model does not implement their technology.
+# ---------------------------------------------------------------------------
+low_voltage_arith:
+  enabled: false
+  domain: npu
+  mac_vmin_v: 0.40           # MAC-array Vmin when enabled (table v_min is 0.45)
+  reduction_x: 1.0           # MAC energy coefficient is divided by this
+  opp_step_v: 0.05
+
+# ---------------------------------------------------------------------------
+# Thermal RC network (assumptions).
+# Each power domain is a junction node with R to the package node; package to
+# enclosure; enclosure to ambient. Areas come from vx1.yaml floorplan fractions.
+# ---------------------------------------------------------------------------
+thermal:
+  die_area_mm2: 100.0
+  r_spec_k_mm2_per_w: 30.0   # junction-to-package spreading resistance per unit area
+  c_spec_j_per_k_mm2: 4.9e-4 # silicon 1.63 J/(cm^3 K) x 0.3 mm thickness
+  min_node_area_mm2: 2.0     # dram_io and noc_cache use their floorplan blocks
+  package_c_j_per_k: 5.0
+  package_to_enclosure_r_k_per_w: 2.0
+  enclosure_c_j_per_k: 60.0
+  enclosure_to_ambient_r_k_per_w: 3.0
+  tj_limit_c: 105.0
+  throttle_c: 100.0
+  release_c: 95.0
+  throttle_step_ms: 10.0

@@ -1,0 +1,5 @@
+# P2: earliest-deadline-first scheduling at nominal V/f.
+name: P2_edf
+scheduler: edf
+power: nominal
+params: {}
