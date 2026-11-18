@@ -1,0 +1,1234 @@
+{
+ "provenance": {
+  "script": "riscv/run_gem5.py",
+  "tool": "gem5 26.0.0.0 SE mode, xcol variant (worktree third_party/gem5-xcol, branch glasschip-xcol, build/RISCV_XCOL)",
+  "tool_commit_base": "9d368896ce119c17e1289dcbb18f33624724b843",
+  "gem5_patch": "riscv/gem5/xcol_gem5.patch",
+  "compiler": "zig cc 0.17.1 (LLVM, ld.lld, musl), -O2 -mcpu=baseline_rv64+v -ffp-contract=off -fno-vectorize -fno-slp-vectorize",
+  "kernel_sources": [
+   "riscv/kernels/fk.c",
+   "riscv/kernels/esdf.c",
+   "riscv/kernels/selfcol.c",
+   "riscv/kernels/inputs.c",
+   "riscv/kernels/kbench.c",
+   "riscv/kernels/control_rvv.cpp",
+   "riscv/kernels/ctrl_bench.cpp",
+   "workloads/capture/control/control.cpp",
+   "riscv/kernels/franka_spheres.h"
+  ],
+  "config_files": [
+   "configs/soc/vx1.yaml",
+   "riscv/gem5/se_xcol.py"
+  ],
+  "date": "2026-11-17",
+  "wall_s": 243.0
+ },
+ "setup": {
+  "system": "1 core, 64 KiB L1I + 64 KiB L1D (4-way, 2-cycle), 1 MiB L2 (16-way, 12-cycle), DDR4_2400_8x8, 2 GHz, VLEN 256 (same as calib/gem5/se_run.py)",
+  "cpu_models": {
+   "minor": "MinorCPU, gem5 defaults (in-order proxy)",
+   "o3": "O3CPU, gem5 defaults (app core proxy)"
+  },
+  "method": "marginal per-call cost from iteration counts 2 and 4 (T7: 50 and 100), rdcycle/rdinstret CSRs read in the binary; cold_cycles_per_call is the 2-iteration run divided by 2; dcache_misses_per_call is the marginal whole-run L1D miss count",
+  "problem": {
+   "configs": 128,
+   "spheres": 61,
+   "sphere_queries": 7808,
+   "self_pairs_per_config": 694,
+   "esdf_grid": "80 x 80 x 50 float32 (1.28 MB), 20 mm, analytic conveyor scene",
+   "spheres_source": "cuRobo franka.yml collision spheres and self_collision_ignore (61 spheres, 694 pairs)"
+  },
+  "xcol_model": {
+   "headline": {
+    "minor": {
+     "lat": 24,
+     "issue": 4
+    },
+    "o3": {
+     "lat": 4,
+     "pipelined": 0
+    }
+   },
+   "assumption": "latency 24 cycles, one issue per 4 cycles per unit; O3 headline uses latency 4 unpipelined as the 1-per-4-cycles throughput proxy; the xcol loop is unrolled 4x in software",
+   "memory": "xcol.sdf reads its sphere, descriptor and 8 corners functionally in gem5 (not through the cache model); the latency parameter stands in for L1 hits"
+  },
+  "notes": [
+   "gem5 RVV timing is coarse: vector instructions become per-register micro-ops on default functional units with no lane-width limit, so O3 RVV numbers are optimistic (calib/README.md).",
+   "Scalar baselines are built with -fno-vectorize -fno-slp-vectorize so they contain no vector code.",
+   "The T7 RVV variant is an app-core what-if: VX-1's RT core has no vector unit."
+  ]
+ },
+ "kernels": {
+  "T7_control_rvv": {
+   "minor": {
+    "cycles_per_call": 4448.32,
+    "instr_per_call": 2535.0,
+    "cpi": 1.7547613412228795,
+    "ipc": 0.5698780663261637,
+    "cold_cycles_per_call": 4762.84,
+    "cycles_per_item": 4448.32,
+    "instr_per_item": 2535.0,
+    "us_per_call_at_app_cpu_freq": 2.22416,
+    "us_per_call_at_rt_freq": 3.706933333333333,
+    "dcache_misses_per_call": 1.6,
+    "dcache_accesses_per_call": 787.64,
+    "runs": [
+     {
+      "kernel": "T7_control",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 50,
+      "cycles": 238142,
+      "instret": 126766,
+      "check": -212.719072944,
+      "wall_s": 2.64,
+      "sim_insts": 137866.0,
+      "dcache_misses": 241.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_rvv_minor_50 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/ctrl_rv64 --args rvv 50"
+     },
+     {
+      "kernel": "T7_control",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 100,
+      "cycles": 460558,
+      "instret": 253516,
+      "check": 141.928039731,
+      "wall_s": 3.68,
+      "sim_insts": 263949.0,
+      "dcache_misses": 321.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_rvv_minor_100 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/ctrl_rv64 --args rvv 100"
+     }
+    ],
+    "work_unit": "control_steps",
+    "items_per_call": 1
+   },
+   "o3": {
+    "cycles_per_call": 866.96,
+    "instr_per_call": 2535.0,
+    "cpi": 0.34199605522682447,
+    "ipc": 2.9240103349635507,
+    "cold_cycles_per_call": 1250.14,
+    "cycles_per_item": 866.96,
+    "instr_per_item": 2535.0,
+    "us_per_call_at_app_cpu_freq": 0.43348000000000003,
+    "us_per_call_at_rt_freq": 0.7224666666666667,
+    "dcache_misses_per_call": 2.14,
+    "dcache_accesses_per_call": 775.18,
+    "runs": [
+     {
+      "kernel": "T7_control",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 50,
+      "cycles": 62507,
+      "instret": 126766,
+      "check": -212.719072944,
+      "wall_s": 3.26,
+      "sim_insts": 137849.0,
+      "dcache_misses": 458.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_rvv_o3_50 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/ctrl_rv64 --args rvv 50"
+     },
+     {
+      "kernel": "T7_control",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 100,
+      "cycles": 105855,
+      "instret": 253516,
+      "check": 141.928039731,
+      "wall_s": 6.18,
+      "sim_insts": 263949.0,
+      "dcache_misses": 565.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_rvv_o3_100 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/ctrl_rv64 --args rvv 100"
+     }
+    ],
+    "work_unit": "control_steps",
+    "items_per_call": 1
+   }
+  },
+  "T7_control_scalar": {
+   "minor": {
+    "cycles_per_call": 4966.84,
+    "instr_per_call": 2971.02,
+    "cpi": 1.6717625596596455,
+    "ipc": 0.5981710705398201,
+    "cold_cycles_per_call": 5357.64,
+    "cycles_per_item": 4966.84,
+    "instr_per_item": 2971.02,
+    "us_per_call_at_app_cpu_freq": 2.4834199999999997,
+    "us_per_call_at_rt_freq": 4.139033333333333,
+    "dcache_misses_per_call": 1.6,
+    "dcache_accesses_per_call": 977.68,
+    "runs": [
+     {
+      "kernel": "T7_control",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 50,
+      "cycles": 267882,
+      "instret": 148112,
+      "check": -212.719072944,
+      "wall_s": 2.82,
+      "sim_insts": 159251.0,
+      "dcache_misses": 239.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_scalar_minor_50 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/ctrl_rv64 --args scalar 50"
+     },
+     {
+      "kernel": "T7_control",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 100,
+      "cycles": 516224,
+      "instret": 296663,
+      "check": 141.928039731,
+      "wall_s": 3.78,
+      "sim_insts": 307135.0,
+      "dcache_misses": 319.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_scalar_minor_100 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/ctrl_rv64 --args scalar 100"
+     }
+    ],
+    "work_unit": "control_steps",
+    "items_per_call": 1
+   },
+   "o3": {
+    "cycles_per_call": 836.82,
+    "instr_per_call": 2971.02,
+    "cpi": 0.2816608437506311,
+    "ipc": 3.5503692550369252,
+    "cold_cycles_per_call": 1312.14,
+    "cycles_per_item": 836.82,
+    "instr_per_item": 2971.02,
+    "us_per_call_at_app_cpu_freq": 0.41841,
+    "us_per_call_at_rt_freq": 0.6973500000000001,
+    "dcache_misses_per_call": 2.14,
+    "dcache_accesses_per_call": 966.02,
+    "runs": [
+     {
+      "kernel": "T7_control",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 50,
+      "cycles": 65607,
+      "instret": 148112,
+      "check": -212.719072944,
+      "wall_s": 3.82,
+      "sim_insts": 159234.0,
+      "dcache_misses": 475.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_scalar_o3_50 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/ctrl_rv64 --args scalar 50"
+     },
+     {
+      "kernel": "T7_control",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 100,
+      "cycles": 107448,
+      "instret": 296663,
+      "check": 141.928039731,
+      "wall_s": 5.08,
+      "sim_insts": 307135.0,
+      "dcache_misses": 582.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/T7_control_scalar_o3_100 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/ctrl_rv64 --args scalar 100"
+     }
+    ],
+    "work_unit": "control_steps",
+    "items_per_call": 1
+   }
+  },
+  "esdf_rvv": {
+   "minor": {
+    "cycles_per_call": 299105.5,
+    "instr_per_call": 47916.0,
+    "cpi": 6.242288588362968,
+    "ipc": 0.16019765601100616,
+    "cold_cycles_per_call": 370999.0,
+    "cycles_per_item": 38.30756915983606,
+    "instr_per_item": 6.136782786885246,
+    "us_per_call_at_app_cpu_freq": 149.55275,
+    "us_per_call_at_rt_freq": 249.25458333333333,
+    "dcache_misses_per_call": 5476.5,
+    "dcache_accesses_per_call": 99089.0,
+    "runs": [
+     {
+      "kernel": "esdf",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 741998,
+      "instret": 95853,
+      "check": 0.0,
+      "wall_s": 9.26,
+      "sim_insts": 768409.0,
+      "dcache_misses": 15760.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_rvv_minor_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args esdf rvv 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "esdf",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 1340209,
+      "instret": 191685,
+      "check": 0.0,
+      "wall_s": 13.72,
+      "sim_insts": 864275.0,
+      "dcache_misses": 26713.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_rvv_minor_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args esdf rvv 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_queries",
+    "items_per_call": 7808
+   },
+   "o3": {
+    "cycles_per_call": 63665.0,
+    "instr_per_call": 47916.0,
+    "cpi": 1.3286793555388596,
+    "ipc": 0.7526270321212597,
+    "cold_cycles_per_call": 100345.5,
+    "cycles_per_item": 8.153816598360656,
+    "instr_per_item": 6.136782786885246,
+    "us_per_call_at_app_cpu_freq": 31.832499999999996,
+    "us_per_call_at_rt_freq": 53.05416666666667,
+    "dcache_misses_per_call": 19328.5,
+    "dcache_accesses_per_call": 99094.5,
+    "runs": [
+     {
+      "kernel": "esdf",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 200691,
+      "instret": 95853,
+      "check": 0.0,
+      "wall_s": 14.35,
+      "sim_insts": 768409.0,
+      "dcache_misses": 71091.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_rvv_o3_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args esdf rvv 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "esdf",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 328021,
+      "instret": 191685,
+      "check": 0.0,
+      "wall_s": 19.85,
+      "sim_insts": 864258.0,
+      "dcache_misses": 109748.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_rvv_o3_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args esdf rvv 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_queries",
+    "items_per_call": 7808
+   }
+  },
+  "esdf_scalar": {
+   "minor": {
+    "cycles_per_call": 1510098.5,
+    "instr_per_call": 999524.0,
+    "cpi": 1.5108176492010197,
+    "ipc": 0.6618932473610165,
+    "cold_cycles_per_call": 1592116.0,
+    "cycles_per_item": 193.40400870901638,
+    "instr_per_item": 128.01280737704917,
+    "us_per_call_at_app_cpu_freq": 755.04925,
+    "us_per_call_at_rt_freq": 1258.4154166666665,
+    "dcache_misses_per_call": 5124.5,
+    "dcache_accesses_per_call": 203039.0,
+    "runs": [
+     {
+      "kernel": "esdf",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 3184232,
+      "instret": 1999069,
+      "check": 0.0,
+      "wall_s": 19.62,
+      "sim_insts": 2671713.0,
+      "dcache_misses": 15158.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_scalar_minor_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args esdf scalar 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "esdf",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 6204429,
+      "instret": 3998117,
+      "check": 0.0,
+      "wall_s": 34.03,
+      "sim_insts": 4670761.0,
+      "dcache_misses": 25407.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_scalar_minor_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args esdf scalar 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_queries",
+    "items_per_call": 7808
+   },
+   "o3": {
+    "cycles_per_call": 288076.0,
+    "instr_per_call": 999524.0,
+    "cpi": 0.28821318947819163,
+    "ipc": 3.469653841347422,
+    "cold_cycles_per_call": 326549.0,
+    "cycles_per_item": 36.89497950819672,
+    "instr_per_item": 128.01280737704917,
+    "us_per_call_at_app_cpu_freq": 144.038,
+    "us_per_call_at_rt_freq": 240.06333333333333,
+    "dcache_misses_per_call": 8731.5,
+    "dcache_accesses_per_call": 187895.5,
+    "runs": [
+     {
+      "kernel": "esdf",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 653098,
+      "instret": 1999069,
+      "check": 0.0,
+      "wall_s": 27.85,
+      "sim_insts": 2671696.0,
+      "dcache_misses": 52640.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_scalar_o3_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args esdf scalar 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "esdf",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 1229250,
+      "instret": 3998117,
+      "check": 0.0,
+      "wall_s": 45.32,
+      "sim_insts": 4670761.0,
+      "dcache_misses": 70103.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_scalar_o3_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args esdf scalar 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_queries",
+    "items_per_call": 7808
+   }
+  },
+  "esdf_xcol": {
+   "minor": {
+    "cycles_per_call": 101644.0,
+    "instr_per_call": 29372.0,
+    "cpi": 3.460574696990331,
+    "ipc": 0.28896934398488844,
+    "cold_cycles_per_call": 117080.0,
+    "cycles_per_item": 13.017930327868852,
+    "instr_per_item": 3.761782786885246,
+    "us_per_call_at_app_cpu_freq": 50.822,
+    "us_per_call_at_rt_freq": 84.70333333333333,
+    "dcache_misses_per_call": 0.0,
+    "dcache_accesses_per_call": 7832.0,
+    "runs": [
+     {
+      "kernel": "esdf",
+      "variant": "xcol",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 234160,
+      "instret": 58765,
+      "check": 0.0,
+      "wall_s": 8.45,
+      "sim_insts": 731370.0,
+      "dcache_misses": 5172.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_xcol_minor_lat24_iss4_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args esdf xcol 2 grid=data/riscv/grid.bin --xcol-lat 24 --xcol-issue 4"
+     },
+     {
+      "kernel": "esdf",
+      "variant": "xcol",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 437448,
+      "instret": 117509,
+      "check": 0.0,
+      "wall_s": 9.36,
+      "sim_insts": 790131.0,
+      "dcache_misses": 5172.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_xcol_minor_lat24_iss4_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args esdf xcol 4 grid=data/riscv/grid.bin --xcol-lat 24 --xcol-issue 4"
+     }
+    ],
+    "work_unit": "sphere_queries",
+    "items_per_call": 7808,
+    "xcol_model": {
+     "lat": 24,
+     "issue": 4
+    }
+   },
+   "o3": {
+    "cycles_per_call": 31232.0,
+    "instr_per_call": 29372.0,
+    "cpi": 1.0633256162331473,
+    "ipc": 0.9404456967213115,
+    "cold_cycles_per_call": 32642.0,
+    "cycles_per_item": 4.0,
+    "instr_per_item": 3.761782786885246,
+    "us_per_call_at_app_cpu_freq": 15.616000000000001,
+    "us_per_call_at_rt_freq": 26.026666666666667,
+    "dcache_misses_per_call": 0.0,
+    "dcache_accesses_per_call": 7829.5,
+    "runs": [
+     {
+      "kernel": "esdf",
+      "variant": "xcol",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 65284,
+      "instret": 58765,
+      "check": 0.0,
+      "wall_s": 10.87,
+      "sim_insts": 731353.0,
+      "dcache_misses": 39588.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_xcol_o3_lat4_pip0_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args esdf xcol 2 grid=data/riscv/grid.bin --xcol-lat 4 --xcol-pipelined 0"
+     },
+     {
+      "kernel": "esdf",
+      "variant": "xcol",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 127748,
+      "instret": 117509,
+      "check": 0.0,
+      "wall_s": 11.48,
+      "sim_insts": 790131.0,
+      "dcache_misses": 39588.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/esdf_xcol_o3_lat4_pip0_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args esdf xcol 4 grid=data/riscv/grid.bin --xcol-lat 4 --xcol-pipelined 0"
+     }
+    ],
+    "work_unit": "sphere_queries",
+    "items_per_call": 7808,
+    "xcol_model": {
+     "lat": 4,
+     "pipelined": 0
+    }
+   }
+  },
+  "fk_rvv": {
+   "minor": {
+    "cycles_per_call": 194082.5,
+    "instr_per_call": 96908.0,
+    "cpi": 2.0027500309571966,
+    "ipc": 0.49931343629642033,
+    "cold_cycles_per_call": 253024.5,
+    "cycles_per_item": 1516.26953125,
+    "instr_per_item": 757.09375,
+    "us_per_call_at_app_cpu_freq": 97.04125,
+    "us_per_call_at_rt_freq": 161.73541666666668,
+    "dcache_misses_per_call": 2040.0,
+    "dcache_accesses_per_call": 58679.0,
+    "runs": [
+     {
+      "kernel": "fk",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 506049,
+      "instret": 193837,
+      "check": 0.0,
+      "wall_s": 10.54,
+      "sim_insts": 1055075.0,
+      "dcache_misses": 10422.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_rvv_minor_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args fk rvv 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "fk",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 894214,
+      "instret": 387653,
+      "check": 0.115,
+      "wall_s": 13.06,
+      "sim_insts": 1250707.0,
+      "dcache_misses": 14502.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_rvv_minor_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args fk rvv 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "configs",
+    "items_per_call": 128
+   },
+   "o3": {
+    "cycles_per_call": 36760.0,
+    "instr_per_call": 96908.0,
+    "cpi": 0.379328847979527,
+    "ipc": 2.636235038084875,
+    "cold_cycles_per_call": 75332.5,
+    "cycles_per_item": 287.1875,
+    "instr_per_item": 757.09375,
+    "us_per_call_at_app_cpu_freq": 18.38,
+    "us_per_call_at_rt_freq": 30.63333333333333,
+    "dcache_misses_per_call": 6350.0,
+    "dcache_accesses_per_call": 57361.5,
+    "runs": [
+     {
+      "kernel": "fk",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 150665,
+      "instret": 193837,
+      "check": 0.0,
+      "wall_s": 15.09,
+      "sim_insts": 1055075.0,
+      "dcache_misses": 53981.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_rvv_o3_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args fk rvv 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "fk",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 224185,
+      "instret": 387653,
+      "check": 0.115,
+      "wall_s": 18.47,
+      "sim_insts": 1250707.0,
+      "dcache_misses": 66681.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_rvv_o3_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args fk rvv 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "configs",
+    "items_per_call": 128
+   }
+  },
+  "fk_scalar": {
+   "minor": {
+    "cycles_per_call": 983410.0,
+    "instr_per_call": 594328.0,
+    "cpi": 1.654658706976619,
+    "ipc": 0.6043542367883182,
+    "cold_cycles_per_call": 1091268.0,
+    "cycles_per_item": 7682.890625,
+    "instr_per_item": 4643.1875,
+    "us_per_call_at_app_cpu_freq": 491.70500000000004,
+    "us_per_call_at_rt_freq": 819.5083333333333,
+    "dcache_misses_per_call": 3964.5,
+    "dcache_accesses_per_call": 273227.5,
+    "runs": [
+     {
+      "kernel": "fk",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 2182536,
+      "instret": 1188677,
+      "check": 0.0,
+      "wall_s": 16.29,
+      "sim_insts": 2049986.0,
+      "dcache_misses": 14098.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_scalar_minor_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args fk scalar 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "fk",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 4149356,
+      "instret": 2377333,
+      "check": 0.115,
+      "wall_s": 24.87,
+      "sim_insts": 3240458.0,
+      "dcache_misses": 22027.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_scalar_minor_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args fk scalar 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "configs",
+    "items_per_call": 128
+   },
+   "o3": {
+    "cycles_per_call": 188992.0,
+    "instr_per_call": 594328.0,
+    "cpi": 0.3179927582075891,
+    "ipc": 3.1447257026752453,
+    "cold_cycles_per_call": 211881.0,
+    "cycles_per_item": 1476.5,
+    "instr_per_item": 4643.1875,
+    "us_per_call_at_app_cpu_freq": 94.496,
+    "us_per_call_at_rt_freq": 157.49333333333334,
+    "dcache_misses_per_call": 15573.0,
+    "dcache_accesses_per_call": 260208.5,
+    "runs": [
+     {
+      "kernel": "fk",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 423762,
+      "instret": 1188677,
+      "check": 0.0,
+      "wall_s": 22.85,
+      "sim_insts": 2049969.0,
+      "dcache_misses": 85753.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_scalar_o3_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args fk scalar 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "fk",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 801746,
+      "instret": 2377333,
+      "check": 0.115,
+      "wall_s": 35.05,
+      "sim_insts": 3240441.0,
+      "dcache_misses": 116899.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/fk_scalar_o3_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args fk scalar 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "configs",
+    "items_per_call": 128
+   }
+  },
+  "selfcol_rvv": {
+   "minor": {
+    "cycles_per_call": 1178822.5,
+    "instr_per_call": 176583.0,
+    "cpi": 6.675741719191541,
+    "ipc": 0.1497960888937902,
+    "cold_cycles_per_call": 1192678.5,
+    "cycles_per_item": 13.270246082492795,
+    "instr_per_item": 1.987830961815562,
+    "us_per_call_at_app_cpu_freq": 589.41125,
+    "us_per_call_at_rt_freq": 982.3520833333334,
+    "dcache_misses_per_call": 3724.0,
+    "dcache_accesses_per_call": 583055.0,
+    "runs": [
+     {
+      "kernel": "selfcol",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 2385357,
+      "instret": 360833,
+      "check": 0.0429400951,
+      "wall_s": 19.46,
+      "sim_insts": 973234.0,
+      "dcache_misses": 11901.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_rvv_minor_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args selfcol rvv 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "selfcol",
+      "variant": "rvv",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 4743002,
+      "instret": 713999,
+      "check": 0.0858449191,
+      "wall_s": 34.81,
+      "sim_insts": 1326400.0,
+      "dcache_misses": 19349.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_rvv_minor_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args selfcol rvv 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_pairs",
+    "items_per_call": 88832
+   },
+   "o3": {
+    "cycles_per_call": 248094.0,
+    "instr_per_call": 176583.0,
+    "cpi": 1.4049710334516912,
+    "ipc": 0.7117584463953179,
+    "cold_cycles_per_call": 254649.5,
+    "cycles_per_item": 2.7928449207492796,
+    "instr_per_item": 1.987830961815562,
+    "us_per_call_at_app_cpu_freq": 124.04699999999998,
+    "us_per_call_at_rt_freq": 206.74499999999998,
+    "dcache_misses_per_call": 8560.0,
+    "dcache_accesses_per_call": 583058.0,
+    "runs": [
+     {
+      "kernel": "selfcol",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 509299,
+      "instret": 360833,
+      "check": 0.0429400951,
+      "wall_s": 30.89,
+      "sim_insts": 973217.0,
+      "dcache_misses": 50641.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_rvv_o3_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args selfcol rvv 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "selfcol",
+      "variant": "rvv",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 1005487,
+      "instret": 713999,
+      "check": 0.0858449191,
+      "wall_s": 54.18,
+      "sim_insts": 1326400.0,
+      "dcache_misses": 67761.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_rvv_o3_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args selfcol rvv 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_pairs",
+    "items_per_call": 88832
+   }
+  },
+  "selfcol_scalar": {
+   "minor": {
+    "cycles_per_call": 4743767.0,
+    "instr_per_call": 2666430.0,
+    "cpi": 1.779070517508429,
+    "ipc": 0.5620912662868982,
+    "cold_cycles_per_call": 4749855.5,
+    "cycles_per_item": 53.401555745677236,
+    "instr_per_item": 30.016548090778098,
+    "us_per_call_at_app_cpu_freq": 2371.8835000000004,
+    "us_per_call_at_rt_freq": 3953.1391666666673,
+    "dcache_misses_per_call": 1963.0,
+    "dcache_accesses_per_call": 799884.5,
+    "runs": [
+     {
+      "kernel": "selfcol",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 2,
+      "cycles": 9499711,
+      "instret": 5332881,
+      "check": 0.0429400951,
+      "wall_s": 42.01,
+      "sim_insts": 5945336.0,
+      "dcache_misses": 8245.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_scalar_minor_2 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args selfcol scalar 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "selfcol",
+      "variant": "scalar",
+      "cpu": "minor",
+      "iters": 4,
+      "cycles": 18987245,
+      "instret": 10665741,
+      "check": 0.0858449191,
+      "wall_s": 83.34,
+      "sim_insts": 11278230.0,
+      "dcache_misses": 12171.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_scalar_minor_4 riscv/gem5/se_xcol.py --cpu minor --binary riscv/build/kbench_rv64 --args selfcol scalar 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_pairs",
+    "items_per_call": 88832
+   },
+   "o3": {
+    "cycles_per_call": 1467587.5,
+    "instr_per_call": 2666430.0,
+    "cpi": 0.5503941599816984,
+    "ipc": 1.816879743115828,
+    "cold_cycles_per_call": 1470150.0,
+    "cycles_per_item": 16.520932771974064,
+    "instr_per_item": 30.016548090778098,
+    "us_per_call_at_app_cpu_freq": 733.7937499999999,
+    "us_per_call_at_rt_freq": 1222.9895833333333,
+    "dcache_misses_per_call": 10675.0,
+    "dcache_accesses_per_call": 799887.5,
+    "runs": [
+     {
+      "kernel": "selfcol",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 2,
+      "cycles": 2940300,
+      "instret": 5332881,
+      "check": 0.0429400951,
+      "wall_s": 56.02,
+      "sim_insts": 5945336.0,
+      "dcache_misses": 53488.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_scalar_o3_2 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args selfcol scalar 2 grid=data/riscv/grid.bin"
+     },
+     {
+      "kernel": "selfcol",
+      "variant": "scalar",
+      "cpu": "o3",
+      "iters": 4,
+      "cycles": 5875475,
+      "instret": 10665741,
+      "check": 0.0858449191,
+      "wall_s": 109.34,
+      "sim_insts": 11278213.0,
+      "dcache_misses": 74838.0,
+      "gem5_cmd": "--outdir=data/riscv/gem5_runs/selfcol_scalar_o3_4 riscv/gem5/se_xcol.py --cpu o3 --binary riscv/build/kbench_rv64 --args selfcol scalar 4 grid=data/riscv/grid.bin"
+     }
+    ],
+    "work_unit": "sphere_pairs",
+    "items_per_call": 88832
+   }
+  }
+ },
+ "speedups": {
+  "fk": {
+   "rvv_vs_scalar_minor": 5.0669689436193375,
+   "rvv_vs_scalar_o3": 5.141240478781284
+  },
+  "esdf": {
+   "rvv_vs_scalar_minor": 5.0487152526449695,
+   "xcol_vs_scalar_minor": 14.856740191255755,
+   "xcol_vs_rvv_minor": 2.9426773838101608,
+   "rvv_vs_scalar_o3": 4.524872378858086,
+   "xcol_vs_scalar_o3": 9.22374487704918,
+   "xcol_vs_rvv_o3": 2.038454149590164
+  },
+  "selfcol": {
+   "rvv_vs_scalar_minor": 4.024157156823865,
+   "rvv_vs_scalar_o3": 5.915449386119777
+  },
+  "T7_control": {
+   "rvv_vs_scalar_minor": 1.116565355010431,
+   "rvv_vs_scalar_o3": 0.9652348435913999
+  }
+ },
+ "xcol_latency_sweep": {
+  "minor": [
+   {
+    "xcol_model": {
+     "lat": 8,
+     "issue": 4
+    },
+    "cycles_per_call": 41129.0,
+    "cycles_per_item": 5.267546106557377
+   },
+   {
+    "xcol_model": {
+     "lat": 16,
+     "issue": 4
+    },
+    "cycles_per_call": 70409.0,
+    "cycles_per_item": 9.017546106557377
+   },
+   {
+    "xcol_model": {
+     "lat": 24,
+     "issue": 1
+    },
+    "cycles_per_call": 101644.0,
+    "cycles_per_item": 13.017930327868852
+   },
+   {
+    "xcol_model": {
+     "lat": 24,
+     "issue": 4
+    },
+    "cycles_per_call": 101644.0,
+    "cycles_per_item": 13.017930327868852,
+    "headline": true
+   },
+   {
+    "xcol_model": {
+     "lat": 24,
+     "issue": 8
+    },
+    "cycles_per_call": 101644.0,
+    "cycles_per_item": 13.017930327868852
+   },
+   {
+    "xcol_model": {
+     "lat": 48,
+     "issue": 4
+    },
+    "cycles_per_call": 195363.0,
+    "cycles_per_item": 25.020876024590162
+   }
+  ],
+  "o3": [
+   {
+    "xcol_model": {
+     "lat": 4,
+     "pipelined": 0
+    },
+    "cycles_per_call": 31232.0,
+    "cycles_per_item": 4.0,
+    "headline": true
+   },
+   {
+    "xcol_model": {
+     "lat": 8,
+     "pipelined": 0
+    },
+    "cycles_per_call": 62464.0,
+    "cycles_per_item": 8.0
+   },
+   {
+    "xcol_model": {
+     "lat": 24,
+     "pipelined": 0
+    },
+    "cycles_per_call": 187392.0,
+    "cycles_per_item": 24.0
+   },
+   {
+    "xcol_model": {
+     "lat": 24,
+     "pipelined": 1
+    },
+    "cycles_per_call": 8484.0,
+    "cycles_per_item": 1.086577868852459
+   },
+   {
+    "xcol_model": {
+     "lat": 48,
+     "pipelined": 0
+    },
+    "cycles_per_call": 374784.0,
+    "cycles_per_item": 48.0
+   }
+  ]
+ },
+ "cpu_cpi": {
+  "T7_control_rvv": {
+   "minor": 1.7547613412228795,
+   "o3": 0.34199605522682447
+  },
+  "T7_control_scalar": {
+   "minor": 1.6717625596596455,
+   "o3": 0.2816608437506311
+  },
+  "esdf_rvv": {
+   "minor": 6.242288588362968,
+   "o3": 1.3286793555388596
+  },
+  "esdf_scalar": {
+   "minor": 1.5108176492010197,
+   "o3": 0.28821318947819163
+  },
+  "esdf_xcol": {
+   "minor": 3.460574696990331,
+   "o3": 1.0633256162331473
+  },
+  "fk_rvv": {
+   "minor": 2.0027500309571966,
+   "o3": 0.379328847979527
+  },
+  "fk_scalar": {
+   "minor": 1.654658706976619,
+   "o3": 0.3179927582075891
+  },
+  "selfcol_rvv": {
+   "minor": 6.675741719191541,
+   "o3": 1.4049710334516912
+  },
+  "selfcol_scalar": {
+   "minor": 1.779070517508429,
+   "o3": 0.5503941599816984
+  }
+ },
+ "verification": {
+  "fk_scalar_minor_verify": {
+   "n": 31232,
+   "bit_exact": 31232,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "fk_rvv_minor_verify": {
+   "n": 31232,
+   "bit_exact": 31232,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_scalar_minor_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_rvv_minor_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_minor_lat24_iss4_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "selfcol_scalar_minor_verify": {
+   "n": 128,
+   "bit_exact": 128,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "selfcol_rvv_minor_verify": {
+   "n": 128,
+   "bit_exact": 128,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "T7_control_scalar_minor_verify": {
+   "n": 350,
+   "bit_exact": 350,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "T7_control_rvv_minor_verify": {
+   "n": 350,
+   "bit_exact": 350,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_minor_lat8_iss4_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_minor_lat16_iss4_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_minor_lat48_iss4_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_minor_lat24_iss1_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_minor_lat24_iss8_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "fk_scalar_o3_verify": {
+   "n": 31232,
+   "bit_exact": 31232,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "fk_rvv_o3_verify": {
+   "n": 31232,
+   "bit_exact": 31232,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_scalar_o3_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_rvv_o3_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_o3_lat4_pip0_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "selfcol_scalar_o3_verify": {
+   "n": 128,
+   "bit_exact": 128,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "selfcol_rvv_o3_verify": {
+   "n": 128,
+   "bit_exact": 128,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "T7_control_scalar_o3_verify": {
+   "n": 350,
+   "bit_exact": 350,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "T7_control_rvv_o3_verify": {
+   "n": 350,
+   "bit_exact": 350,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_o3_lat24_pip1_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_o3_lat24_pip0_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_o3_lat48_pip0_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  },
+  "esdf_xcol_o3_lat8_pip0_verify": {
+   "n": 7808,
+   "bit_exact": 7808,
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "ok": true
+  }
+ },
+ "stock_build_crosscheck": {
+  "stock_RISCV": {
+   "minor": {
+    "cycles": 3184232,
+    "instret": 1999069
+   },
+   "o3": {
+    "cycles": 653098,
+    "instret": 1999069
+   }
+  },
+  "xcol_RISCV_XCOL": {
+   "minor": {
+    "cycles": 3184232,
+    "instret": 1999069
+   },
+   "o3": {
+    "cycles": 653098,
+    "instret": 1999069
+   }
+  },
+  "note": "scalar ESDF, 2 iterations, same binary and args on both gem5 builds"
+ },
+ "errors": []
+}

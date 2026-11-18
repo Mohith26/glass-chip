@@ -1,7 +1,0 @@
-# P3 race to idle: highest OPP everywhere, power-gate idle gateable domains
-# (cpu_a, cpu_b, npu, simt, dsp; list in power/params_vx1.yaml). Wake latency and
-# retention/wake energy are assumptions in power/params_vx1.yaml.
-name: P3_race_to_idle
-scheduler: edf
-power: race_to_idle
-params: {}

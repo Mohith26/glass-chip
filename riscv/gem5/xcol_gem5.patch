@@ -1,0 +1,190 @@
+diff --git a/src/arch/riscv/isa/decoder.isa b/src/arch/riscv/isa/decoder.isa
+index 5252e9d..aa923b3 100644
+--- a/src/arch/riscv/isa/decoder.isa
++++ b/src/arch/riscv/isa/decoder.isa
+@@ -1333,6 +1333,94 @@ decode QUADRANT default Unknown::unknown() {
+             }
+         }
+ 
++        // Glass Chip study (not a RISC-V or vendor proposal): Xglasscol
++        // custom extension in the custom-0 major opcode. xcol.sdf fd, rs1, rs2
++        // rs1 -> sphere {cx, cy, cz, r} (4 x f32), rs2 -> grid descriptor
++        // {ox, oy, oz, inv_h: f32; nx, ny, nz: u32; eta: f32; base: u64}.
++        // f[fd] = NaN-boxed max(0, (r + eta) - trilinear(grid, c)). Memory is
++        // read functionally here; timing comes from the XcolSdf unit latency.
++        0x02: decode FUNCT3 {
++            0x0: decode FUNCT7 {
++                format FPROp {
++                    0x00: xcol_sdf({{
++                        // Same operation order as the IDL in
++                        // riscv/udb (Xglasscol/xcol.sdf.yaml): softfloat,
++                        // round to nearest even, fflags accrued.
++                        SETranslatingPortProxy proxy(xc->tcBase());
++                        uint32_t sph[4];
++                        uint32_t gd[8];
++                        uint64_t base;
++                        if (!proxy.tryReadBlob(Rs1, sph, sizeof(sph)))
++                            return std::make_shared<AddressFault>(
++                                Rs1, ExceptionCode::LOAD_PAGE);
++                        if (!proxy.tryReadBlob(Rs2, gd, sizeof(gd)) ||
++                            !proxy.tryReadBlob(Rs2 + 32, &base, 8))
++                            return std::make_shared<AddressFault>(
++                                Rs2, ExceptionCode::LOAD_PAGE);
++                        if (gd[4] < 2 || gd[5] < 2 || gd[6] < 2)
++                            return std::make_shared<IllegalInstFault>(
++                                "xcol.sdf: grid dims < 2", machInst);
++                        auto isnan32 = [](uint32_t v) {
++                            return (v & 0x7F800000u) == 0x7F800000u &&
++                                (v & 0x007FFFFFu) != 0;
++                        };
++                        uint_fast8_t saved_rm = softfloat_roundingMode;
++                        softfloat_roundingMode = softfloat_round_near_even;
++                        uint32_t i0[3];
++                        float32_t fr[3];
++                        for (int ax = 0; ax < 3; ++ax) {
++                            float32_t gpos = f32_mul(
++                                f32_sub(f32(sph[ax]), f32(gd[ax])), f32(gd[3]));
++                            uint32_t nn = gd[4 + ax];
++                            // maximumNumber(gpos, +0) then minimumNumber(., n-1)
++                            if (isnan32(gpos.v) || (gpos.v >> 31))
++                                gpos.v = 0;
++                            float32_t hi = ui32_to_f32(nn - 1);
++                            if (gpos.v > hi.v)
++                                gpos = hi;
++                            uint32_t ii = f32_to_ui32(gpos,
++                                softfloat_round_minMag, true);
++                            if (ii > nn - 2)
++                                ii = nn - 2;
++                            i0[ax] = ii;
++                            fr[ax] = f32_sub(gpos, ui32_to_f32(ii));
++                        }
++                        uint64_t sy = 4ull * gd[4];
++                        uint64_t sz = 4ull * gd[4] * gd[5];
++                        uint64_t addr0 = base + 4ull * (((uint64_t)i0[2] *
++                            gd[5] + i0[1]) * gd[4] + i0[0]);
++                        float32_t d[8];
++                        for (int k = 0; k < 8; ++k) {
++                            uint64_t ad = addr0 + ((k & 1) ? 4 : 0) +
++                                ((k & 2) ? sy : 0) + ((k & 4) ? sz : 0);
++                            if (!proxy.tryReadBlob(ad, &d[k].v, 4)) {
++                                softfloat_roundingMode = saved_rm;
++                                return std::make_shared<AddressFault>(
++                                    ad, ExceptionCode::LOAD_PAGE);
++                            }
++                        }
++                        // corner k = x + 2y + 4z; lerp(a, b, f) = a + f * (b - a)
++                        auto lerp = [](float32_t lo, float32_t up,
++                                       float32_t f) {
++                            return f32_add(lo, f32_mul(f, f32_sub(up, lo)));
++                        };
++                        float32_t c00 = lerp(d[0], d[1], fr[0]);
++                        float32_t c10 = lerp(d[2], d[3], fr[0]);
++                        float32_t c01 = lerp(d[4], d[5], fr[0]);
++                        float32_t c11 = lerp(d[6], d[7], fr[0]);
++                        float32_t c0 = lerp(c00, c10, fr[1]);
++                        float32_t c1 = lerp(c01, c11, fr[1]);
++                        float32_t dist = lerp(c0, c1, fr[2]);
++                        float32_t pen = f32_sub(
++                            f32_add(f32(sph[3]), f32(gd[7])), dist);
++                        uint32_t cost = (isnan32(pen.v) || (pen.v >> 31)) ?
++                            0u : pen.v;
++                        softfloat_roundingMode = saved_rm;
++                        Fd_bits = 0xFFFFFFFF00000000ULL | cost;
++                    }}, XcolSdfOp);
++                }
++            }
++        }
+         0x03: decode FUNCT3 {
+             format FenceOp {
+                 0x0: fence({{
+diff --git a/src/arch/riscv/isa/includes.isa b/src/arch/riscv/isa/includes.isa
+index b4be0e4..31119d7 100644
+--- a/src/arch/riscv/isa/includes.isa
++++ b/src/arch/riscv/isa/includes.isa
+@@ -120,6 +120,7 @@ output exec {{
+ #include "sim/sim_events.hh"
+ #include "sim/sim_exit.hh"
+ #include "sim/system.hh"
++#include "mem/se_translating_port_proxy.hh"
+ 
+ namespace gem5::RiscvISAInst
+ {
+diff --git a/src/cpu/FuncUnit.py b/src/cpu/FuncUnit.py
+index 704b3b3..774cf18 100644
+--- a/src/cpu/FuncUnit.py
++++ b/src/cpu/FuncUnit.py
+@@ -133,6 +133,7 @@ class OpClass(Enum):
+         "SimdBf16MultAcc",
+         "Bf16Cvt",
+         "System",
++        "XcolSdf",
+     ]
+ 
+ 
+diff --git a/src/cpu/minor/BaseMinorCPU.py b/src/cpu/minor/BaseMinorCPU.py
+index f78f17e..dcb6bc4 100644
+--- a/src/cpu/minor/BaseMinorCPU.py
++++ b/src/cpu/minor/BaseMinorCPU.py
+@@ -283,6 +283,13 @@ class MinorDefaultMiscFU(MinorFU):
+     opLat = 1
+ 
+ 
++# Glass Chip study: unit for the custom xcol.sdf instruction (latency set per run).
++class MinorDefaultXcolFU(MinorFU):
++    opClasses = minorMakeOpClassSet(["XcolSdf"])
++    opLat = 8
++    issueLat = 1
++
++
+ class MinorDefaultFUPool(MinorFUPool):
+     funcUnits = [
+         MinorDefaultIntFU(),
+@@ -293,6 +300,7 @@ class MinorDefaultFUPool(MinorFUPool):
+         MinorDefaultPredFU(),
+         MinorDefaultMemFU(),
+         MinorDefaultMiscFU(),
++        MinorDefaultXcolFU(),
+     ]
+ 
+ 
+diff --git a/src/cpu/o3/FUPool.py b/src/cpu/o3/FUPool.py
+index f2e1141..ce01a7f 100644
+--- a/src/cpu/o3/FUPool.py
++++ b/src/cpu/o3/FUPool.py
+@@ -62,4 +62,5 @@ class DefaultFUPool(FUPool):
+         PredALU(),
+         WritePort(),
+         RdWrPort(),
++        Xcol_Unit(),
+     ]
+diff --git a/src/cpu/o3/FuncUnitConfig.py b/src/cpu/o3/FuncUnitConfig.py
+index 6b52388..28d032c 100644
+--- a/src/cpu/o3/FuncUnitConfig.py
++++ b/src/cpu/o3/FuncUnitConfig.py
+@@ -154,6 +154,13 @@ class PredALU(FUDesc):
+     count = 1
+ 
+ 
++# Glass Chip study: one unit for the custom xcol.sdf instruction. Latency and
++# pipelining are overridden per run by the config script (riscv/gem5/se_xcol.py).
++class Xcol_Unit(FUDesc):
++    opList = [OpDesc(opClass="XcolSdf", opLat=8, pipelined=True)]
++    count = 1
++
++
+ class ReadPort(FUDesc):
+     opList = [
+         OpDesc(opClass="MemRead"),
+diff --git a/src/cpu/op_class.hh b/src/cpu/op_class.hh
+index 0613e55..3d0c929 100644
+--- a/src/cpu/op_class.hh
++++ b/src/cpu/op_class.hh
+@@ -149,6 +149,8 @@ static const OpClass SimdBf16MatMultAccOp = enums::SimdBf16MatMultAcc;
+ static const OpClass SimdBf16MultOp = enums::SimdBf16Mult;
+ static const OpClass SimdBf16MultAccOp = enums::SimdBf16MultAcc;
+ static const OpClass Bf16CvtOp = enums::Bf16Cvt;
++// Glass Chip study: fused ESDF lookup + hinge (custom-0, xcol.sdf)
++static const OpClass XcolSdfOp = enums::XcolSdf;
+ static const OpClass SimdDotProdOp = enums::SimdDotProd;
+ static const OpClass SystemOp = enums::System;
+ static const OpClass Num_OpClasses = enums::Num_OpClass;

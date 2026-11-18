@@ -1,5 +1,0 @@
-# P0 nominal: every domain at its nominal OPP (0.75 V), FIFO scheduling on every engine.
-name: P0_nominal
-scheduler: fifo
-power: nominal
-params: {}

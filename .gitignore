@@ -15,3 +15,6 @@ MUJOCO_LOG.TXT
 viz/public/replays/*/
 viz/public/scenes/
 *.dSYM/
+viz/public/results/
+viz/public/configs/
+riscv/build/
